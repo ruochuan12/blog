@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>4.原型式继承</title>
+</head>
+<body>
+    <script>
+        // 4.原型式继承
+        function object(o){
+            function F(){}
+            F.prototype = o;
+            return new F();
+        }
+        var person = {
+            name: "刘邦",
+            friends: ["张良", "韩信", "萧何"]
+        };
+        var anotherPerson = Object.create(person);
+        anotherPerson.name = "项羽";
+        anotherPerson.friends.push("项庄");
+        var yetAnotherPerson = Object.create(person);
+        yetAnotherPerson.name = "秦始皇";
+        yetAnotherPerson.friends.push("李斯");
+        console.log(person.friends); // ["张良", "韩信", "萧何", "项庄", "李斯"]
+        // 缺点：引用类型值的属性始终都会共享相应的值，就像使用原型模式一样
+    </script>
+</body>
+</html>

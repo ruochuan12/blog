@@ -1,0 +1,37 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // 3.组合继承 —— 原型链和借用构造函数组合而成
+        function Parent(){
+            this.name = '皇帝';
+        }
+        Parent.prototype.doSth = function(){
+            console.log('name:', this.name);
+            return this.name;
+        }
+        function Child(){
+            // 继承了Parent的属性
+            Parent.call(this); // this.name = '皇帝';
+            this.name = '太子';
+            this.age = 20;
+        }
+        Child.prototype = new Parent();
+        Child.prototype.constructor = Child;
+        Child.prototype.sayAge = function(){
+            console.log(this.age);
+        };
+        var child = new Child();
+        console.log('child:', child);
+        console.log('child.doSth:', child.doSth());
+        // 优点：融合原型链继承和借用构造函数的优点
+        // 缺点：父类调用两次，一次是用new，一次是用call
+    </script>
+</body>
+</html>

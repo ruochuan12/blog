@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // 1.原型链继承
+        function Parent(){
+            this.name = '皇帝';
+        }
+        Parent.prototype.doSth = function(){
+            console.log('name:', this.name);
+            return this.name;
+        }
+        function Child(){
+            this.name = '太子';
+        }
+        // 继承了Parent
+        Child.prototype = new Parent();
+        var child = new Child();
+        console.log(child, child.doSth());
+        // 优点：1.父类可以复用
+        // 缺点：1.引用类型值的原型属性会被所有实例共享
+        //      2.不能给父类传递参数
+    </script>
+</body>
+</html>

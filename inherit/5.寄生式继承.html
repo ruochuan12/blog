@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>5.寄生式继承</title>
+</head>
+<body>
+    <script>
+    // 5.寄生式继承
+    function object(o){
+        function F(){}
+        F.prototype = o;
+        return new F();
+    }
+    function createAnother(original){
+        var clone = object(original); //通过调用函数创建一个新对象
+        clone.sayHi = function(){ //以某种方式来增强这个对象
+            console.log("hi");
+        };
+        return clone; //返回这个对象
+    }
+    var person = {
+        name: "Nicholas",
+        friends: ["Shelby", "Court", "Van"]
+    };
+    var anotherPerson = createAnother(person);
+    anotherPerson.sayHi(); //"hi"
+    // 缺点：跟借用构造函数模式一样，每次创建对象都会创建一遍方法。
+    </script>
+</body>
+</html>

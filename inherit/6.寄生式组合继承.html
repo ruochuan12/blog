@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>6.寄生组合式继承</title>
+</head>
+<body>
+    <script>
+    // 6.寄生组合式继承
+    function object(o){
+        function F(){}
+        F.prototype = o;
+        return new F();
+    }
+    function inheritPrototype(Child, Parent){
+        var prototype = object(Parent.prototype); //创建对象
+        prototype.constructor = Child; //增强对象
+        Child.prototype = prototype; //指定对象
+    }
+    function Parent(name){
+        this.name = name;
+        this.colors = ["red", "blue", "green"];
+    }
+    Parent.prototype.sayName = function(){
+        console.log(this.name);
+    };
+    function Child(name, age){
+        Parent.call(this, name);
+        this.age = age;
+    }
+    inheritPrototype(Child, Parent);
+    Child.prototype.sayAge = function(){
+        console.log(this.age);
+    };
+    var child = new Child('太子', 18);
+    console.log('child:', child); // {name: "太子", colors: Array(3), age: 18}
+    child.sayName();
+    child.sayAge();
+//     这个例子的高效率体现在它只调用了一次 Parent 构造函数，并且因此避免了在 Child.
+// prototype 上面创建不必要的、多余的属性。与此同时，原型链还能保持不变；因此，还能够正常使用
+// instanceof 和 isPrototypeOf()。开发人员普遍认为寄生组合式继承是引用类型最理想的继承范式。
+    </script>
+</body>
+</html>

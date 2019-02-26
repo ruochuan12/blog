@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>Document</title>
+</head>
+<body>
+    <script>
+        // 2.借用构造函数，有时候也叫经典继承
+        function Parent(){
+            this.name = '皇帝';
+        }
+        Parent.prototype.doSth = function(){
+            console.log('name:', this.name);
+            return this.name;
+        }
+        function Child(){
+            // 继承了Parent
+            Parent.call(this); // this.name = '皇帝';
+            this.name = '太子';
+        }
+        var child = new Child();
+        console.log('child:', child);
+        console.log('child.doSth:', child.doSth()); // 报错
+        // 优点：1.因为是每次都调用了父类，所以不会子类生成的实例不会共享同一个实例。
+        //      2.可以传参
+        // 缺点：1.仅仅是借用了构造函数，方法只能在构造函数中定义，每次调用子类构造函数都会调用父类构造函数。
+        //      2.父类原型上定义的方法，对于子类无法找到。
+    </script>
+</body>
+</html>
