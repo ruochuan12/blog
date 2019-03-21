@@ -1,0 +1,11 @@
+[从lodash源码学习节流与防抖](https://juejin.im/post/5b043309f265da0ba77015e7)
+[志遥：详解Lodash中的debounce和throttle](https://lizhiyao.github.io/2017/02/15/debounce-throttle/)
+[JavaScript 函数节流和函数去抖应用场景辨析](https://github.com/hanzichi/underscore-analysis/issues/20)
+[underscore 函数去抖的实现](https://github.com/hanzichi/underscore-analysis/issues/21)
+[underscore 函数节流的实现](https://github.com/hanzichi/underscore-analysis/issues/22)
+[聊聊lodash的debounce实现](https://segmentfault.com/a/1190000012102372)
+[一图秒懂函数防抖和函数节流](https://juejin.im/post/5c404329e51d4551e064a332)
+[冴羽：JavaScript专题之跟着underscore学防抖](https://github.com/mqyqingfeng/Blog/issues/22)
+[司徒正美：函数防抖与函数节流](https://zhuanlan.zhihu.com/p/38313717)
+[修言：事件的节流（throttle）与防抖（debounce）](https://juejin.im/book/5b936540f265da0a9624b04b/section/5bb6212be51d451a3f4c3570)
+
