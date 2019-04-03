@@ -9,7 +9,7 @@
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
 [github blog](https://github.com/lxchuan12/blog)，放置资源和源码`demo`，欢迎`star`~
 
-## 文章列表（掘金链接地址）
+## 文章列表（掘金或sf链接地址）
 
 [面试官问：JS的继承](https://juejin.im/post/5c433e216fb9a049c15f841b)，资源和图片放在[`inherit`](https://github.com/lxchuan12/blog/tree/master/inherit)目录下。
 
@@ -28,3 +28,14 @@
 [oh my zsh 和 windows git bash 设置别名提高效率](https://juejin.im/post/5b1408955188257d7541b07c)
 
 [vue 2.x项目 vue-qriously 生成二维码并下载、cliploard复制粘贴](https://juejin.im/post/5afc0d3b6fb9a07a9d70858a)
+
+[分享百度网盘下载搜索神器和一些实用浏览器插件](https://segmentfault.com/a/1190000015638797)
+
+[JavaScript 对象所有API解析](https://segmentfault.com/a/1190000010753942)
+
+[《JavaScript语言精粹 修订版》 读书笔记](https://segmentfault.com/a/1190000010313101)
+
+## 微信交流群
+
+![加微信 `lxchuan12`，备注写明来源](http://lxchuan12.github.io/posts/9ff79b23/wechat.png)
+拉您进微信群【前端视野交流群】
