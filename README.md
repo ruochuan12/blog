@@ -3,11 +3,10 @@
 
 ## 关于
 作者：常以**若川**为名混迹于江湖。前端路上 | PPT爱好者 | 所知甚少，唯善学。<br>
-[个人博客 - 关于我](http://lxchuan12.github.io/posts/9ff79b23.html)<br>
-[`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
 [掘金专栏](https://juejin.im/user/57974dc55bbb500063f522fd/posts)，欢迎关注~<br>
+[`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
-[github blog](https://github.com/lxchuan12/blog)，放置资源和源码`demo`，欢迎`star`~
+
 
 ## 文章列表（掘金或sf链接地址）
 
@@ -37,5 +36,5 @@
 
 ## 微信交流群
 
-![加微信 `lxchuan12`，备注写明来源](http://lxchuan12.github.io/posts/9ff79b23/wechat.png)
+[加微信 `lxchuan12`，备注写明来源](http://lxchuan12.github.io/posts/9ff79b23/wechat.png)
 拉您进微信群【前端视野交流群】
