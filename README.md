@@ -3,7 +3,7 @@
 
 ## 关于
 作者：常以**若川**为名混迹于江湖。前端路上 | PPT爱好者 | 所知甚少，唯善学。<br>
-您可以在以下网站关注我：<br>
+您可以在以下网站（点击图片跳转）关注我：<br>
 <a href="https://juejin.im/user/57974dc55bbb500063f522fd/posts" >
   <img src="./README-images/juejin.svg"  width="210px" height="100px" title="掘金专栏，欢迎关注～" alt="掘金专栏，欢迎关注～"/>
 </a>
@@ -15,10 +15,6 @@
 <a href="https://zhuanlan.zhihu.com/lxchuan12" >
   <img src="./README-images/zhihu.png"  width="210px" height="100px" title="知乎前端视野专栏，欢迎关注～" alt="知乎前端视野专栏，欢迎关注～"/>
 </a>
-
-[掘金专栏](https://juejin.im/user/57974dc55bbb500063f522fd/posts)，欢迎关注~<br>
-[`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
-[知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
 
 
 ## 文章列表（掘金或sf链接地址）
