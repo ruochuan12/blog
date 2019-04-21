@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>debounce</title>
+    <style>
+    body{
+        height: 2000px;
+    }
+    </style>
+</head>
+<body>
+    <script src="./debounce-underscore.js">
+    </script>
+    <script>        
+        // import { debounce } from './lodash/debounce';
+        function scroll(){
+            console.log('scroll', document.documentElement.scrollTop);
+        };
+
+        // window.addEventListener('scroll', scroll);
+        window.addEventListener('scroll', debounce(scroll, 2000, true));
+    </script>
+</body>
+</html>

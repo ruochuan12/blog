@@ -1,3 +1,9 @@
+/**
+ * @link https://github.com/jashkenas/underscore/blob/master/underscore.js
+ * @version 1.9.1
+ * */
+
+// Similar to ES6’s "rest parameter".
 var restArguments = function (func, startIndex) {
     startIndex = startIndex == null ? func.length - 1 : +startIndex;
     return function () {
@@ -40,6 +46,7 @@ var debounce = function (func, wait, immediate) {
     };
 
     var debounced = restArguments(function (args) {
+        console.log(Array.isArray(args), args);
         if (timeout) clearTimeout(timeout);
         if (immediate) {
             var callNow = !timeout;
@@ -59,7 +66,48 @@ var debounce = function (func, wait, immediate) {
 
     return debounced;
 };
-function scroll(){
-    console.log(1);
+
+var _now = Date.now || function() {
+    return new Date().getTime();
 };
-debounce(scroll, 200)
+
+var throttle = function (func, wait, options) {
+    var timeout, context, args, result;
+    var previous = 0;
+    if (!options) options = {};
+
+    var later = function () {
+        previous = options.leading === false ? 0 : _now();
+        timeout = null;
+        result = func.apply(context, args);
+        if (!timeout) context = args = null;
+    };
+
+    var throttled = function () {
+        var now = _now();
+        if (!previous && options.leading === false) previous = now;
+        var remaining = wait - (now - previous);
+        context = this;
+        args = arguments;
+        if (remaining <= 0 || remaining > wait) {
+            if (timeout) {
+                clearTimeout(timeout);
+                timeout = null;
+            }
+            previous = now;
+            result = func.apply(context, args);
+            if (!timeout) context = args = null;
+        } else if (!timeout && options.trailing !== false) {
+            timeout = setTimeout(later, remaining);
+        }
+        return result;
+    };
+
+    throttled.cancel = function () {
+        clearTimeout(timeout);
+        previous = 0;
+        timeout = context = args = null;
+    };
+
+    return throttled;
+};
