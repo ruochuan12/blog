@@ -2,7 +2,7 @@
 若川的博客-前端视野，欢迎`star`，后续文章`demo`和资源都放在这里。
 
 ## 关于
-**若川**，某”世界闻名”的陶瓷大学2016届毕业生，目前在`杭州`从事`前端开发`工作，也是一枚`PPT爱好者`。[`freecodecamp`](https://www.freecodecamp.org/) 杭州社区组织者之一。所知甚少，唯善学。常以**若川**为名混迹于江湖。<br>
+**若川**，某不那么知名的陶瓷大学2016届毕业生，目前在`杭州`从事`前端开发`工作，也是一枚`PPT爱好者`。[`freecodecamp`](https://www.freecodecamp.org/) 杭州社区组织者之一。所知甚少，唯善学。常以**若川**为名混迹于江湖。<br>
 您可以在以下网站（点击图片跳转）关注我：<br>
 <a href="https://juejin.im/user/57974dc55bbb500063f522fd/posts" >
   <img src="./README-images/juejin.svg"  width="210px" height="100px" title="掘金专栏，欢迎关注～" alt="掘金专栏，欢迎关注～"/>
