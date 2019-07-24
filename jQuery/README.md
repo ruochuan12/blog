@@ -5,7 +5,7 @@
 
 ```
 
-### 无 new 改造
+### 无 new 构造
 
 ```
 var Student = function(){
@@ -39,3 +39,19 @@ jQuery.fn.init = function( selector, context, root ) {
 	};
 
 ```
+
+### extend
+
+用法：
+```
+jQuery.extend( target [, object1 ] [, objectN ] )
+
+jQuery.extend( [deep ], target, object1 [, objectN ] )
+```
+[jQuery.extend API](https://api.jquery.com/jQuery.extend/)
+[jQuery.fn.extend API](https://api.jquery.com/jQuery.extend/)
+
+```
+// 例子 jQuery.extend
+```
+第一版
