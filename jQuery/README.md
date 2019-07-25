@@ -6,7 +6,7 @@
 ```
 
 ### 无 new 构造
-
+实际上也是可以 new的，因为jQuery是函数。
 ```
 var Student = function(){
 
