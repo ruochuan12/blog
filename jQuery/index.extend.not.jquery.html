@@ -22,9 +22,17 @@
     <script>
         // 浅拷贝实现
         $.extend = function(){
-            var options, name, copy,
+            // options 是扩展的对象object1，object2...
+            var options, 
+            // object对象上的键
+            name,
+            // copy object对象上的值，也就是是需要拷贝的值
+            copy,
+            // 扩展目标对象，可能不是对象，所以或空对象
             target = arguments[0] || {},
+            // 定义i为1
             i = 1,
+            // 定义实参个数length
             length = arguments.length;
             // 只有一个参数时
             if(i === length){
@@ -36,6 +44,7 @@
                 if((options = arguments[i]) !=  null){
                     for(name in options){
                         copy = options[name];
+                        // 防止死循环，continue 跳出当前此次循环
                         if ( name === "__proto__" || target === copy ) {
                             continue;
                         }
@@ -46,6 +55,7 @@
                 }
 
             }
+            // 最后返回目标对象
             return target;
         }
     </script>

@@ -22,10 +22,43 @@
     <script>
         // 浅拷贝实现
         $.extend = function(){
-            var options, name, copy,
+            // options 是扩展的对象object1，object2...
+            var options, 
+            // object对象上的键
+            name,
+            // copy object对象上的值，也就是是需要拷贝的值
+            copy,
+            // 深拷贝新增的四个变量 deep、src、copyIsArray、clone
+            deep = false,
+            // 源目标，需要往上面赋值的
+            src,
+            // 需要拷贝的值的类型是函数
+            copyIsArray,
+            // 
+            clone,
+            // 扩展目标对象，可能不是对象，所以或空对象
             target = arguments[0] || {},
+            // 定义i为1
             i = 1,
+            // 定义实参个数length
             length = arguments.length;
+
+            // 处理深拷贝情况
+            if ( typeof target === "boolean" ) {
+                deep = target;
+
+                // Skip the boolean and the target
+                // target目标对象开始后移
+                target = arguments[ i ] || {};
+                i++;
+            }
+
+            // Handle case when target is a string or something (possible in deep copy)
+            // target不等于对象，且target不是函数的情况下，强制将其赋值为空对象。
+            if ( typeof target !== "object" && !isFunction( target ) ) {
+                target = {};
+            }
+
             // 只有一个参数时
             if(i === length){
                 target = this;
@@ -36,16 +69,49 @@
                 if((options = arguments[i]) !=  null){
                     for(name in options){
                         copy = options[name];
+                        // 防止死循环，continue 跳出当前此次循环
                         if ( name === "__proto__" || target === copy ) {
                             continue;
                         }
-                        if ( copy !== undefined ) {
+
+                        // Recurse if we're merging plain objects or arrays
+                        // 这里deep为true，并且需要拷贝的值有值，并且是纯粹的对象
+                        // 或者需拷贝的值是数组
+                        if ( deep && copy && ( jQuery.isPlainObject( copy ) ||
+                            ( copyIsArray = Array.isArray( copy ) ) ) ) {
+
+                            // 源目标，需要往上面赋值的
+                            src = target[ name ];
+
+                            // Ensure proper type for the source value
+                            // 拷贝的值，并且src不是数组，clone对象改为空数组。
+                            if ( copyIsArray && !Array.isArray( src ) ) {
+                                clone = [];
+                                // 拷贝的值不是数组，对象不是纯粹的对象。
+                            } else if ( !copyIsArray && !jQuery.isPlainObject( src ) ) {
+                                // clone 赋值为空对象
+                                clone = {};
+                            } else {
+                                // 否则 clone = src
+                                clone = src;
+                            }
+                            // 把下一次循环时，copyIsArray 需要重新赋值为false
+                            copyIsArray = false;
+
+                            // Never move original objects, clone them
+                            // 递归调用自己
+                            target[ name ] = jQuery.extend( deep, clone, copy );
+
+                        // Don't bring in undefined values
+                        }
+                        else if ( copy !== undefined ) {
                             target[ name ] = copy;
                         }
                     }
                 }
 
             }
+            // 最后返回目标对象
             return target;
         }
     </script>
