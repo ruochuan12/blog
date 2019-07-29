@@ -4,7 +4,7 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta http-equiv="X-UA-Compatible" content="ie=edge">
-    <title>index.extend.use.jquery</title>
+    <title>jQuery.extend例子</title>
 </head>
 <body>
     <div id="app">
@@ -17,8 +17,9 @@
         <br>
         <a href="https://api.jquery.com/jQuery.extend/" target="_blank">jQuery.fn.extend API</a>
     </div>
-    <script src="./jquery-3.4.1.js">
-    </script>
+<!--     <script src="./jquery-3.4.1.js">
+    </script> -->
+    <script src="https://unpkg.com/jquery@3.4.1/dist/jquery.js"></script>
     <script>
         //  extend 用法：
         // ```
@@ -51,7 +52,7 @@
             other: {
                 mac: 0,
                 ubuntu: 1,
-                windows: 1, 
+                windows: 1,
             },
         }, {
             job: '前端开发工程师',
@@ -62,27 +63,27 @@
             }
         });
         console.log(result3, 'result3');
-            // deep true
-            // {
-            //     "name": "若川",
-            //     "other": {
-            //         "mac": 1,
-            //         "ubuntu": 1,
-            //         "windows": 0,
-            //         "linux": 1
-            //     },
-            //     "job": "前端开发工程师"
-            // }
-            // deep false
-            // {
-            //     "name": "若川",
-            //     "other": {
-            //         "mac": 1,
-            //         "linux": 1,
-            //         "windows": 0
-            //     },
-            //     "job": "前端开发工程师"
-            // }
+        // deep true
+        // {
+        //     "name": "若川",
+        //     "other": {
+        //         "mac": 1,
+        //         "ubuntu": 1,
+        //         "windows": 0,
+        //         "linux": 1
+        //     },
+        //     "job": "前端开发工程师"
+        // }
+        // deep false
+        // {
+        //     "name": "若川",
+        //     "other": {
+        //         "mac": 1,
+        //         "linux": 1,
+        //         "windows": 0
+        //     },
+        //     "job": "前端开发工程师"
+        // }
 
     </script>
 </body>
