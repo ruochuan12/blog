@@ -32,7 +32,7 @@ if ( !noGlobal ) {
 ### 支持多种环境下使用 比如 commonjs、amd规范
 
 #### commonjs 规范支持
-commonjs node.js
+`commonjs`实现 主要代表 `nodejs`
 ```
 // global是全局变量，factory 是函数
 ( function( global, factory ) {
@@ -41,14 +41,6 @@ commonjs node.js
 	"use strict";
 	// Commonjs 或者 CommonJS-like  环境
 	if ( typeof module === "object" && typeof module.exports === "object" ) {
-
-		// For CommonJS and CommonJS-like environments where a proper `window`
-		// is present, execute the factory and get jQuery.
-		// For environments that do not have a `window` with a `document`
-		// (such as Node.js), expose a factory as module.exports.
-		// This accentuates the need for the creation of a real `window`.
-		// e.g. var jQuery = require("jquery")(window);
-		// See ticket #14549 for more info.
 		// 如果存在global.document 则返回factory(global, true);
 		module.exports = global.document ?
 			factory( global, true ) :
@@ -67,7 +59,7 @@ commonjs node.js
 } )( typeof window !== "undefined" ? window : this, function( window, noGlobal ) {});
 ```
 
-#### amd 规范 require.js
+#### amd 规范 主要代表 requirejs
 ```
 if ( typeof define === "function" && define.amd ) {
 	define( "jquery", [], function() {
@@ -75,7 +67,7 @@ if ( typeof define === "function" && define.amd ) {
 	} );
 }
 ```
-#### cmd 规范 seajs
+#### cmd 规范 主要代表 seajs
 
 很遗憾，`jQuery`源码里没有暴露对`seajs`的支持。但网上也有一些方案。这里就不具体提了。毕竟现在基本不用`seajs`了。
 
@@ -158,7 +150,7 @@ jQuery.extend( [deep ], target, object1 [, objectN ] )
 [jQuery.fn.extend API](https://api.jquery.com/jQuery.extend/)
 
 看几个例子：
-（例子可以我放到在线编辑代码的codepen了，可以直接运行）。
+（例子可以我放到在线编辑代码的[jQuery.extend例子codepen](https://codepen.io/lxchuan12/pen/QeGdqj)了，可以直接运行）。
 ```
 // 1. jQuery.extend( target)
 var result1 = $.extend({
@@ -184,7 +176,7 @@ var result3 = $.extend(true,  {
 	other: {
 		mac: 0,
 		ubuntu: 1,
-		windows: 1, 
+		windows: 1,
 	},
 }, {
 	job: '前端开发工程师',
@@ -195,27 +187,27 @@ var result3 = $.extend(true,  {
 	}
 });
 console.log(result3, 'result3');
-	// deep true
-	// {
-	//     "name": "若川",
-	//     "other": {
-	//         "mac": 1,
-	//         "ubuntu": 1,
-	//         "windows": 0,
-	//         "linux": 1
-	//     },
-	//     "job": "前端开发工程师"
-	// }
-	// deep false
-	// {
-	//     "name": "若川",
-	//     "other": {
-	//         "mac": 1,
-	//         "linux": 1,
-	//         "windows": 0
-	//     },
-	//     "job": "前端开发工程师"
-	// }
+// deep true
+// {
+//     "name": "若川",
+//     "other": {
+//         "mac": 1,
+//         "ubuntu": 1,
+//         "windows": 0,
+//         "linux": 1
+//     },
+//     "job": "前端开发工程师"
+// }
+// deep false
+// {
+//     "name": "若川",
+//     "other": {
+//         "mac": 1,
+//         "linux": 1,
+//         "windows": 0
+//     },
+//     "job": "前端开发工程师"
+// }
 ```
 
 结论：`extend`函数既可以实现给`jQuery`函数可以实现浅拷贝、也可以实现深拷贝。可以给jQuery上添加静态方法和属性，也可以像`jQuery.fn`(也就是`jQuery.prototype`)上添加属性和方法，这个功能归功于`this`，`jQuery.extend`调用时`this`指向是`jQuery`，`jQuery.fn.extend`调用时`this`指向则是`jQuery.fn`。
@@ -226,7 +218,7 @@ console.log(result3, 'result3');
 // 浅拷贝实现
 jQuery.extend = function(){
 	// options 是扩展的对象object1，object2...
-	var options, 
+	var options,
 	// object对象上的键
 	name,
 	// copy object对象上的值，也就是是需要拷贝的值
@@ -263,19 +255,19 @@ jQuery.extend = function(){
 }
 ```
 
-深拷贝则是在以下这段代码做判断。可能是数组和对象引用类型的值，做判断。
+深拷贝则主要是在以下这段代码做判断。可能是数组和对象引用类型的值，做判断。
 ```
 if ( copy !== undefined ) {
 	target[ name ] = copy;
 }
 ```
-
+为了方便读者调试，代码同样放在[jQuery.extend浅拷贝代码实现codepen](https://codepen.io/lxchuan12/pen/VoPPmQ)，可在线运行。
 #### 深拷贝实现
 
 ```
 $.extend = function(){
 	// options 是扩展的对象object1，object2...
-	var options, 
+	var options,
 	// object对象上的键
 	name,
 	// copy object对象上的值，也就是是需要拷贝的值
@@ -286,7 +278,7 @@ $.extend = function(){
 	src,
 	// 需要拷贝的值的类型是函数
 	copyIsArray,
-	// 
+	//
 	clone,
 	// 扩展目标对象，可能不是对象，所以或空对象
 	target = arguments[0] || {},
@@ -367,6 +359,8 @@ $.extend = function(){
 	return target;
 };
 ```
+为了方便读者调试，这段代码同样放在[jQuery.extend深拷贝代码实现codepen](https://codepen.io/lxchuan12/pen/jgyyyN)，可在线运行。
+
 #### 深拷贝衍生的函数 isFunction
 判断参数是否是函数。
 ```
@@ -497,7 +491,7 @@ jQuery.noConflict = function( deep ) {
 
 ```
 // 源码结构
-( function( global, factory ) 
+( function( global, factory )
 	"use strict";
 	if ( typeof module === "object" && typeof module.exports === "object" ) {
 		module.exports = global.document ?
@@ -555,8 +549,7 @@ jQuery.noConflict = function( deep ) {
 ```
 
 可以学习到`jQuery`巧妙的设计和架构，为自己所用，打造属于自己的`js`类库。
-相关代码和资源防止`github blog`中，需要的读者可以自取。
-
+相关代码和资源防止[github blog](https://github.com/lxchuan12/blog)中，需要的读者可以自取。
 
 下一篇文章可能是学习`underscorejs`的源码整体架构。
 
