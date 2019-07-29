@@ -1,4 +1,4 @@
-# 学习 jQuery 源码整体架构，打造属于自己的`js`类库
+# 学习 jQuery 源码整体架构，打造属于自己的 js 类库
 
 虽然现在基本不怎么使用`jQuery`了，但`jQuery`流行`10多年`的`JS库`，还是有必要学习它的源码的。也可以学着打造属于自己的`js`类库，求职面试时可以增色不少。
 
@@ -7,7 +7,7 @@
 
 [`jQuery` `github`仓库](https://github.com/jquery/jquery)
 
-### 自执行匿名函数
+## 自执行匿名函数
 
 ```
 (function(global, factory){
@@ -29,9 +29,9 @@ if ( !noGlobal ) {
 // 其中`noGlobal`参数只有在这里用到。
 ```
 
-### 支持多种环境下使用 比如 commonjs、amd规范
+## 支持多种环境下使用 比如 commonjs、amd规范
 
-#### commonjs 规范支持
+### commonjs 规范支持
 `commonjs`实现 主要代表 `nodejs`
 ```
 // global是全局变量，factory 是函数
@@ -59,7 +59,7 @@ if ( !noGlobal ) {
 } )( typeof window !== "undefined" ? window : this, function( window, noGlobal ) {});
 ```
 
-#### amd 规范 主要代表 requirejs
+### amd 规范 主要代表 requirejs
 ```
 if ( typeof define === "function" && define.amd ) {
 	define( "jquery", [], function() {
@@ -67,11 +67,11 @@ if ( typeof define === "function" && define.amd ) {
 	} );
 }
 ```
-#### cmd 规范 主要代表 seajs
+### cmd 规范 主要代表 seajs
 
 很遗憾，`jQuery`源码里没有暴露对`seajs`的支持。但网上也有一些方案。这里就不具体提了。毕竟现在基本不用`seajs`了。
 
-### 无 new 构造
+## 无 new 构造
 实际上也是可以 `new`的，因为`jQuery`是函数。而且和不用`new`效果是一样的。
 new显示返回对象，所以和直接调用`jQuery`函数作用效果是一样的。
 如果对`new`操作符具体做了什么不明白。可以参看我之前写的文章。
@@ -115,7 +115,7 @@ jQuery.fn.init.prototype === jQuery.prototype; 	// true
 ```
 
 关于这个笔者画了一张`jQuery`原型关系图，所谓一图胜千言。
-![jQuery-v3.4.1原型关系图](./jQuery/jQuery-v3.4.1原型关系图-主题2.png)
+![jQuery-v3.4.1原型关系图](./jQuery-v3.4.1原型关系图-主题2.png)
 ```
 <sciprt src="https://unpkg.com/jquery@3.4.1/dist/jquery.js">
 </script>
@@ -138,7 +138,7 @@ function initMixin (Vue) {
 };
 ```
 
-### 核心函数之一 extend
+## 核心函数之一 extend
 
 用法：
 ```
@@ -212,7 +212,7 @@ console.log(result3, 'result3');
 
 结论：`extend`函数既可以实现给`jQuery`函数可以实现浅拷贝、也可以实现深拷贝。可以给jQuery上添加静态方法和属性，也可以像`jQuery.fn`(也就是`jQuery.prototype`)上添加属性和方法，这个功能归功于`this`，`jQuery.extend`调用时`this`指向是`jQuery`，`jQuery.fn.extend`调用时`this`指向则是`jQuery.fn`。
 
-#### 浅拷贝实现
+### 浅拷贝实现
 知道这些，其实实现浅拷贝还是比较容易的：
 ```
 // 浅拷贝实现
@@ -262,7 +262,7 @@ if ( copy !== undefined ) {
 }
 ```
 为了方便读者调试，代码同样放在[jQuery.extend浅拷贝代码实现codepen](https://codepen.io/lxchuan12/pen/VoPPmQ)，可在线运行。
-#### 深拷贝实现
+### 深拷贝实现
 
 ```
 $.extend = function(){
@@ -361,7 +361,7 @@ $.extend = function(){
 ```
 为了方便读者调试，这段代码同样放在[jQuery.extend深拷贝代码实现codepen](https://codepen.io/lxchuan12/pen/jgyyyN)，可在线运行。
 
-#### 深拷贝衍生的函数 isFunction
+### 深拷贝衍生的函数 isFunction
 判断参数是否是函数。
 ```
 var isFunction = function isFunction( obj ) {
@@ -373,7 +373,7 @@ var isFunction = function isFunction( obj ) {
 	return typeof obj === "function" && typeof obj.nodeType !== "number";
 };
 ```
-#### 深拷贝衍生的函数 jQuery.isPlainObject
+### 深拷贝衍生的函数 jQuery.isPlainObject
 `jQuery.isPlainObject(obj)`
 测试对象是否是纯粹的对象（通过 "{}" 或者 "new Object" 创建的）。
 ```
@@ -418,7 +418,7 @@ jQuery.extend( {
 
 `extend`函数，也可以自己删掉写一写，算是`jQuery`中一个比较核心的函数了。而且用途广泛，可以内部使用也可以，外部使用扩展 插件等。
 
-### 链式调用
+## 链式调用
 `jQuery`能够链式调用是因为一些函数执行结束后 `return this`。
 比如
 `jQuery` 源码中的`addClass`、`removeClass`、`toggleClass`。
@@ -440,7 +440,7 @@ jQuery.fn.extend({
 ```
 
 
-### `jQuery.noConflict` 很多`js`库都会有的防冲突函数
+## `jQuery.noConflict` 很多`js`库都会有的防冲突函数
 [jQuery.noConflict API](https://api.jquery.com/jQuery.noConflict/)
 
 用法：
@@ -484,7 +484,7 @@ jQuery.noConflict = function( deep ) {
 	return jQuery;
 };
 ```
-### 总结
+## 总结
 全文主要通过浅析了`jQuery`整体结构，自执行匿名函数、无`new`构造、支持多种规范（如commonjs、amd规范）、核心函数之`extend`、链式调用、`jQuery.noConflict`等方面。
 
 重新梳理下文中学习的源码结构。
@@ -555,7 +555,7 @@ jQuery.noConflict = function( deep ) {
 
 读者发现有不妥或可改善之处，欢迎评论指出。另外觉得写得不错，可以点赞、评论、转发，也是对笔者的一种支持。
 
-### 笔者往期文章
+## 笔者往期文章
 [面试官问：JS的继承](https://juejin.im/post/5c433e216fb9a049c15f841b)
 
 [面试官问：JS的this指向](https://juejin.im/post/5c0c87b35188252e8966c78a)
@@ -568,17 +568,17 @@ jQuery.noConflict = function( deep ) {
 
 [前端使用puppeteer 爬虫生成《React.js 小书》PDF并合并](https://juejin.im/post/5b86732451882542af1c8082)
 
-### 扩展阅读
+## 扩展阅读
 [chokcoco: jQuery- v1.10.2 源码解读](https://github.com/chokcoco/jQuery-)
 
 [chokcoco:【深入浅出jQuery】源码浅析--整体架构](https://www.cnblogs.com/coco1s/p/5261646.html)
 
 [songjz :jQuery 源码系列（一）总体架构](https://segmentfault.com/a/1190000008365621)
 
-### 关于
+## 关于
 作者：常以**若川**为名混迹于江湖。前端路上 | PPT爱好者 | 所知甚少，唯善学。<br>
 [个人博客](https://lxchuan12.github.io/)<br>
-[`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
 [掘金专栏](https://juejin.im/user/57974dc55bbb500063f522fd/posts)，欢迎关注~<br>
+[`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
 [github blog](https://github.com/lxchuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
