@@ -549,7 +549,7 @@ jQuery.noConflict = function( deep ) {
 ```
 
 可以学习到`jQuery`巧妙的设计和架构，为自己所用，打造属于自己的`js`类库。
-相关代码和资源防止[github blog](https://github.com/lxchuan12/blog)中，需要的读者可以自取。
+相关代码和资源放置在[github blog](https://github.com/lxchuan12/blog)中，需要的读者可以自取。
 
 下一篇文章可能是学习`underscorejs`的源码整体架构。
 
@@ -582,3 +582,6 @@ jQuery.noConflict = function( deep ) {
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
 [github blog](https://github.com/lxchuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
+
+## 微信交流群
+添加微信 `lxchuan12`，注明来源。拉您进【**前端视野交流群**】
