@@ -1067,6 +1067,9 @@
 	  var names = [];
 	  for (var key in obj) {
 		if (_.isFunction(obj[key])) names.push(key);
+		if(!_.isFunction(obj[key])){
+			console.log('isNotFunction', obj[key], obj, key);
+		}
 	  }
 	  return names.sort();
 	};
@@ -1631,6 +1634,8 @@
 
 	// Add your own custom functions to the Underscore object.
 	_.mixin = function(obj) {
+		console.log(_.functions(obj), '_.functions(obj)');
+
 	  _.each(_.functions(obj), function(name) {
 		var func = _[name] = obj[name];
 		_.prototype[name] = function() {

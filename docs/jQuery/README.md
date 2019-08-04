@@ -115,7 +115,7 @@ jQuery.fn.init.prototype === jQuery.prototype; 	// true
 ```
 
 关于这个笔者画了一张`jQuery`原型关系图，所谓一图胜千言。
-![jQuery-v3.4.1原型关系图](./jQuery-v3.4.1原型关系图-主题2.png)
+![jQuery-v3.4.1原型关系图](./jQuery-v3.4.1-prototype.png)
 ```
 <sciprt src="https://unpkg.com/jquery@3.4.1/dist/jquery.js">
 </script>
