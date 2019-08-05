@@ -29,6 +29,37 @@
 		this._wrapped = obj;
 	};
 
+	// Optimize `isFunction` if appropriate. Work around some typeof bugs in old v8,
+	// IE 11 (#1621), Safari 8 (#1929), and PhantomJS (#2236).
+	var nodelist = root.document && root.document.childNodes;
+	if (typeof /./ != 'function' && typeof Int8Array != 'object' && typeof nodelist != 'function') {
+	  _.isFunction = function(obj) {
+		return typeof obj == 'function' || false;
+	  };
+	}
+
+	var getLength = shallowProperty('length');
+	var isArrayLike = function(collection) {
+	  var length = getLength(collection);
+	  return typeof length == 'number' && length >= 0 && length <= MAX_ARRAY_INDEX;
+	};
+
+	_.each = _.forEach = function(obj, iteratee, context) {
+		iteratee = optimizeCb(iteratee, context);
+		var i, length;
+		if (isArrayLike(obj)) {
+			for (i = 0, length = obj.length; i < length; i++) {
+			iteratee(obj[i], i, obj);
+			}
+		} else {
+			var keys = _.keys(obj);
+			for (i = 0, length = keys.length; i < length; i++) {
+			iteratee(obj[keys[i]], keys[i], obj);
+			}
+		}
+		return obj;
+	};
+
 	// Return a sorted list of the function names available on the object.
 	// Aliased as `methods`.
 	_.functions = _.methods = function(obj) {
@@ -55,6 +86,29 @@
 
 	// Current version.
 	_.VERSION = '1.9.1';
+
+	// Internal function that returns an efficient (for current engines) version
+	// of the passed-in callback, to be repeatedly applied in other Underscore
+	// functions.
+	var optimizeCb = function(func, context, argCount) {
+		if (context === void 0) return func;
+		switch (argCount == null ? 3 : argCount) {
+			case 1: return function(value) {
+				return func.call(context, value);
+			};
+			// The 2-argument case is omitted because we’re not using it.
+			case 3: return function(value, index, collection) {
+				return func.call(context, value, index, collection);
+			};
+			case 4: return function(accumulator, value, index, collection) {
+				return func.call(context, accumulator, value, index, collection);
+			};
+		}
+		return function() {
+			return func.apply(context, arguments);
+		};
+	};
+
 		// Run Underscore.js in *noConflict* mode, returning the `_` variable to its
 	// previous owner. Returns a reference to the Underscore object.
 	_.noConflict = function() {
@@ -70,21 +124,22 @@
 	// Helper function to continue chaining intermediate results.
 	var chainResult = function(instance, obj) {
 		return instance._chain ? _(obj).chain() : obj;
-	  };
+	};
 
-	  // Add your own custom functions to the Underscore object.
-	  _.mixin = function(obj) {
+	// Add your own custom functions to the Underscore object.
+	_.mixin = function(obj) {
 		_.each(_.functions(obj), function(name) {
-		  var func = _[name] = obj[name];
-		  _.prototype[name] = function() {
+			var func = _[name] = obj[name];
+			_.prototype[name] = function() {
 			var args = [this._wrapped];
 			push.apply(args, arguments);
 			return chainResult(this, func.apply(_, args));
-		  };
+			};
 		});
 		return _;
-	  };
-	  // Add all of the Underscore functions to the wrapper object.
+	};
+
+	// Add all of the Underscore functions to the wrapper object.
 	_.mixin(_);
 
 	// Extracts the result from a wrapped and chained object.

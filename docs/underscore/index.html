@@ -4,13 +4,20 @@
 	<meta charset="UTF-8">
 	<meta name="viewport" content="width=device-width, initial-scale=1.0">
 	<meta http-equiv="X-UA-Compatible" content="ie=edge">
-	<title>Document</title>
+	<title>underscore-v1.9.1 demo</title>
 </head>
 <body>
 	<script src="./underscore-v1.9.1.js">
 	</script>
 	<script>
 		console.log(1, _);
+		// 链式调用
+		// var arr1 = _.reverse([1,2,3]);
+		var arr2 = _.chain([1, 2, 3]).reverse().value();
+		var arr3 = _([1,2,3]).chain().reverse().value();
+		console.log(arr1);
+		console.log(arr2);
+		console.log(arr3);
 	</script>
 </body>
 </html>
