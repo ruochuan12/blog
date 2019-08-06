@@ -16,14 +16,14 @@
 		console.log('arr1:', arr1); // [3, 2, 1]
 
 		var part1 = _.chain([1, 2, 3]);
-		var part2 = part1.reverse();
-		var part3 = part2.value();
+		// var part2 = part1.reverse();
+		// var part3 = part2.value();
 
 		console.log('part1:', part1); // {__wrapped: [1, 2, 3], _chain: true}
 
-		console.log('part2:', part2); // {__wrapped: [3, 2, 1], _chain: true}
+		// console.log('part2:', part2); // {__wrapped: [3, 2, 1], _chain: true}
 
-		console.log('part3:', part3); // [3, 2, 1]
+		// console.log('part3:', part3); // [3, 2, 1]
 
 		var arr2 = _([1,2,3]).chain().reverse().value();
 		console.log(arr2); // [3, 2, 1]
