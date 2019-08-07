@@ -1,13 +1,15 @@
-学习`underscorejs`整体架构，打造属于自己的函数式编程类库
+# 学习`underscorejs`整体架构，打造属于自己的函数式编程类库
 
 ## 前言
 
 上一篇文章写了`jQuery`，[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://juejin.im/post/5d39d2cbf265da1bc23fbd42)
 
-虽然看过挺多`underscorejs`分析类的文章，但总感觉少点什么。于是决定自己写一篇学习`underscorejs`的文章。
+虽然看过挺多`underscorejs`分析类的文章，但总感觉少点什么。这也许就是纸上得来终觉浅，绝知此事要躬行吧。于是决定自己写一篇学习`underscorejs`整体架构的文章。
 
 本文章学习的版本是`v1.9.1`。
-虽然很多人都没用过underscorejs，但看下官方文档都应该知道。可以
+`unpkg.com`源码地址：https://unpkg.com/underscore@1.9.1/underscore.js
+
+虽然很多人都没用过`underscorejs`，但看下官方文档都应该知道如何使用。
 
 从一个官方文档`_.chain`简单例子看起：
 
@@ -15,10 +17,12 @@
 _.chain([1, 2, 3]).reverse().value();
 // => [3, 2, 1]
 ```
-
 看例子中可以看出，这是支持链式调用。
 
+读者也可以顺着文章思路，自行打开下载源码进行调试，这样印象更加深刻。
+
 ## 链式调用
+
 `_.chain` 函数源码：
 
 ```
@@ -115,7 +119,7 @@ _.chain([1,2,3]).reverse().value()
 
 ## 基于流的编程
 
-至此就分析完了链式调用`_.chain()`和`_` 函数对象。这种把数据存储在实例对象`{_wrapped: '', _chain: true}` 中，`_chain`判断是否支持链式调用，来传递给下一个函数处理。这种做法叫做 **基于流的编程**。
+至此就算是分析完了链式调用`_.chain()`和`_` 函数对象。这种把数据存储在实例对象`{_wrapped: '', _chain: true}` 中，`_chain`判断是否支持链式调用，来传递给下一个函数处理。这种做法叫做 **基于流的编程**。
 
 最后数据处理完，要返回这个数据怎么办呢。`underscore`提供了一个`value`的方法。
 ```
@@ -141,23 +145,38 @@ var String = function(){
 }
 ```
 
+```
+var chainResult = function(instance, obj) {
+	  return instance._chain ? _(obj).chain() : obj;
+};
+```
+
+细心的读者会发现`chainResult`函数中的`_(obj).chain()`，是怎么实现实现链式调用的呢。
+
+而`_(obj) `是返回的实例对象`{_wrapped: obj}`呀。怎么会有`chain()`方法，肯定有地方挂载了这个方法到`_.prototype`上或者其他操作，这就是`_.mixin()`。
+
+
 ## `_.mixin` 挂载所有的静态方法到 `_.prototype`， 也可以挂载自定义的方法
 
 `_.mixin` 混入。但侵入性太强，经常容易出现覆盖之类的问题。记得之前`React`有`mixin`功能，Vue也有`mixin`功能。但版本迭代更新后基本都是慢慢的都不推荐或者不支持`mixin`。
-
 
 ```
 	_.mixin = function(obj) {
 		// 遍历对象上的所有方法
 	  _.each(_.functions(obj), function(name) {
-		  // 比如 each, obj['each'] 函数，自定义的，则赋值到_[name] 上，func 就是该函数。也就是说自定义的方法，不仅_函数对象上有，而且`_.prototype`上也有
+		  // 比如 chain, obj['chain'] 函数，自定义的，则赋值到_[name] 上，func 就是该函数。也就是说自定义的方法，不仅_函数对象上有，而且`_.prototype`上也有
 		var func = _[name] = obj[name];
 		_.prototype[name] = function() {
 			// 处理的数据对象
 		  var args = [this._wrapped];
 		  // 处理的数据对象 和 arguments 结合
 		  push.apply(args, arguments);
-		  // 链式调用
+		  // 链式调用  chain.apply(_, args) 参数又被加上了 _chain属性，支持链式调用。
+		 // _.chain = function(obj) {
+		 //	var instance = _(obj);
+		 //	instance._chain = true;
+		 //	return instance;
+		 };
 		  return chainResult(this, func.apply(_, args));
 		};
 	  });
@@ -167,6 +186,28 @@ var String = function(){
 
 	_.mixin(_);
 ```
+
+`_mixin(_)` 把静态方法挂载到了`_.prototype`上，也就是`_.prototype.chain`方法 也就是 `_.chain`方法。
+
+所以`_.chain(obj)`和`_(obj).chain()`效果一样，都能实现链式调用。
+
+关于上述的链式调用，笔者画了一张图，所谓一图胜千言。
+
+![underscore.js 链式调用图解](./underscore.js-chain.png)
+
+### _.functions(obj)
+
+// _.functions 和 _.methods 两个方法，遍历对象上的方法，放入一个数组，并且排序。返回排序后的数组
+
+_.functions = _.methods = function(obj) {
+	  var names = [];
+	  for (var key in obj) {
+		if (_.isFunction(obj[key])) names.push(key);
+	  }
+	  return names.sort();
+	};
+
+### _.mixin 挂载自定义方法
 
 挂载自定义方法：
 举个例子：
@@ -180,27 +221,146 @@ _.log() // 哎呀，我被调用了
 _().log() // 哎呀，我被调用了
 ```
 
+### `underscorejs` 究竟在`_`和`_.prototype`挂载了多少方法和属性
 
+再来看下`underscorejs`究竟挂载在`_函数对象`上有多少静态方法和属性，和挂载`_.prototype`上有多少方法和属性。
+
+使用`for in`循环一试遍知。看如下代码：
 
 ```
 var staticMethods = [];
-for(var name in _.prototype){
-	staticMethods.push(name);
+var staticProperty = [];
+for(var name in _){
+	if(typeof _[name] === 'function'){
+		staticMethods.push(name);
+	}
+	else{
+		staticProperty.push(name);
+	}
 }
-console.log(staticMethods); // ["after", "all", "allKeys", "any", "assign", ...]
+console.log(staticProperty); // ["VERSION", "templateSettings"] 两个
+console.log(staticMethods); // ["after", "all", "allKeys", "any", "assign", ...] 138个
 ```
 
 ```
 var prototypeMethods = [];
+var prototypeProperty = [];
 for(var name in _.prototype){
-	prototypeMethods.push(name);
+	if(typeof _.prototype[name] === 'function'){
+		prototypeMethods.push(name);
+	}
+	else{
+		prototypeProperty.push(name);
+	}
 }
+console.log(prototypeProperty); // []
 console.log(prototypeMethods); // ["after", "all", "allKeys", "any", "assign", ...] 152个
 ```
 
+根据这些，笔者又画了一张图`underscorejs` 原型关系图，毕竟一图胜千言。
 
-### 推荐阅读
+![`underscorejs` 原型关系图](./underscore.js-prototype.png)
+
+## 整体架构概览
+
+### 匿名函数自执行
+
+```
+(function(){}(
+
+));
+```
+这样保证不污染外界环境，同时隔离外界环境，不是外界影响内部环境。
+
+外界访问不到里面的变量和函数，里面可以访问到外界的变量，但里面定义了自己的变量，则不会访问外界的变量。
+匿名函数将代码包裹在里面，防止与其他代码冲突和污染全局环境。
+关于自执行函数不是很了解的读者可以参看这篇文章。
+[[译] JavaScript：立即执行函数表达式（IIFE）](https://segmentfault.com/a/1190000003985390)
+
+### root 处理
+
+```
+var root = typeof self == 'object' && self.self === self && self ||
+			  typeof global == 'object' && global.global === global && global ||
+			  this ||
+			  {};
+```
+
+支持`浏览器环境`、`node`、`Web Worker`、`node vm`、`微信小程序`。
+
+### 导出
+
+```
+if (typeof exports != 'undefined' && !exports.nodeType) {
+	if (typeof module != 'undefined' && !module.nodeType && module.exports) {
+	exports = module.exports = _;
+	}
+	exports._ = _;
+} else {
+	root._ = _;
+}
+```
+
+关于root处理和导出的这两段代码的解释，推荐看这篇文章[冴羽：underscore 系列之如何写自己的 underscore](https://juejin.im/post/5a0bae515188252964213855)，讲得真的太好了。笔者再此就不赘述了。
+
+### 支持 `amd` 模块化规范
+
+```
+if (typeof define == 'function' && define.amd) {
+	define('underscore', [], function() {
+	return _;
+	});
+}
+```
+
+### _.noConflict 防冲突函数
+
+源码：
+```
+// 暂存在 root 上， 执行noConflict时再赋值回来
+var previousUnderscore = root._;
+_.noConflict = function() {
+	root._ = previousUnderscore;
+	return this;
+};
+```
+使用：
+```
+<script>
+var _ = '我就是我，不一样的烟火，其他可不要覆盖我呀';
+</script>
+<script src="https://unpkg.com/underscore@1.9.1/underscore.js">
+</script>
+<script>
+var underscore = _.noConflict();
+console.log(_); // '我就是我，不一样的烟火，其他可不要覆盖我呀'
+underscore.isArray([]) // true
+</script>
+```
+
+## 总结
+
+下一篇文章可能是学习`lodash`的源码整体架构。
+
+读者发现有不妥或可改善之处，欢迎评论指出。另外觉得写得不错，可以点赞、评论、转发，也是对笔者的一种支持。
+
+## 推荐阅读
 
 [underscorejs.org 官网](https://underscorejs.org/)
+
 [undersercore-analysis](https://yoyoyohamapi.gitbooks.io/undersercore-analysis/content/)
+
 [underscore 系列之如何写自己的 underscore](https://juejin.im/post/5a0bae515188252964213855)
+
+## 关于
+
+作者：常以**若川**为名混迹于江湖。前端路上 | PPT爱好者 | 所知甚少，唯善学。<br>
+[个人博客](https://lxchuan12.github.io/)<br>
+[掘金专栏](https://juejin.im/user/57974dc55bbb500063f522fd/posts)，欢迎关注~<br>
+[`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
+[知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
+[github blog](https://github.com/lxchuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
+
+## 微信交流群
+
+添加微信 `lxchuan12`，注明来源。拉您进【**前端视野交流群**】

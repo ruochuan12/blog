@@ -1067,9 +1067,6 @@
 	  var names = [];
 	  for (var key in obj) {
 		if (_.isFunction(obj[key])) names.push(key);
-		if(!_.isFunction(obj[key])){
-			console.log('isNotFunction', obj[key], obj, key);
-		}
 	  }
 	  return names.sort();
 	};
@@ -1629,18 +1626,24 @@
 
 	// Helper function to continue chaining intermediate results.
 	var chainResult = function(instance, obj) {
+		console.log(instance, obj, 'instance, obj');
 	  return instance._chain ? _(obj).chain() : obj;
 	};
 
 	// Add your own custom functions to the Underscore object.
 	_.mixin = function(obj) {
-		console.log(_.functions(obj), '_.functions(obj)');
+		// console.log(_.functions(obj), '_.functions(obj)');
 
 	  _.each(_.functions(obj), function(name) {
 		var func = _[name] = obj[name];
 		_.prototype[name] = function() {
 		  var args = [this._wrapped];
 		  push.apply(args, arguments);
+		  console.log(args, 'args');
+		  console.log( func, 'func');
+		  console.log( this, 'this');
+		  console.log( _, '_');
+		  console.log( func.apply(_, args), 'func.apply(_, args)');
 		  return chainResult(this, func.apply(_, args));
 		};
 	  });
