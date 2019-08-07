@@ -158,7 +158,7 @@ var chainResult = function(instance, obj) {
 
 ## `_.mixin` 挂载所有的静态方法到 `_.prototype`， 也可以挂载自定义的方法
 
-`_.mixin` 混入。但侵入性太强，经常容易出现覆盖之类的问题。记得之前`React`有`mixin`功能，Vue也有`mixin`功能。但版本迭代更新后基本都是慢慢的都不推荐或者不支持`mixin`。
+`_.mixin` 混入。但侵入性太强，经常容易出现覆盖之类的问题。记得之前`React`有`mixin`功能，`Vue`也有`mixin`功能。但版本迭代更新后基本都是慢慢的都不推荐或者不支持`mixin`。
 
 ```
 	_.mixin = function(obj) {
@@ -266,9 +266,9 @@ console.log(prototypeMethods); // ["after", "all", "allKeys", "any", "assign", .
 ### 匿名函数自执行
 
 ```
-(function(){}(
+(function(){
 
-));
+}());
 ```
 这样保证不污染外界环境，同时隔离外界环境，不是外界影响内部环境。
 
@@ -339,6 +339,8 @@ underscore.isArray([]) // true
 ```
 
 ## 总结
+
+全文根据官网提供的链式调用的例子， `_.chain([1, 2, 3]).reverse().value();`较为深入的调试和追踪代码，分析链式调用（`_.chain()` 和 `_(obj).chain()`）、`OOP`、基于流式编程、和`_.mixin(_)`在`_.prototype`挂载方法，最后整体架构分析。学习`Underscorejs`整体架构，利于打造属于自己的函数式编程类库。
 
 下一篇文章可能是学习`lodash`的源码整体架构。
 
