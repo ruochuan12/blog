@@ -17,6 +17,10 @@ module.exports = {
             { text: '主页', link: '/' },
             { text: '博文',
               items: [
+				{
+					text: '学习underscorejs整体架构，打造属于自己的函数式编程类库',
+					link: '/underscore/',
+				},
                 {
                   text: '学习 jQuery 源码整体架构，打造属于自己的 js 类库',
 				  link: '/jQuery/'
@@ -42,6 +46,10 @@ module.exports = {
             {
 				text: '关于我',
 				link: '/about/'
+			},
+			{
+				text: '诗和远方',
+				link: 'https://www.zhihu.com/question/26805717/answer/764832355',
 			},
             {
 				text: 'Github',
