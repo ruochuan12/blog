@@ -3,8 +3,8 @@ home: true
 lang: zh-CN
 heroText: 若川的博客
 heroImage: /logo.jpg
-actionText: 去看看 →
-actionLink: /about/
+actionText: 去看看最新文章 →
+actionLink: /underscore/
 features:
 - title: 若川的博客
   details: 前端路上 | PPT爱好者 | 所知甚少，唯善学。常以若川为名混迹于江湖。
