@@ -20,6 +20,7 @@ class index extends React.Component{
 [点击这里查看 React github源码](https://github.com/facebook/react/blob/master/packages/react/src/ReactBaseClasses.js)
 
 面试官可以顺着这个问`JS`继承的相关问题，比如：**`ES6`的`class`继承用ES5如何实现**。据说很多人答得不好。<br/>
+
 ## 构造函数、原型对象和实例之间的关系
 
 要弄懂extends继承之前，先来复习一下构造函数、原型对象和实例之间的关系。
@@ -40,7 +41,9 @@ Object.prototype.__proto__ === null; // true
 ```
 笔者画了一张图表示：
 ![构造函数-原型对象-实例关系图By@若川](./ctor-prototype-instance@lxchuan12.png)
+
 ## `ES6 extends` 继承做了什么操作
+
 我们先看看这段包含静态方法的`ES6`继承代码：
 ```
 // ES6
@@ -105,11 +108,13 @@ Object.prototype.__proto__ === null; // true
 `1和2小点`都是相对于设置了`__proto__`链接。那问题来了，什么可以设置了`__proto__`链接呢。
 
 ## `new`、`Object.create`和`Object.setPrototypeOf`可以设置`__proto__`
+
 说明一下，`__proto__`这种写法是浏览器厂商自己的实现。
 再结合一下图和代码看一下的`new`，`new`出来的实例的__proto__指向构造函数的`prototype`，这就是`new`做的事情。
 摘抄一下之前写过文章的一段。[面试官问：能否模拟实现JS的new操作符](https://juejin.im/post/5bde7c926fb9a049f66b8b52)，有兴趣的读者可以点击查看。
 
 ### **`new`做了什么：**
+
 >1. 创建了一个全新的对象。
 >2. 这个对象会被执行`[[Prototype]]`（也就是`__proto__`）链接。
 >3. 生成的新对象会绑定到函数调用的`this`。
@@ -117,6 +122,7 @@ Object.prototype.__proto__ === null; // true
 >5. 如果函数没有返回对象类型`Object`(包含`Functoin`, `Array`, `Date`, `RegExg`, `Error`)，那么`new`表达式中的函数调用会自动返回这个新的对象。
 
 ### `Object.create` `ES5提供的`
+
 `Object.create(proto, [propertiesObject])`
 方法创建一个新对象，使用现有的对象来提供新创建的对象的__proto__。
 它接收两个参数，不过第二个可选参数是属性描述符（不常用，默认是`undefined`）。对于不支持`ES5`的浏览器，`MDN`上提供了`ployfill`方案。
@@ -134,6 +140,7 @@ if(typeof Object.create !== 'function'){
 ```
 
 ### `Object.setPrototypeOf` `ES6提供的`
+
 [`Object.setPrototypeOf` `MDN`](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/setPrototypeOf)
 
 `Object.setPrototypeOf()` 方法设置一个指定的对象的原型 ( 即, 内部`[[Prototype]]`属性）到另一个对象或  `null`。
@@ -170,6 +177,7 @@ function inherits(ctor, superCtor) {
 }
 ```
 ## `ES6`的`extends`的`ES5`版本实现
+
 知道了`ES6 extends`继承做了什么操作和设置`__proto__`的知识点后，把上面`ES6`例子的用`ES5`就比较容易实现了，也就是说**实现寄生组合式继承**，简版代码就是：
 ```
 // ES5 实现ES6 extends的例子
@@ -369,7 +377,9 @@ child.sayName(); // my name is Child
 child.sayAge(); // my age is 18
 ```
 如果对JS继承相关还是不太明白的读者，推荐阅读以下书籍的相关章节，可以自行找到相应的`pdf`版本。
+
 ## 推荐阅读JS继承相关的书籍章节
+
 《JavaScript高级程序设计第3版》-第6章 面向对象的程序设计，6种继承的方案，分别是原型链继承、借用构造函数继承、组合继承、原型式继承、寄生式继承、寄生组合式继承。[图灵社区本书地址](http://www.ituring.com.cn/book/946)，后文放出`github`链接，里面包含这几种继承的代码`demo`。
 
 《JavaScript面向对象编程第2版》-第6章 继承，12种继承的方案。1.原型链法（仿传统）、2.仅从原型继承法、3.临时构造器法、4.原型属性拷贝法、5.全属性拷贝法（即浅拷贝法）、6.深拷贝法、7.原型继承法、8.扩展与增强模式、9.多重继承法、10.寄生继承法、11.构造器借用法、12.构造器借用与属性拷贝法。
@@ -381,11 +391,12 @@ child.sayAge(); // my age is 18
 《你不知道的`JavaScript`-上卷》第6章 行为委托和附录A `ES6中的class`
 
 ## 总结
+
 继承对于JS来说就是父类拥有的方法和属性、静态方法等，子类也要拥有。子类中可以利用原型链查找，也可以在子类调用父类，或者从父类拷贝一份到子类等方案。
 继承方法可以有很多，重点在于必须理解并熟
 悉这些对象、原型以及构造器的工作方式，剩下的就简单了。**寄生组合式继承**是开发者使用比较多的。
 回顾寄生组合式继承。主要就是三点：
-- 1. 子类构造函数的`__proto__`指向父类构造器，继承父类的静态方法
+- 1. 子类构造函数的`__proto__`指向父类构造器，继承父类的静态方法。
 - 2. 子类构造函数的`prototype`的`__proto__`指向父类构造器的`prototype`，继承父类的方法。
 - 3. 子类构造器里调用父类构造器，继承父类的属性。
 行文到此，文章就基本写完了。文章代码和图片等资源放在这里[github inhert](https://github.com/lxchuan12/html5/tree/gh-pages/JS%E7%9B%B8%E5%85%B3/oop/inherit)和[`demo`展示`es6-extends`](http://lxchuan12.github.io/html5/JS%E7%9B%B8%E5%85%B3/oop/inherit/7.es6-extends.html)，结合`console、source`面板查看更佳。
@@ -393,9 +404,16 @@ child.sayAge(); // my age is 18
 读者发现有不妥或可改善之处，欢迎评论指出。另外觉得写得不错，可以点赞、评论、转发，也是对笔者的一种支持。
 
 ## 关于
+
 作者：常以**若川**为名混迹于江湖。前端路上 | PPT爱好者 | 所知甚少，唯善学。<br>
 [个人博客](https://lxchuan12.github.io/)<br>
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，开通了**前端视野**专栏，欢迎关注<br>
 [掘金专栏](https://juejin.im/user/57974dc55bbb500063f522fd/posts)，欢迎关注<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，开通了**前端视野**专栏，欢迎关注<br>
-[github](https://github.com/lxchuan12)，欢迎`follow`~
+[github blog](https://github.com/lxchuan12/blog)，相关资源和文件都放在这里，求个`star`~
+
+## 微信公众号  若川视野
+
+可能比较有趣的微信公众号，长按扫码关注。也可以加微信 `lxchuan12`，注明来源，拉您进【前端视野交流群】。
+
+![若川视野](../about/wechat-official-accounts-mini.jpg)
