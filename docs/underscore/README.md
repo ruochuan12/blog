@@ -2,9 +2,9 @@
 
 ## 前言
 
-上一篇文章写了`jQuery`，[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://juejin.im/post/5d39d2cbf265da1bc23fbd42)
+上一篇文章写了`jQuery整体架构`，[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://juejin.im/post/5d39d2cbf265da1bc23fbd42)
 
-虽然看过挺多`underscorejs`分析类的文章，但总感觉少点什么。这也许就是纸上得来终觉浅，绝知此事要躬行吧。于是决定自己写一篇学习`underscorejs`整体架构的文章。
+虽然看过挺多`underscorejs`分析类的文章，但总感觉少点什么。这也许就是**纸上得来终觉浅，绝知此事要躬行**吧。于是决定自己写一篇学习`underscorejs`整体架构的文章。
 
 本文章学习的版本是`v1.9.1`。
 `unpkg.com`源码地址：https://unpkg.com/underscore@1.9.1/underscore.js
@@ -48,7 +48,7 @@ var _ = function(obj) {
 ```
 
 如果参数`obj`已经是`_`的实例了，则返回`obj`。
-如果`this`不是`_`的实例，则手动 new _(obj);
+如果`this`不是`_`的实例，则手动 `new _(obj)`;
 再次`new`调用时，把`obj`对象赋值给`_wrapped`这个属性。
 也就是说最后得到的实例对象是这样的结构
 `{
@@ -56,8 +56,8 @@ var _ = function(obj) {
 }`
 它的原型`_(obj).__proto__` 是 `_.prototype`;
 
-如果对这块不熟悉的读者，可以看下以下这张图。
-[构造函数、原型对象和实例关系图](./ctor-prototype-instance@lxchuan12.png)
+如果对这块不熟悉的读者，可以看下以下这张图(之前写[面试官问：`JS的继承`](https://juejin.im/post/5c433e216fb9a049c15f841b)画的图)。
+![构造函数、原型对象和实例关系图](./ctor-prototype-instance@lxchuan12.png)
 
 继续分析官方的`_.chain`例子。这个例子拆开，写成三步。
 
@@ -83,29 +83,29 @@ _.chain([1,2,3]).reverse().value()
 ```
 
 ```
-	var ArrayProto = Array.prototype;
-	// 遍历 数组 Array.prototype 的这些方法，赋值到 _.prototype 上
-	_.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
-	  // 这里的`method`是 reverse 函数
-	  var method = ArrayProto[name];
-	  _.prototype[name] = function() {
-		// 这里的obj 就是数组 [1, 2, 3]
-		var obj = this._wrapped;
-		// arguments  是参数集合，指定reverse 的this指向为obj，参数为arguments， 并执行这个函数函数。执行后 obj 则是 [3, 2, 1]
-		method.apply(obj, arguments);
-		if ((name === 'shift' || name === 'splice') && obj.length === 0) delete obj[0];
-		// 重点在于这里 chainResult 函数。
-		return chainResult(this, obj);
-	  };
-	});
+var ArrayProto = Array.prototype;
+// 遍历 数组 Array.prototype 的这些方法，赋值到 _.prototype 上
+_.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
+	// 这里的`method`是 reverse 函数
+	var method = ArrayProto[name];
+	_.prototype[name] = function() {
+	// 这里的obj 就是数组 [1, 2, 3]
+	var obj = this._wrapped;
+	// arguments  是参数集合，指定reverse 的this指向为obj，参数为arguments， 并执行这个函数函数。执行后 obj 则是 [3, 2, 1]
+	method.apply(obj, arguments);
+	if ((name === 'shift' || name === 'splice') && obj.length === 0) delete obj[0];
+	// 重点在于这里 chainResult 函数。
+	return chainResult(this, obj);
+	};
+});
 ```
 
 ```
 // Helper function to continue chaining intermediate results.
-	var chainResult = function(instance, obj) {
-	 // 如果实例中有_chain 为 true 这个属性，则返回实例 支持链式调用的实例对象  { _chain: true, this._wrapped: [3, 2, 1] }，否则直接返回这个对象[3, 2, 1]。
-	  return instance._chain ? _(obj).chain() : obj;
-	};
+var chainResult = function(instance, obj) {
+	// 如果实例中有_chain 为 true 这个属性，则返回实例 支持链式调用的实例对象  { _chain: true, this._wrapped: [3, 2, 1] }，否则直接返回这个对象[3, 2, 1]。
+	return instance._chain ? _(obj).chain() : obj;
+};
 ```
 
 `if ((name === 'shift' || name === 'splice') && obj.length === 0) delete obj[0];`
@@ -147,7 +147,7 @@ var String = function(){
 
 ```
 var chainResult = function(instance, obj) {
-	  return instance._chain ? _(obj).chain() : obj;
+	return instance._chain ? _(obj).chain() : obj;
 };
 ```
 
@@ -161,30 +161,30 @@ var chainResult = function(instance, obj) {
 `_.mixin` 混入。但侵入性太强，经常容易出现覆盖之类的问题。记得之前`React`有`mixin`功能，`Vue`也有`mixin`功能。但版本迭代更新后基本都是慢慢的都不推荐或者不支持`mixin`。
 
 ```
-	_.mixin = function(obj) {
-		// 遍历对象上的所有方法
-	  _.each(_.functions(obj), function(name) {
-		  // 比如 chain, obj['chain'] 函数，自定义的，则赋值到_[name] 上，func 就是该函数。也就是说自定义的方法，不仅_函数对象上有，而且`_.prototype`上也有
-		var func = _[name] = obj[name];
-		_.prototype[name] = function() {
-			// 处理的数据对象
-		  var args = [this._wrapped];
-		  // 处理的数据对象 和 arguments 结合
-		  push.apply(args, arguments);
-		  // 链式调用  chain.apply(_, args) 参数又被加上了 _chain属性，支持链式调用。
-		 // _.chain = function(obj) {
-		 //	var instance = _(obj);
-		 //	instance._chain = true;
-		 //	return instance;
-		 };
-		  return chainResult(this, func.apply(_, args));
+_.mixin = function(obj) {
+	// 遍历对象上的所有方法
+	_.each(_.functions(obj), function(name) {
+		// 比如 chain, obj['chain'] 函数，自定义的，则赋值到_[name] 上，func 就是该函数。也就是说自定义的方法，不仅_函数对象上有，而且`_.prototype`上也有
+	var func = _[name] = obj[name];
+	_.prototype[name] = function() {
+		// 处理的数据对象
+		var args = [this._wrapped];
+		// 处理的数据对象 和 arguments 结合
+		push.apply(args, arguments);
+		// 链式调用  chain.apply(_, args) 参数又被加上了 _chain属性，支持链式调用。
+		// _.chain = function(obj) {
+		//	var instance = _(obj);
+		//	instance._chain = true;
+		//	return instance;
 		};
-	  });
-	  // 最终返回 _ 函数对象。
-	  return _;
+		return chainResult(this, func.apply(_, args));
 	};
+	});
+	// 最终返回 _ 函数对象。
+	return _;
+};
 
-	_.mixin(_);
+_.mixin(_);
 ```
 
 `_mixin(_)` 把静态方法挂载到了`_.prototype`上，也就是`_.prototype.chain`方法 也就是 `_.chain`方法。
@@ -194,18 +194,6 @@ var chainResult = function(instance, obj) {
 关于上述的链式调用，笔者画了一张图，所谓一图胜千言。
 
 ![underscore.js 链式调用图解](./underscore.js-chain.png)
-
-### _.functions(obj)
-
-// _.functions 和 _.methods 两个方法，遍历对象上的方法，放入一个数组，并且排序。返回排序后的数组
-
-_.functions = _.methods = function(obj) {
-	  var names = [];
-	  for (var key in obj) {
-		if (_.isFunction(obj[key])) names.push(key);
-	  }
-	  return names.sort();
-	};
 
 ### _.mixin 挂载自定义方法
 
@@ -220,6 +208,18 @@ _.mixin({
 _.log() // 哎呀，我被调用了
 _().log() // 哎呀，我被调用了
 ```
+
+### _.functions(obj)
+```
+_.functions = _.methods = function(obj) {
+	var names = [];
+	for (var key in obj) {
+	if (_.isFunction(obj[key])) names.push(key);
+	}
+	return names.sort();
+};
+```
+`_.functions` 和 `_.methods` 两个方法，遍历对象上的方法，放入一个数组，并且排序。返回排序后的数组。
 
 ### `underscorejs` 究竟在`_`和`_.prototype`挂载了多少方法和属性
 
@@ -281,9 +281,9 @@ console.log(prototypeMethods); // ["after", "all", "allKeys", "any", "assign", .
 
 ```
 var root = typeof self == 'object' && self.self === self && self ||
-			  typeof global == 'object' && global.global === global && global ||
-			  this ||
-			  {};
+	typeof global == 'object' && global.global === global && global ||
+	this ||
+	{};
 ```
 
 支持`浏览器环境`、`node`、`Web Worker`、`node vm`、`微信小程序`。
@@ -301,14 +301,15 @@ if (typeof exports != 'undefined' && !exports.nodeType) {
 }
 ```
 
-关于root处理和导出的这两段代码的解释，推荐看这篇文章[冴羽：underscore 系列之如何写自己的 underscore](https://juejin.im/post/5a0bae515188252964213855)，讲得真的太好了。笔者再此就不赘述了。
+关于`root处理`和`导出`的这两段代码的解释，推荐看这篇文章[冴羽：underscore 系列之如何写自己的 underscore](https://juejin.im/post/5a0bae515188252964213855)，讲得真的太好了。笔者在此就不赘述了。
+总之，`underscorejs`作者对这些处理也不是一蹴而就的，也是慢慢积累，和其他人提`ISSUE`之后不断改进的。
 
 ### 支持 `amd` 模块化规范
 
 ```
 if (typeof define == 'function' && define.amd) {
 	define('underscore', [], function() {
-	return _;
+		return _;
 	});
 }
 ```
@@ -342,6 +343,91 @@ underscore.isArray([]) // true
 
 全文根据官网提供的链式调用的例子， `_.chain([1, 2, 3]).reverse().value();`较为深入的调试和追踪代码，分析链式调用（`_.chain()` 和 `_(obj).chain()`）、`OOP`、基于流式编程、和`_.mixin(_)`在`_.prototype`挂载方法，最后整体架构分析。学习`Underscorejs`整体架构，利于打造属于自己的函数式编程类库。
 
+文章分析的源码整体结构。
+
+```
+(function() {
+	var root = typeof self == 'object' && self.self === self && self ||
+		typeof global == 'object' && global.global === global && global ||
+		this ||
+		{};
+	var previousUnderscore = root._;
+
+	var _ = function(obj) {
+	  if (obj instanceof _) return obj;
+	  if (!(this instanceof _)) return new _(obj);
+	  this._wrapped = obj;
+	};
+
+	if (typeof exports != 'undefined' && !exports.nodeType) {
+	  if (typeof module != 'undefined' && !module.nodeType && module.exports) {
+		exports = module.exports = _;
+	  }
+	  exports._ = _;
+	} else {
+	  root._ = _;
+	}
+	_.VERSION = '1.9.1';
+
+	_.chain = function(obj) {
+	  var instance = _(obj);
+	  instance._chain = true;
+	  return instance;
+	};
+
+	var chainResult = function(instance, obj) {
+	  return instance._chain ? _(obj).chain() : obj;
+	};
+
+	_.mixin = function(obj) {
+	  _.each(_.functions(obj), function(name) {
+		var func = _[name] = obj[name];
+		_.prototype[name] = function() {
+		  var args = [this._wrapped];
+		  push.apply(args, arguments);
+		  return chainResult(this, func.apply(_, args));
+		};
+	  });
+	  return _;
+	};
+
+	_.mixin(_);
+
+	_.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
+	  var method = ArrayProto[name];
+	  _.prototype[name] = function() {
+		var obj = this._wrapped;
+		method.apply(obj, arguments);
+		if ((name === 'shift' || name === 'splice') && obj.length === 0) delete obj[0];
+		return chainResult(this, obj);
+	  };
+	});
+
+	_.each(['concat', 'join', 'slice'], function(name) {
+	  var method = ArrayProto[name];
+	  _.prototype[name] = function() {
+		return chainResult(this, method.apply(this._wrapped, arguments));
+	  };
+	});
+
+	_.prototype.value = function() {
+	  return this._wrapped;
+	};
+
+	_.prototype.valueOf = _.prototype.toJSON = _.prototype.value;
+
+	_.prototype.toString = function() {
+	  return String(this._wrapped);
+	};
+
+	if (typeof define == 'function' && define.amd) {
+	  define('underscore', [], function() {
+		return _;
+	  });
+	}
+}());
+```
+
 下一篇文章可能是学习`lodash`的源码整体架构。
 
 读者发现有不妥或可改善之处，欢迎评论指出。另外觉得写得不错，可以点赞、评论、转发，也是对笔者的一种支持。
@@ -353,6 +439,22 @@ underscore.isArray([]) // true
 [undersercore-analysis](https://yoyoyohamapi.gitbooks.io/undersercore-analysis/content/)
 
 [underscore 系列之如何写自己的 underscore](https://juejin.im/post/5a0bae515188252964213855)
+
+## 笔者往期文章
+
+[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://juejin.im/post/5d39d2cbf265da1bc23fbd42)
+
+[面试官问：JS的继承](https://juejin.im/post/5c433e216fb9a049c15f841b)
+
+[面试官问：JS的this指向](https://juejin.im/post/5c0c87b35188252e8966c78a)
+
+[面试官问：能否模拟实现JS的call和apply方法](https://juejin.im/post/5bf6c79bf265da6142738b29)
+
+[面试官问：能否模拟实现JS的bind方法](https://juejin.im/post/5bec4183f265da616b1044d7)
+
+[面试官问：能否模拟实现JS的new操作符](https://juejin.im/post/5bde7c926fb9a049f66b8b52)
+
+[前端使用puppeteer 爬虫生成《React.js 小书》PDF并合并](https://juejin.im/post/5b86732451882542af1c8082)
 
 ## 关于
 
