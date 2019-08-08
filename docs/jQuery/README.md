@@ -213,6 +213,7 @@ console.log(result3, 'result3');
 结论：`extend`函数既可以实现给`jQuery`函数可以实现浅拷贝、也可以实现深拷贝。可以给jQuery上添加静态方法和属性，也可以像`jQuery.fn`(也就是`jQuery.prototype`)上添加属性和方法，这个功能归功于`this`，`jQuery.extend`调用时`this`指向是`jQuery`，`jQuery.fn.extend`调用时`this`指向则是`jQuery.fn`。
 
 ### 浅拷贝实现
+
 知道这些，其实实现浅拷贝还是比较容易的：
 ```
 // 浅拷贝实现
@@ -262,6 +263,7 @@ if ( copy !== undefined ) {
 }
 ```
 为了方便读者调试，代码同样放在[jQuery.extend浅拷贝代码实现codepen](https://codepen.io/lxchuan12/pen/VoPPmQ)，可在线运行。
+
 ### 深拷贝实现
 
 ```
@@ -362,6 +364,7 @@ $.extend = function(){
 为了方便读者调试，这段代码同样放在[jQuery.extend深拷贝代码实现codepen](https://codepen.io/lxchuan12/pen/jgyyyN)，可在线运行。
 
 ### 深拷贝衍生的函数 isFunction
+
 判断参数是否是函数。
 ```
 var isFunction = function isFunction( obj ) {
@@ -373,7 +376,9 @@ var isFunction = function isFunction( obj ) {
 	return typeof obj === "function" && typeof obj.nodeType !== "number";
 };
 ```
+
 ### 深拷贝衍生的函数 jQuery.isPlainObject
+
 `jQuery.isPlainObject(obj)`
 测试对象是否是纯粹的对象（通过 "{}" 或者 "new Object" 创建的）。
 ```
@@ -419,6 +424,7 @@ jQuery.extend( {
 `extend`函数，也可以自己删掉写一写，算是`jQuery`中一个比较核心的函数了。而且用途广泛，可以内部使用也可以，外部使用扩展 插件等。
 
 ## 链式调用
+
 `jQuery`能够链式调用是因为一些函数执行结束后 `return this`。
 比如
 `jQuery` 源码中的`addClass`、`removeClass`、`toggleClass`。
@@ -441,6 +447,7 @@ jQuery.fn.extend({
 
 
 ## `jQuery.noConflict` 很多`js`库都会有的防冲突函数
+
 [jQuery.noConflict API](https://api.jquery.com/jQuery.noConflict/)
 
 用法：
@@ -484,7 +491,9 @@ jQuery.noConflict = function( deep ) {
 	return jQuery;
 };
 ```
+
 ## 总结
+
 全文主要通过浅析了`jQuery`整体结构，自执行匿名函数、无`new`构造、支持多种规范（如commonjs、amd规范）、核心函数之`extend`、链式调用、`jQuery.noConflict`等方面。
 
 重新梳理下文中学习的源码结构。
@@ -556,26 +565,22 @@ jQuery.noConflict = function( deep ) {
 读者发现有不妥或可改善之处，欢迎评论指出。另外觉得写得不错，可以点赞、评论、转发，也是对笔者的一种支持。
 
 ## 笔者往期文章
-[面试官问：JS的继承](https://juejin.im/post/5c433e216fb9a049c15f841b)
 
-[面试官问：JS的this指向](https://juejin.im/post/5c0c87b35188252e8966c78a)
-
-[面试官问：能否模拟实现JS的call和apply方法](https://juejin.im/post/5bf6c79bf265da6142738b29)
-
-[面试官问：能否模拟实现JS的bind方法](https://juejin.im/post/5bec4183f265da616b1044d7)
-
-[面试官问：能否模拟实现JS的new操作符](https://juejin.im/post/5bde7c926fb9a049f66b8b52)
-
-[前端使用puppeteer 爬虫生成《React.js 小书》PDF并合并](https://juejin.im/post/5b86732451882542af1c8082)
+[面试官问：JS的继承](https://juejin.im/post/5c433e216fb9a049c15f841b)<br>
+[面试官问：JS的this指向](https://juejin.im/post/5c0c87b35188252e8966c78a)<br>
+[面试官问：能否模拟实现JS的call和apply方法](https://juejin.im/post/5bf6c79bf265da6142738b29)<br>
+[面试官问：能否模拟实现JS的bind方法](https://juejin.im/post/5bec4183f265da616b1044d7)<br>
+[面试官问：能否模拟实现JS的new操作符](https://juejin.im/post/5bde7c926fb9a049f66b8b52)<br>
+[前端使用puppeteer 爬虫生成《React.js 小书》PDF并合并](https://juejin.im/post/5b86732451882542af1c8082)<br>
 
 ## 扩展阅读
-[chokcoco: jQuery- v1.10.2 源码解读](https://github.com/chokcoco/jQuery-)
 
-[chokcoco:【深入浅出jQuery】源码浅析--整体架构](https://www.cnblogs.com/coco1s/p/5261646.html)
-
-[songjz :jQuery 源码系列（一）总体架构](https://segmentfault.com/a/1190000008365621)
+[chokcoco: jQuery- v1.10.2 源码解读](https://github.com/chokcoco/jQuery-)<br>
+[chokcoco:【深入浅出jQuery】源码浅析--整体架构](https://www.cnblogs.com/coco1s/p/5261646.html)<br>
+[songjz :jQuery 源码系列（一）总体架构](https://segmentfault.com/a/1190000008365621)<br>
 
 ## 关于
+
 作者：常以**若川**为名混迹于江湖。前端路上 | PPT爱好者 | 所知甚少，唯善学。<br>
 [个人博客](https://lxchuan12.github.io/)<br>
 [掘金专栏](https://juejin.im/user/57974dc55bbb500063f522fd/posts)，欢迎关注~<br>
@@ -583,5 +588,8 @@ jQuery.noConflict = function( deep ) {
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
 [github blog](https://github.com/lxchuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
 
-## 微信交流群
-添加微信 `lxchuan12`，注明来源。拉您进【**前端视野交流群**】
+## 微信公众号  若川视野
+
+可能比较有趣的微信公众号，长按扫码关注。也可以加微信 `lxchuan12`，注明来源，拉您进【前端视野交流群】。
+
+![若川视野](./wechat-official-accounts-mini.jpg)

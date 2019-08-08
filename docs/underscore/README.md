@@ -434,26 +434,18 @@ underscore.isArray([]) // true
 
 ## 推荐阅读
 
-[underscorejs.org 官网](https://underscorejs.org/)
-
-[undersercore-analysis](https://yoyoyohamapi.gitbooks.io/undersercore-analysis/content/)
-
-[underscore 系列之如何写自己的 underscore](https://juejin.im/post/5a0bae515188252964213855)
+[underscorejs.org 官网](https://underscorejs.org/)<br>
+[undersercore-analysis](https://yoyoyohamapi.gitbooks.io/undersercore-analysis/content/)<br>
+[underscore 系列之如何写自己的 underscore](https://juejin.im/post/5a0bae515188252964213855)<br>
 
 ## 笔者往期文章
 
-[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://juejin.im/post/5d39d2cbf265da1bc23fbd42)
-
-[面试官问：JS的继承](https://juejin.im/post/5c433e216fb9a049c15f841b)
-
-[面试官问：JS的this指向](https://juejin.im/post/5c0c87b35188252e8966c78a)
-
-[面试官问：能否模拟实现JS的call和apply方法](https://juejin.im/post/5bf6c79bf265da6142738b29)
-
-[面试官问：能否模拟实现JS的bind方法](https://juejin.im/post/5bec4183f265da616b1044d7)
-
-[面试官问：能否模拟实现JS的new操作符](https://juejin.im/post/5bde7c926fb9a049f66b8b52)
-
+[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://juejin.im/post/5d39d2cbf265da1bc23fbd42)<br>
+[面试官问：JS的继承](https://juejin.im/post/5c433e216fb9a049c15f841b)<br>
+[面试官问：JS的this指向](https://juejin.im/post/5c0c87b35188252e8966c78a)<br>
+[面试官问：能否模拟实现JS的call和apply方法](https://juejin.im/post/5bf6c79bf265da6142738b29)<br>
+[面试官问：能否模拟实现JS的bind方法](https://juejin.im/post/5bec4183f265da616b1044d7)<br>
+[面试官问：能否模拟实现JS的new操作符](https://juejin.im/post/5bde7c926fb9a049f66b8b52)<br>
 [前端使用puppeteer 爬虫生成《React.js 小书》PDF并合并](https://juejin.im/post/5b86732451882542af1c8082)
 
 ## 关于
@@ -465,6 +457,8 @@ underscore.isArray([]) // true
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
 [github blog](https://github.com/lxchuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
 
-## 微信交流群
+## 微信公众号  若川视野
 
-添加微信 `lxchuan12`，注明来源。拉您进【**前端视野交流群**】
+可能比较有趣的微信公众号，长按扫码关注。也可以加微信 `lxchuan12`，注明来源，拉您进【前端视野交流群】。
+
+![若川视野](./wechat-official-accounts-mini.jpg)
