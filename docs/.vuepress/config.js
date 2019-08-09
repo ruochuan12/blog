@@ -31,7 +31,47 @@ module.exports = {
 				},
                 {
                   text: '面试官问：JS的继承',
-				  link: '/inherit/'
+				  link: '/js-extend/'
+				},
+                {
+					text: '面试官问：JS的this指向',
+					link: '/js-this/'
+				},
+                {
+					text: '面试官问：能否模拟实现JS的call和apply方法',
+					link: '/js-implement-call-apply/'
+				},
+                {
+					text: '面试官问：能否模拟实现JS的bind方法',
+					link: '/js-implement-bind/'
+				},
+                {
+					text: '面试官问：能否模拟实现JS的new操作符',
+					link: '/js-implement-new/'
+				},
+                {
+					text: '前端使用puppeteer 爬虫生成《React.js 小书》PDF并合并',
+					link: '/puppeteer-create-pdf-and-merge/'
+				},
+                {
+					text: '分析vue-cli@2.9.3 搭建的webpack项目工程',
+					link: '/vue-cli-2-webpack/'
+				},
+                {
+					text: 'oh my zsh 和 windows git bash 设置别名提高效率',
+					link: '/oh-my-zsh/'
+				},
+                {
+					text: 'vue 2.x项目 vue-qriously 生成二维码并下载、cliploard复制粘贴',
+					link: '/vue-2-qrcode/'
+				},
+                {
+					text: 'JavaScript 对象所有API解析',
+					link: '/js-object-api/'
+				},
+                {
+					text: '《JavaScript语言精粹 修订版》 读书笔记',
+					link: '/js-book/'
 				},
 				{
 					text: '工作一年后，我有些感悟',
@@ -77,6 +117,10 @@ module.exports = {
 					{
 						text: '微博',
 						link: 'http://weibo.com/lxchuan12'
+					},
+					{
+						text: 'hexo 博客 lxchuan12.cn',
+						link: 'http://lxchuan12.cn'
 					},
 				],
 			}
