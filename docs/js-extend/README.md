@@ -1,3 +1,7 @@
+# 面试官问：JS的继承
+
+>`写于2019年2月20日`
+
 用过`React`的读者知道，经常用`extends`继承`React.Component`。
 
 ```
