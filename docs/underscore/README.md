@@ -1,5 +1,7 @@
 # 学习`underscorejs`整体架构，打造属于自己的函数式编程类库
 
+>`写于2019年8月8日`
+
 ## 前言
 
 上一篇文章写了`jQuery整体架构`，[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://juejin.im/post/5d39d2cbf265da1bc23fbd42)
