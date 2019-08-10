@@ -12,23 +12,23 @@
 
 ## 使用`vue-cli`初始化`webpack`工程
 
-```
-// # 安装
+```bash
+#	# 安装
 npm install -g vue-cli
-// 安装完后vue命令就可以使用了。实际上是全局注册了vue、vue-init、vue-list几个命令
+#	安装完后vue命令就可以使用了。实际上是全局注册了vue、vue-init、vue-list几个命令
 
-// # ubuntu 系统下
-// [vue-cli@2.9.3] link /usr/local/bin/vue@ -> /usr/local/lib/node_modules/vue-cli/bin/vue
-// [vue-cli@2.9.3] link /usr/local/bin/vue-init@ -> /usr/local/lib/node_modules/vue-cli/bin/vue-init
-// [vue-cli@2.9.3] link /usr/local/bin/vue-list@ -> /usr/local/lib/node_modules/vue-cli/bin/vue-list
+# ubuntu 系统下
+#	[vue-cli@2.9.3] link /usr/local/bin/vue@ -> /usr/local/lib/node_modules/vue-cli/bin/vue
+#	[vue-cli@2.9.3] link /usr/local/bin/vue-init@ -> /usr/local/lib/node_modules/vue-cli/bin/vue-init
+#	[vue-cli@2.9.3] link /usr/local/bin/vue-list@ -> /usr/local/lib/node_modules/vue-cli/bin/vue-list
 
 vue list
-// 可以发现有browserify、browserify-simple、pwa、simple、webpack、webpack-simple几种模板可选，这里选用webpack。
+#	可以发现有browserify、browserify-simple、pwa、simple、webpack、webpack-simple几种模板可选，这里选用webpack。
 
-// # 使用 vue init
+#	使用 vue init
 vue init <template-name> <project-name>
 
-// # 例子
+#	例子
 vue init webpack analyse-vue-cli
 ```
 更多`vue-cli`如何工作的可以查看这篇文章[vue-cli是如何工作的](https://juejin.im/post/5a7b1b86f265da4e8f049081)，或者分析Vue-cli源码查看这篇[走进Vue-cli源码，自己动手搭建前端脚手架工具](https://segmentfault.com/a/1190000013975247)，再或者直接查看[vue-cli github仓库源码](https://github.com/vuejs/vue-cli/tree/master)
@@ -38,7 +38,7 @@ vue init webpack analyse-vue-cli
 ## `package.json`
 
 分析一个项目，一般从`package.json`的命令入口`scripts`开始。
-```
+```js
 "scripts": {
   // dev webpack-dev-server --inline 模式 --progress 显示进度 --config 指定配置文件（默认是webpack.config.js）
   "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js",
@@ -62,7 +62,7 @@ vue init webpack analyse-vue-cli
 例如在通过命令`npm i -D webpack-dev-server`将`webpack-dev-server`安装到项目后，是无法直接在项目根目录下通过命令 `webpack-dev-server` 去执行 `webpack-dev-server` 构建的，而是要通过命令 `./node_modules/.bin/webpack-dev-server` 去执行。
 
 `Npm Script` 能方便的解决这个问题，只需要在 `scripts` 字段里定义一个任务，例如：
-```
+```js
 "dev": "webpack-dev-server --inline --progress --config build/webpack.dev.conf.js"
 ```
 `Npm Script` 会先去项目目录下的 `node_modules` 中寻找有没有可执行的 `webpack-dev-server` 文件，如果有就使用本地的，如果没有就使用全局的。 所以现在执行 `webpack-dev-server` 启动服务时只需要通过执行 `npm run dev` 去实现。
@@ -83,7 +83,7 @@ vue init webpack analyse-vue-cli
 
 具体可以看`build/webpack.dev.conf.js`这个文件注释：
 
-```
+```js
 'use strict'
 // 引入工具函数
 const utils = require('./utils')
@@ -280,7 +280,7 @@ module.exports = new Promise((resolve, reject) => {
 
 具体配置可以看该文件注释：
 
-```
+```js
 'use strict'
 const path = require('path')
 // 引入配置文件config/index.js
@@ -434,7 +434,7 @@ exports.createNotifierCallback = () => {
 
 具体可以看这个文件注释：
 
-```
+```js
 // 使用严格模式，更多严格模式可以查看
 // [阮一峰老师的es标准入门](http://es6.ruanyifeng.com/?search=%E4%B8%A5%E6%A0%BC%E6%A8%A1%E5%BC%8F&x=0&y=0#docs/function#%E4%B8%A5%E6%A0%BC%E6%A8%A1%E5%BC%8F)
 'use strict'
@@ -574,7 +574,7 @@ module.exports = {
 主要有：`loaders`，`cssSourceMap`，`cacheBusting`，`transformToRequire`。
 
 具体看该文件注释：
-```
+```js
 'use strict'
 const utils = require('./utils')
 const config = require('../config')
@@ -623,7 +623,7 @@ module.exports = {
 
 具体可以查看相应的注释：
 
-```
+```js
 'use strict'
 // 检查node npm的版本
 require('./check-versions')()
@@ -688,7 +688,7 @@ rm(path.join(config.build.assetsRoot, config.build.assetsSubDirectory), err => {
 
 具体查看这个配置文件注释：
 
-```
+```js
 'use strict'
 // 控制台输入样式 chalk 更多查看：https://github.com/chalk/chalk
 const chalk = require('chalk')
@@ -768,7 +768,7 @@ module.exports = function () {
 
 具体可以查看这个文件配置注释：
 
-```
+```js
 'use strict'
 // 引入node路径相关
 const path = require('path')
@@ -1004,7 +1004,7 @@ module.exports = webpackConfig
 至此，我们就分析完了`package.json`中的`npm run dev`和`npm run build`两个命令。测试相关的类似就略过吧。
 
 `npm run lint`，`.eslintrc.js`中的配置不多，更多可以查看[eslint英文文档](https://eslint.org/)或[`eslint`中文官网](http://eslint.cn/)，所以也略过吧。不过提一下，把`eslint`整合到`git`工作流。可以安装`husky`，`npm i husky -S`。安装后，配置`package.json`的`scripts`中，配置`precommit`，具体如下：
-```
+```js
 "scripts": {
   "lint": "eslint --ext .js,.vue src test/unit test/e2e/specs",
   "precommit": "npm run lint",
@@ -1020,7 +1020,7 @@ module.exports = webpackConfig
 配置了一些转码规则。这里附上两个链接：[`babel`英文官网](https://babeljs.io/)和[`babel`的中文官网](https://babel.bootcss.com/)。
 
 具体看文件中的配置注释：
-```
+```js
 {
   // presets指明转码的规则
   "presets": [

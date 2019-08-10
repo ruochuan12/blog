@@ -5,7 +5,7 @@
 ## 前言
 
 用过`React`的同学都知道，经常会使用`bind`来绑定`this`。
-```
+```js
 import React, { Component } from 'react';
 class TodoItem extends Component{
     constructor(props){
@@ -28,7 +28,7 @@ export default TodoItem;
 
 先看一下`bind`是什么。从上面的`React`代码中，可以看出`bind`执行后是函数，并且每个函数都可以执行调用它。
 眼见为实，耳听为虚。读者可以在控制台一步步点开**例子1**中的`obj`:
-```
+```js
 var obj = {};
 console.log(obj);
 console.log(typeof Function.prototype.bind); // function
@@ -45,7 +45,7 @@ console.log(Function.prototype.bind().name);  // bound
 2、`bind`本身是一个函数名为`bind`的函数，返回值也是函数，函数名是`bound `。（打出来就是`bound加上一个空格`）。
 知道了`bind`是函数，就可以传参，而且返回值`'bound '`也是函数，也可以传参，就很容易写出**例子2**：<br>
 后文统一 `bound` 指原函数`original` `bind`之后返回的函数，便于说明。
-```
+```js
 var obj = {
     name: '若川',
 };
@@ -78,7 +78,7 @@ console.log((function(){}).bind().length); // 0
 5、`bind`函数形参（即函数的`length`）是`1`。`bind`后返回的`bound`函数形参不定，根据绑定的函数原函数（`original`）形参个数确定。
 
 根据结论2：我们就可以简单模拟实现一个简版`bindFn`
-```
+```js
 // 第一版 修改this指向，合并参数
 Function.prototype.bindFn = function bind(thisArg){
     if(typeof this !== 'function'){
@@ -110,7 +110,7 @@ bound(2); // '若川', [1, 2]
 如果面试官看到你答到这里，估计对你的印象60、70分应该是会有的。
 但我们知道函数是可以用`new`来实例化的。那么`bind()`返回值函数会是什么表现呢。<br>
 接下来看**例子3**：
-```
+```js
 var obj = {
     name: '若川',
 };
@@ -143,7 +143,7 @@ console.log(newBoundResult, 'newBoundResult'); // original {name: 2}
 
 所以相当于`new`调用时，`bind`的返回值函数`bound`内部要模拟实现`new`实现的操作。
 话不多说，直接上代码。
-```
+```js
 // 第三版 实现new调用
 Function.prototype.bindFn = function bind(thisArg){
     if(typeof this !== 'function'){
@@ -199,7 +199,7 @@ Function.prototype.bindFn = function bind(thisArg){
 
 ### `instanceof` 不准确，`ES6 new.target`很好的解决这一问题
 
-```
+```js
 function Student(name){
     if(this instanceof Student){
         this.name = name;
@@ -227,7 +227,7 @@ var notAStudent2 = Student2.call(student2, '川');
 console.log(student2, 'student2', notAStudent2, 'notAStudent2'); // 抛出错误
 ```
 细心的同学可能会发现了这版本的代码没有实现`bind`后的`bound`函数的`name`[MDN Function.name](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function/name)和`length`[MDN Function.length](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function/length)。面试官可能也发现了这一点继续追问，如何实现，或者问是否看过[`es5-shim`的源码实现`L201-L335`](https://github.com/es-shims/es5-shim/blob/master/es5-shim.js#L201-L335)。如果不限`ES`版本。其实可以用`ES5`的`Object.defineProperties`来实现。
-```
+```js
 Object.defineProperties(bound, {
     'length': {
         value: self.length,
@@ -241,7 +241,7 @@ Object.defineProperties(bound, {
 ### `es5-shim`的源码实现`bind`
 
 直接附上源码（有删减注释和部分修改等）
-```
+```js
 var $Array = Array;
 var ArrayPrototype = $Array.prototype;
 var $Object = Object;
@@ -316,7 +316,7 @@ FunctionPrototype.bindFn = function bind(that) {
 读者发现有不妥或可改善之处，欢迎指出。另外觉得写得不错，可以点个赞，也是对笔者的一种支持。
 
 文章中的例子和测试代码放在`github`中[bind模拟实现 github](https://github.com/lxchuan12/html5/tree/gh-pages/JS%E7%9B%B8%E5%85%B3/%E5%87%BD%E6%95%B0/bind%E6%A8%A1%E6%8B%9F%E5%AE%9E%E7%8E%B0)。[bind模拟实现 预览地址](http://lxchuan12.github.io/html5/JS%E7%9B%B8%E5%85%B3/%E5%87%BD%E6%95%B0/bind%E6%A8%A1%E6%8B%9F%E5%AE%9E%E7%8E%B0/bind-0.html) `F12`看控制台输出，结合`source`面板查看效果更佳。
-```
+```js
 // 最终版 删除注释 详细注释版请看上文
 Function.prototype.bind = Function.prototype.bind || function bind(thisArg){
     if(typeof this !== 'function'){

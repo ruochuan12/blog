@@ -11,7 +11,7 @@
 
 ## `vue-qriously`插件使用
 
-```
+```js
 // 入口js文件
 // npm install vue-qriously -S
 import Vue from 'vue';
@@ -19,7 +19,7 @@ import VueQriously from 'vue-qriously';
 Vue.use(VueQriously);
 ```
 
-```
+```js
 // vue 文件
 <template>
     <qriously :value="value" size="size" :backgroundAlpha="backgroundAlpha"/>
@@ -43,7 +43,7 @@ export default {
 ```
 更多参数配置可以查看：[github 仓库 v-qriously.vue源码](https://github.com/theomessin/vue-qriously/blob/master/src/components/v-qriously.vue)
 查看代码可以发现，开头引用了`qrious`，这个`star`就多一点，`600`多。
-```
+```js
 import Qrious from 'qrious'
 ```
 [`qrious` github 地址](https://github.com/neocotic/qrious)
@@ -54,7 +54,7 @@ import Qrious from 'qrious'
 粗略的翻看下以上相关文档，写完正准备要做下载功能。这时发现，哎呀，竟然就是只生成了一个`canvas`。
 于是百度(暴露了用百度...我也想用谷歌，但现在不行...)了下`canvas`如何转图片。
 [stackoverflow Capture HTML Canvas as gif/jpg/png/pdf?](https://stackoverflow.com/questions/923885/capture-html-canvas-as-gif-jpg-png-pdf)
-```
+```js
 var canvas = document.getElementById("mycanvas");
 var imgSrc    = canvas.toDataURL("image/png");
 document.write('<img src="'+img+'"/>');
@@ -62,7 +62,7 @@ document.write('<img src="'+img+'"/>');
 // 嗯，这个简单。想着我们项目兼容性没什么要求，于是就用这个了。
 ```
 生成了`img`的`src`资源，那么就可以下载了。
-```
+```js
 // 老模块是用的`jquery` + `seajs` + `vue1.x`
 // 新模块尽量要去除`jquery`。
 let src = $('.img').src;
@@ -70,7 +70,7 @@ let aLink = $('<a></a>').attr('href', src).attr('download', 'xxx二维码.png').
 aLink[0].click();
 aLink.remove();
 ```
-```
+```js
 // 新模块 去除jquery
 let elem = document.createElement('a');
 elem.setAttribute('href', imgSrc);
@@ -82,7 +82,7 @@ document.body.removeChild(elem);
 
 但这样写也相对比较麻烦。
 项目中封装了一个`v-click`指令。
-```
+```js
 /**
  * vClick 触发点击
  * @type {Object}
@@ -107,7 +107,7 @@ export const vClick = {
 	},
 };
 ```
-```
+```js
 <template>
 <div>
     <div class="img" v-show="listShareShow">
@@ -171,7 +171,7 @@ export default {
 ## 显示大小和下载大小不一样
 
 参考了下老模块，`qrcodejs`渲染出来的`html`,
-```
+```html
 //  跟这个类似
 <div id="qrcode_1" title="your content">
     <canvas width="256" height="256" style="display: none;"></canvas>
@@ -179,13 +179,13 @@ export default {
 </div>
 ```
 `vue-qriously`渲染出来是
-```
+```js
 <div>
     <canvas width="80" width="80"></canvas>
 </div>
 ```
 于是我可以把生成的`imgSrc`资源,
-```
+```js
 <template>
 <div>
     <canvas width="160" width="160" v-show="false"></canvas>
@@ -218,7 +218,7 @@ If you want to make it become downloadable, maybe you can transform it from canv
 老模块中是用的`cliploard`[clipboard github仓库](https://github.com/zenorocha/clipboard.js)。就是我引入的。
 
 新模块还没使用过，但依然使用这个。
-```
+```js
 // 安装
 // npm install clipboard --save
 <template @click="Clip($event, '快来复制')"><template>

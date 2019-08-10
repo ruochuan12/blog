@@ -13,7 +13,7 @@
 ## 全局上下文
 
 非严格模式和严格模式中this都是指向顶层对象（浏览器中是`window`）。
-```
+```js
 this === window // true
 'use strict'
 this === window;
@@ -25,7 +25,7 @@ console.log(this.name); // 若川
 
 ### 普通函数调用模式
 
-```
+```js
 // 非严格模式
 var name = 'window';
 var doSth = function(){
@@ -35,7 +35,7 @@ doSth(); // 'window'
 ```
 你可能会误以为`window.doSth()`是调用的，所以是指向`window`。虽然本例中`window.doSth`确实等于`doSth`。`name`等于`window.name`。上面代码中这是因为在`ES5`中，全局变量是挂载在顶层对象（浏览器是`window`）中。
 事实上，并不是如此。
-```
+```js
 // 非严格模式
 let name2 = 'window2';
 let doSth2 = function(){
@@ -47,7 +47,7 @@ doSth2() // true, undefined
 这个例子中`let`没有给顶层对象中（浏览器是window）添加属性，`window.name2和window.doSth`都是`undefined`。
 
 严格模式中，普通函数中的`this`则表现不同，表现为`undefined`。
-```
+```js
 // 严格模式
 'use strict'
 var name = 'window';
@@ -59,14 +59,14 @@ doSth(); // true，// 报错，因为this是undefined
 ```
 看过的《你不知道的`JavaScript`》上卷的读者，应该知道书上将这种叫做默认绑定。
 对`call`，`apply`熟悉的读者会类比为：
-```
+```js
 doSth.call(undefined);
 doSth.apply(undefined);
 ```
 效果是一样的，`call`，`apply`作用之一就是用来修改函数中的`this`指向为第一个参数的。
 第一个参数是`undefined`或者`null`，非严格模式下，是指向`window`。严格模式下，就是指向第一个参数。后文详细解释。<br>
 经常有这类代码（回调函数），其实也是普通函数调用模式。
-```
+```js
 var name = '若川';
 setTimeout(function(){
     console.log(this.name);
@@ -80,7 +80,7 @@ fn.call(undefined, arg1, arg2, ...);
 
 ### 对象中的函数（方法）调用模式
 
-```
+```js
 var name = 'window';
 var doSth = function(){
     console.log(this.name);
@@ -102,7 +102,7 @@ student.other.doSth.call(other);
 ```
 但往往会有以下场景，把对象中的函数赋值成一个变量了。
 这样其实又变成普通函数了，所以使用普通函数的规则（默认绑定）。
-```
+```js
 var studentDoSth = student.doSth;
 studentDoSth(); // 'window'
 // 用call类比则为：
@@ -114,7 +114,7 @@ studentDoSth.call(undefined);
 上文提到`call`、`apply`，这里详细解读一下。先通过`MDN`认识下`call`和`apply`
 [MDN 文档：Function.prototype.call()](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function/call)<br>
 **语法**<br>
-```
+```js
 fun.call(thisArg, arg1, arg2, ...)
 ```
 **thisArg**<br>
@@ -126,7 +126,7 @@ fun.call(thisArg, arg1, arg2, ...)
 `apply`和`call`类似。只是参数不一样。它的参数是数组（或者类数组）。
 
 根据参数`thisArg`的描述，可以知道，`call`就是改变函数中的`this`指向为`thisArg`，并且执行这个函数，这也就使`JS`灵活很多。严格模式下，`thisArg`是原始值是值类型，也就是原始值。不会被包装成对象。举个例子：
-```
+```js
 var doSth = function(name){
     console.log(this);
     console.log(name);
@@ -161,7 +161,7 @@ fun.bind(thisArg[, arg1[, arg2[, ...]]])<br>
 
 ### 构造函数调用模式
 
-```
+```js
 function Student(name){
     this.name = name;
     console.log(this); // {name: '若川'}
@@ -180,7 +180,7 @@ var result = new Student('若川');
 
 由此可以知道：`new`操作符调用时，`this`指向生成的新对象。
 **特别提醒一下，`new`调用时的返回值，如果没有显式返回对象或者函数，才是返回生成的新对象**。
-```
+```js
 function Student(name){
     this.name = name;
     // return function f(){};
@@ -196,7 +196,7 @@ console.log(result); {name: '若川'}
 
 ### 原型链中的调用模式
 
-```
+```js
 function Student(name){
     this.name = name;
 }
@@ -210,7 +210,7 @@ s1.doSth(); // '若川'
 如果该对象继承自其它对象。同样会通过原型链查找。
 上面代码使用
 `ES6`中`class`写法则是：
-```
+```js
 class Student{
     constructor(name){
         this.name = name;
@@ -223,7 +223,7 @@ let s1 = new Student('若川');
 s1.doSth();
 ```
 `babel` `es6`转换成`es5`的结果，可以去[`babeljs网站转换测试`](https://babeljs.io/)自行试试。
-```
+```js
 'use strict';
 
 var _createClass = function () { function defineProperties(target, props) { for (var i = 0; i < props.length; i++) { var descriptor = props[i]; descriptor.enumerable = descriptor.enumerable || false; descriptor.configurable = true; if ("value" in descriptor) descriptor.writable = true; Object.defineProperty(target, descriptor.key, descriptor); } } return function (Constructor, protoProps, staticProps) { if (protoProps) defineProperties(Constructor.prototype, protoProps); if (staticProps) defineProperties(Constructor, staticProps); return Constructor; }; }();
@@ -264,7 +264,7 @@ s1.doSth();
 箭头函数中没有`this`绑定，必须通过查找作用域链来决定其值。
 如果箭头函数被非箭头函数包含，则`this`绑定的是最近一层非箭头函数的`this`，否则`this`的值则被设置为全局对象。
 比如：
-```
+```js
 var name = 'window';
 var student = {
     name: '若川',
@@ -286,7 +286,7 @@ student.arrowDoSth2(); // 'window'
 其实就是相当于箭头函数外的`this`是缓存的该箭头函数上层的普通函数的`this`。如果没有普通函数，则是全局对象（浏览器中则是`window`）。
 也就是说无法通过`call`、`apply`、`bind`绑定箭头函数的`this`(它自身没有`this`)。而`call`、`apply`、`bind`可以绑定缓存箭头函数上层的普通函数的`this`。
 比如：
-```
+```js
 var student = {
     name: '若川',
     doSth: function(){
@@ -307,7 +307,7 @@ student.doSth.call(person)(); // 'person' 'arrowFn:' 'person'
 
 #### addEventerListener、attachEvent、onclick
 
-```
+```js
 <button class="button">onclick</button>
 <ul class="list">
     <li>1</li>
@@ -337,7 +337,7 @@ student.doSth.call(person)(); // 'person' 'arrowFn:' 'person'
 
 #### 内联事件处理函数调用
 
-```
+```html
 <button class="btn1" onclick="console.log(this === document.querySelector('.btn1'))">点我呀</button>
 <button onclick="console.log((function(){return this})());">再点我呀</button>
 ```
@@ -353,7 +353,7 @@ student.doSth.call(person)(); // 'person' 'arrowFn:' 'person'
 
 而箭头函数的`this`是上层普通函数的`this`或者是全局对象（浏览器中是`window`），所以排除，不算优先级。
 
-```
+```js
 var name = 'window';
 var person = {
     name: 'person',
@@ -379,7 +379,7 @@ new Student.doSth.call(person);
 试想一下，如果是`Student.doSth.call(person)`先执行的情况下，那`new`执行一个函数。是没有问题的。
 然而事实上，这代码是报错的。[运算符优先级](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/Operator_Precedence)是`new`比点号低，所以是执行`new (Student.doSth.call)(person)`
 而`Function.prototype.call`，虽然是一个函数（`apply`、`bind`也是函数），跟箭头函数一样，不能用`new`调用。所以报错了。
-```
+```js
 Uncaught TypeError: Student.doSth.call is not a constructor
 ```
 这是因为函数内部有两个不同的方法：`[[Call]]`和`[[Constructor]]`。

@@ -80,10 +80,10 @@
 只要您在**若川视野**微信公众号下留言，说出定目标最后怎么达成的故事或者为什么想看《刻意练习》这本书。截止到6月16日21点（本周日），我在留言区挑选5位觉得不错的留言，联系这5位同学，免费包邮送出《刻意练习》这本书，无需转发，无需集赞。
 ![刻意练习书籍](./books.jpg)
 
-最后附上毕业三年每年的年度总结文章和工作一年的感悟文章。
-[2016年度总结，毕业，工作](https://www.jianshu.com/p/cea7ecd71f14)
-[工作一年后，我有些感悟](https://www.jianshu.com/p/0b29cc65dc82)
-[2017年度总结，一如既往](https://www.jianshu.com/p/71b5730dc606)
-[2018年度总结，平淡无奇](https://www.jianshu.com/p/a9c7aae40e64)
+最后附上毕业三年每年的年度总结文章和工作一年的感悟文章。<br>
+[2016年度总结，毕业，工作](https://www.jianshu.com/p/cea7ecd71f14)<br>
+[工作一年后，我有些感悟](https://www.jianshu.com/p/0b29cc65dc82)<br>
+[2017年度总结，一如既往](https://www.jianshu.com/p/71b5730dc606)<br>
+[2018年度总结，平淡无奇](https://www.jianshu.com/p/a9c7aae40e64)<br>
 
 文章同时发布在简书（方便后续修改），[高考七年后、工作三年后的感悟](https://www.jianshu.com/p/edf9d76596d2)。

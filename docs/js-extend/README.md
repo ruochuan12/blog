@@ -4,7 +4,7 @@
 
 用过`React`的读者知道，经常用`extends`继承`React.Component`。
 
-```
+```js
 // 部分源码
 function Component(props, context, updater) {
   // ...
@@ -29,7 +29,7 @@ class index extends React.Component{
 
 要弄懂extends继承之前，先来复习一下构造函数、原型对象和实例之间的关系。
 代码表示：
-```
+```js
 function F(){}
 var f = new F();
 // 构造器
@@ -49,7 +49,7 @@ Object.prototype.__proto__ === null; // true
 ## `ES6 extends` 继承做了什么操作
 
 我们先看看这段包含静态方法的`ES6`继承代码：
-```
+```js
 // ES6
 class Parent{
     constructor(name){
@@ -84,7 +84,7 @@ child.sayName(); // my name is Child
 child.sayAge(); // my age is 18
 ```
 其中这段代码里有两条原型链，不信看具体代码。
-```
+```js
 // 1、构造器原型链
 Child.__proto__ === Parent; // true
 Parent.__proto__ === Function.prototype; // true
@@ -132,7 +132,7 @@ Object.prototype.__proto__ === null; // true
 它接收两个参数，不过第二个可选参数是属性描述符（不常用，默认是`undefined`）。对于不支持`ES5`的浏览器，`MDN`上提供了`ployfill`方案。
 [MDN Object.create()](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/create)
 
-```
+```js
 // 简版：也正是应用了new会设置__proto__链接的原理。
 if(typeof Object.create !== 'function'){
     Object.create = function(proto){
@@ -150,7 +150,7 @@ if(typeof Object.create !== 'function'){
 `Object.setPrototypeOf()` 方法设置一个指定的对象的原型 ( 即, 内部`[[Prototype]]`属性）到另一个对象或  `null`。
 `Object.setPrototypeOf(obj, prototype)`
 
-```
+```js
 `ployfill`
 // 仅适用于Chrome和FireFox，在IE中不工作：
 Object.setPrototypeOf = Object.setPrototypeOf || function (obj, proto) {
@@ -160,7 +160,7 @@ Object.setPrototypeOf = Object.setPrototypeOf || function (obj, proto) {
 ```
 `nodejs`源码就是利用这个实现继承的工具函数的。
 [nodejs utils inherits](https://github.com/nodejs/node/blob/master/lib/util.js#L295-L313)
-```
+```js
 function inherits(ctor, superCtor) {
   if (ctor === undefined || ctor === null)
     throw new ERR_INVALID_ARG_TYPE('ctor', 'Function', ctor);
@@ -183,7 +183,7 @@ function inherits(ctor, superCtor) {
 ## `ES6`的`extends`的`ES5`版本实现
 
 知道了`ES6 extends`继承做了什么操作和设置`__proto__`的知识点后，把上面`ES6`例子的用`ES5`就比较容易实现了，也就是说**实现寄生组合式继承**，简版代码就是：
-```
+```js
 // ES5 实现ES6 extends的例子
 function Parent(name){
     this.name = name;
@@ -235,7 +235,7 @@ child.sayAge(); // my age is 18
 ```
 我们完全可以把上述`ES6的例子`通过[`babeljs`](https://babeljs.io/repl)转码成`ES5`来查看，更严谨的实现。
 
-```
+```js
 // 对转换后的代码进行了简要的注释
 "use strict";
 // 主要是对当前环境支持Symbol和不支持Symbol的typeof处理

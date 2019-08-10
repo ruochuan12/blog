@@ -5,7 +5,7 @@
 ## 前言
 
 用过`Vuejs`的同学都知道，需要用`new`操作符来实例化。
-```
+```js
 new Vue({
     el: '#app',
     mounted(){},
@@ -17,7 +17,7 @@ new Vue({
 ## new 做了什么
 
 先看简单**例子1**：
-```
+```js
 // 例子1
 function Student(){
 }
@@ -43,7 +43,7 @@ typeof Object === 'function' // true
 再来看下控制台输出图，感兴趣的读者可以在控制台试试。
 ![例子1 控制台输出图](https://user-gold-cdn.xitu.io/2018/11/4/166dde2ad5d6bd84?w=573&h=870&f=png&s=143219)
 与`new Object()` 生成的对象不同的是`new Student()`生成的对象中间还嵌套了一层`__proto__`，它的`constructor`是`Student`这个函数。
-```
+```js
 // 也就是说：
 student.constructor === Student;
 Student.prototype.constructor === Student;
@@ -55,7 +55,7 @@ Student.prototype.constructor === Student;
 2. 这个对象会被执行`[[Prototype]]`（也就是`__proto__`）链接。
 
 接下来我们再来看升级版的**例子2**：
-```
+```js
 // 例子2
 function Student(name){
     console.log('赋值前-this', this); // {}
@@ -72,7 +72,7 @@ console.log(student); // {name: '若川'}
 1. 生成的新对象会绑定到函数调用的`this`。
 
 接下来继续看升级版**例子3**：
-```
+```js
 // 例子3
 function Student(name){
     this.name = name;
@@ -100,7 +100,7 @@ Object.getPrototypeOf(student2) === Student.prototype; // true
 
 细心的同学可能会发现这三个例子中的函数都没有返回值。那么有返回值会是怎样的情形呢。
 那么接下来请看**例子4**
-```
+```js
 // 例子4
 function Student(name){
     this.name = name;
@@ -138,7 +138,7 @@ console.log(student); {name: '若川'}
 ## new 模拟实现
 
 知道了这些现象，我们就可以模拟实现`new`操作符。直接贴出代码和注释
-```
+```js
 /**
  * 模拟实现 new 操作符
  * @param  {Function} ctor [构造函数]
@@ -171,7 +171,7 @@ function newOperator(ctor){
 }
 ```
 最后用模拟实现的`newOperator`函数验证下之前的**例子3**：
-```
+```js
 // 例子3 多加一个参数
 function Student(name, age){
     this.name = name;
@@ -208,7 +208,7 @@ Object.getPrototypeOf(student2) === Student.prototype; // true
 `Object.create(proto, [propertiesObject])`
 方法创建一个新对象，使用现有的对象来提供新创建的对象的__proto__。
 它接收两个参数，不过第二个可选参数是属性描述符（不常用，默认是`undefined`）。
-```
+```js
 var anotherObject = {
     name: '若川'
 };
@@ -226,7 +226,7 @@ myObject.name; // '若川'
 myObject.age; // 18;
 ```
 对于不支持`ES5`的浏览器，`MDN`上提供了`ployfill`方案。
-```
+```js
 if (typeof Object.create !== "function") {
     Object.create = function (proto, propertiesObject) {
         if (typeof proto !== 'object' && typeof proto !== 'function') {
@@ -255,7 +255,7 @@ if (typeof Object.create !== "function") {
 >5. 如果函数没有返回对象类型`Object`(包含`Functoin`, `Array`, `Date`, `RegExg`, `Error`)，那么`new`表达式中的函数调用会自动返回这个新的对象。
 
 2. 怎么模拟实现
-```
+```js
 // 去除了注释
 function newOperator(ctor){
     if(typeof ctor !== 'function'){

@@ -11,7 +11,7 @@
 
 ## 自执行匿名函数
 
-```
+```js
 (function(global, factory){
 
 })(typeof window !== "underfined" ? window: this, function(window, noGlobal){
@@ -24,7 +24,7 @@
 [[译] JavaScript：立即执行函数表达式（IIFE）](https://segmentfault.com/a/1190000003985390)
 
 浏览器环境下，最后把`$` 和 `jQuery`函数挂载到`window`上，所以在外界就可以访问到`$`和`jQuery`了。
-```
+```js
 if ( !noGlobal ) {
 	window.jQuery = window.$ = jQuery;
 }
@@ -35,7 +35,7 @@ if ( !noGlobal ) {
 
 ### commonjs 规范支持
 `commonjs`实现 主要代表 `nodejs`
-```
+```js
 // global是全局变量，factory 是函数
 ( function( global, factory ) {
 
@@ -62,7 +62,7 @@ if ( !noGlobal ) {
 ```
 
 ### amd 规范 主要代表 requirejs
-```
+```js
 if ( typeof define === "function" && define.amd ) {
 	define( "jquery", [], function() {
 		return jQuery;
@@ -81,7 +81,7 @@ new显示返回对象，所以和直接调用`jQuery`函数作用效果是一样
 [面试官问：能否模拟实现JS的new操作符](https://juejin.im/post/5bde7c926fb9a049f66b8b52)
 
 源码：
-```
+```js
  var
 	version = "3.4.1",
 
@@ -107,7 +107,7 @@ init = jQuery.fn.init = function( selector, context, root ) {
 init.prototype = jQuery.fn;
 ```
 
-```
+```js
 jQuery.fn === jQuery.prototype; 	// true
 init = jQuery.fn.init;
 init.prototype = jQuery.fn;
@@ -118,7 +118,7 @@ jQuery.fn.init.prototype === jQuery.prototype; 	// true
 
 关于这个笔者画了一张`jQuery`原型关系图，所谓一图胜千言。
 ![jQuery-v3.4.1原型关系图](./jQuery-v3.4.1-prototype.png)
-```
+```js
 <sciprt src="https://unpkg.com/jquery@3.4.1/dist/jquery.js">
 </script>
 console.log({jQuery});
@@ -126,7 +126,7 @@ console.log({jQuery});
 ```
 
 `Vue`源码中，也跟`jQuery`类似，执行的是`Vue.prototype._init`方法。
-```
+```js
 function Vue (options) {
 	if (!(this instanceof Vue)
 	) {
@@ -143,7 +143,7 @@ function initMixin (Vue) {
 ## 核心函数之一 extend
 
 用法：
-```
+```js
 jQuery.extend( target [, object1 ] [, objectN ] )        Returns: Object
 
 jQuery.extend( [deep ], target, object1 [, objectN ] )
@@ -153,7 +153,7 @@ jQuery.extend( [deep ], target, object1 [, objectN ] )
 
 看几个例子：
 （例子可以我放到在线编辑代码的[jQuery.extend例子codepen](https://codepen.io/lxchuan12/pen/QeGdqj)了，可以直接运行）。
-```
+```js
 // 1. jQuery.extend( target)
 var result1 = $.extend({
 	job: '前端开发工程师',
@@ -217,7 +217,7 @@ console.log(result3, 'result3');
 ### 浅拷贝实现
 
 知道这些，其实实现浅拷贝还是比较容易的：
-```
+```js
 // 浅拷贝实现
 jQuery.extend = function(){
 	// options 是扩展的对象object1，object2...
@@ -259,7 +259,7 @@ jQuery.extend = function(){
 ```
 
 深拷贝则主要是在以下这段代码做判断。可能是数组和对象引用类型的值，做判断。
-```
+```js
 if ( copy !== undefined ) {
 	target[ name ] = copy;
 }
@@ -268,7 +268,7 @@ if ( copy !== undefined ) {
 
 ### 深拷贝实现
 
-```
+```js
 $.extend = function(){
 	// options 是扩展的对象object1，object2...
 	var options,
@@ -368,7 +368,7 @@ $.extend = function(){
 ### 深拷贝衍生的函数 isFunction
 
 判断参数是否是函数。
-```
+```js
 var isFunction = function isFunction( obj ) {
 
 	// Support: Chrome <=57, Firefox <=52
@@ -383,11 +383,11 @@ var isFunction = function isFunction( obj ) {
 
 `jQuery.isPlainObject(obj)`
 测试对象是否是纯粹的对象（通过 "{}" 或者 "new Object" 创建的）。
-```
+```js
 jQuery.isPlainObject({}) // true
 jQuery.isPlainObject("test") // false
 ```
-```
+```js
 var getProto = Object.getPrototypeOf;
 var class2type = {};
 var toString = class2type.toString;
@@ -430,7 +430,7 @@ jQuery.extend( {
 `jQuery`能够链式调用是因为一些函数执行结束后 `return this`。
 比如
 `jQuery` 源码中的`addClass`、`removeClass`、`toggleClass`。
-```
+```js
 jQuery.fn.extend({
 	addClass: function(){
 		// ...
@@ -453,7 +453,7 @@ jQuery.fn.extend({
 [jQuery.noConflict API](https://api.jquery.com/jQuery.noConflict/)
 
 用法：
-```
+```js
  <script>
 	var $ = '我是其他的$，jQuery不要覆盖我';
 </script>
@@ -467,7 +467,7 @@ jQuery.fn.extend({
 
 
 jQuery.noConflict 源码
-```
+```js
 var
 
 	// Map over jQuery in case of overwrite
@@ -500,7 +500,7 @@ jQuery.noConflict = function( deep ) {
 
 重新梳理下文中学习的源码结构。
 
-```
+```js
 // 源码结构
 ( function( global, factory )
 	"use strict";

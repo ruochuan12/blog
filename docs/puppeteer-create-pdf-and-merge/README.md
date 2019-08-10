@@ -22,13 +22,14 @@
 
 ### 2.1 安装 puppeteer
 
-```
-// 安装 puppeteer
-// 可能会因为网络原因安装失败，可使用淘宝镜像
-// npm install -g cnpm --registry=https://registry.npm.taobao.org
+```bash
+# 安装 puppeteer
+# 可能会因为网络原因安装失败，可使用淘宝镜像
+# npm install -g cnpm --registry=https://registry.npm.taobao.org
 npm i puppeteer
 # or "yarn add puppeteer"
 ```
+
 ### 2.2 《`React.js`小书》简介
 
 > [《`React.js`小书》](http://huziketang.mangojuice.top/books/react/)简介 <br/>
@@ -42,7 +43,7 @@ npm i puppeteer
 
 ### 2.3 一些可能会用到的 `puppeteer API`
 
-```
+```js
 // 新建 reactMiniBook.js, 运行 node reactMiniBook.js 生成pdf
 const puppeteer = require('puppeteer');
 
@@ -65,7 +66,7 @@ const puppeteer = require('puppeteer');
 })();
 ```
 知道这启动浏览器打开页面关闭浏览器主流程后，再来看几个`API`。
-```
+```js
 const args = 1;
 let wh = await page.evaluate((args) => {
     // args 可以这样传递给这个函数。
@@ -84,7 +85,7 @@ await page.setViewport(wh);
 await page.waitFor(2000);
 ```
 
-```
+```js
 // 以iPhone X执行。
 const devices = require('puppeteer/DeviceDescriptors');
 const iPhone = devices['iPhone X'];
@@ -110,7 +111,7 @@ await page.emulate(iPhone);
 
 具体代码：可以查看这里[爬虫生成《React.js小书》的`pdf`每一小节的代码](https://github.com/lxchuan12/learn-nodejs/blob/master/src/puppeteer/reactMiniBook.js)
 
-```
+```js
 // node 执行这个文件
 // 笔者这里是：
 node src/puppeteer/reactMiniBook.js
@@ -139,7 +140,7 @@ node src/puppeteer/reactMiniBook.js
 `apt-get install pdftk`
 
 **使用例子**
-```
+```js
 const PDFMerge = require('pdf-merge');
 
 const files = [

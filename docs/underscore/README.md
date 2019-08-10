@@ -1,4 +1,4 @@
-# 学习`underscorejs`整体架构，打造属于自己的函数式编程类库
+# 学习`underscore`整体架构，打造属于自己的函数式编程类库
 
 >`写于2019年8月8日`
 
@@ -6,16 +6,16 @@
 
 上一篇文章写了`jQuery整体架构`，[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://juejin.im/post/5d39d2cbf265da1bc23fbd42)
 
-虽然看过挺多`underscorejs`分析类的文章，但总感觉少点什么。这也许就是**纸上得来终觉浅，绝知此事要躬行**吧。于是决定自己写一篇学习`underscorejs`整体架构的文章。
+虽然看过挺多`underscore.js`分析类的文章，但总感觉少点什么。这也许就是**纸上得来终觉浅，绝知此事要躬行**吧。于是决定自己写一篇学习`underscore.js`整体架构的文章。
 
 本文章学习的版本是`v1.9.1`。
 `unpkg.com`源码地址：https://unpkg.com/underscore@1.9.1/underscore.js
 
-虽然很多人都没用过`underscorejs`，但看下官方文档都应该知道如何使用。
+虽然很多人都没用过`underscore.js`，但看下官方文档都应该知道如何使用。
 
 从一个官方文档`_.chain`简单例子看起：
 
-```
+```js
 _.chain([1, 2, 3]).reverse().value();
 // => [3, 2, 1]
 ```
@@ -27,7 +27,7 @@ _.chain([1, 2, 3]).reverse().value();
 
 `_.chain` 函数源码：
 
-```
+```js
 _.chain = function(obj) {
 	var instance = _(obj);
 	instance._chain = true;
@@ -41,7 +41,7 @@ _.chain = function(obj) {
 
 ## `_` 函数对象 支持`OOP`
 
-```
+```js
 var _ = function(obj) {
 	if (obj instanceof _) return obj;
 	if (!(this instanceof _)) return new _(obj);
@@ -63,7 +63,7 @@ var _ = function(obj) {
 
 继续分析官方的`_.chain`例子。这个例子拆开，写成三步。
 
-```
+```js
 var part1 = _.chain([1, 2, 3]);
 var part2 = part1.reverse();
 var part3 = part2.value();
@@ -80,11 +80,11 @@ console.log(part3); // [3, 2, 1]
 
 并将例子代入这段代码可得（怎么有种高中做数学题的既视感^_^）：
 
-```
-_.chain([1,2,3]).reverse().value()
+```js
+_.chain([1,2,3]).reverse().value()s
 ```
 
-```
+```js
 var ArrayProto = Array.prototype;
 // 遍历 数组 Array.prototype 的这些方法，赋值到 _.prototype 上
 _.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], function(name) {
@@ -102,7 +102,7 @@ _.each(['pop', 'push', 'reverse', 'shift', 'sort', 'splice', 'unshift'], functio
 });
 ```
 
-```
+```js
 // Helper function to continue chaining intermediate results.
 var chainResult = function(instance, obj) {
 	// 如果实例中有_chain 为 true 这个属性，则返回实例 支持链式调用的实例对象  { _chain: true, this._wrapped: [3, 2, 1] }，否则直接返回这个对象[3, 2, 1]。
@@ -124,7 +124,7 @@ var chainResult = function(instance, obj) {
 至此就算是分析完了链式调用`_.chain()`和`_` 函数对象。这种把数据存储在实例对象`{_wrapped: '', _chain: true}` 中，`_chain`判断是否支持链式调用，来传递给下一个函数处理。这种做法叫做 **基于流的编程**。
 
 最后数据处理完，要返回这个数据怎么办呢。`underscore`提供了一个`value`的方法。
-```
+```js
 _.prototype.value = function(){
 	return this._wrapped;
 }
@@ -133,7 +133,7 @@ _.prototype.value = function(){
 _.prototype.valueOf = _.prototype.toJSON = _.prototype.value;
 
 还提供了 `toString`的方法。
-```
+```js
 _.prototype.toString = function() {
 	return String(this._wrapped);
 };
@@ -141,13 +141,13 @@ _.prototype.toString = function() {
 这里的`String()` 和`new String()` 效果是一样的。
 可以猜测内部实现和 `_`函数对象类似。
 
-```
+```js
 var String = function(){
 	if(!(this instanceOf String)) return new String(obj);
 }
 ```
 
-```
+```js{2}
 var chainResult = function(instance, obj) {
 	return instance._chain ? _(obj).chain() : obj;
 };
@@ -162,7 +162,7 @@ var chainResult = function(instance, obj) {
 
 `_.mixin` 混入。但侵入性太强，经常容易出现覆盖之类的问题。记得之前`React`有`mixin`功能，`Vue`也有`mixin`功能。但版本迭代更新后基本都是慢慢的都不推荐或者不支持`mixin`。
 
-```
+```js
 _.mixin = function(obj) {
 	// 遍历对象上的所有方法
 	_.each(_.functions(obj), function(name) {
@@ -201,7 +201,7 @@ _.mixin(_);
 
 挂载自定义方法：
 举个例子：
-```
+```js
 _.mixin({
 	log: function(){
 		console.log('哎呀，我被调用了');
@@ -212,7 +212,8 @@ _().log() // 哎呀，我被调用了
 ```
 
 ### _.functions(obj)
-```
+
+```js
 _.functions = _.methods = function(obj) {
 	var names = [];
 	for (var key in obj) {
@@ -223,13 +224,13 @@ _.functions = _.methods = function(obj) {
 ```
 `_.functions` 和 `_.methods` 两个方法，遍历对象上的方法，放入一个数组，并且排序。返回排序后的数组。
 
-### `underscorejs` 究竟在`_`和`_.prototype`挂载了多少方法和属性
+### `underscore.js` 究竟在`_`和`_.prototype`挂载了多少方法和属性
 
-再来看下`underscorejs`究竟挂载在`_函数对象`上有多少静态方法和属性，和挂载`_.prototype`上有多少方法和属性。
+再来看下`underscore.js`究竟挂载在`_函数对象`上有多少静态方法和属性，和挂载`_.prototype`上有多少方法和属性。
 
 使用`for in`循环一试遍知。看如下代码：
 
-```
+```js
 var staticMethods = [];
 var staticProperty = [];
 for(var name in _){
@@ -244,7 +245,7 @@ console.log(staticProperty); // ["VERSION", "templateSettings"] 两个
 console.log(staticMethods); // ["after", "all", "allKeys", "any", "assign", ...] 138个
 ```
 
-```
+```js
 var prototypeMethods = [];
 var prototypeProperty = [];
 for(var name in _.prototype){
@@ -259,15 +260,15 @@ console.log(prototypeProperty); // []
 console.log(prototypeMethods); // ["after", "all", "allKeys", "any", "assign", ...] 152个
 ```
 
-根据这些，笔者又画了一张图`underscorejs` 原型关系图，毕竟一图胜千言。
+根据这些，笔者又画了一张图`underscore.js` 原型关系图，毕竟一图胜千言。
 
-![`underscorejs` 原型关系图](./underscore.js-prototype.png)
+![`underscore.js` 原型关系图](./underscore.js-prototype.png)
 
 ## 整体架构概览
 
 ### 匿名函数自执行
 
-```
+```js
 (function(){
 
 }());
@@ -281,7 +282,7 @@ console.log(prototypeMethods); // ["after", "all", "allKeys", "any", "assign", .
 
 ### root 处理
 
-```
+```js
 var root = typeof self == 'object' && self.self === self && self ||
 	typeof global == 'object' && global.global === global && global ||
 	this ||
@@ -292,7 +293,7 @@ var root = typeof self == 'object' && self.self === self && self ||
 
 ### 导出
 
-```
+```js
 if (typeof exports != 'undefined' && !exports.nodeType) {
 	if (typeof module != 'undefined' && !module.nodeType && module.exports) {
 	exports = module.exports = _;
@@ -304,11 +305,11 @@ if (typeof exports != 'undefined' && !exports.nodeType) {
 ```
 
 关于`root处理`和`导出`的这两段代码的解释，推荐看这篇文章[冴羽：underscore 系列之如何写自己的 underscore](https://juejin.im/post/5a0bae515188252964213855)，讲得真的太好了。笔者在此就不赘述了。
-总之，`underscorejs`作者对这些处理也不是一蹴而就的，也是慢慢积累，和其他人提`ISSUE`之后不断改进的。
+总之，`underscore.js`作者对这些处理也不是一蹴而就的，也是慢慢积累，和其他人提`ISSUE`之后不断改进的。
 
 ### 支持 `amd` 模块化规范
 
-```
+```js
 if (typeof define == 'function' && define.amd) {
 	define('underscore', [], function() {
 		return _;
@@ -319,7 +320,7 @@ if (typeof define == 'function' && define.amd) {
 ### _.noConflict 防冲突函数
 
 源码：
-```
+```js
 // 暂存在 root 上， 执行noConflict时再赋值回来
 var previousUnderscore = root._;
 _.noConflict = function() {
@@ -328,7 +329,7 @@ _.noConflict = function() {
 };
 ```
 使用：
-```
+```js
 <script>
 var _ = '我就是我，不一样的烟火，其他可不要覆盖我呀';
 </script>
@@ -343,11 +344,11 @@ underscore.isArray([]) // true
 
 ## 总结
 
-全文根据官网提供的链式调用的例子， `_.chain([1, 2, 3]).reverse().value();`较为深入的调试和追踪代码，分析链式调用（`_.chain()` 和 `_(obj).chain()`）、`OOP`、基于流式编程、和`_.mixin(_)`在`_.prototype`挂载方法，最后整体架构分析。学习`Underscorejs`整体架构，利于打造属于自己的函数式编程类库。
+全文根据官网提供的链式调用的例子， `_.chain([1, 2, 3]).reverse().value();`较为深入的调试和追踪代码，分析链式调用（`_.chain()` 和 `_(obj).chain()`）、`OOP`、基于流式编程、和`_.mixin(_)`在`_.prototype`挂载方法，最后整体架构分析。学习`underscore.js`整体架构，利于打造属于自己的函数式编程类库。
 
 文章分析的源码整体结构。
 
-```
+```js
 (function() {
 	var root = typeof self == 'object' && self.self === self && self ||
 		typeof global == 'object' && global.global === global && global ||

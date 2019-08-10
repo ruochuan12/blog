@@ -11,7 +11,7 @@
 
 [MDN 文档：Function.prototype.call()](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function/call)<br>
 **语法**<br>
-```
+```js
 fun.call(thisArg, arg1, arg2, ...)
 ```
 **thisArg**<br>
@@ -22,7 +22,7 @@ fun.call(thisArg, arg1, arg2, ...)
 返回值是你调用的方法的返回值，若该方法没有返回值，则返回`undefined`。<br>
 
 [MDN 文档：Function.prototype.apply()](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function/apply)<br>
-```
+```js
 func.apply(thisArg, [argsArray])
 ```
 **thisArg**<br>
@@ -40,7 +40,7 @@ func.apply(thisArg, [argsArray])
 2、都可以只传递一个参数。<br>
 **不同点：**`apply`只接收两个参数，第二个参数可以是数组也可以是类数组，其实也可以是对象，后续的参数忽略不计。`call`接收第二个及以后一系列的参数。<br>
 看两个简单例子1和2**：
-```
+```js
 // 例子1：浏览器环境 非严格模式下
 var doSth = function(a, b){
     console.log(this);
@@ -52,7 +52,7 @@ doSth.apply(true); // this 是 Boolean(true) // [undefined, undefined]
 doSth.call(undefined, 1, 2); // this 是 window // [1, 2]
 doSth.call('0', 1, {a: 1}); // this 是 String('0') // [1, {a: 1}]
 ```
-```
+```js
 // 例子2：浏览器环境 严格模式下
 'use strict';
 var doSth2 = function(a, b){
@@ -86,7 +86,7 @@ doSth2.apply(null, [1, 2]); // this 是 null // [1, 2]
 
 结合上文和规范，如何将函数里的`this`指向第一个参数`thisArg`呢，这是一个问题。
 这时候请出**例子3**：
-```
+```js
 // 浏览器环境 非严格模式下
 var doSth = function(a, b){
     console.log(this);
@@ -103,7 +103,7 @@ doSth.apply(student, [1, 2]); // this === student // true // '若川' // [1, 2]
 可以**得出结论1**：在对象`student`上加一个函数`doSth`，再执行这个函数，这个函数里的`this`就指向了这个对象。那也就是可以在`thisArg`上新增调用函数，执行后删除这个函数即可。
 知道这些后，我们试着容易实现第一版本：
 
-```
+```js
 // 浏览器环境 非严格模式
 function getGlobalObject(){
     return this;
@@ -149,7 +149,7 @@ Function.prototype.applyFn = function apply(thisArg, argsArray){ // `apply` 方�
 **针对问题1**
 解决方案一：采用`ES6` `Sybmol()` 独一无二的。可以本来就是模拟`ES3`的方法。如果面试官不允许用呢。
 解决方案二：自己用`Math.random()`模拟实现独一无二的`key`。面试时可以直接用生成时间戳即可。
-```
+```js
 // 生成UUID 通用唯一识别码
 // 大概生成 这样一串 '18efca2d-6e25-42bf-a636-30b8f9f2de09'
 function generateUUID(){
@@ -169,7 +169,7 @@ function generateUUID(){
 // '__' + new Date().getTime();
 ```
 如果这个`key`万一这对象中还是有，为了保险起见，可以做一次缓存操作。比如如下代码：
-```
+```js
 var student = {
     name: '若川',
     doSth: 'doSth',
@@ -189,7 +189,7 @@ console.log('student:', student); // { name: '若川', doSth: 'doSth' }
 >`eval`把字符串解析成代码执行。<br>
 [MDN 文档：eval](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/eval)<br>
 **语法**
-```
+```js
 eval(string)
 ```
 **参数**<br>
@@ -200,7 +200,7 @@ eval(string)
 解决方案二：但万一面试官不允许用`eval`呢，毕竟`eval`是魔鬼。可以采用`new Function()`来生成执行函数。
 [MDN 文档：Function](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Function)<br>
 **语法**<br>
-```
+```js
 new Function ([arg1[, arg2[, ...argN]],] functionBody)
 ```
 **参数**<br>
@@ -209,12 +209,12 @@ new Function ([arg1[, arg2[, ...argN]],] functionBody)
 **functionBody**<br>
 一个含有包括函数定义的`JavaScript`语句的字符串。<br>
 接下来看两个例子：
-```
+```js
 简单例子：
 var sum = new Function('a', 'b', 'return a + b');
 console.log(sum(2, 6));
 ```
-```
+```js
 // 稍微复杂点的例子：
 var student = {
     name: '若川',
@@ -245,7 +245,7 @@ function generateFunctionCode(argsArrayLength){
 ## 你可能不知道在`ES3、ES5`中 `undefined` 是能修改的
 
 可能大部分人不知道。`ES5`中虽然在全局作用域下不能修改，但在局部作用域中也是能修改的，不信可以复制以下测试代码在控制台执行下。虽然一般情况下是不会的去修改它。
-```
+```js
 function test(){
     var undefined = 3;
     console.log(undefined); // chrome下也是 3
@@ -259,7 +259,7 @@ test();
 
 ## 使用 `new Function()` 模拟实现的`apply`
 
-```
+```js
 // 浏览器环境 非严格模式
 function getGlobalObject(){
     return this;
@@ -318,7 +318,7 @@ Function.prototype.applyFn = function apply(thisArg, argsArray){ // `apply` 方�
 
 ## 利用模拟实现的`apply`模拟实现`call`
 
-```
+```js
 Function.prototype.callFn = function call(thisArg){
     var argsArray = [];
     var argumentsLength = arguments.length;
@@ -355,7 +355,7 @@ console.log('result:', result);
 console.log('result2:', result2);
 ```
 细心的你会发现注释了这一句`argsArray.push(arguments[i + 1]);`，事实上`push`方法，内部也有一层循环。所以理论上不使用`push`性能会更好些。面试官也可能根据这点来问时间复杂度和空间复杂度的问题。
-```
+```js
 // 看看V8引擎中的具体实现：
 function ArrayPush() {
     var n = TO_UINT32( this.length );    // 被push的对象的length
@@ -375,7 +375,7 @@ function ArrayPush() {
 就是使用在对象上添加调用`apply`的函数执行，这时的调用函数的`this`就指向了这个`thisArg`，再返回结果。引出了`ES6 Symbol`，`ES6`的扩展符`...`、`eval`、`new Function()`，严格模式等。<br>
 事实上，现实业务场景不需要去模拟实现`call`和`apply`,毕竟是`ES3`就提供的方法。但面试官可以通过这个面试题考察候选人很多基础知识。如：`call`、`apply`的使用。`ES6 Symbol`，`ES6`的扩展符`...`，`eval`，`new Function()`，严格模式，甚至时间复杂度和空间复杂度等。<br>
 读者发现有不妥或可改善之处，欢迎指出。另外觉得写得不错，可以点个赞，也是对笔者的一种支持。
-```
+```js
 // 最终版版 删除注释版，详细注释看文章
 // 浏览器环境 非严格模式
 function getGlobalObject(){
