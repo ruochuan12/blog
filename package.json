@@ -22,5 +22,10 @@
   "bugs": {
     "url": "https://github.com/lxchuan12/lxchuan12.github.io/issues"
   },
-  "homepage": "https://github.com/lxchuan12/lxchuan12.github.io#readme"
+  "homepage": "https://github.com/lxchuan12/lxchuan12.github.io#readme",
+  "devDependencies": {
+    "@vuepress/plugin-back-to-top": "^1.0.0-rc.1",
+    "@vuepress/plugin-google-analytics": "^1.0.0-rc.1",
+    "@vuepress/plugin-medium-zoom": "^1.0.0-rc.1"
+  }
 }
