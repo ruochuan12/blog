@@ -3,7 +3,7 @@ home: true
 lang: zh-CN
 heroText: 若川的博客
 heroImage: /logo.jpg
-actionText: 去看看最新文章 →
+actionText: 最新文章 →
 actionLink: /underscore/
 features:
 - title: 若川的博客

@@ -4,13 +4,21 @@ module.exports = {
 	keywords: '若川，罗小川chuan，罗小川，luoxiaochuan，lxchuan12。前端路上，PPT爱好者，所知甚少，唯善学。',
     description: '若川的前端视野',
     head: [
-        // ['link', { rel: 'icon', href: '/img/logo.ico' }],
+        ['link', { rel: 'icon', href: '/favicon.ico' }],
         ['link', { rel: 'mainfest', href: '/mainfest.json' }],
     ],
     port: 4000,
     markdown: {
-      lineNumbers: false
-    },
+      lineNumbers: false,
+	},
+	plugins: [
+		'@vuepress/back-to-top',
+		'@vuepress/google-analytics',
+		{
+			'ga': 'UA-145436866-1' // UA-00000000-0
+		},
+		'@vuepress/medium-zoom',
+	],
     serviceWorker: true, // 是否开启 PWA
     themeConfig: {
         nav: [
