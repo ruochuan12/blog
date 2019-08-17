@@ -26,7 +26,7 @@ module.exports = {
             { text: '博文',
               items: [
 				{
-					text: '学习underscorejs整体架构，打造属于自己的函数式编程类库',
+					text: '学习 underscore 源码整体架构，打造属于自己的函数式编程类库',
 					link: '/underscore/',
 				},
                 {
