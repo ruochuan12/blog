@@ -67,6 +67,13 @@
 		return result;
 	  }
 
+	  function noConflict() {
+		if (root._ === this) {
+		  root._ = oldDash;
+		}
+		return this;
+	  }
+
 	  function mixin(object, source, options) {
 		var props = keys(source),
 			methodNames = baseFunctions(source, props);
