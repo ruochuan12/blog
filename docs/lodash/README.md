@@ -1,6 +1,16 @@
 # 学习 lodash  整体架构
 
+本文章学习的`lodash`的版本是：`v4.17.15`。
 https://unpkg.com/lodash@4.17.15/lodash.js
+
+## 匿名函数执行
+
+;(function() {
+
+}.call(this);
+
+## runInContext
+
 
 ## 推荐阅读
 
