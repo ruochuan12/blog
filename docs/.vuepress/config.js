@@ -187,6 +187,7 @@ module.exports = {
 				'/20190612-after-3-year-work/',
 				'/20170602-After-a-year-s-work-I-had-some-insights/',
 				'/20160907-How-do-I-set-foot-on-the-front-end-of-the-road/',
+				'/lodash/',
 				]
 			},
 			{

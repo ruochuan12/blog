@@ -1766,6 +1766,8 @@
 		}
 	  };
 
+	  console.log('baseLodash', baseLodash, baseLodash.prototype);
+
 	  // Ensure wrappers are instances of `baseLodash`.
 	  lodash.prototype = baseLodash.prototype;
 	  lodash.prototype.constructor = lodash;
@@ -15690,11 +15692,15 @@
 	   * // => ['e']
 	   */
 	  function mixin(object, source, options) {
-		var props = keys(source),
-			methodNames = baseFunctions(source, props);
+		  var props = keys(source),
+		  methodNames = baseFunctions(source, props);
+		  	console.log('props', props);
+			console.log('methodNames', methodNames);
 
 		if (options == null &&
 			!(isObject(source) && (methodNames.length || !props.length))) {
+			console.log('props---', props);
+			console.log('methodNames----', methodNames);
 		  options = source;
 		  source = object;
 		  object = this;
@@ -15707,11 +15713,14 @@
 		  var func = source[methodName];
 		  object[methodName] = func;
 		  if (isFunc) {
+			  console.log(isFunc, 'isFunc', object, 'object');
 			object.prototype[methodName] = function() {
 			  var chainAll = this.__chain__;
 			  if (chain || chainAll) {
-				var result = object(this.__wrapped__),
+				  var result = object(this.__wrapped__),
 					actions = result.__actions__ = copyArray(this.__actions__);
+
+					console.log(result, chain, chainAll, 'result, chain, chainAll');
 
 				actions.push({ 'func': func, 'args': arguments, 'thisArg': object });
 				result.__chain__ = chainAll;
@@ -17076,6 +17085,7 @@
 	  if (symIterator) {
 		lodash.prototype[symIterator] = wrapperToIterator;
 	  }
+	  console.log(LazyWrapper.prototype, 'LazyWrapper.prototype');
 	  return lodash;
 	});
 
