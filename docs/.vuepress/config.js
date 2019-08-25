@@ -190,6 +190,17 @@ module.exports = {
 				]
 			},
 			{
+				title: '年度总结',   // 必要的
+				// path: '/about/',      // 可选的, 应该是一个绝对路径
+				collapsable: true, // 可选的, 默认值是 true,
+				sidebarDepth: 2,    // 可选的, 默认值是 1
+				children: [
+				'/annual-summary/2018/',
+				'/annual-summary/2017/',
+				'/annual-summary/2016/',
+				]
+			},
+			{
 				title: '关于',   // 必要的
 				// path: '/about/',      // 可选的, 应该是一个绝对路径
 				collapsable: true, // 可选的, 默认值是 true,
