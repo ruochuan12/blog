@@ -9,8 +9,23 @@
 <body>
 <script src="./lodash-v4.17.15.js"></script>
 <script>
-console.log(_, 'lodash');
-console.log('lodash', {'lodash': _});
+// console.log(_, 'lodash');
+// console.log('lodash', {'lodash': _});
+var users = [
+  { 'user': 'barney',  'age': 36 },
+  { 'user': 'fred',    'age': 40 },
+  { 'user': 'pebbles', 'age': 1 }
+];
+
+debugger;
+var youngest = _
+  .chain(users)
+  .sortBy('age')
+  .map(function(o) {
+    return o.user + ' is ' + o.age;
+  })
+  .head()
+  .value();
 </script>
 </body>
 </html>
