@@ -12,7 +12,7 @@
 
 `underscore`分析的源码很多。但很少`lodash`分析。原因之一可能是由于`lodash`源码行数太多。注释加起来一万多行。
 
-分析`lodash`整体代码结构的文章少之又少，笔者利用谷歌、必应、`github`搜索都没有找到，可能是找的方式不对。于是打算自己写一篇。`lodash`比`underscore`性能好的主要原因是使用了惰性求值这一特性。
+分析`lodash`整体代码结构的文章比较少，笔者利用谷歌、必应、`github`搜索都没有找到，可能是找的方式不对。于是打算自己写一篇。`lodash`比`underscore`性能好的主要原因是使用了惰性求值这一特性。
 
 本文章学习的`lodash`的版本是：`v4.17.15`。`unpkg.com`地址 https://unpkg.com/lodash@4.17.15/lodash.js
 
@@ -23,7 +23,7 @@
 ```js
 ;(function() {
 
-}.call(this);
+}.call(this));
 ```
 
 暴露 lodash
@@ -299,6 +299,27 @@ function copyArray(source, array) {
 
 ### mixin 源码
 
+源码内部使用：
+
+```js
+// Add methods to `lodash.prototype`.
+// 把lodash上的静态方法赋值到 lodash.prototype 上
+mixin(lodash, lodash);
+
+代入到源码解析如下
+mixin(lodash, (function() {
+	var source = {};
+	baseForOwn(lodash, function(func, methodName) {
+		if (!hasOwnProperty.call(lodash.prototype, methodName)) {
+			source[methodName] = func;
+		}
+	});
+	return source;
+	}()), { 'chain': false });
+```
+
+
+
 ```js
 function mixin(object, source, options) {
 	// source 对象中可以枚举的属性
@@ -369,24 +390,6 @@ function mixin(object, source, options) {
 }
 ```
 
-源码内部使用：
-
-```js
-// Add methods to `lodash.prototype`.
-// 把lodash上的静态方法赋值到 lodash.prototype 上
-mixin(lodash, lodash);
-
-mixin(lodash, (function() {
-	var source = {};
-	baseForOwn(lodash, function(func, methodName) {
-		if (!hasOwnProperty.call(lodash.prototype, methodName)) {
-			source[methodName] = func;
-		}
-	});
-	return source;
-	}()), { 'chain': false });
-```
-
 ## lodash 究竟在_和_.prototype挂载了多少方法和属性
 
 再来看下`lodash`究竟挂载在`_`函数对象上有多少静态方法和属性，和挂载`_.prototype`上有多少方法和属性。
@@ -436,7 +439,7 @@ TODO:
 
 ## 推荐阅读
 
-[本文章学习的`lodash`的版本`v4.17.15`](https://unpkg.com/lodash@4.17.15/lodash.js)
+[本文章学习的`lodash`的版本`v4.17.15` `unpkg.com`链接](https://unpkg.com/lodash@4.17.15/lodash.js)
 
 [lodash github仓库](https://github.com/lodash/lodash)
 
