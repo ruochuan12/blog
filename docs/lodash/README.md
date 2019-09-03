@@ -1,4 +1,4 @@
-# 学习 lodash  源码整体架构
+# 学习 lodash  源码整体架构，打造属于自己的函数式编程类库
 
 ## 前言
 
@@ -83,7 +83,7 @@ LodashWrapper.prototype.constructor = LodashWrapper;
 
 接着往上找`baseCreate、baseLodash`这两个函数。
 
-### baseCreate 继承
+### baseCreate 原型继承
 
 ```js
 //  立即执行匿名函数
@@ -93,21 +93,22 @@ var baseCreate = (function() {
 	// underscore 源码中，把这句放在开头就申明了一个空函数 `Ctor`
 	function object() {}
 	return function(proto) {
-			//  如果传入的参数不是object也不是function 是null
-			// 则返回空对象。
-			if (!isObject(proto)) {
-				return {};
-			}
-			// 如果支持Object.create方法，则返回 Object.create
-			if (objectCreate) {
-				// Object.create
-				return objectCreate(proto);
-			}
-			// 如果不支持Object.create 用 ployfill new
-			object.prototype = proto;
-			var result = new object;
-			object.prototype = undefined;
-			return result;
+		// 如果传入的参数不是object也不是function 是null
+		// 则返回空对象。
+		if (!isObject(proto)) {
+			return {};
+		}
+		// 如果支持Object.create方法，则返回 Object.create
+		if (objectCreate) {
+			// Object.create
+			return objectCreate(proto);
+		}
+		// 如果不支持Object.create 用 ployfill new
+		object.prototype = proto;
+		var result = new object;
+		// 还原 prototype
+		object.prototype = undefined;
+		return result;
 	};
 }());
 
@@ -124,6 +125,7 @@ lodash.prototype.constructor = lodash;
 LodashWrapper.prototype = baseCreate(baseLodash.prototype);
 LodashWrapper.prototype.constructor = LodashWrapper;
 ```
+
 笔者画了一张图，表示这个关系。
 ![lodash 原型关系图](./lodash-v4.17.15-prototype.png)
 
@@ -189,7 +191,7 @@ if (typeof Object.create !== "function") {
 
 ## mixin
 
-具体用法：
+### mixin 具体用法
 
 ```js
 _.mixin([object=lodash], source, [options={}])
@@ -217,8 +219,55 @@ _.mixin([object=lodash], source, [options={}])
 
 >(*): 返回 object.
 
+### mixin 源码
+
+```js
+function mixin(object, source, options) {
+	var props = keys(source),
+		methodNames = baseFunctions(source, props);
+
+	if (options == null &&
+		!(isObject(source) && (methodNames.length || !props.length))) {
+		options = source;
+		source = object;
+		object = this;
+		methodNames = baseFunctions(source, keys(source));
+	}
+	var chain = !(isObject(options) && 'chain' in options) || !!options.chain,
+		isFunc = isFunction(object);
+
+	arrayEach(methodNames, function(methodName) {
+		var func = source[methodName];
+		object[methodName] = func;
+		if (isFunc) {
+			object.prototype[methodName] = function() {
+				var chainAll = this.__chain__;
+				if (chain || chainAll) {
+					var result = object(this.__wrapped__),
+						actions = result.__actions__ = copyArray(this.__actions__);
+
+					actions.push({ 'func': func, 'args': arguments, 'thisArg': object });
+					result.__chain__ = chainAll;
+					return result;
+				}
+				return func.apply(object, arrayPush([this.value()], arguments));
+			};
+		}
+	});
+
+	return object;
+}
+```
+
+接下来先看衍生的函数。
+
+其实看到具体定义的函数代码就大概知道这个函数的功能。为了不影响主线，导致文章篇幅过长。具体源码在这里就不展开。
+
+感兴趣的读者可以自行看这些函数生的其他函数的源码。
+
 ### mixin 衍生的函数 keys
 
+在 `mixin` 函数中 其实最终调用的就是 `Object.keys`
 ```js
 function keys(object) {
 	return isArrayLike(object) ? arrayLikeKeys(object) : baseKeys(object);
@@ -227,6 +276,7 @@ function keys(object) {
 
 ### mixin 衍生的函数 baseFunctions
 
+返回函数数组集合
 ```js
 function baseFunctions(object, props) {
 	return arrayFilter(props, function(key) {
@@ -237,6 +287,7 @@ function baseFunctions(object, props) {
 
 ### mixin 衍生的函数 isFunction
 
+判断参数是否是函数
 ```js
 function isFunction(value) {
 	if (!isObject(value)) {
@@ -251,15 +302,16 @@ function isFunction(value) {
 
 ### mixin 衍生的函数 arrayEach
 
+类似 [].forEarch
 ```js
 function arrayEach(array, iteratee) {
 	var index = -1,
 		length = array == null ? 0 : array.length;
 
 	while (++index < length) {
-	if (iteratee(array[index], index, array) === false) {
-		break;
-	}
+		if (iteratee(array[index], index, array) === false) {
+			break;
+		}
 	}
 	return array;
 }
@@ -267,6 +319,7 @@ function arrayEach(array, iteratee) {
 
 ### mixin 衍生的函数 arrayPush
 
+类似 [].push
 ```js
 function arrayPush(array, values) {
 	var index = -1,
@@ -282,6 +335,8 @@ function arrayPush(array, values) {
 
 ### mixin 衍生的函数 copyArray
 
+拷贝数组
+
 ```js
 function copyArray(source, array) {
 	var index = -1,
@@ -295,30 +350,41 @@ function copyArray(source, array) {
 }
 ```
 
-其实看到具体定义的函数代码就大概知道这个函数的功能。为了不影响主线。具体源码在这里就不展开。感兴趣的读者可以自行看这些函数生的其他函数的源码。
+### mixin 源码解析
 
-### mixin 源码
-
-源码内部使用：
+`lodash` 源码中两次调用 `mixin`
 
 ```js
+// Add methods that return wrapped values in chain sequences.
+lodash.after = after;
+// code ... 等 153 个支持链式调用的方法
+
 // Add methods to `lodash.prototype`.
 // 把lodash上的静态方法赋值到 lodash.prototype 上
 mixin(lodash, lodash);
 
-代入到源码解析如下
+// Add methods that return unwrapped values in chain sequences.
+lodash.add = add;
+// code ... 等 152 个不支持链式调用的方法
+
+
+// 这里其实就是过滤 after 等支持链式调用的方法，获取到 lodash 上的 add 等 添加到lodash.prototype 上。
 mixin(lodash, (function() {
 	var source = {};
 	baseForOwn(lodash, function(func, methodName) {
+		// 第一次 mixin 调用了所以赋值到了lodash.prototype
+		// 所以这里用 Object.hasOwnProperty 排除不在lodash.prototype 上的方法。也就是 add 等 152 个不支持链式调用的方法。
 		if (!hasOwnProperty.call(lodash.prototype, methodName)) {
 			source[methodName] = func;
 		}
 	});
 	return source;
-	}()), { 'chain': false });
+// 最后一个参数options 特意注明不支持链式调用
+}()), { 'chain': false });
 ```
 
 
+结合两次调用`mixin` 代入到源码解析如下
 
 ```js
 function mixin(object, source, options) {
@@ -329,10 +395,10 @@ function mixin(object, source, options) {
 
 	if (options == null &&
 		!(isObject(source) && (methodNames.length || !props.length))) {
-			// 如果 options 没传为 undefined  undefined == null 为true
-			// 且 如果source 不为 对象或者不是函数
-			// 且 source对象的函数函数长度 或者 source 对象的属性长度不为0
-			// 把 options 赋值为 source
+		// 如果 options 没传为 undefined  undefined == null 为true
+		// 且 如果source 不为 对象或者不是函数
+		// 且 source对象的函数函数长度 或者 source 对象的属性长度不为0
+		// 把 options 赋值为 source
 		options = source;
 		// 把 source 赋值为 object
 		source = object;
@@ -343,13 +409,14 @@ function mixin(object, source, options) {
 	}
 	// 是否支持 链式调用
 	// options  不是对象或者不是函数，是null或者其他值
+	// 判断options是否是对象或者函数，如果不是或者函数则不会执行 'chain' in options 也就不会报错
 	//  且 chain 在 options的对象或者原型链中
 	// 知识点 in [MDN in :  https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/in
 	// 如果指定的属性在指定的对象或其原型链中，则in 运算符返回true。
 
 	// 或者 options.chain 转布尔值
 	var chain = !(isObject(options) && 'chain' in options) || !!options.chain,
-	// object 是函数
+		// object 是函数
 		isFunc = isFunction(object);
 
 	// 循环 方法名称数组
@@ -362,6 +429,17 @@ function mixin(object, source, options) {
 			// 如果object是函数 赋值到  object prototype  上，通常是lodash
 			object.prototype[methodName] = function() {
 				// 实例上的__chain__ 属性 是否支持链式调用
+				// 这里的 this 是 new LodashWrapper 实例 类似如下
+				/**
+				 {
+					__actions__: [],
+					__chain__: true
+					__index__: 0
+					__values__: undefined
+					__wrapped__: []
+				 }
+				 **/
+
 				var chainAll = this.__chain__;
 				// options 中的 chain 属性 是否支持链式调用
 				// 两者有一个符合链式调用  执行下面的代码
@@ -371,10 +449,11 @@ function mixin(object, source, options) {
 					// 复制 实例上的 __action__ 到 result.__action__ 和 action 上
 					actions = result.__actions__ = copyArray(this.__actions__);
 
-					// action 添加 函数 和 args 和 this 指向
+					// action 添加 函数 和 args 和 this 指向，延迟计算调用。
 					actions.push({ 'func': func, 'args': arguments, 'thisArg': object });
 					//实例上的__chain__ 属性  赋值给 result 的 属性 __chain__
 					result.__chain__ = chainAll;
+					// 最后返回这个实例
 					return result;
 				}
 
@@ -408,6 +487,7 @@ for(var name in _){
 }
 console.log(staticProperty); // ["templateSettings", "VERSION"] 2个
 console.log(staticMethods); // ["after", "ary", "assign", "assignIn", "assignInWith", ...] 305个
+// 其实就是上文提及的 lodash.after 等153个支持链式调用的函数 、lodash.add 等 152 不支持链式调用的函数 赋值而来。
 ```
 
 ```js
@@ -423,15 +503,37 @@ for(var name in _.prototype){
 }
 console.log(prototypeProperty); // []
 console.log(prototypeMethods); // ["after", "all", "allKeys", "any", "assign", ...] 317个
+// 相比lodash上的静态方法多了12个，说明除了mixin外，还有12个其他形式赋值而来。
+
 ```
 
+支持链式调用的方法最后返回是实例对象，获取最后的处理的结果值，最后需要调用value方法。
+
+## lodash.prototype.value
+
+```js
+function baseWrapperValue(value, actions) {
+	var result = value;
+	if (result instanceof LazyWrapper) {
+		result = result.value();
+	}
+	return arrayReduce(actions, function(result, action) {
+		return action.func.apply(action.thisArg, arrayPush([result], action.args));
+	}, result);
+}
+function wrapperValue() {
+	return baseWrapperValue(this.__wrapped__, this.__actions__);
+}
+lodash.prototype.toJSON = lodash.prototype.valueOf = lodash.prototype.value = wrapperValue;
+```
 
 TODO:
 
-- [ ] mixin 使用解释、外部使用示例
+- [x] mixin 使用解释、外部使用示例
 - [ ] 补图原型关系图
 - [ ] 挂载方法和属性图
 - [ ] lazyWrapper 解释 惰性求值
+- [ ] lodash.prototype.value 求值解析
 
 ## 总结
 
