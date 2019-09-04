@@ -221,6 +221,9 @@ _.mixin([object=lodash], source, [options={}])
 
 ### mixin 源码
 
+<details>
+<summary>点击这里展开源码，后文注释解析</summary>
+
 ```js
 function mixin(object, source, options) {
 	var props = keys(source),
@@ -258,7 +261,7 @@ function mixin(object, source, options) {
 	return object;
 }
 ```
-
+</details>
 接下来先看衍生的函数。
 
 其实看到具体定义的函数代码就大概知道这个函数的功能。为了不影响主线，导致文章篇幅过长。具体源码在这里就不展开。
@@ -507,16 +510,18 @@ console.log(prototypeMethods); // ["after", "all", "allKeys", "any", "assign", .
 
 ```
 
-支持链式调用的方法最后返回是实例对象，获取最后的处理的结果值，最后需要调用value方法。
+支持链式调用的方法最后返回是实例对象，获取最后的处理的结果值，最后需要调用`value`方法。
 
-## lodash.prototype.value
+## lodash.prototype.value 即 wrapperValue
 
 ```js
 function baseWrapperValue(value, actions) {
 	var result = value;
+	// 如果是lazyWrapper的实例，则调用LazyWrapper.prototype.value 方法，也就是 lazyValue 方法
 	if (result instanceof LazyWrapper) {
 		result = result.value();
 	}
+	// 类似 [].reduce()
 	return arrayReduce(actions, function(result, action) {
 		return action.func.apply(action.thisArg, arrayPush([result], action.args));
 	}, result);
@@ -525,6 +530,81 @@ function wrapperValue() {
 	return baseWrapperValue(this.__wrapped__, this.__actions__);
 }
 lodash.prototype.toJSON = lodash.prototype.valueOf = lodash.prototype.value = wrapperValue;
+```
+
+## LazyWrapper.prototype.value 即 lazyValue
+
+```js
+function LazyWrapper(value) {
+	this.__wrapped__ = value;
+	this.__actions__ = [];
+	this.__dir__ = 1;
+	this.__filtered__ = false;
+	this.__iteratees__ = [];
+	this.__takeCount__ = MAX_ARRAY_LENGTH;
+	this.__views__ = [];
+}
+/**
+* Extracts the unwrapped value from its lazy wrapper.
+*
+* @private
+* @name value
+* @memberOf LazyWrapper
+* @returns {*} Returns the unwrapped value.
+*/
+function lazyValue() {
+	var array = this.__wrapped__.value(),
+		dir = this.__dir__,
+		isArr = isArray(array),
+		isRight = dir < 0,
+		arrLength = isArr ? array.length : 0,
+		view = getView(0, arrLength, this.__views__),
+		start = view.start,
+		end = view.end,
+		length = end - start,
+		index = isRight ? end : (start - 1),
+		iteratees = this.__iteratees__,
+		iterLength = iteratees.length,
+		resIndex = 0,
+		takeCount = nativeMin(length, this.__takeCount__);
+
+	if (!isArr || (!isRight && arrLength == length && takeCount == length)) {
+		return baseWrapperValue(array, this.__actions__);
+	}
+	var result = [];
+
+	outer:
+	while (length-- && resIndex < takeCount) {
+		index += dir;
+
+		var iterIndex = -1,
+			value = array[index];
+
+		while (++iterIndex < iterLength) {
+		var data = iteratees[iterIndex],
+			iteratee = data.iteratee,
+			type = data.type,
+			computed = iteratee(value);
+
+		if (type == LAZY_MAP_FLAG) {
+			value = computed;
+		} else if (!computed) {
+			if (type == LAZY_FILTER_FLAG) {
+				continue outer;
+			} else {
+				break outer;
+			}
+		}
+		}
+		result[resIndex++] = value;
+	}
+	return result;
+}
+// Ensure `LazyWrapper` is an instance of `baseLodash`.
+LazyWrapper.prototype = baseCreate(baseLodash.prototype);
+LazyWrapper.prototype.constructor = LazyWrapper;
+
+LazyWrapper.prototype.value = lazyValue;
 ```
 
 TODO:
