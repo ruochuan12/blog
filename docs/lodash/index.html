@@ -11,21 +11,30 @@
 <script>
 // console.log(_, 'lodash');
 // console.log('lodash', {'lodash': _});
-var users = [
-  { 'user': 'barney',  'age': 36 },
-  { 'user': 'fred',    'age': 40 },
-  { 'user': 'pebbles', 'age': 1 }
-];
+// var users = [
+//   { 'user': 'barney',  'age': 36 },
+//   { 'user': 'fred',    'age': 40 },
+//   { 'user': 'pebbles', 'age': 1 }
+// ];
+
+// debugger;
+// var youngest = _
+//   .chain(users)
+//   .sortBy('age')
+//   .map(function(o) {
+//     return o.user + ' is ' + o.age;
+//   })
+//   .head()
+//   .value();
 
 debugger;
-var youngest = _
-  .chain(users)
-  .sortBy('age')
-  .map(function(o) {
-    return o.user + ' is ' + o.age;
-  })
-  .head()
-  .value();
+var result = _.chain([1, 2, 3, 4, 5])
+.map(el => el + 1)
+.take(3)
+.value();
+
+console.log('result:', result);
+
 </script>
 </body>
 </html>

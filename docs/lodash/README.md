@@ -2,7 +2,7 @@
 
 ## 前言
 
-这是`学习源码整体架构系列`第三篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是如何组织代码的，不太关心具体函数的实现。文章学习的是打包整合后的代码，不是实际仓库中的拆分的代码。
+这是`学习源码整体架构系列`第三篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究具体函数的实现。文章学习的是打包整合后的代码，不是实际仓库中的拆分的代码。
 
 上上篇文章写了`jQuery源码整体架构`，[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://juejin.im/post/5d39d2cbf265da1bc23fbd42)
 
@@ -12,7 +12,7 @@
 
 `underscore`分析的源码很多。但很少`lodash`分析。原因之一可能是由于`lodash`源码行数太多。注释加起来一万多行。
 
-分析`lodash`整体代码结构的文章比较少，笔者利用谷歌、必应、`github`搜索都没有找到，可能是找的方式不对。于是打算自己写一篇。`lodash`比`underscore`性能好的主要原因是使用了惰性求值这一特性。
+分析`lodash`整体代码结构的文章比较少，笔者利用谷歌、必应、`github`搜索都没有找到，可能是找的方式不对。于是打算自己写一篇。平常开发大多数人都会使用`lodash`,而且都或多或少知道，`lodash`比`underscore`性能好，性能好的主要原因是使用了惰性求值这一特性。
 
 本文章学习的`lodash`的版本是：`v4.17.15`。`unpkg.com`地址 https://unpkg.com/lodash@4.17.15/lodash.js
 
@@ -266,7 +266,7 @@ function mixin(object, source, options) {
 
 其实看到具体定义的函数代码就大概知道这个函数的功能。为了不影响主线，导致文章篇幅过长。具体源码在这里就不展开。
 
-感兴趣的读者可以自行看这些函数生的其他函数的源码。
+感兴趣的读者可以自行看这些函数衍生的其他函数的源码。
 
 ### mixin 衍生的函数 keys
 
@@ -385,7 +385,6 @@ mixin(lodash, (function() {
 // 最后一个参数options 特意注明不支持链式调用
 }()), { 'chain': false });
 ```
-
 
 结合两次调用`mixin` 代入到源码解析如下
 
@@ -512,6 +511,23 @@ console.log(prototypeMethods); // ["after", "all", "allKeys", "any", "assign", .
 
 支持链式调用的方法最后返回是实例对象，获取最后的处理的结果值，最后需要调用`value`方法。
 
+## 举个简单的例子
+
+```js
+var result = _.chain([1, 2, 3, 4, 5])
+.map(el => el + 1)
+.take(3)
+.value();
+
+// 具体功能也很简单 获取1-5 加一，最后获取其中三个值。
+console.log('result:', result);
+```
+// 如果是 平常实现该功能也简单
+```js
+var result = [1, 2, 3, 4, 5].map(el => el + 1).slice(0, 3);
+console.log('result:', result);
+```
+
 ## lodash.prototype.value 即 wrapperValue
 
 ```js
@@ -607,6 +623,59 @@ LazyWrapper.prototype.constructor = LazyWrapper;
 LazyWrapper.prototype.value = lazyValue;
 ```
 
+## Add `LazyWrapper` methods to `lodash.prototype`
+
+<details>
+<summary>点击这里展开源码</summary>
+
+```js
+// Add `LazyWrapper` methods to `lodash.prototype`.
+baseForOwn(LazyWrapper.prototype, function(func, methodName) {
+	var checkIteratee = /^(?:filter|find|map|reject)|While$/.test(methodName),
+		isTaker = /^(?:head|last)$/.test(methodName),
+		lodashFunc = lodash[isTaker ? ('take' + (methodName == 'last' ? 'Right' : '')) : methodName],
+		retUnwrapped = isTaker || /^find/.test(methodName);
+
+	if (!lodashFunc) {
+		return;
+	}
+	lodash.prototype[methodName] = function() {
+		var value = this.__wrapped__,
+			args = isTaker ? [1] : arguments,
+			isLazy = value instanceof LazyWrapper,
+			iteratee = args[0],
+			useLazy = isLazy || isArray(value);
+
+		var interceptor = function(value) {
+			var result = lodashFunc.apply(lodash, arrayPush([value], args));
+			return (isTaker && chainAll) ? result[0] : result;
+		};
+
+		if (useLazy && checkIteratee && typeof iteratee == 'function' && iteratee.length != 1) {
+			// Avoid lazy use if the iteratee has a "length" value other than `1`.
+			isLazy = useLazy = false;
+		}
+		var chainAll = this.__chain__,
+			isHybrid = !!this.__actions__.length,
+			isUnwrapped = retUnwrapped && !chainAll,
+			onlyLazy = isLazy && !isHybrid;
+
+		if (!retUnwrapped && useLazy) {
+			value = onlyLazy ? value : new LazyWrapper(this);
+			var result = func.apply(value, args);
+			result.__actions__.push({ 'func': thru, 'args': [interceptor], 'thisArg': undefined });
+			return new LodashWrapper(result, chainAll);
+		}
+		if (isUnwrapped && onlyLazy) {
+			return func.apply(this, args);
+		}
+		result = this.thru(interceptor);
+		return isUnwrapped ? (isTaker ? result.value()[0] : result.value()) : result;
+	};
+});
+```
+<details>
+
 TODO:
 
 - [x] mixin 使用解释、外部使用示例
@@ -617,11 +686,9 @@ TODO:
 
 ## 总结
 
-读者发现有不妥或可改善之处，欢迎评论指出。另外觉得写得不错，可以点赞、评论、转发，也是对笔者的一种支持。
+读者发现有不妥或可改善之处，欢迎评论指出。另外觉得写得不错，可以点赞、评论、转发，也是对笔者的一种支持。万分感谢。
 
 ## 推荐阅读
-
-[本文章学习的`lodash`的版本`v4.17.15` `unpkg.com`链接](https://unpkg.com/lodash@4.17.15/lodash.js)
 
 [lodash github仓库](https://github.com/lodash/lodash)
 
@@ -632,3 +699,9 @@ TODO:
 [打造一个类似于lodash的前端工具库](http://blog.zollty.com/b/archive/create-a-front-end-tool-library.html)
 
 [惰性求值——lodash源码解读](https://juejin.im/post/5b784baf51882542ed141a84)
+
+[luobo tang：lazy.js 惰性求值实现分析](https://zhuanlan.zhihu.com/p/24138694)
+
+[lazy.js github 仓库](https://github.com/dtao/lazy.js)
+
+[本文章学习的`lodash`的版本`v4.17.15` `unpkg.com`链接](https://unpkg.com/lodash@4.17.15/lodash.js)

@@ -17086,6 +17086,20 @@
 		lodash.prototype[symIterator] = wrapperToIterator;
 	  }
 	  console.log(LazyWrapper.prototype, 'LazyWrapper.prototype');
+	  var prototypeMethods = [];
+	var prototypeProperty = [];
+	for(var name in LazyWrapper.prototype){
+		if(typeof LazyWrapper.prototype[name] === 'function'){
+			if(hasOwnProperty.call(LazyWrapper.prototype, name)){
+				prototypeMethods.push(name);
+			}
+		}
+		else{
+			prototypeProperty.push(name);
+		}
+	}
+	console.log('prototypeProperty:', prototypeProperty); // []
+	console.log('prototypeMethods:', prototypeMethods);
 	  return lodash;
 	});
 
