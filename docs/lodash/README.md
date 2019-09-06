@@ -387,6 +387,8 @@ mixin(lodash, (function() {
 ```
 
 结合两次调用`mixin` 代入到源码解析如下
+<details>
+<summary>点击这里展开mixin源码及注释</summary>
 
 ```js
 function mixin(object, source, options) {
@@ -471,6 +473,10 @@ function mixin(object, source, options) {
 }
 ```
 
+</details>
+
+小结：简单说就是把`lodash`上的静态方法赋值到`lodash.prototype`上。
+
 ## lodash 究竟在_和_.prototype挂载了多少方法和属性
 
 再来看下`lodash`究竟挂载在`_`函数对象上有多少静态方法和属性，和挂载`_.prototype`上有多少方法和属性。
@@ -528,6 +534,118 @@ var result = [1, 2, 3, 4, 5].map(el => el + 1).slice(0, 3);
 console.log('result:', result);
 ```
 
+```js
+// 不使用 map、slice
+var result = [];
+var arr = [1, 2, 3, 4, 5];
+for (var i = 0; i < 3; i++){
+	result[i] = arr[i] + 1;
+}
+console.log(result, 'result');
+```
+
+## 添加 `LazyWrapper` 的方法到 `lodash.prototype`
+
+<details>
+<summary>点击这里展开源码及注释</summary>
+
+```js
+// Add `LazyWrapper` methods to `lodash.prototype`.
+baseForOwn(LazyWrapper.prototype, function(func, methodName) {
+	// 检测函数名称是否是迭代器也就是循环
+	var checkIteratee = /^(?:filter|find|map|reject)|While$/.test(methodName),
+		// 检测函数名称是否head和last
+		// 顺便提一下 这里的 ?: 是非捕获分组
+		isTaker = /^(?:head|last)$/.test(methodName),
+		// lodashFunc 是 根据 isTaker 组合 takeRight take methodName
+		lodashFunc = lodash[isTaker ? ('take' + (methodName == 'last' ? 'Right' : '')) : methodName],
+		// 根据isTaker 和 是 find 判断结果是否 包装
+		retUnwrapped = isTaker || /^find/.test(methodName);
+
+	// 如果不存在这个函数，就不往下执行
+	if (!lodashFunc) {
+		return;
+	}
+	// 把 lodash.prototype 方法赋值到lodash.prototype
+	lodash.prototype[methodName] = function() {
+		// 取实例中的__wrapped__ 值 例子中则是 [1,2,3,4,5]
+		var value = this.__wrapped__,
+			// 如果是head和last 方法 isTaker 返回 [1], 否则是arguments对象
+			args = isTaker ? [1] : arguments,
+			// 如果value 是LayeWrapper的实例
+			isLazy = value instanceof LazyWrapper,
+			// 迭代器 循环
+			iteratee = args[0],
+			// 使用useLazy isLazy value或者是数组
+			useLazy = isLazy || isArray(value);
+
+		var interceptor = function(value) {
+			// 函数执行 value args 组合成数组参数
+			var result = lodashFunc.apply(lodash, arrayPush([value], args));
+			// 如果是 head 和 last (isTaker) 支持链式调用 返回结果的第一个参数 否则 返回result
+			return (isTaker && chainAll) ? result[0] : result;
+		};
+
+		// useLazy true 并且 函数checkIteratee 且迭代器是函数，且迭代器参数个数不等于1
+		if (useLazy && checkIteratee && typeof iteratee == 'function' && iteratee.length != 1) {
+			// Avoid lazy use if the iteratee has a "length" value other than `1`.
+			// useLazy 赋值为 false
+			// isLazy 赋值为 false
+			isLazy = useLazy = false;
+		}
+		// 取实例上的 __chain__
+		var chainAll = this.__chain__,
+			// 存储的待执行的函数 __actions__ 二次取反是布尔值 也就是等于0或者大于0两种结果
+			isHybrid = !!this.__actions__.length,
+			// 是否不包装 用结果是否不包装 且 不支持链式调用
+			isUnwrapped = retUnwrapped && !chainAll,
+			// 是否仅Lazy 用isLazy 和 存储的函数
+			onlyLazy = isLazy && !isHybrid;
+
+		// 结果不包装 且 useLazy 为 true
+		if (!retUnwrapped && useLazy) {
+			// 实例 new LazyWrapper 这里的this 是 new LodashWrapper()
+			value = onlyLazy ? value : new LazyWrapper(this);
+			// result 执行函数结果
+			var result = func.apply(value, args);
+
+			/*
+			*
+			// _.thru(value, interceptor)
+			// 这个方法类似 _.tap， 除了它返回 interceptor 的返回结果。该方法的目的是"传递" 值到一个方法链序列以取代中间结果。
+			_([1, 2, 3])
+			.tap(function(array) {
+				// 改变传入的数组
+				array.pop();
+			})
+			.reverse()
+			.value();
+			// => [2, 1]
+			*/
+
+			// thisArg 指向undefined 或者null 非严格模式下是指向window，严格模式是undefined 或者nll
+			result.__actions__.push({ 'func': thru, 'args': [interceptor], 'thisArg': undefined });
+			// 返回实例 lodashWrapper
+			return new LodashWrapper(result, chainAll);
+		}
+		// 不包装 且 onlyLazy 为 true
+		if (isUnwrapped && onlyLazy) {
+			// 执行函数
+			return func.apply(this, args);
+		}
+		// 上面都没有执行，执行到这里了
+		// 执行 thru 函数，回调函数 是 interceptor
+		result = this.thru(interceptor);
+		return isUnwrapped ? (isTaker ? result.value()[0] : result.value()) : result;
+	};
+});
+```
+</details>
+
+小结一下，写了这么多注释，简单说：其实就是把函数存储下来。需要时调用。
+读者可以断点调试一下，对着注释看，可能会更加清晰。
+
+
 ## lodash.prototype.value 即 wrapperValue
 
 ```js
@@ -549,6 +667,9 @@ lodash.prototype.toJSON = lodash.prototype.valueOf = lodash.prototype.value = wr
 ```
 
 ## LazyWrapper.prototype.value 即 lazyValue
+
+<details>
+<summary>点击这里展开lazyValue源码及注释</summary>
 
 ```js
 function LazyWrapper(value) {
@@ -623,58 +744,9 @@ LazyWrapper.prototype.constructor = LazyWrapper;
 LazyWrapper.prototype.value = lazyValue;
 ```
 
-## Add `LazyWrapper` methods to `lodash.prototype`
+</details>
 
-<details>
-<summary>点击这里展开源码</summary>
 
-```js
-// Add `LazyWrapper` methods to `lodash.prototype`.
-baseForOwn(LazyWrapper.prototype, function(func, methodName) {
-	var checkIteratee = /^(?:filter|find|map|reject)|While$/.test(methodName),
-		isTaker = /^(?:head|last)$/.test(methodName),
-		lodashFunc = lodash[isTaker ? ('take' + (methodName == 'last' ? 'Right' : '')) : methodName],
-		retUnwrapped = isTaker || /^find/.test(methodName);
-
-	if (!lodashFunc) {
-		return;
-	}
-	lodash.prototype[methodName] = function() {
-		var value = this.__wrapped__,
-			args = isTaker ? [1] : arguments,
-			isLazy = value instanceof LazyWrapper,
-			iteratee = args[0],
-			useLazy = isLazy || isArray(value);
-
-		var interceptor = function(value) {
-			var result = lodashFunc.apply(lodash, arrayPush([value], args));
-			return (isTaker && chainAll) ? result[0] : result;
-		};
-
-		if (useLazy && checkIteratee && typeof iteratee == 'function' && iteratee.length != 1) {
-			// Avoid lazy use if the iteratee has a "length" value other than `1`.
-			isLazy = useLazy = false;
-		}
-		var chainAll = this.__chain__,
-			isHybrid = !!this.__actions__.length,
-			isUnwrapped = retUnwrapped && !chainAll,
-			onlyLazy = isLazy && !isHybrid;
-
-		if (!retUnwrapped && useLazy) {
-			value = onlyLazy ? value : new LazyWrapper(this);
-			var result = func.apply(value, args);
-			result.__actions__.push({ 'func': thru, 'args': [interceptor], 'thisArg': undefined });
-			return new LodashWrapper(result, chainAll);
-		}
-		if (isUnwrapped && onlyLazy) {
-			return func.apply(this, args);
-		}
-		result = this.thru(interceptor);
-		return isUnwrapped ? (isTaker ? result.value()[0] : result.value()) : result;
-	};
-});
-```
-<details>
 
 TODO:
 
