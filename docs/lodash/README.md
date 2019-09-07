@@ -643,8 +643,9 @@ baseForOwn(LazyWrapper.prototype, function(func, methodName) {
 </details>
 
 小结一下，写了这么多注释，简单说：其实就是把函数存储下来。需要时调用。
-读者可以断点调试一下，对着注释看，可能会更加清晰。
-
+**读者可以断点调试一下，对着注释看，可能会更加清晰。**
+![例子的chain和map执行后的debugger截图](./demo-chain-map-result-debugger.png)
+![例子的chain和map执行后的结果截图](./demo-chain-map-result.png)
 
 ## lodash.prototype.value 即 wrapperValue
 
@@ -777,3 +778,29 @@ TODO:
 [lazy.js github 仓库](https://github.com/dtao/lazy.js)
 
 [本文章学习的`lodash`的版本`v4.17.15` `unpkg.com`链接](https://unpkg.com/lodash@4.17.15/lodash.js)
+
+
+## 笔者往期文章
+[学习 underscore 源码整体架构，打造属于自己的函数式编程类库](https://juejin.im/post/5d4bf94de51d453bb13b65dc)<br>
+[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://juejin.im/post/5d39d2cbf265da1bc23fbd42)<br>
+[面试官问：JS的继承](https://juejin.im/post/5c433e216fb9a049c15f841b)<br>
+[面试官问：JS的this指向](https://juejin.im/post/5c0c87b35188252e8966c78a)<br>
+[面试官问：能否模拟实现JS的call和apply方法](https://juejin.im/post/5bf6c79bf265da6142738b29)<br>
+[面试官问：能否模拟实现JS的bind方法](https://juejin.im/post/5bec4183f265da616b1044d7)<br>
+[面试官问：能否模拟实现JS的new操作符](https://juejin.im/post/5bde7c926fb9a049f66b8b52)<br>
+[前端使用puppeteer 爬虫生成《React.js 小书》PDF并合并](https://juejin.im/post/5b86732451882542af1c8082)
+
+## 关于
+
+作者：常以**若川**为名混迹于江湖。前端路上 | PPT爱好者 | 所知甚少，唯善学。<br>
+[个人博客](https://lxchuan12.github.io/)<br>
+[掘金专栏](https://juejin.im/user/57974dc55bbb500063f522fd/posts)，欢迎关注~<br>
+[`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
+[知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
+[github blog](https://github.com/lxchuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
+
+## 微信公众号  若川视野
+
+可能比较有趣的微信公众号，长按扫码关注。也可以加微信 `lxchuan12`，注明来源，拉您进【前端视野交流群】。
+
+![若川视野](../about/wechat-official-accounts-mini.jpg)
