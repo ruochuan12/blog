@@ -482,6 +482,7 @@ function mixin(object, source, options) {
 再来看下`lodash`究竟挂载在`_`函数对象上有多少静态方法和属性，和挂载`_.prototype`上有多少方法和属性。
 
 使用`for in`循环一试遍知。看如下代码：
+
 ```js
 var staticMethods = [];
 var staticProperty = [];
@@ -495,8 +496,9 @@ for(var name in _){
 }
 console.log(staticProperty); // ["templateSettings", "VERSION"] 2个
 console.log(staticMethods); // ["after", "ary", "assign", "assignIn", "assignInWith", ...] 305个
-// 其实就是上文提及的 lodash.after 等153个支持链式调用的函数 、lodash.add 等 152 不支持链式调用的函数 赋值而来。
 ```
+
+其实就是上文提及的 `lodash.after` 等153个支持链式调用的函数 、`lodash.add` 等 152 不支持链式调用的函数 赋值而来。
 
 ```js
 var prototypeMethods = [];
@@ -511,13 +513,12 @@ for(var name in _.prototype){
 }
 console.log(prototypeProperty); // []
 console.log(prototypeMethods); // ["after", "all", "allKeys", "any", "assign", ...] 317个
-// 相比lodash上的静态方法多了12个，说明除了mixin外，还有12个其他形式赋值而来。
-
 ```
+相比`lodash`上的静态方法多了12个，说明除了 `mixin` 外，还有12个其他形式赋值而来。
 
 支持链式调用的方法最后返回是实例对象，获取最后的处理的结果值，最后需要调用`value`方法。
 
-## 举个简单的例子
+## 举个贯穿下文的简单的例子
 
 ```js
 var result = _.chain([1, 2, 3, 4, 5])
@@ -545,6 +546,13 @@ console.log(result, 'result');
 ```
 
 ## 添加 `LazyWrapper` 的方法到 `lodash.prototype`
+
+主要是如下方法添加到到 `lodash.prototype` 原型上。
+
+```
+// "constructor"
+["drop", "dropRight", "take", "takeRight", "filter", "map", "takeWhile", "head", "last", "initial", "tail", "compact", "find", "findLast", "invokeMap", "reject", "slice", "takeRightWhile", "toArray", "clone", "reverse", "value"]
+```
 
 <details>
 <summary>点击这里展开源码及注释</summary>
@@ -642,7 +650,7 @@ baseForOwn(LazyWrapper.prototype, function(func, methodName) {
 ```
 </details>
 
-小结一下，写了这么多注释，简单说：其实就是把函数存储下来。需要时调用。
+小结一下，写了这么多注释，简单说：其实就是把函数存储下来。需要时再调用。
 **读者可以断点调试一下，对着注释看，可能会更加清晰。**
 ![例子的chain和map执行后的debugger截图](./demo-chain-map-result-debugger.png)
 ![例子的chain和map执行后的结果截图](./demo-chain-map-result.png)
@@ -656,7 +664,7 @@ function baseWrapperValue(value, actions) {
 	if (result instanceof LazyWrapper) {
 		result = result.value();
 	}
-	// 类似 [].reduce()
+	// 类似 [].reduce()，把上一个函数返回结果作为参数传递给下一个函数
 	return arrayReduce(actions, function(result, action) {
 		return action.func.apply(action.thisArg, arrayPush([result], action.args));
 	}, result);
@@ -667,19 +675,25 @@ function wrapperValue() {
 lodash.prototype.toJSON = lodash.prototype.valueOf = lodash.prototype.value = wrapperValue;
 ```
 
-## LazyWrapper.prototype.value 即 lazyValue
+## LazyWrapper.prototype.value 即 lazyValue 惰性求值
 
 <details>
 <summary>点击这里展开lazyValue源码及注释</summary>
 
 ```js
 function LazyWrapper(value) {
+	// 参数 value
 	this.__wrapped__ = value;
+	// 执行的函数
 	this.__actions__ = [];
 	this.__dir__ = 1;
+	// 过滤
 	this.__filtered__ = false;
+	// 存储迭代器函数
 	this.__iteratees__ = [];
+	// 默认最大取值个数
 	this.__takeCount__ = MAX_ARRAY_LENGTH;
+	// 具体取值多少个，存储函数和类型
 	this.__views__ = [];
 }
 /**
@@ -691,51 +705,77 @@ function LazyWrapper(value) {
 * @returns {*} Returns the unwrapped value.
 */
 function lazyValue() {
+	// this.__wrapped__ 是 new LodashWrapper 实例 所以执行.value 获取原始值
 	var array = this.__wrapped__.value(),
+		//
 		dir = this.__dir__,
+		// 是否是函数
 		isArr = isArray(array),
+		// 是否从右边开始
 		isRight = dir < 0,
+		// 数组的长度。如果不是数组，则是0
 		arrLength = isArr ? array.length : 0,
+		// 获取 take(3) 上述例子中 则是 start: 0，end: 3
 		view = getView(0, arrLength, this.__views__),
 		start = view.start,
 		end = view.end,
+		// 长度 3
 		length = end - start,
+		// 如果是是从右开始
 		index = isRight ? end : (start - 1),
+		// 存储的迭代器数组
 		iteratees = this.__iteratees__,
+		// 迭代器数组长度
 		iterLength = iteratees.length,
+		// 结果resIndex
 		resIndex = 0,
+		// 最后获取几个值，也就是 3
 		takeCount = nativeMin(length, this.__takeCount__);
 
+	// 如果不是数组，或者 不是从右开始 并且 参数数组长度等于take的长度 takeCount等于长度
+	// 则直接调用 baseWrapperValue 不需要
 	if (!isArr || (!isRight && arrLength == length && takeCount == length)) {
 		return baseWrapperValue(array, this.__actions__);
 	}
 	var result = [];
 
+	// 标签语句 label
+	// MDN label 链接
+	// https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Statements/label
+	// 标记语句可以和 break 或 continue 语句一起使用。标记就是在一条语句前面加个可以引用的标识符（identifier）。
 	outer:
 	while (length-- && resIndex < takeCount) {
 		index += dir;
 
 		var iterIndex = -1,
+			// 数组第一项
 			value = array[index];
 
 		while (++iterIndex < iterLength) {
-		var data = iteratees[iterIndex],
-			iteratee = data.iteratee,
-			type = data.type,
-			computed = iteratee(value);
+			// 迭代器数组 {iteratee: function{}, typy: 2}
+			var data = iteratees[iterIndex],
+				iteratee = data.iteratee,
+				type = data.type,
+				// 结果 迭代器执行结果
+				computed = iteratee(value);
 
-		if (type == LAZY_MAP_FLAG) {
-			value = computed;
-		} else if (!computed) {
-			if (type == LAZY_FILTER_FLAG) {
-				continue outer;
-			} else {
-				break outer;
+			if (type == LAZY_MAP_FLAG) {
+				// 如果 type 是 map 类型，结果 computed 赋值给value
+				value = computed;
+			} else if (!computed) {
+				if (type == LAZY_FILTER_FLAG) {
+					// 退出当前这次循环，进行下一次循环
+					continue outer;
+				} else {
+					// 退出整个循环
+					break outer;
+				}
 			}
 		}
-		}
+		// 最终数组
 		result[resIndex++] = value;
 	}
+	// 返回数组 例子中则是 [2, 3, 4]
 	return result;
 }
 // Ensure `LazyWrapper` is an instance of `baseLodash`.
@@ -747,19 +787,30 @@ LazyWrapper.prototype.value = lazyValue;
 
 </details>
 
+小结：`lazyValue`简单说实现的功能就是把之前记录的需要执行几次，把记录存储的函数执行几次，不会有多少项数据就执行多少次，而是根据需要几项，执行几项。
+也就是说这个例子中，`map`函数只会执行3次。如果没有用惰性求值，那么`map`函数会执行5次。
 
+```js
+var result = _.chain([1, 2, 3, 4, 5])
+.map(el => el + 1)
+.take(3)
+.value();
+```
 
 TODO:
 
 - [x] mixin 使用解释、外部使用示例
-- [ ] 补图原型关系图
+- [x] 补图原型关系图
 - [ ] 挂载方法和属性图
 - [ ] lazyWrapper 解释 惰性求值
 - [ ] lodash.prototype.value 求值解析
 
 ## 总结
 
-读者发现有不妥或可改善之处，欢迎评论指出。另外觉得写得不错，可以点赞、评论、转发，也是对笔者的一种支持。万分感谢。
+行文至此，基本接近尾声，最后总结一下。
+
+
+如果读者发现有不妥或可改善之处，欢迎评论指出。另外觉得写得不错，可以点赞、评论、转发分享，也是对笔者的一种支持。万分感谢。
 
 ## 推荐阅读
 
@@ -779,8 +830,8 @@ TODO:
 
 [本文章学习的`lodash`的版本`v4.17.15` `unpkg.com`链接](https://unpkg.com/lodash@4.17.15/lodash.js)
 
-
 ## 笔者往期文章
+
 [学习 underscore 源码整体架构，打造属于自己的函数式编程类库](https://juejin.im/post/5d4bf94de51d453bb13b65dc)<br>
 [学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://juejin.im/post/5d39d2cbf265da1bc23fbd42)<br>
 [面试官问：JS的继承](https://juejin.im/post/5c433e216fb9a049c15f841b)<br>
