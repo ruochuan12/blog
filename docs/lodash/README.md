@@ -2,7 +2,7 @@
 
 ## 前言
 
-这是`学习源码整体架构系列`第三篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究具体函数的实现。文章学习的是打包整合后的代码，不是实际仓库中的拆分的代码。
+这是`学习源码整体架构系列`第三篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。文章学习的是打包整合后的代码，不是实际仓库中的拆分的代码。
 
 上上篇文章写了`jQuery源码整体架构`，[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://juejin.im/post/5d39d2cbf265da1bc23fbd42)
 
@@ -10,11 +10,16 @@
 
 感兴趣的读者可以点击阅读。
 
-`underscore`分析的源码很多。但很少`lodash`分析。原因之一可能是由于`lodash`源码行数太多。注释加起来一万多行。
+`underscore`源码分析的文章比较多，而`lodash`源码分析的文章比较少。原因之一可能是由于`lodash`源码行数太多。注释加起来一万多行。
 
-分析`lodash`整体代码结构的文章比较少，笔者利用谷歌、必应、`github`搜索都没有找到，可能是找的方式不对。于是打算自己写一篇。平常开发大多数人都会使用`lodash`,而且都或多或少知道，`lodash`比`underscore`性能好，性能好的主要原因是使用了惰性求值这一特性。
+分析`lodash`整体代码结构的文章比较少，笔者利用谷歌、必应、`github`等搜索都没有找到，可能是找的方式不对。于是打算自己写一篇。平常开发大多数人都会使用`lodash`，而且都或多或少知道，`lodash`比`underscore`性能好，性能好的主要原因是使用了惰性求值这一特性。
 
 本文章学习的`lodash`的版本是：`v4.17.15`。`unpkg.com`地址 https://unpkg.com/lodash@4.17.15/lodash.js
+
+文章篇幅可能比较长，可以先收藏再看，所以笔者使用了展开收缩的形式。
+
+**导读：**
+>文章主要学习了`runInContext()` 导出`_`  `lodash`函数使用`baseCreate`方法原型继承`LodashWrapper`和`LazyWrapper`，`mixin`挂载方法到`lodash.prototype`、后文用结合例子解释`lodash.prototype.value(wrapperValue)`和`Lazy.prototype.value(lazyValue)`惰性求值的源码具体实现。
 
 **分享一个只知道函数名找源码定位函数申明位置的`VSCode` 技巧**：`Ctrl + p`。输入 `@functionName` 定位函数`functionName`在源码文件中的具体位置。如果知道调用位置，那直接按`alt+鼠标左键`即可跳转到函数申明的位置。
 
@@ -38,6 +43,7 @@ var _ = runInContext();
 
 ```js
 var runInContext = (function runInContext(context) {
+	// 浏览器中处理context为window
 	// ...
 	function lodash(value) {}{
 		// ...
@@ -47,7 +53,7 @@ var runInContext = (function runInContext(context) {
 	return lodash;
 });
 ```
-可以看到申明了一个`runInContext`函数。里面有一个lodash函数，最后处理返回这个`lodash`函数。
+可以看到申明了一个`runInContext`函数。里面有一个`lodash`函数，最后处理返回这个`lodash`函数。
 
 再看`lodash`函数中的返回值 `new LodashWrapper(value)`。
 
@@ -63,15 +69,14 @@ function LodashWrapper(value, chainAll) {
 }
 ```
 
-TODO:
 设置了这些属性：
 `__wrapped__`：存放参数`value`。
 `__actions__`：存放待执行的函数体`func`， 函数参数 `args`，函数执行的`this` 指向 `thisArg`。
 
 `__chain__`、`undefined`两次取反转成布尔值`false`，不支持链式调用。和`underscore`一样，默认是不支持链式调用的。
 
-`__index__`：
-`__value__`：
+`__index__`：索引值 默认 0
+`__values__`：主要`clone`时使用
 
 接着往下搜索源码，`LodashWrapper`，
 会发现这两行代码。
@@ -141,6 +146,10 @@ function isObject(value) {
 
 ### Object.create() 用法举例
 
+[面试官问：能否模拟实现JS的new操作符](https://juejin.im/post/5bde7c926fb9a049f66b8b52) 之前这篇文章写过的一段，所以这里收缩起来了。
+<details>
+<summary> 点击 查看 Object.create() 用法举例</summary>
+
 笔者之前整理的一篇文章中也有讲过，可以翻看[JavaScript 对象所有API解析](https://segmentfault.com/a/1190000010753942)
 
 [MDN Object.create()](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/create)
@@ -187,7 +196,9 @@ if (typeof Object.create !== "function") {
 }
 ```
 
-`lodash`上有很多方法和属性，但在`lodash.prototype`也有很多与lodash上相同的方法。肯定不是在`lodash.prototype`上重新写一遍。而是通过`mixin`挂载的。
+</details>
+
+`lodash`上有很多方法和属性，但在`lodash.prototype`也有很多与`lodash`上相同的方法。肯定不是在`lodash.prototype`上重新写一遍。而是通过`mixin`挂载的。
 
 ## mixin
 
@@ -222,7 +233,7 @@ _.mixin([object=lodash], source, [options={}])
 ### mixin 源码
 
 <details>
-<summary>点击这里展开源码，后文注释解析</summary>
+<summary>点击这里展开mixin源码，后文注释解析</summary>
 
 ```js
 function mixin(object, source, options) {
@@ -261,10 +272,11 @@ function mixin(object, source, options) {
 	return object;
 }
 ```
+
 </details>
 接下来先看衍生的函数。
 
-其实看到具体定义的函数代码就大概知道这个函数的功能。为了不影响主线，导致文章篇幅过长。具体源码在这里就不展开。
+**其实看到具体定义的函数代码就大概知道这个函数的功能。为了不影响主线，导致文章篇幅过长。具体源码在这里就不展开。**
 
 感兴趣的读者可以自行看这些函数衍生的其他函数的源码。
 
@@ -374,6 +386,7 @@ lodash.add = add;
 // 这里其实就是过滤 after 等支持链式调用的方法，获取到 lodash 上的 add 等 添加到lodash.prototype 上。
 mixin(lodash, (function() {
 	var source = {};
+	// baseForOwn 这里其实就是遍历lodash上的静态方法，执行回调函数
 	baseForOwn(lodash, function(func, methodName) {
 		// 第一次 mixin 调用了所以赋值到了lodash.prototype
 		// 所以这里用 Object.hasOwnProperty 排除不在lodash.prototype 上的方法。也就是 add 等 152 个不支持链式调用的方法。
@@ -475,7 +488,7 @@ function mixin(object, source, options) {
 
 </details>
 
-小结：简单说就是把`lodash`上的静态方法赋值到`lodash.prototype`上。
+小结：简单说就是把`lodash`上的静态方法赋值到`lodash.prototype`上。分两次第一次是支持链式调用（`lodash.after`等 `153 `个支持链式调用的方法），第二次是不支持链式调用的方法（`lodash.add`等`152`个不支持链式调用的方法）。
 
 ## lodash 究竟在_和_.prototype挂载了多少方法和属性
 
@@ -498,7 +511,7 @@ console.log(staticProperty); // ["templateSettings", "VERSION"] 2个
 console.log(staticMethods); // ["after", "ary", "assign", "assignIn", "assignInWith", ...] 305个
 ```
 
-其实就是上文提及的 `lodash.after` 等153个支持链式调用的函数 、`lodash.add` 等 152 不支持链式调用的函数 赋值而来。
+其实就是上文提及的 `lodash.after` 等`153`个支持链式调用的函数 、`lodash.add` 等 `152`不支持链式调用的函数赋值而来。
 
 ```js
 var prototypeMethods = [];
@@ -514,27 +527,33 @@ for(var name in _.prototype){
 console.log(prototypeProperty); // []
 console.log(prototypeMethods); // ["after", "all", "allKeys", "any", "assign", ...] 317个
 ```
-相比`lodash`上的静态方法多了12个，说明除了 `mixin` 外，还有12个其他形式赋值而来。
+相比`lodash`上的静态方法多了`12`个，说明除了 `mixin` 外，还有`12`个其他形式赋值而来。
 
 支持链式调用的方法最后返回是实例对象，获取最后的处理的结果值，最后需要调用`value`方法。
 
-## 举个贯穿下文的简单的例子
+## 请出贯穿下文的简单的例子
 
 ```js
 var result = _.chain([1, 2, 3, 4, 5])
-.map(el => el + 1)
+.map(el => {
+	console.log(el); // 1, 2, 3
+	return el + 1;
+})
 .take(3)
 .value();
-
-// 具体功能也很简单 获取1-5 加一，最后获取其中三个值。
+// lodash中这里的`map`仅执行了`3`次。
+// 具体功能也很简单 数组 1-5 加一，最后获取其中三个值。
 console.log('result:', result);
 ```
-// 如果是 平常实现该功能也简单
+
+**也就是说这里`lodash`聪明的知道了最后需要几个值，就执行几次`map`循环，对于很大的数组，提升性能很有帮助。**<br>
+而`underscore`执行这段代码其中`map`执行了5次。
+如果是平常实现该功能也简单。
 ```js
 var result = [1, 2, 3, 4, 5].map(el => el + 1).slice(0, 3);
 console.log('result:', result);
 ```
-
+而相比`lodash`这里的`map`执行了`5`次。
 ```js
 // 不使用 map、slice
 var result = [];
@@ -544,6 +563,9 @@ for (var i = 0; i < 3; i++){
 }
 console.log(result, 'result');
 ```
+
+简单说这里的`map`方法，添加 `LazyWrapper` 的方法到 `lodash.prototype`存储下来，最后调用 `value`时再调用。
+具体看下文源码实现。
 
 ## 添加 `LazyWrapper` 的方法到 `lodash.prototype`
 
@@ -555,15 +577,16 @@ console.log(result, 'result');
 ```
 
 <details>
-<summary>点击这里展开源码及注释</summary>
+<summary>点击这里展开具体源码及注释</summary>
 
 ```js
 // Add `LazyWrapper` methods to `lodash.prototype`.
+// baseForOwn 这里其实就是遍历LazyWrapper.prototype上的方法，执行回调函数
 baseForOwn(LazyWrapper.prototype, function(func, methodName) {
 	// 检测函数名称是否是迭代器也就是循环
 	var checkIteratee = /^(?:filter|find|map|reject)|While$/.test(methodName),
 		// 检测函数名称是否head和last
-		// 顺便提一下 这里的 ?: 是非捕获分组
+		// 顺便提一下 ()这个是捕获分组 而加上 ?:  则是非捕获分组 也就是说不用于其他操作
 		isTaker = /^(?:head|last)$/.test(methodName),
 		// lodashFunc 是 根据 isTaker 组合 takeRight take methodName
 		lodashFunc = lodash[isTaker ? ('take' + (methodName == 'last' ? 'Right' : '')) : methodName],
@@ -648,12 +671,21 @@ baseForOwn(LazyWrapper.prototype, function(func, methodName) {
 	};
 });
 ```
+
 </details>
 
-小结一下，写了这么多注释，简单说：其实就是把函数存储下来。需要时再调用。
-**读者可以断点调试一下，对着注释看，可能会更加清晰。**
+小结一下，写了这么多注释，简单说：其实就是用`LazyWrapper.prototype` 改写原先在`lodash.prototype`的函数，判断函数是否需要使用惰性求值，需要时再调用。
+
+**读者可以断点调试一下，善用断点进入函数功能，对着注释看，可能会更加清晰。**
+<details>
+<summary>点击查看断点调试的部分截图</summary>
+
 ![例子的chain和map执行后的debugger截图](./demo-chain-map-result-debugger.png)
 ![例子的chain和map执行后的结果截图](./demo-chain-map-result.png)
+
+</details>
+
+链式调用最后都是返回实例对象，实际的处理数据的函数都没有调用，而是被存储存储下来了，最后调用`value`方法，才执行这些函数。
 
 ## lodash.prototype.value 即 wrapperValue
 
@@ -674,6 +706,8 @@ function wrapperValue() {
 }
 lodash.prototype.toJSON = lodash.prototype.valueOf = lodash.prototype.value = wrapperValue;
 ```
+
+如果是惰性求值，则调用的是 `LazyWrapper.prototype.value` 即 `lazyValue`。
 
 ## LazyWrapper.prototype.value 即 lazyValue 惰性求值
 
@@ -787,8 +821,11 @@ LazyWrapper.prototype.value = lazyValue;
 
 </details>
 
+笔者画了一张 `lodash`和`LazyWrapper`的关系图来表示。
+![`lodash`和`LazyWrapper`的关系图](./lodash-v4.17.15-LazyWrapper.prototype.png)
+
 小结：`lazyValue`简单说实现的功能就是把之前记录的需要执行几次，把记录存储的函数执行几次，不会有多少项数据就执行多少次，而是根据需要几项，执行几项。
-也就是说这个例子中，`map`函数只会执行3次。如果没有用惰性求值，那么`map`函数会执行5次。
+也就是说以下这个例子中，`map`函数只会执行`3`次。如果没有用惰性求值，那么`map`函数会执行`5`次。
 
 ```js
 var result = _.chain([1, 2, 3, 4, 5])
@@ -808,27 +845,20 @@ TODO:
 ## 总结
 
 行文至此，基本接近尾声，最后总结一下。
+>文章主要学习了`runInContext()` 导出`_`  `lodash`函数使用`baseCreate`方法原型继承`LodashWrapper`和`LazyWrapper`，`mixin`挂载方法到`lodash.prototype`、后文用结合例子解释`lodash.prototype.value(wrapperValue)`和`Lazy.prototype.value(lazyValue)`惰性求值的源码具体实现。
 
-
-如果读者发现有不妥或可改善之处，欢迎评论指出。另外觉得写得不错，可以点赞、评论、转发分享，也是对笔者的一种支持。万分感谢。
+如果读者发现有不妥或可改善之处，再或者哪里没写明白的地方，欢迎评论指出。另外觉得写得不错，对您有些许帮助，可以点赞、评论、转发分享，也是对笔者的一种支持。万分感谢。
 
 ## 推荐阅读
 
-[lodash github仓库](https://github.com/lodash/lodash)
-
-[lodash 官方文档](https://lodash.com/docs/4.17.15)
-
-[lodash 中文文档](https://lodashjs.com/)
-
-[打造一个类似于lodash的前端工具库](http://blog.zollty.com/b/archive/create-a-front-end-tool-library.html)
-
-[惰性求值——lodash源码解读](https://juejin.im/post/5b784baf51882542ed141a84)
-
-[luobo tang：lazy.js 惰性求值实现分析](https://zhuanlan.zhihu.com/p/24138694)
-
-[lazy.js github 仓库](https://github.com/dtao/lazy.js)
-
-[本文章学习的`lodash`的版本`v4.17.15` `unpkg.com`链接](https://unpkg.com/lodash@4.17.15/lodash.js)
+[lodash github仓库](https://github.com/lodash/lodash)<br>
+[lodash 官方文档](https://lodash.com/docs/4.17.15)<br>
+[lodash 中文文档](https://lodashjs.com/)<br>
+[打造一个类似于lodash的前端工具库](http://blog.zollty.com/b/archive/create-a-front-end-tool-library.html)<br>
+[惰性求值——lodash源码解读](https://juejin.im/post/5b784baf51882542ed141a84)<br>
+[luobo tang：lazy.js 惰性求值实现分析](https://zhuanlan.zhihu.com/p/24138694)<br>
+[lazy.js github 仓库](https://github.com/dtao/lazy.js)<br>
+[本文章学习的`lodash`的版本`v4.17.15` `unpkg.com`链接](https://unpkg.com/lodash@4.17.15/lodash.js)<br>
 
 ## 笔者往期文章
 
@@ -844,10 +874,10 @@ TODO:
 ## 关于
 
 作者：常以**若川**为名混迹于江湖。前端路上 | PPT爱好者 | 所知甚少，唯善学。<br>
-[个人博客](https://lxchuan12.github.io/)<br>
+[个人博客-若川](https://lxchuan12.github.io/)，使用`vuepress`重构了，阅读体验可能更好些<br>
 [掘金专栏](https://juejin.im/user/57974dc55bbb500063f522fd/posts)，欢迎关注~<br>
-[`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
-[知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
+[`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，欢迎关注~<br>
+[知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，欢迎关注~<br>
 [github blog](https://github.com/lxchuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
 
 ## 微信公众号  若川视野
