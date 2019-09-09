@@ -531,6 +531,10 @@ console.log(prototypeMethods); // ["after", "all", "allKeys", "any", "assign", .
 
 支持链式调用的方法最后返回是实例对象，获取最后的处理的结果值，最后需要调用`value`方法。
 
+笔者画了一张表示`lodash`的方法和属性挂载关系图。
+
+![`lodash`的方法和属性挂载关系图](./lodash-v4.17.15-lodash.prototype-mixin.png)
+
 ## 请出贯穿下文的简单的例子
 
 ```js
@@ -833,14 +837,6 @@ var result = _.chain([1, 2, 3, 4, 5])
 .take(3)
 .value();
 ```
-
-TODO:
-
-- [x] mixin 使用解释、外部使用示例
-- [x] 补图原型关系图
-- [ ] 挂载方法和属性图
-- [ ] lazyWrapper 解释 惰性求值
-- [ ] lodash.prototype.value 求值解析
 
 ## 总结
 
