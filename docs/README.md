@@ -4,7 +4,7 @@ lang: zh-CN
 heroText: 若川的博客
 heroImage: /logo.jpg
 actionText: 最新文章 →
-actionLink: /underscore/
+actionLink: /lodash/
 features:
 - title: 若川的博客
   details: 前端路上 | PPT爱好者 | 所知甚少，唯善学。常以若川为名混迹于江湖。

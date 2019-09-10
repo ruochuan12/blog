@@ -25,7 +25,7 @@ module.exports = {
     themeConfig: {
         nav: [
 			{ text: '主页', link: '/' },
-			{ text: '最新文章', link: '/underscore/' },
+			{ text: '最新文章', link: '/lodash/' },
             // { text: '博文',
             //   items: [
 			// 	{
@@ -148,8 +148,9 @@ module.exports = {
 				collapsable: true, // 可选的, 默认值是 true,
 				sidebarDepth: 2,    // 可选的, 默认值是 1
 				children: [
+				'/lodash/',
 				'/underscore/',
-				'/jQuery/'
+				'/jQuery/',
 				]
 			},
 			{
@@ -189,7 +190,6 @@ module.exports = {
 				'/20190612-after-3-year-work/',
 				'/20170602-After-a-year-s-work-I-had-some-insights/',
 				'/20160907-How-do-I-set-foot-on-the-front-end-of-the-road/',
-				'/lodash/',
 				]
 			},
 			{
