@@ -6,8 +6,11 @@
 
 **若川**，某不那么知名的陶瓷大学2016届毕业生，目前在`杭州`从事`前端开发`工作，也是一枚`PPT爱好者`。[`freecodecamp`](https://www.freecodecamp.org/) 杭州社区组织者之一。所知甚少，唯善学。常以**若川**为名混迹于江湖。<br>
 
-> 为了提升读者的阅读体验，我将博客从`hexo`升级为`vuepress`。
-> `vuepress`博客：[lxchuan12.github.io](lxchuan12.github.io)，原来`hexo`博客：[lxchuan12.cn](lxchuan12.cn)
+> **为了提升读者的阅读体验，我将博客从`hexo`升级为`vuepress`。**
+>
+> `vuepress`博客：[lxchuan12.github.io](https://lxchuan12.github.io)
+>
+> 原来`hexo`博客：[http://lxchuan12.cn](lxchuan12.cn)
 
 您可以在以下网站（点击图片跳转）关注我：<br>
 <a href="https://juejin.im/user/57974dc55bbb500063f522fd/posts" >
@@ -21,6 +24,9 @@
 <a href="https://zhuanlan.zhihu.com/lxchuan12" >
   <img src="./README-images/zhihu.png"  width="210px" height="100px" title="知乎前端视野专栏，欢迎关注～" alt="知乎前端视野专栏，欢迎关注～"/>
 </a>
+
+<details>
+<summary>点击查看文章列表</summary>
 
 ## 文章列表（掘金或sf链接地址，建议在新标签页打开）
 
@@ -47,6 +53,8 @@
 - 2.[JavaScript 对象所有API解析](https://segmentfault.com/a/1190000010753942)
 
 - 1.[《JavaScript语言精粹 修订版》 读书笔记](https://segmentfault.com/a/1190000010313101)
+
+</details>
 
 ## 免费的知识星球 前端视野
 
