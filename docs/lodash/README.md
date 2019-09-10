@@ -21,8 +21,6 @@
 **导读：**
 >文章主要学习了`runInContext()` 导出`_`  `lodash`函数使用`baseCreate`方法原型继承`LodashWrapper`和`LazyWrapper`，`mixin`挂载方法到`lodash.prototype`、后文用结合例子解释`lodash.prototype.value(wrapperValue)`和`Lazy.prototype.value(lazyValue)`惰性求值的源码具体实现。
 
-**分享一个只知道函数名找源码定位函数申明位置的`VSCode` 技巧**：`Ctrl + p`。输入 `@functionName` 定位函数`functionName`在源码文件中的具体位置。如果知道调用位置，那直接按`alt+鼠标左键`即可跳转到函数申明的位置。
-
 ## 匿名函数执行
 
 ```js
@@ -70,13 +68,16 @@ function LodashWrapper(value, chainAll) {
 ```
 
 设置了这些属性：
+
 `__wrapped__`：存放参数`value`。
+
 `__actions__`：存放待执行的函数体`func`， 函数参数 `args`，函数执行的`this` 指向 `thisArg`。
 
 `__chain__`、`undefined`两次取反转成布尔值`false`，不支持链式调用。和`underscore`一样，默认是不支持链式调用的。
 
-`__index__`：索引值 默认 0
-`__values__`：主要`clone`时使用
+`__index__`：索引值 默认 0。
+
+`__values__`：主要`clone`时使用。
 
 接着往下搜索源码，`LodashWrapper`，
 会发现这两行代码。
@@ -842,6 +843,8 @@ var result = _.chain([1, 2, 3, 4, 5])
 
 行文至此，基本接近尾声，最后总结一下。
 >文章主要学习了`runInContext()` 导出`_`  `lodash`函数使用`baseCreate`方法原型继承`LodashWrapper`和`LazyWrapper`，`mixin`挂载方法到`lodash.prototype`、后文用结合例子解释`lodash.prototype.value(wrapperValue)`和`Lazy.prototype.value(lazyValue)`惰性求值的源码具体实现。
+
+**分享一个只知道函数名找源码定位函数申明位置的`VSCode` 技巧**：`Ctrl + p`。输入 `@functionName` 定位函数`functionName`在源码文件中的具体位置。如果知道调用位置，那直接按`alt+鼠标左键`即可跳转到函数申明的位置。
 
 如果读者发现有不妥或可改善之处，再或者哪里没写明白的地方，欢迎评论指出。另外觉得写得不错，对您有些许帮助，可以点赞、评论、转发分享，也是对笔者的一种支持。万分感谢。
 
