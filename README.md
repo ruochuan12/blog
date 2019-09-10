@@ -10,7 +10,7 @@
 >
 > `vuepress`博客：[lxchuan12.github.io](https://lxchuan12.github.io)
 >
-> 原来`hexo`博客：[http://lxchuan12.cn](lxchuan12.cn)
+> 原来`hexo`博客：[http://lxchuan12.cn](http://lxchuan12.cn)
 
 您可以在以下网站（点击图片跳转）关注我：<br>
 <a href="https://juejin.im/user/57974dc55bbb500063f522fd/posts" >
