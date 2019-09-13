@@ -24,6 +24,7 @@
   },
   "homepage": "https://github.com/lxchuan12/lxchuan12.github.io#readme",
   "devDependencies": {
+    "vuepress": "^1.0.4",
     "@vuepress/plugin-back-to-top": "^1.0.0-rc.1",
     "@vuepress/plugin-google-analytics": "^1.0.0-rc.1",
     "@vuepress/plugin-medium-zoom": "^1.0.0-rc.1"
