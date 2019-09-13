@@ -13,12 +13,22 @@ module.exports = {
 	},
 	plugins: [
 		'@vuepress/back-to-top',
-		'@vuepress/medium-zoom',
 		[
 			'@vuepress/google-analytics',
 			{
 				'ga': 'UA-145436866-1' // UA-00000000-0
 			},
+		],
+		[
+			'@vuepress/medium-zoom',
+			// {
+			// 	selector: 'img',
+			// 	// medium-zoom options here
+			// 	// See: https://github.com/francoischalifour/medium-zoom#options
+			// 	options: {
+			// 		margin: 16
+			// 	}
+			// }
 		],
 	],
     serviceWorker: true, // 是否开启 PWA
