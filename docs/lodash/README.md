@@ -495,7 +495,7 @@ function mixin(object, source, options) {
 
 再来看下`lodash`究竟挂载在`_`函数对象上有多少静态方法和属性，和挂载`_.prototype`上有多少方法和属性。
 
-使用`for in`循环一试遍知。看如下代码：
+使用`for in`循环一试便知。看如下代码：
 
 ```js
 var staticMethods = [];
