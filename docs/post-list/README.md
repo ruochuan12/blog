@@ -8,7 +8,7 @@
 
 > **为了提升读者的阅读体验，我将博客从`hexo`升级为`vuepress`。**
 >
-> `vuepress`博客：[lxchuan12.github.io](https://lxchuan12.github.io)
+> `vuepress`博客：[lxchuan12.github.io](../)
 >
 > 原来`hexo`博客：[http://lxchuan12.cn](http://lxchuan12.cn)
 
@@ -27,35 +27,35 @@
 
 ## 文章列表
 
-- 17.[学习 lodash 源码整体架构，打造属于自己的函数式编程类库](https://lxchuan12.github.io/lodash/)
+- 17.[学习 lodash 源码整体架构，打造属于自己的函数式编程类库](../lodash/)
 
-- 15.[学习 underscore 源码整体架构，打造属于自己的函数式编程类库](https://lxchuan12.github.io/underscore/)
+- 15.[学习 underscore 源码整体架构，打造属于自己的函数式编程类库](../underscore/)
 
-- 13.[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://lxchuan12.github.io/jQuery/)
+- 13.[学习 jQuery 源码整体架构，打造属于自己的 js 类库](../jQuery/)
 
-- 12.[面试官问：JS的继承](https://lxchuan12.github.io/js-extend/)
+- 12.[面试官问：JS的继承](../js-extend/)
 
-- 11.[面试官问：JS的this指向](https://lxchuan12.github.io/js-this/)
+- 11.[面试官问：JS的this指向](../js-this/)
 
-- 10.[面试官问：能否模拟实现JS的call和apply方法](https://lxchuan12.github.io/js-implement-call-apply/)
+- 10.[面试官问：能否模拟实现JS的call和apply方法](../js-implement-call-apply/)
 
-- 9.[面试官问：能否模拟实现JS的bind方法](https://lxchuan12.github.io/js-implement-bind/)
+- 9.[面试官问：能否模拟实现JS的bind方法](../js-implement-bind/)
 
-- 8.[面试官问：能否模拟实现JS的new操作符](https://lxchuan12.github.io/js-implement-new/)
+- 8.[面试官问：能否模拟实现JS的new操作符](../js-implement-new/)
 
-- 7.[前端使用puppeteer 爬虫生成《React.js 小书》PDF并合并](https://lxchuan12.github.io/puppeteer-create-pdf-and-merge/)
+- 7.[前端使用puppeteer 爬虫生成《React.js 小书》PDF并合并](../puppeteer-create-pdf-and-merge/)
 
-- 6.[分析vue-cli@2.9.3 搭建的webpack项目工程](https://lxchuan12.github.io/vue-cli-2-webpack/)
+- 6.[分析vue-cli@2.9.3 搭建的webpack项目工程](../vue-cli-2-webpack/)
 
-- 5.[oh my zsh 和 windows git bash 设置别名提高效率](https://lxchuan12.github.io//oh-my-zsh/)
+- 5.[oh my zsh 和 windows git bash 设置别名提高效率](..//oh-my-zsh/)
 
-- 4.[vue 2.x项目 vue-qriously 生成二维码并下载、cliploard复制粘贴](https://lxchuan12.github.io/vue-2-qrcode/)
+- 4.[vue 2.x项目 vue-qriously 生成二维码并下载、cliploard复制粘贴](../vue-2-qrcode/)
 
-- 3.[参加有赞前端技术开放日所感所想](https://lxchuan12.github.io/20180421-youzan-front-end-tech-open-day/)
+- 3.[参加有赞前端技术开放日所感所想](../20180421-youzan-front-end-tech-open-day/)
 
-- 2.[JavaScript 对象所有API解析](https://lxchuan12.github.io/js-object-api/)
+- 2.[JavaScript 对象所有API解析](../js-object-api/)
 
-- 1.[《JavaScript语言精粹 修订版》 读书笔记](https://lxchuan12.github.io/js-book/)
+- 1.[《JavaScript语言精粹 修订版》 读书笔记](../js-book/)
 
 ## 免费的知识星球 前端视野
 
