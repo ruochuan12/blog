@@ -14,19 +14,16 @@
 
 您可以在以下网站（点击图片跳转）关注我：<br>
 <a href="https://juejin.im/user/57974dc55bbb500063f522fd/posts" >
-  <img src="./README-images/juejin.svg"  width="210px" height="100px" title="掘金专栏，欢迎关注～" alt="掘金专栏，欢迎关注～"/>
+  <img src="../../README-images/juejin.svg"  width="210px" height="100px" title="掘金专栏，欢迎关注～" alt="掘金专栏，欢迎关注～"/>
 </a>
 <br>
 <a href="https://segmentfault.com/blog/lxchuan12" >
-  <img src="./README-images/segmentfault.png"  width="210px" height="100px" title="segmentfault专栏，欢迎关注～" alt="segmentfault专栏，欢迎关注～"/>
+  <img src="../../README-images/segmentfault.png"  width="210px" height="100px" title="segmentfault专栏，欢迎关注～" alt="segmentfault专栏，欢迎关注～"/>
 </a>
 <br>
 <a href="https://zhuanlan.zhihu.com/lxchuan12" >
-  <img src="./README-images/zhihu.png"  width="210px" height="100px" title="知乎前端视野专栏，欢迎关注～" alt="知乎前端视野专栏，欢迎关注～"/>
+  <img src="../../README-images/zhihu.png"  width="210px" height="100px" title="知乎前端视野专栏，欢迎关注～" alt="知乎前端视野专栏，欢迎关注～"/>
 </a>
-
-<details>
-<summary>点击查看文章列表</summary>
 
 ## 文章列表
 
@@ -60,11 +57,9 @@
 
 - 1.[《JavaScript语言精粹 修订版》 读书笔记](https://lxchuan12.github.io/js-book/)
 
-</details>
-
 ## 免费的知识星球 前端视野
 
-<img src="./README-images/zsxq.png"  width="250px" height="325px" title="前端视野知识星球" alt="前端视野知识星球"/>
+<img src="../../README-images/zsxq.png"  width="250px" height="325px" title="前端视野知识星球" alt="前端视野知识星球"/>
 
 主要发表一些前端所见所想，Vue、React、构建工具(比如：gulp、webpack)、设计模式等。一个人走得快，一群人走得远。
 
@@ -72,4 +67,4 @@
 
 可能比较有趣的微信公众号，长按扫码关注。也可以加微信 `lxchuan12`，注明来源，拉您进【前端视野交流群】。
 
-![若川视野](./docs/about/wechat-official-accounts-mini.jpg)
+![若川视野](../about/wechat-official-accounts-mini.jpg)

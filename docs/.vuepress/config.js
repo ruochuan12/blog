@@ -35,6 +35,7 @@ module.exports = {
     themeConfig: {
         nav: [
 			{ text: '主页', link: '/' },
+			{ text: '目录', link: '/post-list/' },
 			{ text: '最新文章', link: '/lodash/' },
             // { text: '博文',
             //   items: [
@@ -152,6 +153,15 @@ module.exports = {
         ],
 		// sidebar: 'auto',
 		sidebar: [
+			{
+				title: '目录',   // 必要的
+				path: '/post-list/',      // 可选的, 应该是一个绝对路径
+				// collapsable: true, // 可选的, 默认值是 true,
+				// sidebarDepth: 2,    // 可选的, 默认值是 1
+				// children: [
+				// '../../README.md',
+				// ]
+			},
 			{
 				title: '源码',   // 必要的
 				// path: '/about/',      // 可选的, 应该是一个绝对路径
