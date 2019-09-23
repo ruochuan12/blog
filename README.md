@@ -30,9 +30,9 @@
 
 ## 文章列表
 
-- 17.[学习 lodash 源码整体架构，打造属于自己的函数式编程类库](https://lxchuan12.github.io/lodash/)
+- 15.[学习 lodash 源码整体架构，打造属于自己的函数式编程类库](https://lxchuan12.github.io/lodash/)
 
-- 15.[学习 underscore 源码整体架构，打造属于自己的函数式编程类库](https://lxchuan12.github.io/underscore/)
+- 14.[学习 underscore 源码整体架构，打造属于自己的函数式编程类库](https://lxchuan12.github.io/underscore/)
 
 - 13.[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://lxchuan12.github.io/jQuery/)
 
