@@ -8,9 +8,7 @@
 
 > **为了提升读者的阅读体验，我将博客从`hexo`升级为`vuepress`。**
 >
-> `vuepress`博客：[lxchuan12.github.io](https://lxchuan12.github.io)
->
-> 原来`hexo`博客：[http://lxchuan12.cn](http://lxchuan12.cn)
+> `vuepress`博客：[https://lxchuan12.cn](https://lxchuan12.cn)
 
 您可以在以下网站（点击图片跳转）关注我：<br>
 <a href="https://juejin.im/user/57974dc55bbb500063f522fd/posts" >
