@@ -39,7 +39,7 @@ npm i puppeteer
 知识、经验。于是把⼀些想法慢慢整理书写下来，做成⼀本**开源、免费、专业、简单**
 的⼊⻔级别的⼩书，提供给社区。希望能够帮助到更多 `React.js` 刚⼊⻔朋友。<br/>
 下图是《`React.js` 小书》部分截图：
-![《`React.js` 小书》部分截图](https://user-gold-cdn.xitu.io/2018/8/29/1658531bb246a1a2?w=800&h=619&f=png&s=351857)
+![《`React.js` 小书》部分截图](./react-mini-book.jpg)
 
 ### 2.3 一些可能会用到的 `puppeteer API`
 
@@ -118,7 +118,7 @@ node src/puppeteer/reactMiniBook.js
 ```
 即可生成如下图：每一小节（0-46小节）的`pdf`
 
-![每一小节（0-46小节）的`pdf`](https://user-gold-cdn.xitu.io/2018/8/29/1658531bb40c8f52?w=416&h=725&f=png&s=127839)
+![每一小节（0-46小节）的`pdf`](./react-mini-books.jpg)
 
 生成这些后，那么问题来了，就是查看时总不能看一小节，打开一小节来看，这样很不方便。<br/>
 于是接下来就是合并这些`pdf`成为一个`pdf`文件。
