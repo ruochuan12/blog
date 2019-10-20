@@ -433,7 +433,7 @@ function getHubFromCarrier(carrier) {
 
 ##
 
-![new BrowserClient(options)](./sentry-new&#32;BrowserClient(options).png)
+![new BrowserClient(options)](./sentry-new-BrowserClient(options).png)
 
 ## 总结
 
