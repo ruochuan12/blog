@@ -144,10 +144,10 @@ module.exports = {
 						text: '微博',
 						link: 'http://weibo.com/lxchuan12'
 					},
-					{
-						text: 'hexo 博客 lxchuan12.cn',
-						link: 'http://lxchuan12.cn'
-					},
+					// {
+					// 	text: 'hexo 博客 lxchuan12.cn',
+					// 	link: 'http://lxchuan12.cn'
+					// },
 				],
 			}
         ],
