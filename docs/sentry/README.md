@@ -52,7 +52,7 @@
 
 ```js
 window.addEventListener('error', function(e) {
-  console.log('捕获'，e)
+  console.log('捕获', e)
 }, true) // 这里只有捕获才能触发事件，冒泡是不能触发
 ```
 
@@ -91,7 +91,7 @@ window.onerror = function (msg, url, line, column, error) {
 
 >2.采用`Ajax`上传
 
-支持 `fetch` 使用 `fetch` 否则使用　`XHR`。
+支持 `fetch` 使用 `fetch`，否则使用　`XHR`。
 
 ```js
 BrowserBackend.prototype._setupTransport = function () {
@@ -147,7 +147,8 @@ var Sentry = (function(exports){
     exports.addBreadcrumb = addBreadcrumb;
     exports.addGlobalEventProcessor = addGlobalEventProcessor;
     exports.captureEvent = captureEvent;
-    exports.captureException = captureException;
+	exports.captureException = captureException;
+	// 重点关注 captureMessage
     exports.captureMessage = captureMessage;
     exports.close = close;
     exports.configureScope = configureScope;
@@ -155,7 +156,8 @@ var Sentry = (function(exports){
     exports.flush = flush;
     exports.forceLoad = forceLoad;
     exports.getCurrentHub = getCurrentHub;
-    exports.getHubFromCarrier = getHubFromCarrier;
+	exports.getHubFromCarrier = getHubFromCarrier;
+	// 重点关注 init
     exports.init = init;
     exports.lastEventId = lastEventId;
     exports.onLoad = onLoad;
@@ -172,5 +174,273 @@ var Sentry = (function(exports){
     return exports;
 }({}));
 ```
+
+## Sentry.init 初始化
+
+```js
+Sentry.init({ dsn: 'https://34e29c93475c43a58bee89a5530f2b9f@sentry.io/1784519' });
+```
+
+### init 函数
+
+```js
+function init(options) {
+	if (options === void 0) { options = {}; }
+	if (options.defaultIntegrations === undefined) {
+		options.defaultIntegrations = defaultIntegrations;
+	}
+	if (options.release === undefined) {
+		var window_1 = getGlobalObject();
+		// This supports the variable that sentry-webpack-plugin injects
+		if (window_1.SENTRY_RELEASE && window_1.SENTRY_RELEASE.id) {
+			options.release = window_1.SENTRY_RELEASE.id;
+		}
+	}
+	initAndBind(BrowserClient, options);
+}
+```
+
+继续看 `initAndBind` 函数
+
+### initAndBind 函数
+
+```js
+function initAndBind(clientClass, options) {
+	if (options.debug === true) {
+		logger.enable();
+	}
+	getCurrentHub().bindClient(new clientClass(options));
+}
+```
+
+可以看出 initAndBind()，第一个参数是 `BrowserClient` 构造函数，第二个参数是初始化后的`options`
+接着先看 构造函数 `BrowserClient`。
+TODO: 另一条线 `getCurrentHub().bindClient()` 先不看。
+
+### BrowserClient class
+
+```js
+var BrowserClient = /** @class */ (function (_super) {
+	__extends(BrowserClient, _super);
+	/**
+	 * Creates a new Browser SDK instance.
+	 *
+	 * @param options Configuration options for this SDK.
+	 */
+	function BrowserClient(options) {
+		if (options === void 0) { options = {}; }
+		return _super.call(this, BrowserBackend, options) || this;
+	}
+	/**
+	 * @inheritDoc
+	 */
+	BrowserClient.prototype._prepareEvent = function (event, scope, hint) {
+		// code ...
+		return _super.prototype._prepareEvent.call(this, event, scope, hint);
+	};
+	/**
+	 * Show a report dialog to the user to send feedback to a specific event.
+	 *
+	 * @param options Set individual options for the dialog
+	 */
+	BrowserClient.prototype.showReportDialog = function (options) {
+		// code ...
+	};
+	return BrowserClient;
+}(BaseClient));
+```
+
+```js
+__extends(BrowserClient, _super);
+function BrowserClient(options) {
+	if (options === void 0) { options = {}; }
+	return _super.call(this, BrowserBackend, options) || this;
+}
+```
+`从代码中可以看出`
+`BrowserClient` 继承至`BaseClient`，并且把`BrowserBackend`，`options`传参给`BaseClient`调用。
+
+先看
+TODO: 这里的`BaseClient`，暂时不看。
+
+#### BrowserBackend  浏览器后端
+
+```js
+var BrowserBackend = /** @class */ (function (_super) {
+    __extends(BrowserBackend, _super);
+	function BrowserBackend() {
+		return _super !== null && _super.apply(this, arguments) || this;
+	}
+	/**
+	 * @inheritDoc
+	 */
+	BrowserBackend.prototype._setupTransport = function () {
+		if (!this._options.dsn) {
+			// We return the noop transport here in case there is no Dsn.
+			return _super.prototype._setupTransport.call(this);
+		}
+		var transportOptions = __assign({}, this._options.transportOptions, { dsn: this._options.dsn });
+		if (this._options.transport) {
+			return new this._options.transport(transportOptions);
+		}
+		if (supportsFetch()) {
+			return new FetchTransport(transportOptions);
+		}
+		return new XHRTransport(transportOptions);
+	};
+	// code ...
+	return BrowserBackend;
+}(BaseBackend));
+```
+
+
+#### BaseBackend  基础后端
+
+
+```js
+/**
+ * This is the base implemention of a Backend.
+ * @hidden
+ */
+var BaseBackend = /** @class */ (function () {
+	/** Creates a new backend instance. */
+	function BaseBackend(options) {
+		this._options = options;
+		if (!this._options.dsn) {
+			logger.warn('No DSN provided, backend will not do anything.');
+		}
+		this._transport = this._setupTransport();
+	}
+	/**
+	 * Sets up the transport so it can be used later to send requests.
+	 */
+	BaseBackend.prototype._setupTransport = function () {
+		return new NoopTransport();
+	};
+	/**
+	 * @inheritDoc
+	 */
+	BaseBackend.prototype.eventFromException = function (_exception, _hint) {
+		throw new SentryError('Backend has to implement `eventFromException` method');
+	};
+	/**
+	 * @inheritDoc
+	 */
+	BaseBackend.prototype.eventFromMessage = function (_message, _level, _hint) {
+		throw new SentryError('Backend has to implement `eventFromMessage` method');
+	};
+	/**
+	 * @inheritDoc
+	 */
+	BaseBackend.prototype.sendEvent = function (event) {
+		this._transport.sendEvent(event).then(null, function (reason) {
+			logger.error("Error while sending event: " + reason);
+		});
+	};
+	/**
+	 * @inheritDoc
+	 */
+	BaseBackend.prototype.getTransport = function () {
+		return this._transport;
+	};
+	return BaseBackend;
+}());
+```
+
+
+#### BaseClient class
+
+```js
+var BaseClient = /** @class */ (function () {
+	/**
+	 * Initializes this client instance.
+	 *
+	 * @param backendClass A constructor function to create the backend.
+	 * @param options Options for the client.
+	 */
+	function BaseClient(backendClass, options) {
+		/** Array of used integrations. */
+		this._integrations = {};
+		/** Is the client still processing a call? */
+		this._processing = false;
+		this._backend = new backendClass(options);
+		this._options = options;
+		if (options.dsn) {
+			this._dsn = new Dsn(options.dsn);
+		}
+		if (this._isEnabled()) {
+			this._integrations = setupIntegrations(this._options);
+		}
+	}
+	// code ...
+	return BaseClient;
+}());
+```
+
+
+### 经过一系列的继承和初始化
+
+最终得到这样的数据
+
+```js
+function initAndBind(clientClass, options) {
+	if (options.debug === true) {
+		logger.enable();
+	}
+	getCurrentHub().bindClient(new clientClass(options));
+}
+```
+
+### getCurrentHub()
+
+```js
+function getCurrentHub() {
+	// Get main carrier (global for every environment)
+	var registry = getMainCarrier();
+	// If there's no hub, or its an old API, assign a new one
+	if (!hasHubOnCarrier(registry) || getHubFromCarrier(registry).isOlderThan(API_VERSION)) {
+		setHubOnCarrier(registry, new Hub());
+	}
+	// Prefer domains over global if they are there (applicable only to Node environment)
+	if (isNodeEnv()) {
+		return getHubFromActiveDomain(registry);
+	}
+	// Return hub that lives on a global object
+	return getHubFromCarrier(registry);
+}
+```
+
+```js
+function getMainCarrier() {
+	var carrier = getGlobalObject();
+	carrier.__SENTRY__ = carrier.__SENTRY__ || {
+		hub: undefined,
+	};
+	return carrier;
+}
+```
+
+```js
+function getHubFromCarrier(carrier) {
+	if (carrier && carrier.__SENTRY__ && carrier.__SENTRY__.hub) {
+		return carrier.__SENTRY__.hub;
+	}
+	carrier.__SENTRY__ = carrier.__SENTRY__ || {};
+	carrier.__SENTRY__.hub = new Hub();
+	return carrier.__SENTRY__.hub;
+}
+```
+
+##
+
+![new BrowserClient(options)](./sentry-new&#32;BrowserClient(options).png)
+
+## 总结
+
+可谓是惊艳。
+
+## 推荐阅读
+
+[JavaScript集成Sentry](https://juejin.im/post/5b7f63c96fb9a019f709b14b)
 
 未完待续 ...

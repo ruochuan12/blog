@@ -3191,7 +3191,10 @@ var Sentry = (function (exports) {
     function initAndBind(clientClass, options) {
         if (options.debug === true) {
             logger.enable();
-        }
+		}
+		var client = new clientClass(options);
+		console.log(client, options, 'client, options');
+		console.log('getCurrentHub()', getCurrentHub());
         getCurrentHub().bindClient(new clientClass(options));
     }
 

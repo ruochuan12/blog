@@ -23,7 +23,13 @@
 		debugger;
 		Sentry.init({ dsn: 'https://34e29c93475c43a58bee89a5530f2b9f@sentry.io/1784519' });
 		Sentry.captureMessage('Hello, 若川!');
-		fun();
+		// fun();
+		try{
+			a();
+		}
+		catch(e){
+			console.log(e);
+		}
 		console.log(`Sentry.captureMessage('Hello, 若川!');`);
 	</script>
 </body>
