@@ -390,6 +390,7 @@ function initAndBind(clientClass, options) {
 	getCurrentHub().bindClient(new clientClass(options));
 }
 ```
+获取当前的控制中心 `Hub`，bindClient。
 
 ### getCurrentHub()
 
@@ -412,6 +413,9 @@ function getCurrentHub() {
 
 ```js
 function getMainCarrier() {
+	// 载体 这里是window
+	// 通过一系列new BrowerClient() 一系列的初始化
+	// 挂载在  carrier.__SENTRY__ 已经有了三个属性，globalEventProcessors, hub, logger
 	var carrier = getGlobalObject();
 	carrier.__SENTRY__ = carrier.__SENTRY__ || {
 		hub: undefined,
