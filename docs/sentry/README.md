@@ -402,6 +402,7 @@ function getCurrentHub() {
 	if (!hasHubOnCarrier(registry) || getHubFromCarrier(registry).isOlderThan(API_VERSION)) {
 		setHubOnCarrier(registry, new Hub());
 	}
+	// node 才执行
 	// Prefer domains over global if they are there (applicable only to Node environment)
 	if (isNodeEnv()) {
 		return getHubFromActiveDomain(registry);
@@ -411,6 +412,8 @@ function getCurrentHub() {
 }
 ```
 
+
+<!-- 获取主载体 -->
 ```js
 function getMainCarrier() {
 	// 载体 这里是window
@@ -424,8 +427,11 @@ function getMainCarrier() {
 }
 ```
 
+
 ```js
+// 获取控制中心 hub 从载体上
 function getHubFromCarrier(carrier) {
+	// 已经有了则返回，没有则new Hub
 	if (carrier && carrier.__SENTRY__ && carrier.__SENTRY__.hub) {
 		return carrier.__SENTRY__.hub;
 	}
@@ -435,7 +441,240 @@ function getHubFromCarrier(carrier) {
 }
 ```
 
-##
+### bindClient
+
+获取最后一个
+
+```js
+Hub.prototype.bindClient = function (client) {
+	var top = this.getStackTop();
+	top.client = client;
+};
+```
+
+```js
+Hub.prototype.getStackTop = function () {
+	return this._stack[this._stack.length - 1];
+};
+```
+
+#### hub
+
+```js
+{
+_stack: Array(1)
+0:
+client: BrowserClient {_integrations: {…}, _processing: false, _backend: BrowserBackend, _options: {…}, _dsn: Dsn}
+scope: Scope {_notifyingListeners: false, _scopeListeners: Array(0), _eventProcessors: Array(0), _breadcrumbs: Array(0), _user: {…}, …}
+__proto__: Object
+length: 1
+__proto__: Array(0)
+_version: 3
+__proto__:
+		addBreadcrumb: ƒ (breadcrumb, hint)
+		bindClient: ƒ (client)
+		captureEvent: ƒ (event, hint)
+		captureException: ƒ (exception, hint)
+		captureMessage: ƒ (message, level, hint)
+		configureScope: ƒ (callback)
+		getClient: ƒ ()
+		getIntegration: ƒ (integration)
+		getScope: ƒ ()
+		getStack: ƒ ()
+		getStackTop: ƒ ()
+		isOlderThan: ƒ (version)
+		lastEventId: ƒ ()
+		popScope: ƒ ()
+		pushScope: ƒ ()
+		run: ƒ (callback)
+		setContext: ƒ (name, context)
+		setExtra: ƒ (key, extra)
+		setExtras: ƒ (extras)
+		setTag: ƒ (key, value)
+		setTags: ƒ (tags)
+		setUser: ƒ (user)
+		traceHeaders: ƒ ()
+		withScope: ƒ (callback)
+		_invokeClient: ƒ (method)
+		constructor: ƒ Hub(client, scope, _version)
+		__proto__: Object
+}
+```
+
+
+```js
+function captureMessage(message, level) {
+	var syntheticException;
+	try {
+		throw new Error(message);
+	}
+	catch (exception) {
+		syntheticException = exception;
+	}
+	return callOnHub('captureMessage', message, level, {
+		originalException: message,
+		syntheticException: syntheticException,
+	});
+}
+```
+
+```js
+/**
+ * This calls a function on the current hub.
+ * @param method function to call on hub.
+ * @param args to pass to function.
+ */
+function callOnHub(method) {
+	var args = [];
+	for (var _i = 1; _i < arguments.length; _i++) {
+		args[_i - 1] = arguments[_i];
+	}
+	var hub = getCurrentHub();
+	if (hub && hub[method]) {
+		// tslint:disable-next-line:no-unsafe-any
+		return hub[method].apply(hub, __spread(args));
+	}
+	throw new Error("No hub defined or " + method + " was not found on the hub, please open a bug report.");
+}
+```
+
+```js
+/**
+ * @inheritDoc
+ */
+Hub.prototype.captureMessage = function (message, level, hint) {
+	var eventId = (this._lastEventId = uuid4());
+	var finalHint = hint;
+	// If there's no explicit hint provided, mimick the same thing that would happen
+	// in the minimal itself to create a consistent behavior.
+	// We don't do this in the client, as it's the lowest level API, and doing this,
+	// would prevent user from having full control over direct calls.
+	if (!hint) {
+		var syntheticException = void 0;
+		try {
+			throw new Error(message);
+		}
+		catch (exception) {
+			syntheticException = exception;
+		}
+		finalHint = {
+			originalException: message,
+			syntheticException: syntheticException,
+		};
+	}
+	this._invokeClient('captureMessage', message, level, __assign({}, finalHint, { event_id: eventId }));
+	return eventId;
+};
+```
+
+```js
+/**
+ * Internal helper function to call a method on the top client if it exists.
+ *
+ * @param method The method to call on the client.
+ * @param args Arguments to pass to the client function.
+ */
+Hub.prototype._invokeClient = function (method) {
+	var _a;
+	var args = [];
+	for (var _i = 1; _i < arguments.length; _i++) {
+		args[_i - 1] = arguments[_i];
+	}
+	var top = this.getStackTop();
+	if (top && top.client && top.client[method]) {
+		(_a = top.client)[method].apply(_a, __spread(args, [top.scope]));
+	}
+};
+```
+
+
+### BaseClient.prototype.captureMessage
+
+### BaseClient.prototype._processEvent
+
+### _this._getBackend().sendEvent(finalEvent);
+
+###
+
+```js
+/**
+	* @inheritDoc
+	*/
+BaseBackend.prototype.sendEvent = function (event) {
+	this._transport.sendEvent(event).then(null, function (reason) {
+		logger.error("Error while sending event: " + reason);
+	});
+};
+```
+
+```js
+/**
+	* @inheritDoc
+	*/
+FetchTransport.prototype.sendEvent = function (event) {
+	var defaultOptions = {
+		body: JSON.stringify(event),
+		method: 'POST',
+		// Despite all stars in the sky saying that Edge supports old draft syntax, aka 'never', 'always', 'origin' and 'default
+		// https://caniuse.com/#feat=referrer-policy
+		// It doesn't. And it throw exception instead of ignoring this parameter...
+		// REF: https://github.com/getsentry/raven-js/issues/1233
+		referrerPolicy: (supportsReferrerPolicy() ? 'origin' : ''),
+	};
+	return this._buffer.add(global$2.fetch(this.url, defaultOptions).then(function (response) { return ({
+		status: exports.Status.fromHttpCode(response.status),
+	}); }));
+};
+```
+
+### PromiseBuffer
+
+### captureEvent
+
+```js
+/** JSDoc */
+GlobalHandlers.prototype._installGlobalOnErrorHandler = function () {
+	if (this._onErrorHandlerInstalled) {
+		return;
+	}
+	var self = this; // tslint:disable-line:no-this-assignment
+	this._oldOnErrorHandler = this._global.onerror;
+	this._global.onerror = function (msg, url, line, column, error) {
+		var currentHub = getCurrentHub();
+		var hasIntegration = currentHub.getIntegration(GlobalHandlers);
+		var isFailedOwnDelivery = error && error.__sentry_own_request__ === true;
+		if (!hasIntegration || shouldIgnoreOnError() || isFailedOwnDelivery) {
+			if (self._oldOnErrorHandler) {
+				return self._oldOnErrorHandler.apply(this, arguments);
+			}
+			return false;
+		}
+		var client = currentHub.getClient();
+		var event = isPrimitive(error)
+			? self._eventFromIncompleteOnError(msg, url, line, column)
+			: self._enhanceEventWithInitialFrame(eventFromUnknownInput(error, undefined, {
+				attachStacktrace: client && client.getOptions().attachStacktrace,
+				rejection: false,
+			}), url, line, column);
+		addExceptionMechanism(event, {
+			handled: false,
+			type: 'onerror',
+		});
+		currentHub.captureEvent(event, {
+			originalException: error,
+		});
+		if (self._oldOnErrorHandler) {
+			return self._oldOnErrorHandler.apply(this, arguments);
+		}
+		return false;
+	};
+	this._onErrorHandlerInstalled = true;
+};
+```
+
+BaseClient.prototype.captureEvent
+
+BaseClient.prototype._processEvent
 
 ![new BrowserClient(options)](./sentry-new-BrowserClient(options).png)
 
