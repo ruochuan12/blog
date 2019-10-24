@@ -2,7 +2,7 @@
 
 ## 前言
 
-这是学习源码整体架构第四篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。文章学习的是打包整合后的代码，不是实际仓库中的拆分的代码。
+>这是学习源码整体架构第四篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。文章学习的是打包整合后的代码，不是实际仓库中的拆分的代码。
 
 其余三篇分别是：
 >1.[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://juejin.im/post/5d39d2cbf265da1bc23fbd42)
@@ -17,6 +17,8 @@
 顺便研究下[`sentry-javascript`](https://github.com/getsentry/sentry-javascript) 的源码整体架构，于是有了这篇文章。
 
 本文分析的是打包后未压缩的源码，源码总行数五千余行，链接地址是：[https://browser.sentry-cdn.com/5.7.1/bundle.js](https://browser.sentry-cdn.com/5.7.1/bundle.js)， 版本是`v5.7.1`。
+
+本文示例等源代码在这个[github blog](https://github.com/lxchuan12/blog/docs/sentry)，需要的读者可以点击查看，觉得不错，可以顺便`star`一下。
 
 看源码前先来梳理下前端错误监控的知识。
 
@@ -130,82 +132,98 @@ FetchTransport.prototype.sendEvent = function (event) {
  }
 ```
 
+本文主要通过如何`Ajax上报`和`window.onerror`两条主线来学习源码。
+
 ## Sentry 源码入口和出口
 
 ```js
 var Sentry = (function(exports){
 	// code ...
 
-	exports.BrowserClient = BrowserClient;
-    exports.Hub = Hub;
-    exports.Integrations = INTEGRATIONS;
-    exports.SDK_NAME = SDK_NAME;
-    exports.SDK_VERSION = SDK_VERSION;
-    exports.Scope = Scope;
-    exports.Span = Span;
-    exports.Transports = index;
-    exports.addBreadcrumb = addBreadcrumb;
-    exports.addGlobalEventProcessor = addGlobalEventProcessor;
-    exports.captureEvent = captureEvent;
-	exports.captureException = captureException;
+	// code ...
+	// 省略了导出的Sentry的若干个方法和属性
+	// 只列出了如下两个
 	// 重点关注 captureMessage
     exports.captureMessage = captureMessage;
-    exports.close = close;
-    exports.configureScope = configureScope;
-    exports.defaultIntegrations = defaultIntegrations;
-    exports.flush = flush;
-    exports.forceLoad = forceLoad;
-    exports.getCurrentHub = getCurrentHub;
-	exports.getHubFromCarrier = getHubFromCarrier;
 	// 重点关注 init
     exports.init = init;
-    exports.lastEventId = lastEventId;
-    exports.onLoad = onLoad;
-    exports.setContext = setContext;
-    exports.setExtra = setExtra;
-    exports.setExtras = setExtras;
-    exports.setTag = setTag;
-    exports.setTags = setTags;
-    exports.setUser = setUser;
-    exports.showReportDialog = showReportDialog;
-    exports.withScope = withScope;
-    exports.wrap = wrap$1;
 
     return exports;
 }({}));
 ```
 
-## Sentry.init 初始化
+## Sentry.init 初始化 init 函数
+
+初始化
 
 ```js
 Sentry.init({ dsn: 'https://34e29c93475c43a58bee89a5530f2b9f@sentry.io/1784519' });
 ```
 
-### init 函数
-
 ```js
+// options 是 {dsn: '...'}
 function init(options) {
+	// 如果options 是undefined，则赋值为 空对象
 	if (options === void 0) { options = {}; }
+	// 如果没传 defaultIntegrations 则赋值默认的
 	if (options.defaultIntegrations === undefined) {
 		options.defaultIntegrations = defaultIntegrations;
 	}
+	// 初始化语句
 	if (options.release === undefined) {
 		var window_1 = getGlobalObject();
+		// 这是给  sentry-webpack-plugin 插件提供的，webpack插件注入的变量。这里没用这个插件，所以这里不深究。
 		// This supports the variable that sentry-webpack-plugin injects
 		if (window_1.SENTRY_RELEASE && window_1.SENTRY_RELEASE.id) {
 			options.release = window_1.SENTRY_RELEASE.id;
 		}
 	}
+	// 初始化并且绑定
 	initAndBind(BrowserClient, options);
 }
 ```
 
+### getGlobalObject、inNodeEnv 函数
+
+很多地方用到这个函数，解释一下，其实做的事情也比较简单，就是获取全局对象。浏览器中是`window`。
+
+```js
+/**
+ 	* 判断是否是node环境
+	* Checks whether we're in the Node.js or Browser environment
+	*
+	* @returns Answer to given question
+	*/
+function isNodeEnv() {
+	// tslint:disable:strict-type-predicates
+	return Object.prototype.toString.call(typeof process !== 'undefined' ? process : 0) === '[object process]';
+}
+var fallbackGlobalObject = {};
+/**
+	* Safely get global scope object
+	*
+	* @returns Global scope object
+	*/
+function getGlobalObject() {
+	return (isNodeEnv()
+	// 是 node 环境 赋值给 global
+		? global
+		: typeof window !== 'undefined'
+			? window
+			// 不是 window self 不是undefined 说明是 web Socket 环境
+			: typeof self !== 'undefined'
+				? self
+				// 都不是，赋值给空对象。
+				: fallbackGlobalObject);
+```
+
 继续看 `initAndBind` 函数
 
-### initAndBind 函数
+## initAndBind 函数 之 new BrowserClient(options)
 
 ```js
 function initAndBind(clientClass, options) {
+	//
 	if (options.debug === true) {
 		logger.enable();
 	}
@@ -217,7 +235,7 @@ function initAndBind(clientClass, options) {
 接着先看 构造函数 `BrowserClient`。
 TODO: 另一条线 `getCurrentHub().bindClient()` 先不看。
 
-### BrowserClient class
+### BrowserClient 构造函数
 
 ```js
 var BrowserClient = /** @class */ (function (_super) {
@@ -231,21 +249,6 @@ var BrowserClient = /** @class */ (function (_super) {
 		if (options === void 0) { options = {}; }
 		return _super.call(this, BrowserBackend, options) || this;
 	}
-	/**
-	 * @inheritDoc
-	 */
-	BrowserClient.prototype._prepareEvent = function (event, scope, hint) {
-		// code ...
-		return _super.prototype._prepareEvent.call(this, event, scope, hint);
-	};
-	/**
-	 * Show a report dialog to the user to send feedback to a specific event.
-	 *
-	 * @param options Set individual options for the dialog
-	 */
-	BrowserClient.prototype.showReportDialog = function (options) {
-		// code ...
-	};
 	return BrowserClient;
 }(BaseClient));
 ```
@@ -260,10 +263,33 @@ function BrowserClient(options) {
 `从代码中可以看出`
 `BrowserClient` 继承至`BaseClient`，并且把`BrowserBackend`，`options`传参给`BaseClient`调用。
 
-先看
+先看 `BrowserBackend`
 TODO: 这里的`BaseClient`，暂时不看。
 
-#### BrowserBackend  浏览器后端
+### __extends、extendStatics
+
+这里提一下继承、继承静态属性和方法。
+
+未打包的源码是使用`ES6 extends`实现的。这是打包后的对`ES6`的`extends`的一种实现。
+
+如果对继承还不是很熟悉的读者，可以参考我之前写的文章。[面试官问：JS的继承](https://lxchuan12.github.io/js-extend/)
+
+```js
+var extendStatics = function(d, b) {
+	extendStatics = Object.setPrototypeOf ||
+		({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
+		function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
+	return extendStatics(d, b);
+};
+
+function __extends(d, b) {
+	extendStatics(d, b);
+	function __() { this.constructor = d; }
+	d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
+}
+```
+
+### BrowserBackend  构造函数 浏览器后端
 
 ```js
 var BrowserBackend = /** @class */ (function (_super) {
@@ -293,9 +319,7 @@ var BrowserBackend = /** @class */ (function (_super) {
 }(BaseBackend));
 ```
 
-
-#### BaseBackend  基础后端
-
+#### BaseBackend  构造函数 （基础后端）
 
 ```js
 /**
@@ -377,10 +401,15 @@ var BaseClient = /** @class */ (function () {
 }());
 ```
 
-
-### 经过一系列的继承和初始化
+### new BrowerClient 经过一系列的继承和初始化
 
 最终得到这样的数据
+
+![new BrowserClient(options)](./images/sentry-new-BrowserClient(options).png)
+
+## initAndBind 函数 之 getCurrentHub().bindClient()
+
+继续看initAndBind 的另一条线
 
 ```js
 function initAndBind(clientClass, options) {
@@ -390,6 +419,7 @@ function initAndBind(clientClass, options) {
 	getCurrentHub().bindClient(new clientClass(options));
 }
 ```
+
 获取当前的控制中心 `Hub`，bindClient。
 
 ### getCurrentHub()
@@ -412,6 +442,7 @@ function getCurrentHub() {
 }
 ```
 
+### getMainCarrier、getHubFromCarrier
 
 <!-- 获取主载体 -->
 ```js
@@ -458,7 +489,20 @@ Hub.prototype.getStackTop = function () {
 };
 ```
 
-#### hub
+### 经过一系列的继承和初始化
+
+最终得到这样的数据
+
+```js
+function initAndBind(clientClass, options) {
+	if (options.debug === true) {
+		logger.enable();
+	}
+	getCurrentHub().bindClient(new clientClass(options));
+}
+```
+
+### hub
 
 ```js
 {
@@ -500,6 +544,15 @@ __proto__:
 		__proto__: Object
 }
 ```
+
+初始化完成后，再来看例子
+具体 `captureMessage` 函数。
+
+```js
+Sentry.captureMessage('Hello, 若川!');
+```
+
+## captureMessage 函数
 
 
 ```js
@@ -594,7 +647,7 @@ Hub.prototype._invokeClient = function (method) {
 
 ### _this._getBackend().sendEvent(finalEvent);
 
-###
+### BaseBackend.prototype.sendEvent
 
 ```js
 /**
@@ -606,6 +659,8 @@ BaseBackend.prototype.sendEvent = function (event) {
 	});
 };
 ```
+
+### FetchTransport.prototype.sendEvent
 
 ```js
 /**
@@ -628,6 +683,19 @@ FetchTransport.prototype.sendEvent = function (event) {
 ```
 
 ### PromiseBuffer
+
+TODO:
+可不写
+
+看完 `Ajax 上报` 主线，再看本文的另外一条主线 `window.onerror` 捕获。
+
+## window.onerror 捕获 错误
+
+例子：调用一个未申明的变量。
+
+```js
+func();
+```
 
 ### captureEvent
 
@@ -676,7 +744,35 @@ BaseClient.prototype.captureEvent
 
 BaseClient.prototype._processEvent
 
-![new BrowserClient(options)](./sentry-new-BrowserClient(options).png)
+_this._getBackend().sendEvent(finalEvent);
+
+
+```js
+BaseBackend.prototype.sendEvent = function (event) {
+		this._transport.sendEvent(event).then(null, function (reason) {
+			logger.error("Error while sending event: " + reason);
+		});
+};
+```
+
+```js
+FetchTransport.prototype.sendEvent = function (event) {
+	var defaultOptions = {
+		body: JSON.stringify(event),
+		method: 'POST',
+		// Despite all stars in the sky saying that Edge supports old draft syntax, aka 'never', 'always', 'origin' and 'default
+		// https://caniuse.com/#feat=referrer-policy
+		// It doesn't. And it throw exception instead of ignoring this parameter...
+		// REF: https://github.com/getsentry/raven-js/issues/1233
+		referrerPolicy: (supportsReferrerPolicy() ? 'origin' : ''),
+	};
+	return this._buffer.add(global$2.fetch(this.url, defaultOptions).then(function (response) { return ({
+		status: exports.Status.fromHttpCode(response.status),
+	}); }));
+};
+```
+
+![new BrowserClient(options)](./images/sentry-new-BrowserClient(options).png)
 
 ## 总结
 
@@ -687,3 +783,6 @@ BaseClient.prototype._processEvent
 [JavaScript集成Sentry](https://juejin.im/post/5b7f63c96fb9a019f709b14b)
 
 未完待续 ...
+
+TODO:
+
