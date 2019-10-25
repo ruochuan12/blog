@@ -9,7 +9,15 @@
 <body>
 	<script src="../src/syncPromise.js"></script>
 	<script>
-		var Sync = new SyncPromise();
+		console.log(1);
+		var Sync = new SyncPromise(() => {
+			setTimeout(() => {
+				console.log(3);
+			});
+			console.log(2);
+		});
+		console.log(Sync, 'Sync');
+		console.log(4);
 	</script>
 </body>
 </html>

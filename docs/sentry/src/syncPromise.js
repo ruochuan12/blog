@@ -1,3 +1,17 @@
+/** SyncPromise internal states */
+var States;
+(function (States) {
+	/** Pending */
+	States["PENDING"] = "PENDING";
+	/** Resolved / OK */
+	States["RESOLVED"] = "RESOLVED";
+	/** Rejected / Error */
+	States["REJECTED"] = "REJECTED";
+})(States || (States = {}));
+/**
+ * Thenable class that behaves like a Promise and follows it's interface
+ * but is not async internally
+ */
 var SyncPromise = /** @class */ (function () {
 	function SyncPromise(executor) {
 		var _this = this;
