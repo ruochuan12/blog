@@ -67,7 +67,7 @@ window.addEventListener('error', function(e) {
 `Image`上报错误方式：
 ` (new Image()).src = 'https://lxchuan12.cn/error?name=若川'`
 
-## Sentry 前端异常监控原理
+## Sentry 前端异常监控基本原理
 
 >1.重写 `window.onerror` 方法、重写 `window.onunhandledrejection` 方法
 
@@ -82,15 +82,19 @@ window.onerror = function (message, source, lineno, colno, error) {
 ```
 
 >参数：
-`message`：错误信息（字符串）。可用于`HTML onerror=""`处理程序中的`event`。
-`source`：发生错误的脚本`URL`（字符串）
-`lineno`：发生错误的行号（数字）
-`colno`：发生错误的列号（数字）
-`error`：`Error`对象（对象）
+
+>`message`：错误信息（字符串）。可用于`HTML onerror=""`处理程序中的`event`。
+
+>`source`：发生错误的脚本`URL`（字符串）
+
+>`lineno`：发生错误的行号（数字）
+
+>`colno`：发生错误的列号（数字）
+
+>`error`：`Error`对象（对象）
 
 [MDN unhandledrejection](https://developer.mozilla.org/zh-CN/docs/Web/Events/unhandledrejection)
 >当 `Promise` 被 `reject` 且没有 `reject` 处理器的时候，会触发 `unhandledrejection` 事件；这可能发生在 `window` 下，但也可能发生在 `Worker` 中。 这对于调试回退错误处理非常有用。
-
 
 `Sentry` 源码可以搜索 `global.onerror` 定位到具体位置
 
@@ -202,7 +206,7 @@ function init(options) {
 
 ### getGlobalObject、inNodeEnv 函数
 
-很多地方用到这个函数，解释一下，其实做的事情也比较简单，就是获取全局对象。浏览器中是`window`。
+很多地方用到这个函数`getGlobalObject`。其实做的事情也比较简单，就是获取全局对象。浏览器中是`window`。
 
 ```js
 /**
@@ -240,7 +244,7 @@ function getGlobalObject() {
 
 ```js
 function initAndBind(clientClass, options) {
-	// 这里没有开启debug模式，这句不会执行
+	// 这里没有开启debug模式，logger.enable() 这句不会执行
 	if (options.debug === true) {
 		logger.enable();
 	}
@@ -283,7 +287,7 @@ var BrowserClient = /** @class */ (function (_super) {
 
 未打包的源码是使用`ES6 extends`实现的。这是打包后的对`ES6`的`extends`的一种实现。
 
-如果对继承还不是很熟悉的读者，可以参考我之前写的文章。[面试官问：JS的继承](https://lxchuan12.cn/js-extend/)
+如果对继承还不是很熟悉的读者，可以参考我之前写的文章。[面试官问：JS的继承](https://juejin.im/post/5c433e216fb9a049c15f841b)
 
 ```js
 // 继承静态方法和属性
@@ -304,6 +308,8 @@ function __extends(d, b) {
 	function __() { this.constructor = d; }
 	// (__.prototype = b.prototype, new __()) 这种逗号形式的代码，最终返回是后者，也就是 new __()
 	// 比如 (typeof null, 1) 返回的是1
+	// 如果 b === null 用Object.create(b) 创建 ，也就是一个不含原型链等信息的空对象 {}
+	// 否则使用 new __() 返回
 	d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
 ```
@@ -328,6 +334,8 @@ var BrowserBackend = /** @class */ (function (_super) {
 		return _super !== null && _super.apply(this, arguments) || this;
 	}
 	/**
+	 * TODO:
+	 *
 	 * @inheritDoc
 	 */
 	BrowserBackend.prototype._setupTransport = function () {
@@ -352,6 +360,8 @@ var BrowserBackend = /** @class */ (function (_super) {
 `BrowserBackend` 又继承自 `BaseBackend`。
 
 #### BaseBackend  构造函数 （基础后端）
+
+TODO:
 
 ```js
 /**
@@ -403,7 +413,9 @@ var BaseBackend = /** @class */ (function () {
 }());
 ```
 
-通过一系列的继承后，回过头来看 `BaseClient` 构造函数
+通过一系列的继承后，回过头来看 `BaseClient` 构造函数。
+
+
 
 #### BaseClient 构造函数
 
@@ -455,14 +467,16 @@ function initAndBind(clientClass, options) {
 }
 ```
 
-获取当前的控制中心 `Hub`，bindClient。
+获取当前的控制中心 `Hub`，再把`new BrowserClient()` 的实例对象绑定在`Hub`上。
 
 ### getCurrentHub()
 
 ```js
+// 获取当前Hub 控制中心
 function getCurrentHub() {
 	// Get main carrier (global for every environment)
 	var registry = getMainCarrier();
+	// 如果没有控制中心在载体上，或者它的版本是老版本，就设置新的。
 	// If there's no hub, or its an old API, assign a new one
 	if (!hasHubOnCarrier(registry) || getHubFromCarrier(registry).isOlderThan(API_VERSION)) {
 		setHubOnCarrier(registry, new Hub());
@@ -472,12 +486,13 @@ function getCurrentHub() {
 	if (isNodeEnv()) {
 		return getHubFromActiveDomain(registry);
 	}
+	// 返回当前控制中心来自载体上。
 	// Return hub that lives on a global object
 	return getHubFromCarrier(registry);
 }
 ```
 
-### getMainCarrier、getHubFromCarrier
+### 衍生的函数 getMainCarrier、getHubFromCarrier
 
 <!-- 获取主载体 -->
 ```js
@@ -493,7 +508,6 @@ function getMainCarrier() {
 }
 ```
 
-
 ```js
 // 获取控制中心 hub 从载体上
 function getHubFromCarrier(carrier) {
@@ -507,26 +521,27 @@ function getHubFromCarrier(carrier) {
 }
 ```
 
-### bindClient
-
-获取最后一个
+### bindClient 绑定客户端在当前控制中心上
 
 ```js
 Hub.prototype.bindClient = function (client) {
+	// 获取最后一个
 	var top = this.getStackTop();
+	// 把 new BrowerClient() 实例 绑定到top上
 	top.client = client;
 };
 ```
 
 ```js
 Hub.prototype.getStackTop = function () {
+	// 获取最后一个
 	return this._stack[this._stack.length - 1];
 };
 ```
 
 ### 经过一系列的继承和初始化
 
-最终得到这样的数据
+再回过头来看 `initAndBind`函数
 
 ```js
 function initAndBind(clientClass, options) {
@@ -536,6 +551,8 @@ function initAndBind(clientClass, options) {
 	getCurrentHub().bindClient(new clientClass(options));
 }
 ```
+
+最终会得到这样一份数据。
 
 ### hub
 
@@ -580,8 +597,8 @@ __proto__:
 }
 ```
 
-初始化完成后，再来看例子
-具体 `captureMessage` 函数。
+初始化完成后，再来看具体例子。
+具体 `captureMessage` 函数的实现。
 
 ```js
 Sentry.captureMessage('Hello, 若川!');
@@ -599,6 +616,7 @@ function captureMessage(message, level) {
 	catch (exception) {
 		syntheticException = exception;
 	}
+	// 调用 callOnHub 方法
 	return callOnHub('captureMessage', message, level, {
 		originalException: message,
 		syntheticException: syntheticException,
@@ -613,11 +631,15 @@ function captureMessage(message, level) {
  * @param args to pass to function.
  */
 function callOnHub(method) {
+	// 这里method 传进来的是 'captureMessage'
+	// 把method除外的其他参数放到args数组中
 	var args = [];
 	for (var _i = 1; _i < arguments.length; _i++) {
 		args[_i - 1] = arguments[_i];
 	}
+	// 获取当前控制中心 hub
 	var hub = getCurrentHub();
+	// 有这个方法 把args 数组展开，传递给 hub[method] 执行
 	if (hub && hub[method]) {
 		// tslint:disable-next-line:no-unsafe-any
 		return hub[method].apply(hub, __spread(args));
@@ -625,6 +647,8 @@ function callOnHub(method) {
 	throw new Error("No hub defined or " + method + " was not found on the hub, please open a bug report.");
 }
 ```
+
+接着看`Hub.prototype` 上定义的 `captureMessage` 方法
 
 ```js
 /**
@@ -655,6 +679,9 @@ Hub.prototype.captureMessage = function (message, level, hint) {
 };
 ```
 
+看代码可以知道最后会调用 `Hub.prototype` 上的 `_invokeClient`方法。
+
+
 ```js
 /**
  * Internal helper function to call a method on the top client if it exists.
@@ -663,12 +690,16 @@ Hub.prototype.captureMessage = function (message, level, hint) {
  * @param args Arguments to pass to the client function.
  */
 Hub.prototype._invokeClient = function (method) {
+	// 同样：这里method 传进来的是 'captureMessage'
+	// 把method除外的其他参数放到args数组中
 	var _a;
 	var args = [];
 	for (var _i = 1; _i < arguments.length; _i++) {
 		args[_i - 1] = arguments[_i];
 	}
 	var top = this.getStackTop();
+	// 获取控制中心的 hub，调用客户端也就是new BrowerClient () 实例中继承自 BaseClient 的 captureMessage 方法
+	// 有这个方法 把args 数组展开，传递给 hub[method] 执行
 	if (top && top.client && top.client[method]) {
 		(_a = top.client)[method].apply(_a, __spread(args, [top.scope]));
 	}
@@ -677,6 +708,38 @@ Hub.prototype._invokeClient = function (method) {
 
 
 ### BaseClient.prototype.captureMessage
+
+```js
+/**
+ * @inheritDoc
+ */
+BaseClient.prototype.captureMessage = function (message, level, hint, scope) {
+	var _this = this;
+	var eventId = hint && hint.event_id;
+	this._processing = true;
+	var promisedEvent = isPrimitive(message)
+		? this._getBackend().eventFromMessage("" + message, level, hint)
+		: this._getBackend().eventFromException(message, hint);
+	promisedEvent
+		.then(function (event) { return _this._processEvent(event, hint, scope); })
+		.then(function (finalEvent) {
+		// We need to check for finalEvent in case beforeSend returned null
+		eventId = finalEvent && finalEvent.event_id;
+		_this._processing = false;
+	})
+		.then(null, function (reason) {
+		logger.error(reason);
+		_this._processing = false;
+	});
+	return eventId;
+};
+```
+
+最后会执行这句
+
+```js
+_this._processEvent
+```
 
 ### BaseClient.prototype._processEvent
 
@@ -798,13 +861,13 @@ Hub.prototype._invokeClient = function (method) {
 };
 ```
 
-BaseClient.prototype.captureEvent
+### BaseClient.prototype.captureEvent
 
-BaseClient.prototype.captureEvent
+this._processEvent(event, hint, scope)
 
-BaseClient.prototype._processEvent
+### BaseClient.prototype._processEvent
 
-_this._getBackend().sendEvent(finalEvent);
+### _this._getBackend().sendEvent(finalEvent);
 
 可谓是殊途同归。
 
