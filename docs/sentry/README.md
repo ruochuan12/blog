@@ -69,14 +69,31 @@ window.addEventListener('error', function(e) {
 
 ## Sentry 前端异常监控原理
 
->1.重写 `window.onerror` 方法
+>1.重写 `window.onerror` 方法、重写 `window.onunhandledrejection` 方法
+
+如果不了解`onerror和onunhandledrejection`方法的读者，可以看相关的`MDN`文档。这里简要介绍一下：
+
+[MDN GlobalEventHandlers.onerror](https://developer.mozilla.org/zh-CN/docs/Web/API/GlobalEventHandlers/onerror)
 
 ```js
-window.onerror = function (msg, url, line, column, error) {
-	console.log('msg, url, line, column, error', msg, url, line, column, error);
+window.onerror = function (message, source, lineno, colno, error) {
+	console.log('message, source, lineno, colno, error', message, source, lineno, colno, error);
 }
 ```
+
+>参数：
+`message`：错误信息（字符串）。可用于`HTML onerror=""`处理程序中的`event`。
+`source`：发生错误的脚本`URL`（字符串）
+`lineno`：发生错误的行号（数字）
+`colno`：发生错误的列号（数字）
+`error`：`Error`对象（对象）
+
+[MDN unhandledrejection](https://developer.mozilla.org/zh-CN/docs/Web/Events/unhandledrejection)
+>当 `Promise` 被 `reject` 且没有 `reject` 处理器的时候，会触发 `unhandledrejection` 事件；这可能发生在 `window` 下，但也可能发生在 `Worker` 中。 这对于调试回退错误处理非常有用。
+
+
 `Sentry` 源码可以搜索 `global.onerror` 定位到具体位置
+
 ```js
  GlobalHandlers.prototype._installGlobalOnErrorHandler = function () {
             if (this._onErrorHandlerInstalled) {
@@ -152,7 +169,7 @@ var Sentry = (function(exports){
 }({}));
 ```
 
-## Sentry.init 初始化 init 函数
+## Sentry.init 初始化 之 init 函数
 
 初始化
 
@@ -210,7 +227,7 @@ function getGlobalObject() {
 		? global
 		: typeof window !== 'undefined'
 			? window
-			// 不是 window self 不是undefined 说明是 web Socket 环境
+			// 不是 window self 不是undefined 说明是 Web Worker 环境
 			: typeof self !== 'undefined'
 				? self
 				// 都不是，赋值给空对象。
@@ -219,11 +236,11 @@ function getGlobalObject() {
 
 继续看 `initAndBind` 函数
 
-## initAndBind 函数 之 new BrowserClient(options)
+## initAndBind 函数之 new BrowserClient(options)
 
 ```js
 function initAndBind(clientClass, options) {
-	//
+	// 这里没有开启debug模式，这句不会执行
 	if (options.debug === true) {
 		logger.enable();
 	}
@@ -231,14 +248,15 @@ function initAndBind(clientClass, options) {
 }
 ```
 
-可以看出 initAndBind()，第一个参数是 `BrowserClient` 构造函数，第二个参数是初始化后的`options`
+可以看出 `initAndBind()`，第一个参数是 `BrowserClient` 构造函数，第二个参数是初始化后的`options`。
 接着先看 构造函数 `BrowserClient`。
-TODO: 另一条线 `getCurrentHub().bindClient()` 先不看。
+另一条线 `getCurrentHub().bindClient()` 先不看。
 
 ### BrowserClient 构造函数
 
 ```js
 var BrowserClient = /** @class */ (function (_super) {
+	// `BrowserClient` 继承自`BaseClient`
 	__extends(BrowserClient, _super);
 	/**
 	 * Creates a new Browser SDK instance.
@@ -247,35 +265,33 @@ var BrowserClient = /** @class */ (function (_super) {
 	 */
 	function BrowserClient(options) {
 		if (options === void 0) { options = {}; }
+		// 把`BrowserBackend`，`options`传参给`BaseClient`调用。
 		return _super.call(this, BrowserBackend, options) || this;
 	}
 	return BrowserClient;
 }(BaseClient));
 ```
 
-```js
-__extends(BrowserClient, _super);
-function BrowserClient(options) {
-	if (options === void 0) { options = {}; }
-	return _super.call(this, BrowserBackend, options) || this;
-}
-```
-`从代码中可以看出`
-`BrowserClient` 继承至`BaseClient`，并且把`BrowserBackend`，`options`传参给`BaseClient`调用。
+`从代码中可以看出`：
+`BrowserClient` 继承自`BaseClient`，并且把`BrowserBackend`，`options`传参给`BaseClient`调用。
 
-先看 `BrowserBackend`
-TODO: 这里的`BaseClient`，暂时不看。
+先看 `BrowserBackend`，这里的`BaseClient`，暂时不看。
 
-### __extends、extendStatics
+看`BrowserBackend`之前，先提一下继承、继承静态属性和方法。
 
-这里提一下继承、继承静态属性和方法。
+### __extends、extendStatics 打包代码实现的继承
 
 未打包的源码是使用`ES6 extends`实现的。这是打包后的对`ES6`的`extends`的一种实现。
 
-如果对继承还不是很熟悉的读者，可以参考我之前写的文章。[面试官问：JS的继承](https://lxchuan12.github.io/js-extend/)
+如果对继承还不是很熟悉的读者，可以参考我之前写的文章。[面试官问：JS的继承](https://lxchuan12.cn/js-extend/)
 
 ```js
+// 继承静态方法和属性
 var extendStatics = function(d, b) {
+	// 如果支持 Object.setPrototypeOf 这个函数，直接使用
+	// 不支持，则使用原型__proto__ 属性，
+	// 如何还不支持（但有可能__proto__也不支持，毕竟是浏览器特有的方法。）
+	// 则使用for in 遍历原型链上的属性，从而达到继承的目的。
 	extendStatics = Object.setPrototypeOf ||
 		({ __proto__: [] } instanceof Array && function (d, b) { d.__proto__ = b; }) ||
 		function (d, b) { for (var p in b) if (b.hasOwnProperty(p)) d[p] = b[p]; };
@@ -284,10 +300,24 @@ var extendStatics = function(d, b) {
 
 function __extends(d, b) {
 	extendStatics(d, b);
+	// 申明构造函数__ 并且把 d 赋值给 constructor
 	function __() { this.constructor = d; }
+	// (__.prototype = b.prototype, new __()) 这种逗号形式的代码，最终返回是后者，也就是 new __()
+	// 比如 (typeof null, 1) 返回的是1
 	d.prototype = b === null ? Object.create(b) : (__.prototype = b.prototype, new __());
 }
 ```
+
+不得不说这打包后的代码十分严谨，上面说的我的文章《面试官问：`JS`的继承》中没有提到不支持`__proto__`的情况。看来这文章可以进一步严谨修正了。
+让我想起`Vue`源码中对数组检测代理判断是否支持`__proto__`的判断。
+
+```js
+// vuejs 源码：https://github.com/vuejs/vue/blob/dev/dist/vue.js#L526-L527
+// can we use __proto__?
+var hasProto = '__proto__' in {};
+```
+
+看完打包代码实现的继承，继续看 `BrowserBackend` 构造函数
 
 ### BrowserBackend  构造函数 浏览器后端
 
@@ -318,6 +348,8 @@ var BrowserBackend = /** @class */ (function (_super) {
 	return BrowserBackend;
 }(BaseBackend));
 ```
+
+`BrowserBackend` 又继承自 `BaseBackend`。
 
 #### BaseBackend  构造函数 （基础后端）
 
@@ -371,8 +403,9 @@ var BaseBackend = /** @class */ (function () {
 }());
 ```
 
+通过一系列的继承后，回过头来看 `BaseClient` 构造函数
 
-#### BaseClient class
+#### BaseClient 构造函数
 
 ```js
 var BaseClient = /** @class */ (function () {
@@ -403,13 +436,15 @@ var BaseClient = /** @class */ (function () {
 
 ### new BrowerClient 经过一系列的继承和初始化
 
-最终得到这样的数据
+最终得到这样的数据。我画了一张图表示。
 
 ![new BrowserClient(options)](./images/sentry-new-BrowserClient(options).png)
 
-## initAndBind 函数 之 getCurrentHub().bindClient()
+TODO: 上面部分还需完善
 
-继续看initAndBind 的另一条线
+## initAndBind 函数之 getCurrentHub().bindClient()
+
+继续看 `initAndBind` 的另一条线。
 
 ```js
 function initAndBind(clientClass, options) {
@@ -689,7 +724,7 @@ TODO:
 
 看完 `Ajax 上报` 主线，再看本文的另外一条主线 `window.onerror` 捕获。
 
-## window.onerror 捕获 错误
+## window.onerror 和 window.onunhandledrejection 捕获 错误
 
 例子：调用一个未申明的变量。
 
@@ -740,12 +775,38 @@ GlobalHandlers.prototype._installGlobalOnErrorHandler = function () {
 };
 ```
 
+
+```js
+Hub.prototype.captureEvent = function (event, hint) {
+	var eventId = (this._lastEventId = uuid4());
+	this._invokeClient('captureEvent', event, __assign({}, hint, { event_id: eventId }));
+	return eventId;
+};
+```
+
+```js
+Hub.prototype._invokeClient = function (method) {
+	var _a;
+	var args = [];
+	for (var _i = 1; _i < arguments.length; _i++) {
+		args[_i - 1] = arguments[_i];
+	}
+	var top = this.getStackTop();
+	if (top && top.client && top.client[method]) {
+		(_a = top.client)[method].apply(_a, __spread(args, [top.scope]));
+	}
+};
+```
+
+BaseClient.prototype.captureEvent
+
 BaseClient.prototype.captureEvent
 
 BaseClient.prototype._processEvent
 
 _this._getBackend().sendEvent(finalEvent);
 
+可谓是殊途同归。
 
 ```js
 BaseBackend.prototype.sendEvent = function (event) {
@@ -772,7 +833,6 @@ FetchTransport.prototype.sendEvent = function (event) {
 };
 ```
 
-![new BrowserClient(options)](./images/sentry-new-BrowserClient(options).png)
 
 ## 总结
 
@@ -780,9 +840,10 @@ FetchTransport.prototype.sendEvent = function (event) {
 
 ## 推荐阅读
 
-[JavaScript集成Sentry](https://juejin.im/post/5b7f63c96fb9a019f709b14b)
+[知乎滴滴云：超详细！搭建一个前端错误监控系统](https://zhuanlan.zhihu.com/p/51446011)
+
+[掘金BlackHole1：JavaScript集成Sentry](https://juejin.im/post/5b7f63c96fb9a019f709b14b)
 
 未完待续 ...
 
 TODO:
-
