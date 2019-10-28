@@ -10,9 +10,10 @@
 	<script src="../src/syncPromise.js"></script>
 	<script>
 		console.log(1);
-		var Sync = new SyncPromise(() => {
+		var Sync = new SyncPromise((reject) => {
 			setTimeout(() => {
 				console.log(3);
+				reject('reject');
 			});
 			console.log(2);
 		});

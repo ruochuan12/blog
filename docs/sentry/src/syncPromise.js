@@ -8,6 +8,17 @@ var States;
 	/** Rejected / Error */
 	States["REJECTED"] = "REJECTED";
 })(States || (States = {}));
+
+/**
+ * Checks whether given value has a then function.
+ * @param wat A value to be checked.
+ */
+function isThenable(wat) {
+	// tslint:disable:no-unsafe-any
+	return Boolean(wat && wat.then && typeof wat.then === 'function');
+	// tslint:enable:no-unsafe-any
+}
+
 /**
  * Thenable class that behaves like a Promise and follows it's interface
  * but is not async internally
