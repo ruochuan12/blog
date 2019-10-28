@@ -335,8 +335,6 @@ var BrowserBackend = /** @class */ (function (_super) {
 	}
 	/**
 	 * TODO:
-	 *
-	 * @inheritDoc
 	 */
 	BrowserBackend.prototype._setupTransport = function () {
 		if (!this._options.dsn) {
@@ -383,29 +381,17 @@ var BaseBackend = /** @class */ (function () {
 	BaseBackend.prototype._setupTransport = function () {
 		return new NoopTransport();
 	};
-	/**
-	 * @inheritDoc
-	 */
 	BaseBackend.prototype.eventFromException = function (_exception, _hint) {
 		throw new SentryError('Backend has to implement `eventFromException` method');
 	};
-	/**
-	 * @inheritDoc
-	 */
 	BaseBackend.prototype.eventFromMessage = function (_message, _level, _hint) {
 		throw new SentryError('Backend has to implement `eventFromMessage` method');
 	};
-	/**
-	 * @inheritDoc
-	 */
 	BaseBackend.prototype.sendEvent = function (event) {
 		this._transport.sendEvent(event).then(null, function (reason) {
 			logger.error("Error while sending event: " + reason);
 		});
 	};
-	/**
-	 * @inheritDoc
-	 */
 	BaseBackend.prototype.getTransport = function () {
 		return this._transport;
 	};
@@ -414,7 +400,6 @@ var BaseBackend = /** @class */ (function () {
 ```
 
 通过一系列的继承后，回过头来看 `BaseClient` 构造函数。
-
 
 
 #### BaseClient 构造函数
@@ -606,6 +591,9 @@ Sentry.captureMessage('Hello, 若川!');
 
 ## captureMessage 函数
 
+>调用栈流程：
+>
+captureMessage
 
 ```js
 function captureMessage(message, level) {
@@ -623,6 +611,8 @@ function captureMessage(message, level) {
 	});
 }
 ```
+
+=> callOnHub
 
 ```js
 /**
@@ -648,12 +638,11 @@ function callOnHub(method) {
 }
 ```
 
+=>  Hub.prototype.captureMessage
+
 接着看`Hub.prototype` 上定义的 `captureMessage` 方法
 
 ```js
-/**
- * @inheritDoc
- */
 Hub.prototype.captureMessage = function (message, level, hint) {
 	var eventId = (this._lastEventId = uuid4());
 	var finalHint = hint;
@@ -679,7 +668,7 @@ Hub.prototype.captureMessage = function (message, level, hint) {
 };
 ```
 
-看代码可以知道最后会调用 `Hub.prototype` 上的 `_invokeClient`方法。
+=> Hub.prototype._invokeClient
 
 
 ```js
@@ -706,13 +695,9 @@ Hub.prototype._invokeClient = function (method) {
 };
 ```
 
-
-### BaseClient.prototype.captureMessage
+=> BaseClient.prototype.captureMessage
 
 ```js
-/**
- * @inheritDoc
- */
 BaseClient.prototype.captureMessage = function (message, level, hint, scope) {
 	var _this = this;
 	var eventId = hint && hint.event_id;
@@ -735,22 +720,14 @@ BaseClient.prototype.captureMessage = function (message, level, hint, scope) {
 };
 ```
 
-最后会执行这句
-
+=> BaseClient.prototype._processEvent
 ```js
-_this._processEvent
+_this._getBackend().sendEvent(finalEvent);
 ```
 
-### BaseClient.prototype._processEvent
-
-### _this._getBackend().sendEvent(finalEvent);
-
-### BaseBackend.prototype.sendEvent
+=>  BaseBackend.prototype.sendEvent
 
 ```js
-/**
-	* @inheritDoc
-	*/
 BaseBackend.prototype.sendEvent = function (event) {
 	this._transport.sendEvent(event).then(null, function (reason) {
 		logger.error("Error while sending event: " + reason);
@@ -758,12 +735,11 @@ BaseBackend.prototype.sendEvent = function (event) {
 };
 ```
 
+=> FetchTransport.prototype.sendEvent 最终发送了请求
+
 ### FetchTransport.prototype.sendEvent
 
 ```js
-/**
-	* @inheritDoc
-	*/
 FetchTransport.prototype.sendEvent = function (event) {
 	var defaultOptions = {
 		body: JSON.stringify(event),
@@ -779,11 +755,6 @@ FetchTransport.prototype.sendEvent = function (event) {
 	}); }));
 };
 ```
-
-### PromiseBuffer
-
-TODO:
-可不写
 
 看完 `Ajax 上报` 主线，再看本文的另外一条主线 `window.onerror` 捕获。
 
@@ -797,8 +768,9 @@ func();
 
 ### captureEvent
 
+>调用栈流程：
+
 ```js
-/** JSDoc */
 GlobalHandlers.prototype._installGlobalOnErrorHandler = function () {
 	if (this._onErrorHandlerInstalled) {
 		return;
@@ -807,25 +779,7 @@ GlobalHandlers.prototype._installGlobalOnErrorHandler = function () {
 	this._oldOnErrorHandler = this._global.onerror;
 	this._global.onerror = function (msg, url, line, column, error) {
 		var currentHub = getCurrentHub();
-		var hasIntegration = currentHub.getIntegration(GlobalHandlers);
-		var isFailedOwnDelivery = error && error.__sentry_own_request__ === true;
-		if (!hasIntegration || shouldIgnoreOnError() || isFailedOwnDelivery) {
-			if (self._oldOnErrorHandler) {
-				return self._oldOnErrorHandler.apply(this, arguments);
-			}
-			return false;
-		}
-		var client = currentHub.getClient();
-		var event = isPrimitive(error)
-			? self._eventFromIncompleteOnError(msg, url, line, column)
-			: self._enhanceEventWithInitialFrame(eventFromUnknownInput(error, undefined, {
-				attachStacktrace: client && client.getOptions().attachStacktrace,
-				rejection: false,
-			}), url, line, column);
-		addExceptionMechanism(event, {
-			handled: false,
-			type: 'onerror',
-		});
+		// 代码有删减
 		currentHub.captureEvent(event, {
 			originalException: error,
 		});
@@ -838,38 +792,57 @@ GlobalHandlers.prototype._installGlobalOnErrorHandler = function () {
 };
 ```
 
-
 ```js
-Hub.prototype.captureEvent = function (event, hint) {
-	var eventId = (this._lastEventId = uuid4());
-	this._invokeClient('captureEvent', event, __assign({}, hint, { event_id: eventId }));
-	return eventId;
-};
+currentHub.captureEvent(event, {
+	originalException: error,
+});
 ```
 
+=> Hub.prototype.captureEvent
+
 ```js
+this._invokeClient('captureEvent')
+```
+
+=> Hub.prototype._invokeClient
+
+```js
+/**
+ * Internal helper function to call a method on the top client if it exists.
+ *
+ * @param method The method to call on the client.
+ * @param args Arguments to pass to the client function.
+ */
 Hub.prototype._invokeClient = function (method) {
+	// 同样：这里method 传进来的是 'captureMessage'
+	// 把method除外的其他参数放到args数组中
 	var _a;
 	var args = [];
 	for (var _i = 1; _i < arguments.length; _i++) {
 		args[_i - 1] = arguments[_i];
 	}
 	var top = this.getStackTop();
+	// 获取控制中心的 hub，调用客户端也就是new BrowerClient () 实例中继承自 BaseClient 的 captureMessage 方法
+	// 有这个方法 把args 数组展开，传递给 hub[method] 执行
 	if (top && top.client && top.client[method]) {
 		(_a = top.client)[method].apply(_a, __spread(args, [top.scope]));
 	}
 };
 ```
 
-### BaseClient.prototype.captureEvent
+=> BaseClient.prototype.captureEvent
 
+```js
 this._processEvent(event, hint, scope)
+```
 
-### BaseClient.prototype._processEvent
+=> BaseClient.prototype._processEvent
 
-### _this._getBackend().sendEvent(finalEvent);
+```js
+_this._getBackend().sendEvent(finalEvent);
+```
 
-可谓是殊途同归。
+=>  BaseBackend.prototype.sendEvent
 
 ```js
 BaseBackend.prototype.sendEvent = function (event) {
@@ -878,6 +851,8 @@ BaseBackend.prototype.sendEvent = function (event) {
 		});
 };
 ```
+
+=> FetchTransport.prototype.sendEvent 最终发送了请求
 
 ```js
 FetchTransport.prototype.sendEvent = function (event) {
@@ -896,6 +871,7 @@ FetchTransport.prototype.sendEvent = function (event) {
 };
 ```
 
+可谓是殊途同归。
 
 ## 总结
 
@@ -910,3 +886,8 @@ FetchTransport.prototype.sendEvent = function (event) {
 未完待续 ...
 
 TODO:
+
+- [ ] 完善继承图
+- [ ] 完善文章
+- [ ] 完善和补充调用栈调试方法
+- [ ] 完善 onunhandledrejection 示例
