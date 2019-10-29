@@ -14,17 +14,19 @@
 感兴趣的读者可以点击阅读。
 
 开发微信小程序，想着搭建小程序错误监控方案。最近用了丁香园 开源的`Sentry` 小程序 `SDK`[sentry-miniapp](https://github.com/lizhiyao/sentry-miniapp)。
-顺便研究下[`sentry-javascript`](https://github.com/getsentry/sentry-javascript) 的源码整体架构，于是有了这篇文章。
+顺便研究下[`sentry-javascript`仓库](https://github.com/getsentry/sentry-javascript) 的源码整体架构，于是有了这篇文章。
 
 本文分析的是打包后未压缩的源码，源码总行数五千余行，链接地址是：[https://browser.sentry-cdn.com/5.7.1/bundle.js](https://browser.sentry-cdn.com/5.7.1/bundle.js)， 版本是`v5.7.1`。
 
-本文示例等源代码在这个[github blog](https://github.com/lxchuan12/blog/docs/sentry)，需要的读者可以点击查看，觉得不错，可以顺便`star`一下。
+本文示例等源代码在这我的`github`博客中[github blog sentry](https://github.com/lxchuan12/blog/docs/sentry)，需要的读者可以点击查看，如果觉得不错，可以顺便`star`一下。
 
 看源码前先来梳理下前端错误监控的知识。
 
 ## 前端错误监控知识
 
-摘抄自某视频教程。
+摘抄自 [慕课网视频教程：前端跳槽面试必备技巧](https://coding.imooc.com/class/129.html)
+
+[别人做的笔记：前端跳槽面试必备技巧-4-4 错误监控类](https://articles.jerryshi.com/learning/fe/js-interview-skill.html#_4-4-%E9%94%99%E8%AF%AF%E7%9B%91%E6%8E%A7%E7%B1%BB)
 
 ### 前端错误的分类
 
@@ -148,12 +150,26 @@ FetchTransport.prototype.sendEvent = function (event) {
 	 var _this = this;
 	return this._buffer.add(new SyncPromise(function (resolve, reject) {
 		var request = new XMLHttpRequest();
-		// code ...
-	};
+		request.onreadystatechange = function () {
+			if (request.readyState !== 4) {
+				return;
+			}
+			if (request.status === 200) {
+				resolve({
+					status: exports.Status.fromHttpCode(request.status),
+				});
+			}
+			reject(request);
+		};
+		request.open('POST', _this.url);
+		request.send(JSON.stringify(event));
+	}));
  }
 ```
 
-本文主要通过如何`Ajax上报`和`window.onerror`两条主线来学习源码。
+本文主要通过如何`Ajax上报`和`window.onerror、window.onunhandledrejection`两条主线来学习源码。
+
+>如果看到这里，暂时不想关注后面的源码细节，可以点赞或收藏这篇文章。后续想看了再看。
 
 ## Sentry 源码入口和出口
 
@@ -161,9 +177,14 @@ FetchTransport.prototype.sendEvent = function (event) {
 var Sentry = (function(exports){
 	// code ...
 
+    var SDK_NAME = 'sentry.javascript.browser';
+	var SDK_VERSION = '5.7.1';
+
 	// code ...
 	// 省略了导出的Sentry的若干个方法和属性
-	// 只列出了如下两个
+	// 只列出了如下几个
+    exports.SDK_NAME = SDK_NAME;
+    exports.SDK_VERSION = SDK_VERSION;
 	// 重点关注 captureMessage
     exports.captureMessage = captureMessage;
 	// 重点关注 init
@@ -377,6 +398,7 @@ var BaseBackend = /** @class */ (function () {
 	}
 	/**
 	 * Sets up the transport so it can be used later to send requests.
+	 * 设置发送请求空函数
 	 */
 	BaseBackend.prototype._setupTransport = function () {
 		return new NoopTransport();
@@ -400,7 +422,6 @@ var BaseBackend = /** @class */ (function () {
 ```
 
 通过一系列的继承后，回过头来看 `BaseClient` 构造函数。
-
 
 #### BaseClient 构造函数
 
@@ -433,9 +454,9 @@ var BaseClient = /** @class */ (function () {
 
 ### new BrowerClient 经过一系列的继承和初始化
 
-最终得到这样的数据。我画了一张图表示。
+最终得到这样的数据。我画了一张图表示。重点关注部分不同颜色标注了，其他部分收缩了。
 
-![new BrowserClient(options)](./images/sentry-new-BrowserClient(options).png)
+![sentry new BrowserClient 实例图 By@若川](./images/sentry-new-BrowserClient-2019-10-29.png)
 
 TODO: 上面部分还需完善
 
@@ -454,7 +475,7 @@ function initAndBind(clientClass, options) {
 
 获取当前的控制中心 `Hub`，再把`new BrowserClient()` 的实例对象绑定在`Hub`上。
 
-### getCurrentHub()
+### getCurrentHub 函数
 
 ```js
 // 获取当前Hub 控制中心
@@ -591,7 +612,12 @@ Sentry.captureMessage('Hello, 若川!');
 
 ## captureMessage 函数
 
->调用栈流程：
+通过之前的阅读代码，知道会最终会调用`Fetch`接口，所以直接断点调试即可，得出如下调用栈。
+接下来描述调用栈的主要流程。
+
+![captureMessage 断点调试图](./images/captureMessageCallStack.png)
+
+>调用栈主要流程：
 >
 captureMessage
 
@@ -646,23 +672,7 @@ function callOnHub(method) {
 Hub.prototype.captureMessage = function (message, level, hint) {
 	var eventId = (this._lastEventId = uuid4());
 	var finalHint = hint;
-	// If there's no explicit hint provided, mimick the same thing that would happen
-	// in the minimal itself to create a consistent behavior.
-	// We don't do this in the client, as it's the lowest level API, and doing this,
-	// would prevent user from having full control over direct calls.
-	if (!hint) {
-		var syntheticException = void 0;
-		try {
-			throw new Error(message);
-		}
-		catch (exception) {
-			syntheticException = exception;
-		}
-		finalHint = {
-			originalException: message,
-			syntheticException: syntheticException,
-		};
-	}
+	// 代码有删减
 	this._invokeClient('captureMessage', message, level, __assign({}, finalHint, { event_id: eventId }));
 	return eventId;
 };
@@ -705,25 +715,24 @@ BaseClient.prototype.captureMessage = function (message, level, hint, scope) {
 	var promisedEvent = isPrimitive(message)
 		? this._getBackend().eventFromMessage("" + message, level, hint)
 		: this._getBackend().eventFromException(message, hint);
+		// 代码有删减
 	promisedEvent
 		.then(function (event) { return _this._processEvent(event, hint, scope); })
-		.then(function (finalEvent) {
-		// We need to check for finalEvent in case beforeSend returned null
-		eventId = finalEvent && finalEvent.event_id;
-		_this._processing = false;
-	})
-		.then(null, function (reason) {
-		logger.error(reason);
-		_this._processing = false;
-	});
+	// 代码有删减
 	return eventId;
 };
 ```
+最后会调用 `_processEvent` 也就是
 
 => BaseClient.prototype._processEvent
+
+这个函数最终会调用
+
 ```js
 _this._getBackend().sendEvent(finalEvent);
 ```
+
+也就是
 
 =>  BaseBackend.prototype.sendEvent
 
@@ -766,9 +775,22 @@ FetchTransport.prototype.sendEvent = function (event) {
 func();
 ```
 
+`Promise` 不捕获错误
+
+```js
+new Promise(() => {
+	fun();
+})
+.then(res => {
+	console.log('then');
+})
+```
+
 ### captureEvent
 
->调用栈流程：
+>调用栈主要流程：
+
+>window.onerror
 
 ```js
 GlobalHandlers.prototype._installGlobalOnErrorHandler = function () {
@@ -776,6 +798,7 @@ GlobalHandlers.prototype._installGlobalOnErrorHandler = function () {
 		return;
 	}
 	var self = this; // tslint:disable-line:no-this-assignment
+	// 浏览器中这里的 this._global.  就是window
 	this._oldOnErrorHandler = this._global.onerror;
 	this._global.onerror = function (msg, url, line, column, error) {
 		var currentHub = getCurrentHub();
@@ -792,6 +815,33 @@ GlobalHandlers.prototype._installGlobalOnErrorHandler = function () {
 };
 ```
 
+>window.onunhandledrejection
+
+```js
+GlobalHandlers.prototype._installGlobalOnUnhandledRejectionHandler = function () {
+		if (this._onUnhandledRejectionHandlerInstalled) {
+			return;
+		}
+		var self = this; // tslint:disable-line:no-this-assignment
+		this._oldOnUnhandledRejectionHandler = this._global.onunhandledrejection;
+		this._global.onunhandledrejection = function (e) {
+			// 代码有删减
+			var currentHub = getCurrentHub();
+			currentHub.captureEvent(event, {
+				originalException: error,
+			});
+			if (self._oldOnUnhandledRejectionHandler) {
+				return self._oldOnUnhandledRejectionHandler.apply(this, arguments);
+			}
+			return false;
+		};
+		this._onUnhandledRejectionHandlerInstalled = true;
+	};
+}
+```
+
+共同点：都会调用`currentHub.captureEvent`
+
 ```js
 currentHub.captureEvent(event, {
 	originalException: error,
@@ -800,82 +850,34 @@ currentHub.captureEvent(event, {
 
 => Hub.prototype.captureEvent
 
+最终又是调用 `_invokeClient` ，调用流程跟 `captureMessage` 类似，这里就不再赘述。
+
 ```js
 this._invokeClient('captureEvent')
 ```
 
 => Hub.prototype._invokeClient
 
-```js
-/**
- * Internal helper function to call a method on the top client if it exists.
- *
- * @param method The method to call on the client.
- * @param args Arguments to pass to the client function.
- */
-Hub.prototype._invokeClient = function (method) {
-	// 同样：这里method 传进来的是 'captureMessage'
-	// 把method除外的其他参数放到args数组中
-	var _a;
-	var args = [];
-	for (var _i = 1; _i < arguments.length; _i++) {
-		args[_i - 1] = arguments[_i];
-	}
-	var top = this.getStackTop();
-	// 获取控制中心的 hub，调用客户端也就是new BrowerClient () 实例中继承自 BaseClient 的 captureMessage 方法
-	// 有这个方法 把args 数组展开，传递给 hub[method] 执行
-	if (top && top.client && top.client[method]) {
-		(_a = top.client)[method].apply(_a, __spread(args, [top.scope]));
-	}
-};
-```
-
 => BaseClient.prototype.captureEvent
-
-```js
-this._processEvent(event, hint, scope)
-```
 
 => BaseClient.prototype._processEvent
 
-```js
-_this._getBackend().sendEvent(finalEvent);
-```
-
 =>  BaseBackend.prototype.sendEvent
 
-```js
-BaseBackend.prototype.sendEvent = function (event) {
-		this._transport.sendEvent(event).then(null, function (reason) {
-			logger.error("Error while sending event: " + reason);
-		});
-};
-```
+=> FetchTransport.prototype.sendEvent
 
-=> FetchTransport.prototype.sendEvent 最终发送了请求
-
-```js
-FetchTransport.prototype.sendEvent = function (event) {
-	var defaultOptions = {
-		body: JSON.stringify(event),
-		method: 'POST',
-		// Despite all stars in the sky saying that Edge supports old draft syntax, aka 'never', 'always', 'origin' and 'default
-		// https://caniuse.com/#feat=referrer-policy
-		// It doesn't. And it throw exception instead of ignoring this parameter...
-		// REF: https://github.com/getsentry/raven-js/issues/1233
-		referrerPolicy: (supportsReferrerPolicy() ? 'origin' : ''),
-	};
-	return this._buffer.add(global$2.fetch(this.url, defaultOptions).then(function (response) { return ({
-		status: exports.Status.fromHttpCode(response.status),
-	}); }));
-};
-```
+最终同样是调用了这个函数发送了请求。
 
 可谓是殊途同归。
 
 ## 总结
 
-可谓是惊艳。
+`sentry`源码高效利用了`JS`的原型链机制。可谓是惊艳，值得学习。
+本文比较详细的介绍了 `Ajax上报`和`window.onerror、window.onunhandledrejection`这两条主线。还有很多细节和构造函数没有分析。
+
+总共的构造函数有25个，提到的主要有9个，分别是：`Hub、BaseClient、BaseBackend、BaseTransport、FetchTransport、XHRTransport、BrowserBackend、BrowserClient、GlobalHandlers`。
+
+其他没有提到的分别是 `SentryError、Logger、Memo、SyncPromise、PromiseBuffer、Span、Scope、Dsn、API、NoopTransport、FunctionToString、InboundFilters、TryCatch、Breadcrumbs、LinkedErrors、UserAgent`。
 
 ## 推荐阅读
 
@@ -883,11 +885,44 @@ FetchTransport.prototype.sendEvent = function (event) {
 
 [掘金BlackHole1：JavaScript集成Sentry](https://juejin.im/post/5b7f63c96fb9a019f709b14b)
 
+丁香园 开源的`Sentry` 小程序 `SDK`[sentry-miniapp](https://github.com/lizhiyao/sentry-miniapp)。
+
+[`sentry`官网](https://sentry.io)
+
+[`sentry-javascript`仓库](https://github.com/getsentry/sentry-javascript)
+
 未完待续 ...
 
 TODO:
 
-- [ ] 完善继承图
+- [ ] 完善继承图、完善继承代码
 - [ ] 完善文章
-- [ ] 完善和补充调用栈调试方法
-- [ ] 完善 onunhandledrejection 示例
+- [x] 完善和补充调用栈调试方法
+- [x] 完善 onunhandledrejection 示例
+
+## 笔者往期文章
+
+[学习 lodash 源码整体架构，打造属于自己的函数式编程类库](https://juejin.im/post/5d767e1d6fb9a06b032025ea)<br>
+[学习 underscore 源码整体架构，打造属于自己的函数式编程类库](https://juejin.im/post/5d4bf94de51d453bb13b65dc)<br>
+[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://juejin.im/post/5d39d2cbf265da1bc23fbd42)<br>
+[面试官问：JS的继承](https://juejin.im/post/5c433e216fb9a049c15f841b)<br>
+[面试官问：JS的this指向](https://juejin.im/post/5c0c87b35188252e8966c78a)<br>
+[面试官问：能否模拟实现JS的call和apply方法](https://juejin.im/post/5bf6c79bf265da6142738b29)<br>
+[面试官问：能否模拟实现JS的bind方法](https://juejin.im/post/5bec4183f265da616b1044d7)<br>
+[面试官问：能否模拟实现JS的new操作符](https://juejin.im/post/5bde7c926fb9a049f66b8b52)<br>
+[前端使用puppeteer 爬虫生成《React.js 小书》PDF并合并](https://juejin.im/post/5b86732451882542af1c8082)
+
+## 关于
+
+作者：常以**若川**为名混迹于江湖。前端路上 | PPT爱好者 | 所知甚少，唯善学。<br>
+[个人博客-若川](https://lxchuan12.github.io/)，使用`vuepress`重构了，阅读体验可能更好些<br>
+[掘金专栏](https://juejin.im/user/57974dc55bbb500063f522fd/posts)，欢迎关注~<br>
+[`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，欢迎关注~<br>
+[知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，欢迎关注~<br>
+[github blog](https://github.com/lxchuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
+
+## 微信公众号  若川视野
+
+可能比较有趣的微信公众号，长按扫码关注。也可以加微信 `lxchuan12`，注明来源，拉您进【前端视野交流群】。
+
+![若川视野](../about/wechat-official-accounts-mini.jpg)
