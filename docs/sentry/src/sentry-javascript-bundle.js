@@ -3194,8 +3194,11 @@ var Sentry = (function (exports) {
 		}
 		var client = new clientClass(options);
 		console.log(client, options, 'client, options');
-		console.log('getCurrentHub()', getCurrentHub());
-        getCurrentHub().bindClient(new clientClass(options));
+		var currentHub = getCurrentHub();
+		currentHub.bindClient(client);
+		console.log('currentHub', currentHub);
+		// 源代码
+        // getCurrentHub().bindClient(new clientClass(options));
     }
 
     var originalFunctionToString;

@@ -5,11 +5,9 @@
 >这是学习源码整体架构第四篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。文章学习的是打包整合后的代码，不是实际仓库中的拆分的代码。
 
 其余三篇分别是：
->1.[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://juejin.im/post/5d39d2cbf265da1bc23fbd42)
-
->2.[学习 underscore 源码整体架构，打造属于自己的函数式编程类库](https://juejin.im/post/5d4bf94de51d453bb13b65dc)
-
->3.[学习 lodash 源码整体架构，打造属于自己的函数式编程类库](https://juejin.im/post/5d767e1d6fb9a06b032025ea)
+>1.[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://juejin.im/post/5d39d2cbf265da1bc23fbd42)<br/>
+>2.[学习 underscore 源码整体架构，打造属于自己的函数式编程类库](https://juejin.im/post/5d4bf94de51d453bb13b65dc)<br/>
+>3.[学习 lodash 源码整体架构，打造属于自己的函数式编程类库](https://juejin.im/post/5d767e1d6fb9a06b032025ea)<br/>
 
 感兴趣的读者可以点击阅读。
 
@@ -83,17 +81,12 @@ window.onerror = function (message, source, lineno, colno, error) {
 }
 ```
 
->参数：
-
->`message`：错误信息（字符串）。可用于`HTML onerror=""`处理程序中的`event`。
-
->`source`：发生错误的脚本`URL`（字符串）
-
->`lineno`：发生错误的行号（数字）
-
->`colno`：发生错误的列号（数字）
-
->`error`：`Error`对象（对象）
+>参数：<br/>
+>`message`：错误信息（字符串）。可用于`HTML onerror=""`处理程序中的`event`。<br/>
+>`source`：发生错误的脚本`URL`（字符串）<br/>
+>`lineno`：发生错误的行号（数字）<br/>
+>`colno`：发生错误的列号（数字）<br/>
+>`error`：`Error`对象（对象）<br/>
 
 [MDN unhandledrejection](https://developer.mozilla.org/zh-CN/docs/Web/Events/unhandledrejection)
 >当 `Promise` 被 `reject` 且没有 `reject` 处理器的时候，会触发 `unhandledrejection` 事件；这可能发生在 `window` 下，但也可能发生在 `Worker` 中。 这对于调试回退错误处理非常有用。
@@ -102,17 +95,22 @@ window.onerror = function (message, source, lineno, colno, error) {
 
 ```js
  GlobalHandlers.prototype._installGlobalOnErrorHandler = function () {
-            if (this._onErrorHandlerInstalled) {
-                return;
-            }
-			var self = this; // tslint:disable-line:no-this-assignment
-
-			// 这里的 this._global 在浏览器中就是 window
-            this._oldOnErrorHandler = this._global.onerror;
-			this._global.onerror = function (msg, url, line, column, error) {}
-			// code ...
+	// 代码有删减
+	// 这里的 this._global 在浏览器中就是 window
+	this._oldOnErrorHandler = this._global.onerror;
+	this._global.onerror = function (msg, url, line, column, error) {}
+	// code ...
  }
 ```
+同样，可以搜索`global.onunhandledrejection` 定位到具体位置
+```js
+GlobalHandlers.prototype._installGlobalOnUnhandledRejectionHandler = function () {
+	// 代码有删减
+	this._oldOnUnhandledRejectionHandler = this._global.onunhandledrejection;
+	this._global.onunhandledrejection = function (e) {}
+}
+```
+
 
 >2.采用`Ajax`上传
 
@@ -120,7 +118,7 @@ window.onerror = function (message, source, lineno, colno, error) {
 
 ```js
 BrowserBackend.prototype._setupTransport = function () {
-	// code ...
+	// 代码有删减
 	if (supportsFetch()) {
 		return new FetchTransport(transportOptions);
 	}
@@ -149,6 +147,7 @@ FetchTransport.prototype.sendEvent = function (event) {
  XHRTransport.prototype.sendEvent = function (event) {
 	 var _this = this;
 	return this._buffer.add(new SyncPromise(function (resolve, reject) {
+		// 熟悉的 XMLHttpRequest
 		var request = new XMLHttpRequest();
 		request.onreadystatechange = function () {
 			if (request.readyState !== 4) {
@@ -169,7 +168,7 @@ FetchTransport.prototype.sendEvent = function (event) {
 
 本文主要通过如何`Ajax上报`和`window.onerror、window.onunhandledrejection`两条主线来学习源码。
 
->如果看到这里，暂时不想关注后面的源码细节，可以点赞或收藏这篇文章。后续想看了再看。
+>如果看到这里，暂时不想关注后面的源码细节，直接看后文小结1和2的两张图。或者可以点赞或收藏这篇文章，后续想看了再看。
 
 ## Sentry 源码入口和出口
 
@@ -199,7 +198,8 @@ var Sentry = (function(exports){
 初始化
 
 ```js
-Sentry.init({ dsn: 'https://34e29c93475c43a58bee89a5530f2b9f@sentry.io/1784519' });
+// 这里的dsn，是sentry.io网站会生成的。
+Sentry.init({ dsn: 'xxx' });
 ```
 
 ```js
@@ -346,7 +346,7 @@ var hasProto = '__proto__' in {};
 
 看完打包代码实现的继承，继续看 `BrowserBackend` 构造函数
 
-### BrowserBackend  构造函数 浏览器后端
+### BrowserBackend  构造函数 （浏览器后端）
 
 ```js
 var BrowserBackend = /** @class */ (function (_super) {
@@ -355,17 +355,20 @@ var BrowserBackend = /** @class */ (function (_super) {
 		return _super !== null && _super.apply(this, arguments) || this;
 	}
 	/**
-	 * TODO:
+	 * 设置请求
 	 */
 	BrowserBackend.prototype._setupTransport = function () {
 		if (!this._options.dsn) {
 			// We return the noop transport here in case there is no Dsn.
+			// 没有设置dsn，调用BaseBackend.prototype._setupTransport 返回空函数
 			return _super.prototype._setupTransport.call(this);
 		}
 		var transportOptions = __assign({}, this._options.transportOptions, { dsn: this._options.dsn });
 		if (this._options.transport) {
 			return new this._options.transport(transportOptions);
 		}
+		// 支持Fetch则返回 FetchTransport 实例，否则返回 XHRTransport实例，
+		// 这两个构造函数具体代码在开头已有提到。
 		if (supportsFetch()) {
 			return new FetchTransport(transportOptions);
 		}
@@ -380,8 +383,6 @@ var BrowserBackend = /** @class */ (function (_super) {
 
 #### BaseBackend  构造函数 （基础后端）
 
-TODO:
-
 ```js
 /**
  * This is the base implemention of a Backend.
@@ -394,6 +395,7 @@ var BaseBackend = /** @class */ (function () {
 		if (!this._options.dsn) {
 			logger.warn('No DSN provided, backend will not do anything.');
 		}
+		// 调用设置请求函数
 		this._transport = this._setupTransport();
 	}
 	/**
@@ -403,12 +405,7 @@ var BaseBackend = /** @class */ (function () {
 	BaseBackend.prototype._setupTransport = function () {
 		return new NoopTransport();
 	};
-	BaseBackend.prototype.eventFromException = function (_exception, _hint) {
-		throw new SentryError('Backend has to implement `eventFromException` method');
-	};
-	BaseBackend.prototype.eventFromMessage = function (_message, _level, _hint) {
-		throw new SentryError('Backend has to implement `eventFromMessage` method');
-	};
+	// code ...
 	BaseBackend.prototype.sendEvent = function (event) {
 		this._transport.sendEvent(event).then(null, function (reason) {
 			logger.error("Error while sending event: " + reason);
@@ -423,7 +420,7 @@ var BaseBackend = /** @class */ (function () {
 
 通过一系列的继承后，回过头来看 `BaseClient` 构造函数。
 
-#### BaseClient 构造函数
+#### BaseClient 构造函数（基础客户端）
 
 ```js
 var BaseClient = /** @class */ (function () {
@@ -452,13 +449,26 @@ var BaseClient = /** @class */ (function () {
 }());
 ```
 
-### new BrowerClient 经过一系列的继承和初始化
+### 小结1. new BrowerClient 经过一系列的继承和初始化
 
-最终得到这样的数据。我画了一张图表示。重点关注部分不同颜色标注了，其他部分收缩了。
+可以输出下具体`new clientClass(options)`之后的结果：
 
-![sentry new BrowserClient 实例图 By@若川](./images/sentry-new-BrowserClient-2019-10-29.png)
+```js
+function initAndBind(clientClass, options) {
+	if (options.debug === true) {
+		logger.enable();
+	}
+	var client = new clientClass(options);
+	console.log('new clientClass(options)', client);
+	getCurrentHub().bindClient(client);
+	// 原来的代码
+	// getCurrentHub().bindClient(new clientClass(options));
+}
+```
 
-TODO: 上面部分还需完善
+最终输出得到这样的数据。我画了一张图表示。重点关注部分不同颜色标注了，其他部分收缩了。
+
+![sentry new BrowserClient 实例图 By@若川](./images/BrowserClient-instance.png)
 
 ## initAndBind 函数之 getCurrentHub().bindClient()
 
@@ -545,63 +555,28 @@ Hub.prototype.getStackTop = function () {
 };
 ```
 
-### 经过一系列的继承和初始化
+### 小结2. 经过一系列的继承和初始化
 
 再回过头来看 `initAndBind`函数
 
 ```js
 function initAndBind(clientClass, options) {
-	if (options.debug === true) {
-		logger.enable();
-	}
-	getCurrentHub().bindClient(new clientClass(options));
+        if (options.debug === true) {
+            logger.enable();
+		}
+		var client = new clientClass(options);
+		console.log(client, options, 'client, options');
+		var currentHub = getCurrentHub();
+		currentHub.bindClient(client);
+		console.log('currentHub', currentHub);
+		// 源代码
+        // getCurrentHub().bindClient(new clientClass(options));
 }
 ```
 
-最终会得到这样一份数据。
+最终会得到这样的`Hub`实例对象。笔者画了一张图表示，便于查看理解。
 
-### hub
-
-```js
-{
-_stack: Array(1)
-0:
-client: BrowserClient {_integrations: {…}, _processing: false, _backend: BrowserBackend, _options: {…}, _dsn: Dsn}
-scope: Scope {_notifyingListeners: false, _scopeListeners: Array(0), _eventProcessors: Array(0), _breadcrumbs: Array(0), _user: {…}, …}
-__proto__: Object
-length: 1
-__proto__: Array(0)
-_version: 3
-__proto__:
-		addBreadcrumb: ƒ (breadcrumb, hint)
-		bindClient: ƒ (client)
-		captureEvent: ƒ (event, hint)
-		captureException: ƒ (exception, hint)
-		captureMessage: ƒ (message, level, hint)
-		configureScope: ƒ (callback)
-		getClient: ƒ ()
-		getIntegration: ƒ (integration)
-		getScope: ƒ ()
-		getStack: ƒ ()
-		getStackTop: ƒ ()
-		isOlderThan: ƒ (version)
-		lastEventId: ƒ ()
-		popScope: ƒ ()
-		pushScope: ƒ ()
-		run: ƒ (callback)
-		setContext: ƒ (name, context)
-		setExtra: ƒ (key, extra)
-		setExtras: ƒ (extras)
-		setTag: ƒ (key, value)
-		setTags: ƒ (tags)
-		setUser: ƒ (user)
-		traceHeaders: ƒ ()
-		withScope: ƒ (callback)
-		_invokeClient: ƒ (method)
-		constructor: ƒ Hub(client, scope, _version)
-		__proto__: Object
-}
-```
+![Hub 实例关系图](./images/Hub-instance.png)
 
 初始化完成后，再来看具体例子。
 具体 `captureMessage` 函数的实现。
@@ -759,6 +734,7 @@ FetchTransport.prototype.sendEvent = function (event) {
 		// REF: https://github.com/getsentry/raven-js/issues/1233
 		referrerPolicy: (supportsReferrerPolicy() ? 'origin' : ''),
 	};
+	// global$2.fetch(this.url, defaultOptions) 使用fetch发送请求
 	return this._buffer.add(global$2.fetch(this.url, defaultOptions).then(function (response) { return ({
 		status: exports.Status.fromHttpCode(response.status),
 	}); }));
@@ -868,37 +844,32 @@ this._invokeClient('captureEvent')
 
 最终同样是调用了这个函数发送了请求。
 
-可谓是殊途同归。
+可谓是殊途同归，行文至此就基本已经结束，最后总结一下。
 
 ## 总结
 
-`sentry`源码高效利用了`JS`的原型链机制。可谓是惊艳，值得学习。
+`Sentry-JavaScript`源码高效利用了`JS`的原型链机制。可谓是惊艳，值得学习。
+
 本文比较详细的介绍了 `Ajax上报`和`window.onerror、window.onunhandledrejection`这两条主线。还有很多细节和构造函数没有分析。
 
-总共的构造函数有25个，提到的主要有9个，分别是：`Hub、BaseClient、BaseBackend、BaseTransport、FetchTransport、XHRTransport、BrowserBackend、BrowserClient、GlobalHandlers`。
+总共的构造函数（类）有25个，提到的主要有9个，分别是：`Hub、BaseClient、BaseBackend、BaseTransport、FetchTransport、XHRTransport、BrowserBackend、BrowserClient、GlobalHandlers`。
 
 其他没有提到的分别是 `SentryError、Logger、Memo、SyncPromise、PromiseBuffer、Span、Scope、Dsn、API、NoopTransport、FunctionToString、InboundFilters、TryCatch、Breadcrumbs、LinkedErrors、UserAgent`。
 
+这些构造函数（类）中还有很多值得学习，比如同步的`Promise`（SyncPromise）。
+有兴趣的读者，可以看这一块官方仓库中采用`typescript`写的源码[SyncPromise](https://github.com/getsentry/sentry-javascript/blob/master/packages/utils/src/syncpromise.ts)，也可以看打包后出来未压缩的代码。
+
+读源码比较耗费时间，写文章记录下来更加费时间（比如我这篇文章写了十多天...），但收获一般都比较大。
+
+如果读者发现有不妥或可改善之处，再或者哪里没写明白的地方，欢迎评论指出。另外觉得写得不错，对您有些许帮助，可以点赞、评论、转发分享，也是对笔者的一种支持。万分感谢。
+
 ## 推荐阅读
 
-[知乎滴滴云：超详细！搭建一个前端错误监控系统](https://zhuanlan.zhihu.com/p/51446011)
-
-[掘金BlackHole1：JavaScript集成Sentry](https://juejin.im/post/5b7f63c96fb9a019f709b14b)
-
-丁香园 开源的`Sentry` 小程序 `SDK`[sentry-miniapp](https://github.com/lizhiyao/sentry-miniapp)。
-
-[`sentry`官网](https://sentry.io)
-
-[`sentry-javascript`仓库](https://github.com/getsentry/sentry-javascript)
-
-未完待续 ...
-
-TODO:
-
-- [ ] 完善继承图、完善继承代码
-- [ ] 完善文章
-- [x] 完善和补充调用栈调试方法
-- [x] 完善 onunhandledrejection 示例
+[知乎滴滴云：超详细！搭建一个前端错误监控系统](https://zhuanlan.zhihu.com/p/51446011)<br/>
+[掘金BlackHole1：JavaScript集成Sentry](https://juejin.im/post/5b7f63c96fb9a019f709b14b)<br/>
+丁香园 开源的`Sentry` 小程序 `SDK`[sentry-miniapp](https://github.com/lizhiyao/sentry-miniapp)<br/>
+[`sentry`官网](https://sentry.io)<br/>
+[`sentry-javascript`仓库](https://github.com/getsentry/sentry-javascript)<br/>
 
 ## 笔者往期文章
 
