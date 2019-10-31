@@ -11,6 +11,9 @@
 
 感兴趣的读者可以点击阅读。
 
+**导读**<br/>
+本文通过梳理前端错误监控知识、介绍`sentry`错误监控原理、`sentry`初始化、`Ajax`上报、`window.onerror、window.onunhandledrejection`几个方面来学习`sentry`的源码。
+
 开发微信小程序，想着搭建小程序错误监控方案。最近用了丁香园 开源的`Sentry` 小程序 `SDK`[sentry-miniapp](https://github.com/lizhiyao/sentry-miniapp)。
 顺便研究下[`sentry-javascript`仓库](https://github.com/getsentry/sentry-javascript) 的源码整体架构，于是有了这篇文章。
 
@@ -22,8 +25,7 @@
 
 ## 前端错误监控知识
 
-摘抄自 [慕课网视频教程：前端跳槽面试必备技巧](https://coding.imooc.com/class/129.html)
-
+摘抄自 [慕课网视频教程：前端跳槽面试必备技巧](https://coding.imooc.com/class/129.html)<br/>
 [别人做的笔记：前端跳槽面试必备技巧-4-4 错误监控类](https://articles.jerryshi.com/learning/fe/js-interview-skill.html#_4-4-%E9%94%99%E8%AF%AF%E7%9B%91%E6%8E%A7%E7%B1%BB)
 
 ### 前端错误的分类
@@ -144,8 +146,8 @@ FetchTransport.prototype.sendEvent = function (event) {
 >2.2 `XMLHttpRequest`
 
 ```js
- XHRTransport.prototype.sendEvent = function (event) {
-	 var _this = this;
+XHRTransport.prototype.sendEvent = function (event) {
+	var _this = this;
 	return this._buffer.add(new SyncPromise(function (resolve, reject) {
 		// 熟悉的 XMLHttpRequest
 		var request = new XMLHttpRequest();
@@ -163,10 +165,10 @@ FetchTransport.prototype.sendEvent = function (event) {
 		request.open('POST', _this.url);
 		request.send(JSON.stringify(event));
 	}));
- }
+}
 ```
 
-本文主要通过如何`Ajax上报`和`window.onerror、window.onunhandledrejection`两条主线来学习源码。
+接下来主要通过Sentry初始化、如何`Ajax上报`和`window.onerror、window.onunhandledrejection`三条主线来学习源码。
 
 >如果看到这里，暂时不想关注后面的源码细节，直接看后文小结1和2的两张图。或者可以点赞或收藏这篇文章，后续想看了再看。
 
@@ -231,21 +233,21 @@ function init(options) {
 
 ```js
 /**
- 	* 判断是否是node环境
-	* Checks whether we're in the Node.js or Browser environment
-	*
-	* @returns Answer to given question
-	*/
+ * 判断是否是node环境
+ * Checks whether we're in the Node.js or Browser environment
+ *
+ * @returns Answer to given question
+ */
 function isNodeEnv() {
 	// tslint:disable:strict-type-predicates
 	return Object.prototype.toString.call(typeof process !== 'undefined' ? process : 0) === '[object process]';
 }
 var fallbackGlobalObject = {};
 /**
-	* Safely get global scope object
-	*
-	* @returns Global scope object
-	*/
+ * Safely get global scope object
+ *
+ * @returns Global scope object
+ */
 function getGlobalObject() {
 	return (isNodeEnv()
 	// 是 node 环境 赋值给 global
@@ -466,7 +468,7 @@ function initAndBind(clientClass, options) {
 }
 ```
 
-最终输出得到这样的数据。我画了一张图表示。重点关注部分不同颜色标注了，其他部分收缩了。
+最终输出得到这样的数据。我画了一张图表示。重点关注的原型链用颜色标注了，其他部分收缩了。
 
 ![sentry new BrowserClient 实例图 By@若川](./images/BrowserClient-instance.png)
 
@@ -561,22 +563,22 @@ Hub.prototype.getStackTop = function () {
 
 ```js
 function initAndBind(clientClass, options) {
-        if (options.debug === true) {
-            logger.enable();
-		}
-		var client = new clientClass(options);
-		console.log(client, options, 'client, options');
-		var currentHub = getCurrentHub();
-		currentHub.bindClient(client);
-		console.log('currentHub', currentHub);
-		// 源代码
-        // getCurrentHub().bindClient(new clientClass(options));
+	if (options.debug === true) {
+		logger.enable();
+	}
+	var client = new clientClass(options);
+	console.log(client, options, 'client, options');
+	var currentHub = getCurrentHub();
+	currentHub.bindClient(client);
+	console.log('currentHub', currentHub);
+	// 源代码
+	// getCurrentHub().bindClient(new clientClass(options));
 }
 ```
 
 最终会得到这样的`Hub`实例对象。笔者画了一张图表示，便于查看理解。
 
-![Hub 实例关系图](./images/Hub-instance.png)
+![Hub 实例关系图](./images/Hub-instance-new.png)
 
 初始化完成后，再来看具体例子。
 具体 `captureMessage` 函数的实现。
@@ -795,25 +797,24 @@ GlobalHandlers.prototype._installGlobalOnErrorHandler = function () {
 
 ```js
 GlobalHandlers.prototype._installGlobalOnUnhandledRejectionHandler = function () {
-		if (this._onUnhandledRejectionHandlerInstalled) {
-			return;
+	if (this._onUnhandledRejectionHandlerInstalled) {
+		return;
+	}
+	var self = this; // tslint:disable-line:no-this-assignment
+	this._oldOnUnhandledRejectionHandler = this._global.onunhandledrejection;
+	this._global.onunhandledrejection = function (e) {
+		// 代码有删减
+		var currentHub = getCurrentHub();
+		currentHub.captureEvent(event, {
+			originalException: error,
+		});
+		if (self._oldOnUnhandledRejectionHandler) {
+			return self._oldOnUnhandledRejectionHandler.apply(this, arguments);
 		}
-		var self = this; // tslint:disable-line:no-this-assignment
-		this._oldOnUnhandledRejectionHandler = this._global.onunhandledrejection;
-		this._global.onunhandledrejection = function (e) {
-			// 代码有删减
-			var currentHub = getCurrentHub();
-			currentHub.captureEvent(event, {
-				originalException: error,
-			});
-			if (self._oldOnUnhandledRejectionHandler) {
-				return self._oldOnUnhandledRejectionHandler.apply(this, arguments);
-			}
-			return false;
-		};
-		this._onUnhandledRejectionHandlerInstalled = true;
+		return false;
 	};
-}
+	this._onUnhandledRejectionHandlerInstalled = true;
+};
 ```
 
 共同点：都会调用`currentHub.captureEvent`
@@ -850,7 +851,7 @@ this._invokeClient('captureEvent')
 
 `Sentry-JavaScript`源码高效利用了`JS`的原型链机制。可谓是惊艳，值得学习。
 
-本文比较详细的介绍了 `Ajax上报`和`window.onerror、window.onunhandledrejection`这两条主线。还有很多细节和构造函数没有分析。
+本文通过梳理前端错误监控知识、介绍`sentry`错误监控原理、`sentry`初始化、`Ajax`上报、`window.onerror、window.onunhandledrejection`几个方面来学习`sentry`的源码。还有很多细节和构造函数没有分析。
 
 总共的构造函数（类）有25个，提到的主要有9个，分别是：`Hub、BaseClient、BaseBackend、BaseTransport、FetchTransport、XHRTransport、BrowserBackend、BrowserClient、GlobalHandlers`。
 
@@ -859,7 +860,7 @@ this._invokeClient('captureEvent')
 这些构造函数（类）中还有很多值得学习，比如同步的`Promise`（SyncPromise）。
 有兴趣的读者，可以看这一块官方仓库中采用`typescript`写的源码[SyncPromise](https://github.com/getsentry/sentry-javascript/blob/master/packages/utils/src/syncpromise.ts)，也可以看打包后出来未压缩的代码。
 
-读源码比较耗费时间，写文章记录下来更加费时间（比如我这篇文章写了十多天...），但收获一般都比较大。
+读源码比较耗费时间，写文章记录下来更加费时间（比如写这篇文章跨度十几天...），但收获一般都比较大。
 
 如果读者发现有不妥或可改善之处，再或者哪里没写明白的地方，欢迎评论指出。另外觉得写得不错，对您有些许帮助，可以点赞、评论、转发分享，也是对笔者的一种支持。万分感谢。
 
