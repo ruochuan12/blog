@@ -77,7 +77,7 @@
   },
   "devDependencies": {
     "common-style": "^3.0.0",
-    "request": "2.49.x",
+    "request": "2.68.x",
     "vows": "0.7.x"
   },
   "bugs": {
