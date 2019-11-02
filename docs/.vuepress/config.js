@@ -36,7 +36,7 @@ module.exports = {
         nav: [
 			{ text: '主页', link: '/' },
 			{ text: '目录', link: '/posts/' },
-			{ text: '最新文章', link: '/lodash/' },
+			{ text: '最新文章', link: '/sentry/' },
             // { text: '博文',
             //   items: [
 			// 	{

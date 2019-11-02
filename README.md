@@ -28,6 +28,8 @@
 
 ## 文章列表
 
+- 16.[学习 sentry 源码整体架构，打造属于自己的前端异常监控SDK](https://lxchuan12.github.io/sentry/)
+
 - 15.[学习 lodash 源码整体架构，打造属于自己的函数式编程类库](https://lxchuan12.github.io/lodash/)
 
 - 14.[学习 underscore 源码整体架构，打造属于自己的函数式编程类库](https://lxchuan12.github.io/underscore/)
