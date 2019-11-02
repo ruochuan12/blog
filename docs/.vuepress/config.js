@@ -126,19 +126,19 @@ module.exports = {
 				link: 'https://juejin.im/user/57974dc55bbb500063f522fd/posts'
 			},
 			{
-				text: 'segmentFault',
-				link: 'https://segmentfault.com/u/lxchuan12/',
+				text: '知乎',
+				link: 'https://www.zhihu.com/people/lxchuan12/activities',
 			},
 			{
 				text: '其他',
 				items: [
 					{
-						text: '简书',
-						link: 'http://www.jianshu.com/users/83129d433d72/latest_articles',
+						text: 'segmentFault',
+						link: 'https://segmentfault.com/u/lxchuan12/',
 					},
 					{
-						text: '知乎',
-						link: 'https://www.zhihu.com/people/lxchuan12/activities',
+						text: '简书',
+						link: 'http://www.jianshu.com/users/83129d433d72/latest_articles',
 					},
 					{
 						text: '微博',

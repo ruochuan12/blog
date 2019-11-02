@@ -2,7 +2,7 @@
 
 ## 简介
 
-某不那么知名的陶瓷大学2016届毕业生，目前在杭州从事前端开发工作，也是一枚`PPT爱好者`。[`freecodecamp`](https://learn.freecodecamp.one/) （简称FCC）杭州社区组织者之一。所知甚少，唯善学。常以~~轩辕Rowboat~~`若川`为名混迹于江湖。
+某不那么知名的陶瓷大学2016届毕业生，目前在杭州从事前端开发工作，也是一枚`PPT爱好者`。[`freecodecamp`](https://learn.freecodecamp.one/) （简称FCC）杭州社区组织者之一（`简单说就是FCC杭州社区与杭州互联网公司共同举办线下技术分享交流活动，帮助开发者提高，曾与宋小菜、丁香园、微医、个推等公司合作过`）。所知甚少，唯善学。常以~~轩辕Rowboat~~`若川`为名混迹于江湖。
 
 ## ~~轩辕Rowboat由来~~
 
@@ -25,7 +25,9 @@
 
 ## 联系我
 
-![知识星球【**前端视野**】二维码，欢迎扫码免费加入](./zsxq.png)
+知识星球【**前端视野·若川**】，欢迎扫码免费加入。
+
+<img src="./zsxq.png"  width="250px" height="325px" title="知识星球【**前端视野**】二维码，欢迎扫码免费加入" alt="知识星球【**前端视野**】二维码，欢迎扫码免费加入"/>
 
 同时也建了一个微信群【前端视野交流群】，欢迎加入（可以加我微信好友，拉您进群）。
 
@@ -36,15 +38,15 @@
 同时建有一个微信交流群。(2019-06-20更新)
 欢迎加入，可以加我微信(lxchuan12)，邀请您进群。
 
-[segmentfault社区](https://segmentfault.com/u/lxchuan12)，偶尔在`SF社区`答题，虽然目前只有少得可怜的`5.2K`声望(2019-03-28更新)。
+[掘金社区@若川](https://juejin.im/user/57974dc55bbb500063f522fd/posts)，有时也活跃在掘金社区，欢迎关注。
 
-[掘金社区](https://juejin.im/user/57974dc55bbb500063f522fd/posts)，有时也活跃在掘金社区，欢迎关注。
+[知乎@若川](https://www.zhihu.com/people/lxchuan12/activities)，偶尔逛逛知乎，也发发文章，目前很少回答问题。
 
-[github](https://github.com/lxchuan12)，没有star过百，特别有价值的项目，不过有些可能有点价值，您可以瞧瞧。
+[segmentfault社区@若川](https://segmentfault.com/u/lxchuan12)，偶尔在`SF社区`答题，虽然目前只有少得可怜的`5.2K`声望(2019-03-28更新)。
 
-[简书](http://www.jianshu.com/u/83129d433d72)，偶尔在简书上写写文章。
+[github@若川](https://github.com/lxchuan12)，没有star过百，特别有价值的项目，不过有些可能有点价值，您可以瞧瞧。
 
-[知乎](https://www.zhihu.com/people/lxchuan12/activities)，偶尔逛逛知乎，目前基本是看帖不回帖。
+[简书@若川i](http://www.jianshu.com/u/83129d433d72)，偶尔在简书上写写文章。
 
 [微博](https://weibo.com/lxchuan12)，偶尔在微博上更新日常。
 
