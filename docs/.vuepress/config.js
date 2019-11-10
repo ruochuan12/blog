@@ -114,8 +114,8 @@ module.exports = {
 				link: '/about/'
 			},
 			{
-				text: '诗和远方',
-				link: 'https://www.zhihu.com/question/26805717/answer/764832355',
+				text: '曾经写的"诗词"',
+				link: '/poetry/2012-2016/',
 			},
             {
 				text: 'Github',
@@ -211,6 +211,16 @@ module.exports = {
 				'/20190612-after-3-year-work/',
 				'/20170602-After-a-year-s-work-I-had-some-insights/',
 				'/20160907-How-do-I-set-foot-on-the-front-end-of-the-road/',
+				]
+			},
+			{
+				title: '曾经写的"诗词"',   // 必要的
+				// path: '/about/',      // 可选的, 应该是一个绝对路径
+				collapsable: true, // 可选的, 默认值是 true,
+				sidebarDepth: 2,    // 可选的, 默认值是 1
+				children: [
+				'/poetry/2012-2016/',
+				'/poetry/2013/',
 				]
 			},
 			{
