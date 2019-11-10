@@ -223,9 +223,9 @@ var student = {
         console.log(this.name);
     }
 };
-// var result = student.doSth(['Rowboat', 18]);
+// var result = student.doSth(['若川i', 18]);
 // 用new Function()生成函数并执行返回结果
-var result = new Function('return arguments[0][arguments[1]](arguments[2][0], arguments[2][1])')(student, 'doSth', ['Rowboat', 18]);
+var result = new Function('return arguments[0][arguments[1]](arguments[2][0], arguments[2][1])')(student, 'doSth', ['若川i', 18]);
 // 个数不定
 // 所以可以写一个函数生成函数代码：
 function generateFunctionCode(argsArrayLength){
@@ -349,8 +349,8 @@ var student = {
     __fn: 'doSth',
 };
 var firstArg = student;
-var result = doSth.applyFn(firstArg, [1, {name: 'Rowboat'}]);
-var result2 = doSth.callFn(firstArg, 1, {name: 'Rowboat'});
+var result = doSth.applyFn(firstArg, [1, {name: '若川i'}]);
+var result2 = doSth.callFn(firstArg, 1, {name: '若川i'});
 console.log('result:', result);
 console.log('result2:', result2);
 ```
