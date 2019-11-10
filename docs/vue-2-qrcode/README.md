@@ -92,7 +92,7 @@ export const vClick = {
 		click: {
 			/**
 			 * 值更新时候触发点击
-			 * @author 轩辕Rowboat <lxchuan12@163.com>
+			 * @author 若川 <lxchuan12@163.com>
 			 * @date   2018-05-15
 			 * @param  {HTMLElement} el                指令所绑定的元素
 			 * @param  {Boolean}     options.value     绑定值(新)
@@ -135,7 +135,7 @@ export default {
     methods: {
         /**
 		 * 查看链接/二维码
-		 * @author 轩辕Rowboat <lxchuan12@163.com>
+		 * @author 若川 <lxchuan12@163.com>
 		 * @date   2018-05-15
 		 */
 		listShare(event){
@@ -148,7 +148,7 @@ export default {
 		},
         /**
 		 * 表格上方：下载二维码列表
-		 * @author 轩辕Rowboat <lxchuan12@163.com>
+		 * @author 若川 <lxchuan12@163.com>
 		 * @date   2018-05-15
 		 */
 		downloadQrcode(event, linkSrc, downloadFilename){
