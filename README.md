@@ -28,6 +28,8 @@
 
 ## 文章列表
 
+- 17. [学习 vuex 源码整体架构，打造属于自己的状态管理库](https://lxchuan12.github.io/vuex/)
+
 - 16.[学习 sentry 源码整体架构，打造属于自己的前端异常监控SDK](https://lxchuan12.github.io/sentry/)
 
 - 15.[学习 lodash 源码整体架构，打造属于自己的函数式编程类库](https://lxchuan12.github.io/lodash/)
