@@ -142,6 +142,8 @@ function resetStoreVM (store, state, hot) {
 
 ![Vuex 对象关系图](./images/vuex-object.png)
 
+>看到这里，恭喜你已经了解了`Vuex`原理。文章比较长，如果暂时不想关注源码细节，可以克隆一下本仓库代码`git clone https://github.com/lxchuan12/vuex-analysis.git`，后续调试代码，点赞收藏到时想看了再看。
+
 [文档 Vue.use](https://cn.vuejs.org/v2/api/#Vue-use)
 `Vue.use(Vuex)`
 
@@ -1323,7 +1325,7 @@ export const createNamespacedHelpers = (namespace) => ({
 文章比较详细的介绍了`vuex`、`vue`源码调试方法和 `Vuex` 原理。并且详细介绍了 `Vuex.use` 安装和 `new Vuex.Store` 初始化、`Vuex.Store` 的全部`API`（如`dispatch`、`commit`等）的实现和辅助函数 `mapState`、`mapGetters`、 `mapActions`、`mapMutations`
 `createNamespacedHelpers`。
 
-文章注释，在源码里基本都有注释分析。再次强烈建议要克隆代码下来。
+文章注释，在[vuex-analysis](https://github.com/lxchuan12/vuex-analysis)源码仓库里基本都有注释分析，求个`star`。再次强烈建议要克隆代码下来。
 
 ```bash
 git clone https://github.com/lxchuan12/vuex-analysis.git
