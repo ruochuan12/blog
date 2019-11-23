@@ -19,7 +19,7 @@
 
 本文分析的是打包后未压缩的源码，源码总行数五千余行，链接地址是：[https://browser.sentry-cdn.com/5.7.1/bundle.js](https://browser.sentry-cdn.com/5.7.1/bundle.js)， 版本是`v5.7.1`。
 
-本文示例等源代码在这我的`github`博客中[github blog sentry](https://github.com/lxchuan12/blog/docs/sentry)，需要的读者可以点击查看，如果觉得不错，可以顺便`star`一下。
+本文示例等源代码在这我的`github`博客中[github blog sentry](https://github.com/lxchuan12/blog/blob/master/docs/sentry/README.md)，需要的读者可以点击查看，如果觉得不错，可以顺便`star`一下。
 
 看源码前先来梳理下前端错误监控的知识。
 
