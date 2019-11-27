@@ -163,7 +163,7 @@ module.exports = {
 				// ]
 			},
 			{
-				title: '源码',   // 必要的
+				title: '学习源码系列',   // 必要的
 				// path: '/about/',      // 可选的, 应该是一个绝对路径
 				collapsable: true, // 可选的, 默认值是 true,
 				sidebarDepth: 2,    // 可选的, 默认值是 1
