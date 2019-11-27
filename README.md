@@ -12,15 +12,15 @@
 
 您可以在以下网站（点击图片跳转）关注我：<br>
 <a href="https://juejin.im/user/57974dc55bbb500063f522fd/posts" >
-  <img src="../../README-images/juejin.svg"  width="110px" height="50px" title="掘金专栏，欢迎关注～" alt="掘金专栏，欢迎关注～"/>
+  <img src="./README-images/juejin.svg"  width="110px" height="50px" title="掘金专栏，欢迎关注～" alt="掘金专栏，欢迎关注～"/>
 </a>
 <span style="margin-left: 30px"></span>
 <a href="https://zhuanlan.zhihu.com/lxchuan12" >
-  <img src="../../README-images/zhihu.png"  width="110px" height="50px" title="知乎前端视野专栏，欢迎关注～" alt="知乎前端视野专栏，欢迎关注～"/>
+  <img src="./README-images/zhihu.png"  width="110px" height="50px" title="知乎前端视野专栏，欢迎关注～" alt="知乎前端视野专栏，欢迎关注～"/>
 </a>
 <span style="margin-left: 30px"></span>
 <a href="https://segmentfault.com/blog/lxchuan12" >
-  <img src="../../README-images/segmentfault.png"  width="110px" height="50px" title="segmentfault专栏，欢迎关注～" alt="segmentfault专栏，欢迎关注～"/>
+  <img src="./README-images/segmentfault.png"  width="110px" height="50px" title="segmentfault专栏，欢迎关注～" alt="segmentfault专栏，欢迎关注～"/>
 </a>
 
 ## 文章列表
