@@ -55,7 +55,7 @@
 
 - 6.[分析vue-cli@2.9.3 搭建的webpack项目工程](https://lxchuan12.cn/vue-cli-2-webpack/)
 
-- 5.[oh my zsh 和 windows git bash 设置别名提高效率](https://lxchuan12.cn//oh-my-zsh/)
+- 5.[oh my zsh 和 windows git bash 设置别名提高效率](https://lxchuan12.cn/oh-my-zsh/)
 
 - 4.[vue 2.x项目 vue-qriously 生成二维码并下载、cliploard复制粘贴](https://lxchuan12.cn/vue-2-qrcode/)
 
