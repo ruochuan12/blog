@@ -27,7 +27,9 @@
 
 **学习源码整体架构系列：**
 
-- 17. [学习 vuex 源码整体架构，打造属于自己的状态管理库](https://lxchuan12.cn/vuex/)
+- 18.[学习 axios 源码整体架构，打造属于自己的请求库](https://lxchuan12.cn/axios/)
+
+- 17.[学习 vuex 源码整体架构，打造属于自己的状态管理库](https://lxchuan12.cn/vuex/)
 
 - 16.[学习 sentry 源码整体架构，打造属于自己的前端异常监控SDK](https://lxchuan12.cn/sentry/)
 
