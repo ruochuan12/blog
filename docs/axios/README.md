@@ -13,18 +13,18 @@
 
 感兴趣的读者可以点击阅读。下一篇可能是`vue-router`源码。
 
-本文比较长，手机上阅读，可以直接文中的几张图即可。建议收藏后在电脑上阅读，按照文中调试方式自己调试或许更容易吸收消化。
+本文比较长，手机上阅读，可以直接看文中的几张图即可。建议收藏后在电脑上阅读，按照文中调试方式自己调试或许更容易吸收消化。
 
 **导读**<br>
 文章详细介绍了 axios 调试方法。详细介绍了 axios 构造函数，拦截器，取消等功能的实现。最后还对比了其他请求库。
 
 本文学习的版本是`v0.19.0`。克隆的官方仓库的`master`分支。
-截至目前（2019年12月10日），最新一次`commit`是`2019-12-09 15:52 ZhaoXC` `dc4bc49673943e352`，`fix: fix ignore set withCredentials false (#2582)`。
+截至目前（2019年12月14日），最新一次`commit`是`2019-12-09 15:52 ZhaoXC` `dc4bc49673943e352`，`fix: fix ignore set withCredentials false (#2582)`。
 
 本文仓库在这里[若川的 axios-analysis github 仓库](https://github.com/lxchuan12/axios-analysis)。求个`star`呀。
 
 如果你是求职者，项目写了运用了`axios`，面试官可能会问你：
->1. 为什么 `axios` 既可以当函数调用，也可以当对象使用，比如`axios.get`。<br>
+>1. 为什么 `axios` 既可以当函数调用，也可以当对象使用，比如`axios.get`、`axios({})`。<br>
 >2. 简述 `axios` 调用流程。<br>
 >3. 有用过拦截器吗？<br>
 >4. 有使用`axios`的取消功能吗？是怎么实现的<br>
@@ -647,11 +647,20 @@ submit.onclick ((index):138)
 
 ### Axios.prototype.request 请求核心方法
 
+这个函数是核心函数。
+主要做了三件事：
+>1. 判断第一个参数是字符串，则设置 url,也就是支持`axios('example/url', [, config])`，也支持`axios({})`。<br>
+>2. 合并默认参数和用户传递的参数<br>
+>3. 设置请求的方法，默认是是`get`方法<br>
+>4. 将用户设置的请求和响应拦截器、发送请求的`dispatchRequest`组成`Promise`链，最后返回还是`Promise`实例。<br>
+    也就是保证了请求前拦截器先执行，然后发送请求，再响应拦截器执行这样的顺序<br>
+    也就是为啥最后还是可以`then`，`catch`方法的缘故。<br>
+
 ```js
 Axios.prototype.request = function request(config) {
   /*eslint no-param-reassign:0*/
   // Allow for axios('example/url'[, config]) a la fetch API
-  // 这一段代码 其实就是 使 axios('lxchuan12.cn', [, config])
+  // 这一段代码 其实就是 使 axios('example/url', [, config])
   // config 参数可以省略
   if (typeof config === 'string') {
     config = arguments[1] || {};
@@ -677,6 +686,15 @@ Axios.prototype.request = function request(config) {
 };
 ```
 
+#### 组成`Promise`链，返回`Promise`实例
+
+>这部分：用户设置的请求和响应拦截器、发送请求的`dispatchRequest`组成`Promise`链。也就是保证了请求前拦截器先执行，然后发送请求，再响应拦截器执行这样的顺序<br>
+    也就是保证了请求前拦截器先执行，然后发送请求，再响应拦截器执行这样的顺序<br>
+    也就是为啥最后还是可以`then`，`catch`方法的缘故。<br>
+
+如果读者对`Promise`不熟悉，建议读阮老师的书籍《ES6 标准入门》。 
+[阮一峰老师 的 ES6 Promise-resolve](http://es6.ruanyifeng.com/#docs/promise#Promise-resolve) 和 [JavaScript Promise迷你书（中文版）](http://liubin.org/promises-book/)
+
 ```js
   // Hook up interceptors middleware
   var chain = [dispatchRequest, undefined];
@@ -697,6 +715,45 @@ Axios.prototype.request = function request(config) {
   return promise;
 ```
 
+```js
+var promise = Promise.resolve(config);
+```
+
+解释下这段。生成`promise`实例。
+
+```js
+var promise = Promise.resolve({name: '若川'})
+// 等价于
+// new Promise(resolve => resolve({name: '若川'}))
+promise.then(function (config){
+  console.log(config)
+});
+// {name: "若川"}
+```
+
+同样解释下后文会出现的`Promise.reject(error);`：
+
+```js
+Promise.reject(error);
+```
+
+```js
+var promise = Promise.reject({name: '若川'})
+// 等价于
+// new Promise(reject => reject({name: '若川'}))
+
+
+// promise.then(null, function (config){
+//   console.log(config)
+// });
+// 等价于
+promise.catch(function (config){
+  console.log(config)
+});
+// {name: "若川"}
+```
+
+接下来结合例子，来理解这段代码。<br>
 很遗憾，在`example`文件夹没有拦截器的例子。笔者在`example`中在`example/get`的基础上添加了一个拦截器的示例。`axios/examples/interceptors`，便于读者调试。
 
 ```bash
@@ -727,16 +784,128 @@ var chain = [
 中间会调用`dispatchRequest`方法。
 
 ```js
+// config 是 用户配置和默认配置合并的
+var promise = Promise.resolve(config);
 promise.then('请求成功拦截2', '请求失败拦截2')
 .then('请求成功拦截1', '请求失败拦截1')
 .then(dispatchRequest, undefined)
 .then('响应成功拦截1', '响应失败拦截1')
 .then('响应成功拦截2', '响应失败拦截2')
+
+.then('用户写的业务处理函数')
+.catch('用户写的报错业务处理函数');
 ```
 
-dispatchRequest(config) 这里的`config`是请求成功拦截返回的。
+这里提下`promise` `then`和`catch`知识：<br>
+`Promise.prototype.then`方法的第一个参数是`resolved`状态的回调函数，第二个参数（可选）是`rejected`状态的回调函数。所以是成对出现的。<br>
+`Promise.prototype.catch`方法是`.then(null, rejection)`或`.then(undefined, rejection)`的别名，用于指定发生错误时的回调函数。<br>
+`then`方法返回的是一个新的`Promise`实例（注意，不是原来那个`Promise`实例）。因此可以采用链式写法，即`then`方法后面再调用另一个`then`方法。<br>
+
+结合上述的例子更详细一点，代码则是这样的。
+
+```js
+var promise = Promise.resolve(config);
+// promise.then('请求成功拦截2', '请求失败拦截2')
+promise.then(function requestSuccess2(config) {
+          console.log('------request------success------2');
+          return config;
+        }, function requestError2(error) {
+          console.log('------response------error------2');
+          return Promise.reject(error);
+        })
+
+        // .then('请求成功拦截1', '请求失败拦截1')
+  .then(function requestSuccess1(config) {
+          console.log('------request------success------1');
+          return config;
+        }, function requestError1(error) {
+          console.log('------response------error------1');
+          return Promise.reject(error);
+        })
+        // .then(dispatchRequest, undefined)
+  .then( function dispatchRequest(config) {
+    /**
+     * 适配器返回的也是Promise 实例
+        adapter = function xhrAdapter(config) {
+              return new Promise(function dispatchXhrRequest(resolve, reject) {})
+        }
+     **/
+    return adapter(config).then(function onAdapterResolution(response) {
+      // 省略代码 ...
+      return response;
+    }, function onAdapterRejection(reason) {
+      // 省略代码 ...
+      return Promise.reject(reason);
+    });
+  }, undefined)
+
+  // .then('响应成功拦截1', '响应失败拦截1')
+  .then(function responseSuccess1(response) {
+          console.log('------response------success------1');
+          return response;
+        }, function responseError1(error) {
+          console.log('------response------error------1');
+          return Promise.reject(error);
+        })
+
+    // .then('响应成功拦截2', '响应失败拦截2')
+  .then(function responseSuccess2(response) {
+          console.log('------response------success------2');
+          return response;
+        }, function responseError2(error) {
+          console.log('------response------error------2');
+          return Promise.reject(error);
+        })
+
+        // .then('用户写的业务处理函数')
+        // .catch('用户写的报错业务处理函数');
+        .then(function (response) {
+          console.log('哈哈哈，终于获取到数据了', response);
+        })
+         .catch(function (err) {
+          console.log('哎呀，怎么报错了', err);
+        });
+```
+
+仔细看这段`Promise`链式调用，代码都类似。`then`方法最后返回的参数，就是下一个`then`方法第一个参数。<br>
+`catch`错误捕获，都返回`Promise.reject(error)`，这是为了便于用户`catch`时能捕获到错误。
+
+举个例子：
+
+```js
+var p1 = new Promise((resolve, reject) => {
+ reject(new Error({name: '若川'}));
+});
+
+p1.catch(err => {
+    console.log(res, 'err');
+    return Promise.reject(err)
+})
+.catch(err => {
+ console.log(err, 'err1');
+})
+.catch(err => {
+ console.log(err, 'err2');
+});
+```
+
+`err2`不会捕获到，也就是不会执行，但如果都返回了`return Promise.reject(err)`，则可以捕获到。
+
+`dispatchRequest(config)` 这里的`config`是请求成功拦截器返回的。接下来看`dispatchRequest`函数。
+
+>小结：1. 请求和响应的拦截器可以写`Promise`。<br>
+>2. 如果设置了多个请求响应器，后设置的先执行。<br>
+>3. 如果设置了多个响应拦截器，先设置的先执行。<br>
 
 ### dispatchRequest 最终派发请求
+
+这个函数主要做了如下几件事情：<br>
+>1. 如果已经取消，则`throw` 原因报错，使`Promise`走向`rejected`。<br>
+>2. 确保 `config.header` 存在。<br>
+>3. 利用用户设置的和默认的请求转换器转换数据。<br>
+>4. 拍平 `config.header`。<br>
+>5. 删除一些 `config.header`。<br>
+>6. 返回适配器`adapter`（`Promise`实例）执行后 `then`执行后的 `Promise`实例。返回结果传递给响应拦截器处理。<br>
 
 ```js
 'use strict';
