@@ -539,14 +539,14 @@ function InterceptorManager() {
 
 #### InterceptorManager.prototype.use 使用
 
-传递两个函数作为参数，数组中的一项存储的是`{fulfilled, rejected}`。返回数字 ID，用于移除拦截器。
+传递两个函数作为参数，数组中的一项存储的是`{fulfilled: function(){}, rejected: function(){}}`。返回数字 ID，用于移除拦截器。
 
 ```js
 /**
  * @param {Function} fulfilled The function to handle `then` for a `Promise`
  * @param {Function} rejected The function to handle `reject` for a `Promise`
  *
- * @return {Number} An ID used to remove interceptor later
+ * @return {Number} 返回ID 是为了用 eject 移除
  */
 InterceptorManager.prototype.use = function use(fulfilled, rejected) {
   this.handlers.push({
@@ -642,9 +642,9 @@ submit.onclick ((index):138)
 1. `Send Request` 按钮点击 `submit.onclick`<br>
 2. 调用 `axios` 函数实际上是调用 `Axios.prototype.request` 函数，而这个函数使用 `bind` 返回的一个名为`wrap`的函数。<br>
 3. 调用 `Axios.prototype.request`<br>
-4. 执行拦截器 `dispatchRequest`<br>
+4. （有请求拦截器的情况下执行请求拦截器），中间会执行 `dispatchRequest`方法<br>
 5. `dispatchRequest` 之后调用 `adapter (xhrAdapter)`<br>
-6. 最后调用 `Promise` 中的函数`dispatchXhrRequest`<br>
+6. 最后调用 `Promise` 中的函数`dispatchXhrRequest`，（有响应拦截器的情况下最后会再调用响应拦截器）<br>
 
 如果仔细看了文章开始的`axios 结构关系图`，其实对这个流程也有大概的了解。
 
@@ -701,6 +701,7 @@ Axios.prototype.request = function request(config) {
 [阮一峰老师 的 ES6 Promise-resolve](http://es6.ruanyifeng.com/#docs/promise#Promise-resolve) 和 [JavaScript Promise迷你书（中文版）](http://liubin.org/promises-book/)
 
 ```js
+  // 组成`Promise`链
   // Hook up interceptors middleware
   // 把 xhr 请求 的 dispatchRequest 和 undefined 放在一个数组里
   var chain = [dispatchRequest, undefined];
@@ -753,7 +754,6 @@ var promise = Promise.reject({name: '若川'})
 // 等价于
 // new Promise(reject => reject({name: '若川'}))
 
-
 // promise.then(null, function (config){
 //   console.log(config)
 // });
@@ -790,9 +790,7 @@ var chain = [
 ]
 ```
 
-这段代码相对比较绕。
-
-中间会调用`dispatchRequest`方法。
+这段代码相对比较绕。也就是会生成如下类似的代码，中间会调用`dispatchRequest`方法。
 
 ```js
 // config 是 用户配置和默认配置合并的
@@ -902,6 +900,10 @@ p1.catch(err => {
 ```
 
 `err2`不会捕获到，也就是不会执行，但如果都返回了`return Promise.reject(err)`，则可以捕获到。
+
+![axios promise 链式调用](./images/axios-promise-chain.png)
+
+最后画个图总结下 `Promise` 链式调用。
 
 `dispatchRequest(config)` 这里的`config`是请求成功拦截器返回的。接下来看`dispatchRequest`函数。
 
@@ -1213,9 +1215,11 @@ axios.get('/get/server', {
 source.cancel('哎呀，我被若川取消了');
 ```
 
-#### 简化取消请求模块代码示例
+#### 取消请求模块代码示例
 
-取消这块源码可能比较绕。我这里简化下，读者可以复制这段到浏览器控制台输入，体会体会，或者调试时用这里的例子`axios/examples/cancel-simple/index.html`。
+结合源码取消流程大概是这样的。这段放在代码在`axios/examples/cancel-token/index.html`。
+
+参数的 `config.cancelToken` 是触发了`source.cancel('哎呀，我被若川取消了');`才生成的。
 
 ```js
 // source.cancel('哎呀，我被若川取消了');
@@ -1225,16 +1229,24 @@ var config = {
   name: '若川',
   // 这里简化了
   cancelToken: {
-      reason: '',
-      promise: '',
-  }
+        promise: new Promise(function(resolve){
+            resolve({ message: '哎呀，我被若川取消了'})
+        }),
+        reason: { message: '哎呀，我被若川取消了' }
+  },
 };
-var reason = {message: '哎呀，我被若川取消了'};
 // 取消 抛出异常方法
 function throwIfCancellationRequested(config){
   // 取消的情况下执行这句
   if(config.cancelToken){
-    throw reason;
+    //   这里源代码 便于执行，我改成具体代码
+    // config.cancelToken.throwIfRequested();
+    // if (this.reason) {
+    //     throw this.reason;
+    //   }
+    if(config.cancelToken.reason){
+        throw config.cancelToken.reason;
+    }
   }
 }
 
@@ -1245,11 +1257,19 @@ function dispatchRequest(config){
   return new Promise((resovle, reject) => {
     var request = new XMLHttpRequest();
     console.log('request', request);
-    //  if(  用户点取消了 ){} source.cancel('哎呀，我被若川取消了')
-    // 取消的情况下执行这两句
-    // 取消
-    request.abort();
-    reject(reason);
+    if (config.cancelToken) {
+        // Handle cancellation
+        config.cancelToken.promise.then(function onCanceled(cancel) {
+            if (!request) {
+                return;
+            }
+
+            request.abort();
+            reject(cancel);
+            // Clean up request
+            request = null;
+        });
+    }
   })
   .then(function(res){
     // 有可能是执行到这里就才取消 取消的情况下执行这句
@@ -1282,7 +1302,9 @@ promise
 //  err2 {message: "哎呀，我被若川取消了"}
 ```
 
-#### 接下来看真正取消模块的源码
+#### 接下来看取消模块的源码
+
+看如何通过生成`config.cancelToken`。
 
 ```js
 // CancelToken
@@ -1380,7 +1402,7 @@ CancelToken.source();
 source.cancel('哎呀，我被若川取消了');
 ```
 
-执行后的大概结构是这样的。
+执行后`source`的大概结构是这样的。
 
 ```js
 {
@@ -1399,89 +1421,6 @@ source.cancel('哎呀，我被若川取消了');
     token.reason = {message: '哎呀，我被若川取消了'};
   }
 }
-```
-
-结合源码取消流程大概是这样的。这段放在代码在`axios/examples/cancel-token/index.html`。
-
-```js
-// source.cancel('哎呀，我被若川取消了');
-// 点击取消时才会 生成 cancelToken 实例对象。
-// 点击取消后，会生成原因，看懂了这段在看之后的源码，可能就好理解了。
-var config = {
-  name: '若川',
-  // 这里简化了
-  cancelToken: {
-        promise: new Promise(function(resolve){
-            resolve({ message: '哎呀，我被若川取消了'})
-        }),
-        reason: { message: '哎呀，我被若川取消了' }
-  },
-};
-// 取消 抛出异常方法
-function throwIfCancellationRequested(config){
-  // 取消的情况下执行这句
-  if(config.cancelToken){
-    //   这里源代码 便于执行，我改成具体代码
-    // config.cancelToken.throwIfRequested();
-    // if (this.reason) {
-    //     throw this.reason;
-    //   }
-    if(config.cancelToken.reason){
-        throw config.cancelToken.reason;
-    }
-  }
-}
-
-function dispatchRequest(config){
-  // 有可能是执行到这里就取消了，所以抛出错误会被err2 捕获到
-  throwIfCancellationRequested(config);
-  //  adapter xhr适配器
-  return new Promise((resovle, reject) => {
-    var request = new XMLHttpRequest();
-    console.log('request', request);
-    if (config.cancelToken) {
-        // Handle cancellation
-        config.cancelToken.promise.then(function onCanceled(cancel) {
-            if (!request) {
-                return;
-            }
-
-            request.abort();
-            reject(cancel);
-            // Clean up request
-            request = null;
-        });
-    }
-  })
-  .then(function(res){
-    // 有可能是执行到这里就才取消 取消的情况下执行这句
-    throwIfCancellationRequested(config);
-    console.log('res', res);
-    return res;
-  })
-  .catch(function(reason){
-    // 有可能是执行到这里就才取消 取消的情况下执行这句
-    throwIfCancellationRequested(config);
-    console.log('reason', reason);
-    return Promise.reject(reason);
-  });
-}
-
-var promise = Promise.resolve(config);
-
-// 没设置拦截器的情况下是这样的
-promise
-.then(dispatchRequest, undefined)
-// 用户定义的then 和 catch
-.then(function(res){
-  console.log('res1', res);
-  return res;
-})
-.catch(function(err){
-  console.log('err2', err);
-  return Promise.reject(err);
-});
-//  err2 {message: "哎呀，我被若川取消了"}
 ```
 
 到这里取消的流程就介绍完毕了。主要就是通过传递配置参数`cancelToken`，判断有，则抛出错误，使`Promise` 走向`rejected`，让用户捕获到消息{message: '用户设置的取消信息'}。
@@ -1521,11 +1460,17 @@ FCC成都社区负责人水歌开源的[KoAJAX](https://github.com/EasyWebApp/Ko
 
 文章详细介绍了 `axios` 调试方法。详细介绍了 `axios` 构造函数，拦截器，取消等功能的实现。最后还对比了其他请求库。
 
+最后画个图总结一下axios的总体大致流程。
+
+![axios的总体大致流程](./images/axios-all.png)
+
 `axios` 源码相对不多，打包后一千多行，比较容易看完，非常值得学习。
 
 建议 `clone` [若川的 axios-analysis github 仓库](https://github.com/lxchuan12/axios-analysis)，按照文中方法自己调试<br>
 
-基于`Promise`，`request`中的拦截器和`dispatch`中的取消这两个模块相对复杂，可以多调试调试，吸收消化。
+基于`Promise`，构成`Promise`链，巧妙的设置请求拦截，发送请求，再试试响应拦截器。
+
+`request`中的拦截器和`dispatch`中的取消这两个模块相对复杂，可以多调试调试，吸收消化。
 
 `axios` 既是函数，是函数时调用的是`Axios.prototype.request`函数，又是对象，其上面有`get`、`post`等请求方法，最终也是调用`Axios.prototype.request`函数。
 
