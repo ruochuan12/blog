@@ -901,15 +901,15 @@ p1.catch(err => {
 
 `err2`不会捕获到，也就是不会执行，但如果都返回了`return Promise.reject(err)`，则可以捕获到。
 
-![axios promise 链式调用](./images/axios-promise-chain.png)
-
 最后画个图总结下 `Promise` 链式调用。
 
-`dispatchRequest(config)` 这里的`config`是请求成功拦截器返回的。接下来看`dispatchRequest`函数。
+![axios promise 链式调用](./images/axios-promise-chain.png)
 
 >小结：1. 请求和响应的拦截器可以写`Promise`。<br>
 >2. 如果设置了多个请求响应器，后设置的先执行。<br>
 >3. 如果设置了多个响应拦截器，先设置的先执行。<br>
+
+`dispatchRequest(config)` 这里的`config`是请求成功拦截器返回的。接下来看`dispatchRequest`函数。
 
 ### dispatchRequest 最终派发请求
 
