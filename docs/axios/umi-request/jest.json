@@ -1,6 +1,0 @@
-{
-  "verbose": false,
-  "collectCoverage": true,
-  "collectCoverageFrom": ["src/**"],
-  "coverageReporters": ["json", "lcov", "text-summary", "html"]
-}
