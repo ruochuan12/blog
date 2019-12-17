@@ -14,7 +14,7 @@
 
 感兴趣的读者可以点击阅读。下一篇可能是`vue-router`源码。
 
-本文比较长，手机上阅读，可以直接看文中的几张图即可。建议收藏后在电脑上阅读，按照文中调试方式自己调试或许更容易吸收消化。
+本文比较长，手机上阅读，可以直接看文中的几张图即可。建议点赞或收藏后在电脑上阅读，按照文中调试方式自己调试或许更容易吸收消化。
 
 **导读**<br>
 文章详细介绍了 `axios` 调试方法。详细介绍了 `axios` 构造函数，拦截器，取消等功能的实现。最后还对比了其他请求库。
@@ -27,9 +27,9 @@
 如果你是求职者，项目写了运用了`axios`，面试官可能会问你：
 >1.为什么 `axios` 既可以当函数调用，也可以当对象使用，比如`axios({})`、`axios.get`。<br>
 >2.简述 `axios` 调用流程。<br>
->3. 有用过拦截器吗？原理是怎样的？<br>
->4.有使用`axios`的取消功能吗？是怎么实现的<br>
->5.为什么支持浏览器中发送请求也支持`node`发送请求<br>
+>3.有用过拦截器吗？原理是怎样的？<br>
+>4.有使用`axios`的取消功能吗？是怎么实现的？<br>
+>5.为什么支持浏览器中发送请求也支持`node`发送请求？<br>
 诸如这类问题。
 
 ## chrome 和 vscode 调试 axios 源码方法
@@ -43,7 +43,7 @@
 
 看源码，调试很重要，所以笔者详细写下 `axios` 源码调试方法，帮助一些可能不知道如何调试的读者。
 
-### chrome 调试浏览器环境 的 axios
+### chrome 调试浏览器环境的 axios
 
 调试方法
 
@@ -103,7 +103,7 @@ node ./examples/server.js -p 5000
 ### vscode 调试 node 环境的 axios
 
 在根目录下 `axios-analysis/`
-创建`.vscode/launch`文件如下：
+创建`.vscode/launch.json`文件如下：
 
 ```json
 {
@@ -153,7 +153,7 @@ console.log({axios: axios});
 
 看完结构图，如果看过`jQuery`、`underscore`和`lodash`源码，会发现其实跟`axios`源码设计类似。
 
-`jQuery` 别名 `$`，`underscore``loadsh`别名`（_）`也既是函数，也是对象。比如`jQuery`使用方式。`$('#id')`, `$.ajax`。
+`jQuery` 别名 `$`，`underscore` `loadsh` 别名 `_` 也既是函数，也是对象。比如`jQuery`使用方式。`$('#id')`, `$.ajax`。
 
 接下来看具体源码的实现。可以跟着断点调试一下。
 
@@ -227,7 +227,7 @@ function createInstance(defaultConfig) {
   // new 一个 Axios 生成实例对象
   var context = new Axios(defaultConfig);
   // bind 返回一个新的 wrap 函数，
-  // 也就是为什么调用axios是调用Axios.prototype.request 函数的原因
+  // 也就是为什么调用 axios 是调用 Axios.prototype.request 函数的原因
   var instance = bind(Axios.prototype.request, context);
   // Copy axios.prototype to instance
   // 复制 Axios.prototype 到实例上。
@@ -264,7 +264,7 @@ axios.create = function create(instanceConfig) {
 
 #### 工具方法之 bind
 
-`./helpers/bind`
+`axios/lib/helpers/bind.js`
 
 ```js
 'use strict';
@@ -293,13 +293,15 @@ module.exports = function bind(fn, thisArg) {
 
 ```js
 function fn(){
-  console.log.apply(console.log, arguments);
+  console.log.apply(console, arguments);
 }
 fn(1,2,3,4,5,6, '若川');
 // 1 2 3 4 5 6 '若川'
 ```
 
 #### 工具方法之 utils.extend
+
+`axios/lib/utils.js`
 
 ```js
 function extend(a, b, thisArg) {
@@ -317,6 +319,8 @@ function extend(a, b, thisArg) {
 其实就是遍历参数 `b` 对象，复制到 `a` 对象上，如果是函数就是则用 `bind` 调用。
 
 #### 工具方法之 utils.forEach
+
+`axios/lib/utils.js`
 
 遍历数组和对象。设计模式称之为迭代器模式。很多源码都有类似这样的遍历函数。比如大家熟知的`jQuery` `$.each`。
 
@@ -387,7 +391,7 @@ module.exports = axios;
 module.exports.default = axios;
 ```
 
-这里介绍下 `spread`，取消的`API`暂时不做分析。
+这里介绍下 `spread`，取消的`API`暂时不做分析，后文再详细分析。
 
 假设你有这样的需求。
 
@@ -421,7 +425,7 @@ module.exports = function spread(callback) {
 
 ### 核心构造函数 Axios
 
-`lib/core/Axios.js`
+`axios/lib/core/Axios.js`
 
 构造函数`Axios`。
 
@@ -445,7 +449,7 @@ Axios.prototype.request = function(config){
   // code ...
   return promise;
 }
-// 这是获取Uri的函数，这里省略
+// 这是获取 Uri 的函数，这里省略
 Axios.prototype.getUri = function(){}
 // 提供一些请求方法的别名
 // Provide aliases for supported request methods
@@ -511,7 +515,7 @@ axios.interceptors.response.use(function (response) {
 });
 ```
 
-如果用完拦截器想移除，用`eject`方法。
+如果想把拦截器，可以用`eject`方法。
 
 ```js
 const myInterceptor = axios.interceptors.request.use(function () {/*...*/});
@@ -527,7 +531,7 @@ instance.interceptors.request.use(function () {/*...*/});
 
 源码实现：
 
-构造函数，`handles` 存储拦截器函数。
+构造函数，`handles` 用于存储拦截器函数。
 
 ```js
 function InterceptorManager() {
@@ -539,7 +543,7 @@ function InterceptorManager() {
 
 #### InterceptorManager.prototype.use 使用
 
-传递两个函数作为参数，数组中的一项存储的是`{fulfilled: function(){}, rejected: function(){}}`。返回数字 ID，用于移除拦截器。
+传递两个函数作为参数，数组中的一项存储的是`{fulfilled: function(){}, rejected: function(){}}`。返回数字 `ID`，用于移除拦截器。
 
 ```js
 /**
@@ -575,7 +579,7 @@ InterceptorManager.prototype.eject = function eject(id) {
 有点类似定时器`setTimeout` 和 `setInterval`，返回值是`id`。用`clearTimeout` 和`clearInterval`来清除定时器。
 
 ```js
-// 估计有人不知道 定时器回调函数是可以传参的，返回值 timer 是数字
+// 提一下 定时器回调函数是可以传参的，返回值 timer 是数字
 var timer = setInterval((name) => {
   console.log(name);
 }, 1000, '若川');
@@ -586,7 +590,7 @@ clearInterval(timer);
 
 #### InterceptorManager.prototype.forEach 遍历
 
-遍历执行 拦截器
+遍历执行所有拦截器，传递一个回调函数（每一个拦截器函数作为参数）调用，被移除的一项是`null`，所以不会执行，也就达到了移除的效果。
 
 ```js
 /**
@@ -603,7 +607,7 @@ InterceptorManager.prototype.forEach = function forEach(fn) {
 
 ## 实例结合
 
-上文叙述的调试时运行`npm start` 是用`axios/sandbox/client.html`路径的文件作为示例的。
+上文叙述的调试时运行`npm start` 是用`axios/sandbox/client.html`路径的文件作为示例的，读者可以自行调试。
 
 以下是一段这个文件中的代码。
 
@@ -654,11 +658,11 @@ submit.onclick ((index):138)
 
 这个函数是核心函数。
 主要做了这几件事：
->1. 判断第一个参数是字符串，则设置 url,也就是支持`axios('example/url', [, config])`，也支持`axios({})`。<br>
->2. 合并默认参数和用户传递的参数<br>
->3. 设置请求的方法，默认是是`get`方法<br>
->4. 将用户设置的请求和响应拦截器、发送请求的`dispatchRequest`组成`Promise`链，最后返回还是`Promise`实例。<br>
-    也就是保证了请求前拦截器先执行，然后发送请求，再响应拦截器执行这样的顺序<br>
+>1.判断第一个参数是字符串，则设置 url,也就是支持`axios('example/url', [, config])`，也支持`axios({})`。<br>
+>2.合并默认参数和用户传递的参数<br>
+>3.设置请求的方法，默认是是`get`方法<br>
+>4.将用户设置的请求和响应拦截器、发送请求的`dispatchRequest`组成`Promise`链，最后返回还是`Promise`实例。<br>
+    也就是保证了请求前拦截器先执行，然后发送请求，再响应拦截器执行这样的顺序。<br>
     也就是为啥最后还是可以`then`，`catch`方法的缘故。<br>
 
 ```js
@@ -718,7 +722,7 @@ Axios.prototype.request = function request(config) {
     chain.push(interceptor.fulfilled, interceptor.rejected);
   });
 
- // 遍历chain 数组，直到遍历 chain.length 为 0
+ // 遍历 chain 数组，直到遍历 chain.length 为 0
   while (chain.length) {
     // 两两对应移出来 放到 then 的两个参数里。
     promise = promise.then(chain.shift(), chain.shift());
@@ -776,9 +780,7 @@ node ./examples/server.js -p 5000
 会得到这样的这张图。
 ![request方法中promise链](./images/request-promise-chain.png)
 
-特别关注下，右侧，`local`中的`chain`数组。
-
-也就是这样的结构。
+特别关注下，右侧，`local`中的`chain`数组。也就是这样的结构。
 
 ```js
 var chain = [
@@ -914,23 +916,26 @@ p1.catch(err => {
 ### dispatchRequest 最终派发请求
 
 这个函数主要做了如下几件事情：<br>
->1. 如果已经取消，则`throw` 原因报错，使`Promise`走向`rejected`。<br>
->2. 确保 `config.header` 存在。<br>
->3. 利用用户设置的和默认的请求转换器转换数据。<br>
->4. 拍平 `config.header`。<br>
->5. 删除一些 `config.header`。<br>
->6. 返回适配器`adapter`（`Promise`实例）执行后 `then`执行后的 `Promise`实例。返回结果传递给响应拦截器处理。<br>
+>1.如果已经取消，则 `throw` 原因报错，使`Promise`走向`rejected`。<br>
+>2.确保 `config.header` 存在。<br>
+>3.利用用户设置的和默认的请求转换器转换数据。<br>
+>4.拍平 `config.header`。<br>
+>5.删除一些 `config.header`。<br>
+>6.返回适配器`adapter`（`Promise`实例）执行后 `then`执行后的 `Promise`实例。返回结果传递给响应拦截器处理。<br>
 
 ```js
 'use strict';
-
+// utils 工具函数
 var utils = require('./../utils');
+// 转换数据
 var transformData = require('./transformData');
+// 取消状态
 var isCancel = require('../cancel/isCancel');
+// 默认参数
 var defaults = require('../defaults');
 
 /**
- * Throws a `Cancel` if cancellation has been requested.
+ * 抛出 错误原因，使`Promise`走向`rejected`
  */
 function throwIfCancellationRequested(config) {
   if (config.cancelToken) {
@@ -1015,7 +1020,7 @@ axios.get('https://api.github.com/users/mzabriskie', {
 
 源码：
 
-就是遍历数组，调用数组里的传递 `data` 和 `headers`参数调用函数。
+就是遍历数组，调用数组里的传递 `data` 和 `headers` 参数调用函数。
 
 ```js
 module.exports = function transformData(data, headers, fns) {
@@ -1085,14 +1090,16 @@ var adapter = config.adapter || defaults.adapter;
 文件路径：`axios/lib/defaults.js`
 
 根据当前环境引入，如果是浏览器环境引入`xhr`，是`node`环境则引入`http`。<br>
-类似判断`node`环境，也在[`sentry-javascript`](https://github.com/getsentry/sentry-javascript)源码中有看到。<br>
+类似判断`node`环境，也在[`sentry-javascript`](https://github.com/getsentry/sentry-javascript/blob/a876d46c61e2618e3c3a3e1710f77419331a9248/packages/utils/src/misc.ts#L37-L40)源码中有看到。<br>
 
 ```js
 function getDefaultAdapter() {
   var adapter;
+  // 根据 XMLHttpRequest 判断
   if (typeof XMLHttpRequest !== 'undefined') {
     // For browsers use XHR adapter
     adapter = require('./adapters/xhr');
+    // 根据 process 判断
   } else if (typeof process !== 'undefined' && Object.prototype.toString.call(process) === '[object process]') {
     // For node use HTTP adapter
     adapter = require('./adapters/http');
@@ -1113,7 +1120,7 @@ var defaults = {
 
 主要提醒下：`onabort`是请求取消事件，`withCredentials`是一个布尔值，用来指定跨域 `Access-Control` 请求是否应带有授权信息，如 `cookie` 或授权 `header` 头。
 
-这块代码有删减，具体可以看[axios 仓库 xhr.js](https://github.com/axios/axios/blob/master/lib/adapters/xhr.js)，也可以克隆笔者的`axios-analysis`仓库调试时具体分析。
+这块代码有删减，具体可以看[若川的`axios-analysis`仓库](https://github.com/lxchuan12/axios-analysis/blob/master/axios/lib/adapters/xhr.js)，也可以克隆笔者的`axios-analysis`仓库调试时再具体分析。
 
 ```js
 module.exports = function xhrAdapter(config) {
@@ -1165,7 +1172,7 @@ module.exports = function xhrAdapter(config) {
 
 `http`
 
-`http`这里就不详细叙述了，感兴趣的读者可以自行查看。
+`http`这里就不详细叙述了，感兴趣的读者可以自行查看，[若川的`axios-analysis`仓库](https://github.com/lxchuan12/axios-analysis/blob/master/axios/lib/adapters/http.js)。
 
 ```js
 module.exports = function httpAdapter(config) {
@@ -1299,12 +1306,61 @@ promise
   console.log('err2', err);
   return Promise.reject(err);
 });
-//  err2 {message: "哎呀，我被若川取消了"}
+// err2 {message: "哎呀，我被若川取消了"}
 ```
 
 #### 接下来看取消模块的源码
 
 看如何通过生成`config.cancelToken`。
+
+文件路径：
+
+`axios/lib/cancel/CancelToken.js`
+
+```js
+const CancelToken = axios.CancelToken;
+const source = CancelToken.source();
+source.cancel('哎呀，我被若川取消了');
+```
+
+由示例看 `CancelToken.source`的实现，
+
+```js
+CancelToken.source = function source() {
+  var cancel;
+  var token = new CancelToken(function executor(c) {
+    cancel = c;
+  });
+  // token
+  return {
+    token: token,
+    cancel: cancel
+  };
+};
+```
+
+执行后`source`的大概结构是这样的。
+
+```js
+{
+    token: {
+    promise: new Promise(function(resolve){
+      resolve({ message: '哎呀，我被若川取消了'})
+    }),
+    reason: { message: '哎呀，我被若川取消了' }
+  },
+  cancel: function cancel(message) {
+    if (token.reason) {
+      // Cancellation has already been requested
+      // 已经取消
+      return;
+    }
+    token.reason = {message: '哎呀，我被若川取消了'};
+  }
+}
+```
+
+接着看 `new CancelToken`
 
 ```js
 // CancelToken
@@ -1335,21 +1391,6 @@ function CancelToken(executor) {
 module.exports = CancelToken;
 ```
 
-```js
-// 抛出异常函数
-function throwIfCancellationRequested(config) {
-  if (config.cancelToken) {
-    config.cancelToken.throwIfRequested();
-  }
-}
-// 抛出异常 用户 { message: '哎呀，我被若川取消了' }
-CancelToken.prototype.throwIfRequested = function throwIfRequested() {
-  if (this.reason) {
-    throw this.reason;
-  }
-};
-```
-
 发送请求的适配器里是这样使用的。
 
 ```js
@@ -1369,6 +1410,23 @@ if (config.cancelToken) {
 }
 ```
 
+`dispatchRequest` 中的`throwIfCancellationRequested`具体实现：throw 抛出异常。
+
+```js
+// 抛出异常函数
+function throwIfCancellationRequested(config) {
+  if (config.cancelToken) {
+    config.cancelToken.throwIfRequested();
+  }
+}
+// 抛出异常 用户 { message: '哎呀，我被若川取消了' }
+CancelToken.prototype.throwIfRequested = function throwIfRequested() {
+  if (this.reason) {
+    throw this.reason;
+  }
+};
+```
+
 取消流程调用栈
 >1.source.cancel()<br>
 >2.resolvePromise(token.reason);<br>
@@ -1376,58 +1434,13 @@ if (config.cancelToken) {
 
 最后进入`request.abort();``reject(cancel);`
 
-```js
-const CancelToken = axios.CancelToken;
-const source = CancelToken.source();
+到这里取消的流程就介绍完毕了。主要就是通过传递配置参数`cancelToken`，取消时才会生成`cancelToken`，判断有，则抛出错误，使`Promise` 走向`rejected`，让用户捕获到消息{message: '用户设置的取消信息'}。
 
-source.cancel('哎呀，我被若川取消了');
-```
-
-```js
-CancelToken.source = function source() {
-  var cancel;
-  var token = new CancelToken(function executor(c) {
-    cancel = c;
-  });
-  // token
-  return {
-    token: token,
-    cancel: cancel
-  };
-};
-```
-
-```js
-CancelToken.source();
-source.cancel('哎呀，我被若川取消了');
-```
-
-执行后`source`的大概结构是这样的。
-
-```js
-{
-    token: {
-    promise: new Promise(function(resolve){
-      resolve({ message: '哎呀，我被若川取消了'})
-    }),
-    reason: { message: '哎呀，我被若川取消了' }
-  },
-  cancel: function cancel(message) {
-    if (token.reason) {
-      // Cancellation has already been requested
-      // 已经取消
-      return;
-    }
-    token.reason = {message: '哎呀，我被若川取消了'};
-  }
-}
-```
-
-到这里取消的流程就介绍完毕了。主要就是通过传递配置参数`cancelToken`，判断有，则抛出错误，使`Promise` 走向`rejected`，让用户捕获到消息{message: '用户设置的取消信息'}。
+文章写到这里就基本到接近尾声了。
 
 能读到最后，说明你已经超过很多人啦^_^
 
-文章写到这里就基本到接近尾声了。
+`axios`是非常优秀的请求库，但肯定也不能满足所有开发者的需求，接下来对比下其他库，看看其他开发者有什么具体需求。
 
 ## 对比其他请求库
 
@@ -1464,9 +1477,25 @@ FCC成都社区负责人水歌开源的[KoAJAX](https://github.com/EasyWebApp/Ko
 
 ![axios的总体大致流程](./images/axios-all.png)
 
+解答下文章开头提的问题：
+
+如果你是求职者，项目写了运用了`axios`，面试官可能会问你：
+>1.为什么 `axios` 既可以当函数调用，也可以当对象使用，比如`axios({})`、`axios.get`。<br>
+答：`axios`本质是函数，赋值了一些别名方法，比如`get`、`post`方法，可被调用，最终调用的还是`Axios.prototype.request`函数。<br>
+>2.简述 `axios` 调用流程。<br>
+答：实际是调用的`Axios.prototype.request`方法，最终返回的是`promise`链式调用，实际请求是在`dispatchRequest`中派发的。<br>
+>3.有用过拦截器吗？原理是怎样的？<br>
+答：用过，用`axios.interceptors.request.use`添加请求成功和失败拦截器函数，用`axios.interceptors.response.use`添加响应成功和失败拦截器函数。在`Axios.prototype.request`函数组成`promise`链式调用时，`Interceptors.protype.forEach`遍历请求和响应拦截器添加到真正发送请求`dispatchRequest`的两端，从而做到请求前拦截和响应后拦截。拦截器也支持用`Interceptors.protype.eject`方法移除。<br>
+>4.有使用`axios`的取消功能吗？是怎么实现的？<br>
+答：用过，通过传递`config`配置`cancelToken`的形式，来取消的。判断有传`cancelToken`，在`promise`链式调用的`dispatchRequest`抛出错误，在`adapter`中`request.abort()`取消请求，使`promise`走向`rejected`，被用户捕获取消信息。<br>
+>5.为什么支持浏览器中发送请求也支持`node`发送请求？<br>
+答：`axios.defaults.adapter`默认配置中根据环境判断是浏览器还是`node`环境，使用对应的适配器。适配器支持自定义。<br>
+
+回答面试官的问题，读者也可以根据自己的理解，组织语言，笔者的回答只是做一个参考。
+
 `axios` 源码相对不多，打包后一千多行，比较容易看完，非常值得学习。
 
-建议 `clone` [若川的 axios-analysis github 仓库](https://github.com/lxchuan12/axios-analysis)，按照文中方法自己调试<br>
+建议 `clone` [若川的 axios-analysis github 仓库](https://github.com/lxchuan12/axios-analysis)，按照文中方法自己调试，印象更深刻。<br>
 
 基于`Promise`，构成`Promise`链，巧妙的设置请求拦截，发送请求，再试试响应拦截器。
 
