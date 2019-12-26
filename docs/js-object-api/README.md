@@ -1,6 +1,56 @@
 # JavaScript 对象所有API解析
 
->`写于 2017年08月20日`
+>`写于 2017年08月20日`，虽然是2017年写的文章，但现在`2019`年依旧不过时，而且发现有挺多人对对象基础`API`不熟悉。`2019`年新增了`ES10` `Object.fromEntries()`。
+
+举个例子，经常会有类似的封装`http`到原型`Vue.prototype`，一般人是这样封装的，但容易被篡改。
+
+```js
+function Vue(){
+ console.log('test vue');
+}
+function http(){
+  console.log('我是调用接口的http');
+}
+Vue.prototype.$http = http;
+var vm = new Vue();
+vm.$http()
+vm.$http = 1; // 一旦被修改，虽然一般正常情况下不会被修改
+vm.$http(); // 再次调用报错
+```
+
+熟悉`Object.defineProperty`或者说熟悉对象`API`的人，一般是如下代码写的，则不会出现被修改的问题。
+
+```js
+function Vue(){
+ console.log('test vue');
+};
+function http(){
+  console.log('我是调用接口的http');
+};
+Object.defineProperty(Vue.prototype, '$http', {
+    get(){
+     return http;
+    }
+});
+var vm = new Vue();
+vm.$http();
+vm.$http = 1; // 这里无法修改
+vm.$http(); // 调用正常
+```
+
+[vue-router 源码里就是类似这样写的](https://github.com/vuejs/vue-router/blob/dev/src/install.js#L38-L44)，`this.$router`，`this.$route`无法修改。
+
+```js
+// vue-router 源码
+Object.defineProperty(Vue.prototype, '$router', {
+	get () { return this._routerRoot._router }
+})
+Object.defineProperty(Vue.prototype, '$route', {
+	get () { return this._routerRoot._route }
+})
+```
+
+以下是正文~
 
 >之前看到[【深度长文】JavaScript数组所有API全解密](http://louiszhai.github.io/2017/04/28/array/)和[JavaScript字符串所有API全解密](http://louiszhai.github.io/2016/01/12/js.String/)这两篇高质量的文章。发现没写对象API解析（估计是博主觉得简单，就没写）。刚好我看到《JavaScript面向对象编程指南（第2版）》，觉得有必要写（或者说chao）一下，也好熟悉下对象的所有API用法。
 
@@ -24,7 +74,7 @@ n.constructor; // ƒ Number() { [native code] }
 该属性是所有对象的原型（包括 `Object`对象本身），语言中的其他对象正是通过对该属性上添加东西来实现它们之间的继承关系的。所以要小心使用。
 比如：
 ```js
-var s = new String('xuanyuan');
+var s = new String('若川');
 Object.prototype.custom = 1;
 console.log(s.custom); // 1
 ```
@@ -309,14 +359,14 @@ o.customProto; // 101
 Object.keys(o); // ['own']
 ```
 
-### 四、在`ES6`中附加的`Object`属性
+## 四、在`ES6`中附加的`Object`属性
 
 ### Object.is(value1, value2) (ES6)
 
 该方法用来比较两个值是否严格相等。它与严格比较运算符（===）的行为基本一致。
 不同之处只有两个：一是`+0`不等于`-0`，而是`NaN`等于自身。
 ```js
-Object.is('xuanyuan', 'xuanyuan'); // true
+Object.is('若川', '若川'); // true
 Object.is({},{}); // false
 Object.is(+0, -0); // false
 +0 === -0; // true
@@ -436,21 +486,41 @@ Object.values(obj); // [1,2,3]
 ### Object.entries(obj) (ES8)
 
 `Object.entries()` 方法返回一个给定对象自己的可枚举属性`[key，value]`对的数组，数组中键值对的排列顺序和使用 `for...in` 循环遍历该对象时返回的顺序一致（区别在于一个`for-in`循环也枚举原型链中的属性）。
+
 ```js
 var obj = {a:1,b:2,c:3};
 Object.keys(obj); // ['a','b','c']
 Object.values(obj); // [1,2,3]
 Object.entries(obj); // [['a',1],['b',2],['c',3]]
 ```
+
+## 六、在`ES10`中附加的`Object`属性
+
+### Object.fromEntries(iterable) (ES10)
+
+`Object.fromEntries()`方法返回一个给定可迭代对象（类似`Array`、`Map`或其他可迭代对象）对应属性的新对象。
+
+`Object.fromEntries()` 是 `Object.entries()`的逆操作。
+
+```js
+var arr = [['a',1],['b',2],['c',3]];
+Object.fromEntries(obj); // {a: 1, b: 2, c: 3}
+var entries = new Map([
+  ['name', '若川'],
+  ['age', 18]
+]);
+Object.fromEntries(entries) // {name: '若川', age: 18}
+```
+
 ## 小结
 
-您可能会发现MDN上还有一些API，本文没有列举到。因为那些是非标准的API。熟悉对象的API对理解原型和原型链相关知识会有一定帮助。常用的API主要有`Object.prototype.toString()`，`Object.prototype.hasOwnProperty()`， `Object.getPrototypeOf(obj)`，`Object.create()`，`Object.defineProperty`，`Object.keys(obj)`，`Object.assign()`。
+细心的读者可能会发现`MDN`上还有一些`API`，本文没有列举到。因为那些是非标准的`API`。熟悉对象的API对理解原型和原型链相关知识会有一定帮助。常用的API主要有`Object.prototype.toString()`，`Object.prototype.hasOwnProperty()`， `Object.getPrototypeOf(obj)`，`Object.create()`，`Object.defineProperty`，`Object.keys(obj)`，`Object.assign()`。
 
 ## 参考资料
 
-[MDN Object API](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object)
-[JavaScript面向对象编程指南（第2版）（豆瓣读书链接）](https://book.douban.com/subject/26302623/)
-[阮一峰 ES6标准入门2](http://es6.ruanyifeng.com/)
+[MDN Object API](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object)<br>
+[JavaScript面向对象编程指南（第2版）（豆瓣读书链接）](https://book.douban.com/subject/26302623/)<br>
+[阮一峰 ES6标准入门2](http://es6.ruanyifeng.com/)<br>
 
 ## 关于
 
