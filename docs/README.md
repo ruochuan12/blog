@@ -12,5 +12,8 @@ features:
   details: 某不那么知名的陶瓷大学2016届毕业生，目前在杭州从事前端开发工作，也是一枚PPT爱好者。freecodecamp （简称FCC）杭州社区组织者之一。
 - title: 微信公众号
   details: 若川视野
-footer: Copyright © 2016-present 若川
 ---
+
+<div class="footer">
+    Copyright © 2016-present 若川 <a href="http://www.beian.miit.gov.cn" target="_blank">浙ICP备19003142号-1</a>
+</div>
