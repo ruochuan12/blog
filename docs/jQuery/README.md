@@ -2,10 +2,22 @@
 
 >`写于2019年7月29日`
 
+>这是`学习源码整体架构系列`第一篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是打包整合后的代码，不是实际仓库中的拆分的代码。
+
+`学习源码整体架构系列`文章如下：
+>1.[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://juejin.im/post/5d39d2cbf265da1bc23fbd42)<br>
+>2.[学习 underscore 源码整体架构，打造属于自己的函数式编程类库](https://juejin.im/post/5d4bf94de51d453bb13b65dc)<br>
+>3.[学习 lodash 源码整体架构，打造属于自己的函数式编程类库](https://juejin.im/post/5d767e1d6fb9a06b032025ea)<br>
+>4.[学习 sentry 源码整体架构，打造属于自己的前端异常监控SDK](https://juejin.im/post/5dba5a39e51d452a2378348a)<br>
+>5.[学习 vuex 源码整体架构，打造属于自己的状态管理库](https://juejin.im/post/5dd4e61a6fb9a05a5c010af0)<br>
+>6.[学习 axios 源码整体架构，打造属于自己的请求库](https://juejin.im/post/5df349b5518825123751ba66)<br>
+
+感兴趣的读者可以点击阅读。
+
 虽然现在基本不怎么使用`jQuery`了，但`jQuery`流行`10多年`的`JS库`，还是有必要学习它的源码的。也可以学着打造属于自己的`js`类库，求职面试时可以增色不少。
 
 本文章学习的是`v3.4.1 `版本。
-`unpkg.com`源码地址：https://unpkg.com/jquery@3.4.1/dist/jquery.js
+[`unpkg.com` jQuery源码地址](https://unpkg.com/jquery@3.4.1/dist/jquery.js)
 
 [`jQuery` `github`仓库](https://github.com/jquery/jquery)
 
