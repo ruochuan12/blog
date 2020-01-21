@@ -5,6 +5,10 @@
 >3.[学习 lodash 源码整体架构，打造属于自己的函数式编程类库](https://segmentfault.com/a/1190000020350442)
 >4.[学习 sentry 源码整体架构，打造属于自己的前端异常监控SDK](https://segmentfault.com/a/1190000020870683)
 >5.[学习 vuex 源码整体架构，打造属于自己的状态管理库](https://segmentfault.com/a/1190000021073120)
+>6.[学习 axios 源码整体架构，打造属于自己的请求库](https://segmentfault.com/a/1190000021321303)
+
+
+![若川视野](https://github.com/lxchuan12/blog/raw/master/docs/about/wechat-official-accounts-mini.jpg)
 
 ## 笔者精选文章
 
