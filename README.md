@@ -39,7 +39,7 @@
 
 - 13.[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://lxchuan12.cn/jQuery/)
 
-**面试官系列：**
+**面试官问系列：**
 
 - 12.[面试官问：JS的继承](https://lxchuan12.cn/js-extend/)
 
