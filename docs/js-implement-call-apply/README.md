@@ -2,6 +2,16 @@
 
 >`写于2018年11月30日`
 
+## 前言
+
+>这是面试官问系列的第三篇，旨在帮助读者提升`JS`基础知识，包含`new、call、apply、this、继承`相关知识。<br>
+`面试官问系列`文章如下：感兴趣的读者可以点击阅读。<br>
+>1.[面试官问：能否模拟实现JS的new操作符](https://juejin.im/post/5bde7c926fb9a049f66b8b52)<br>
+>2.[面试官问：能否模拟实现JS的bind方法](https://juejin.im/post/5bec4183f265da616b1044d7)<br>
+>3.[面试官问：能否模拟实现JS的call和apply方法](https://juejin.im/post/5bf6c79bf265da6142738b29)<br>
+>4.[面试官问：JS的this指向](https://juejin.im/post/5c0c87b35188252e8966c78a)<br>
+>5.[面试官问：JS的继承](https://juejin.im/post/5c433e216fb9a049c15f841b)<br>
+
 之前写过两篇[《面试官问：能否模拟实现`JS`的`new`操作符》](https://juejin.im/post/5bde7c926fb9a049f66b8b52)和[《面试官问：能否模拟实现`JS`的`bind`方法》](https://juejin.im/post/5bec4183f265da616b1044d7)
 
 其中模拟`bind`方法时是使用的`call`和`apply`修改`this`指向。但面试官可能问：能否不用`call`和`apply`来实现呢。意思也就是需要模拟实现`call`和`apply`的了。
