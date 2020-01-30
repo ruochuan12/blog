@@ -210,7 +210,7 @@ module.exports = {
 				collapsable: true, // 可选的, 默认值是 true,
 				sidebarDepth: 2,    // 可选的, 默认值是 1
 				children: [
-				'goal',
+				'/goal/',
 				'/20190612-after-3-year-work/',
 				'/20170602-After-a-year-s-work-I-had-some-insights/',
 				'/20160907-How-do-I-set-foot-on-the-front-end-of-the-road/',
