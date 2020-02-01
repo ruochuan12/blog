@@ -76,7 +76,7 @@ npm i -g http-server
 hs -p 8100
 
 # 在examples 文件夹中把引用的vuejs的index.html 文件 vue.min.js 改为 vue.js
-# 或者把dist文件夹的 vue.min.js ，替换成npm run dev编译后的dist/vue.js 
+# 或者把dist文件夹的 vue.min.js ，替换成npm run dev编译后的dist/vue.js
 
 # 浏览器打开 open http://localhost:8100/examples/
 
