@@ -34,8 +34,8 @@ module.exports = {
     serviceWorker: true, // 是否开启 PWA
     themeConfig: {
         nav: [
-			{ text: '主页', link: '/' },
-			{ text: '目录', link: '/posts/' },
+			{ text: '目录', link: '/' },
+			// { text: '目录', link: '/posts/' },
 			{ text: '最新文章', link: '/axios/' },
             // { text: '博文',
             //   items: [
@@ -155,7 +155,7 @@ module.exports = {
 		sidebar: [
 			{
 				title: '目录',   // 必要的
-				path: '/posts/',      // 可选的, 应该是一个绝对路径
+				path: '/',      // 可选的, 应该是一个绝对路径
 				// collapsable: true, // 可选的, 默认值是 true,
 				// sidebarDepth: 2,    // 可选的, 默认值是 1
 				// children: [
