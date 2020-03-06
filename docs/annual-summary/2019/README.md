@@ -149,7 +149,7 @@
 
 掘金终于突破了1000粉丝，这一年阅读量4万多一点。
 
-8月4日，用`vuepress`重构了[博客 lxchuan12.cn](https://lxchuan12.cn/posts/)，相比以前，阅读体验更好些。
+8月4日，用`vuepress`重构了[博客 lxchuan12.cn](https://lxchuan12.cn)，相比以前，阅读体验更好些。
 
 纵向对比，这些对比于2018年，都是一些进步。
 
@@ -307,7 +307,7 @@
 ## 关于
 
 作者：常以**若川**为名混迹于江湖。前端路上 | PPT爱好者 | 所知甚少，唯善学。<br>
-[若川的博客](https://lxchuan12.cn/posts/)，使用`vuepress`重构了，阅读体验可能更好些<br>
+[若川的博客](https://lxchuan12.cn)，使用`vuepress`重构了，阅读体验可能更好些<br>
 [掘金专栏](https://juejin.im/user/57974dc55bbb500063f522fd/posts)，欢迎关注~<br>
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，欢迎关注~<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，欢迎关注~<br>
