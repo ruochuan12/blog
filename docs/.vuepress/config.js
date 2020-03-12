@@ -36,7 +36,7 @@ module.exports = {
         nav: [
 			{ text: '目录', link: '/' },
 			// { text: '目录', link: '/posts/' },
-			{ text: '最新文章', link: '/axios/' },
+			{ text: '最新文章', link: '/koa/' },
             // { text: '博文',
             //   items: [
 			// 	{
@@ -168,6 +168,7 @@ module.exports = {
 				collapsable: true, // 可选的, 默认值是 true,
 				sidebarDepth: 2,    // 可选的, 默认值是 1
 				children: [
+				'/koa/',
 				'/axios/',
 				'/vuex/',
 				'/sentry/',
