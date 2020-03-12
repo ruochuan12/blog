@@ -23,7 +23,7 @@
 **导读**<br>
 文章通过例子调试`koa`，梳理`koa`的主流程，来理解`koa-compose`洋葱模型原理和`co`库的原理，相信看完一定会有所收获。
 
-![本文目录](../koa-analysis/images/contents.png)
+![本文目录](./images/contents.png)
 
 本文学习的`koa`版本是`v2.11.0`。克隆的官方仓库的`master`分支。
 截至目前（2020年3月11日），最新一次`commit`是`2020-01-04 07:41 Olle Jonsson` `eda27608`，`build: Drop unused Travis sudo: false directive (#1416)`。
@@ -97,9 +97,9 @@ git clone https://github.com/koajs/examples.git
 
 学习 `koa-compose` 前，先看两张图。
 
-![洋葱模型示意图](../koa-analysis/images/models.png)
+![洋葱模型示意图](./images/models.png)
 
-![洋葱模型中间件示意图](../koa-analysis/images/middleware.png)
+![洋葱模型中间件示意图](./images/middleware.png)
 
 在`koa`中，请求响应都放在中间件的第一个参数`context`对象中了。
 
@@ -187,13 +187,13 @@ app.use(async (ctx, next) => {
 
 在调试控制台`ctrl + 反引号键（一般在`Tab`上方的按键）唤起`，输入`app`，按`enter`键打印`app`。会有一张这样的图。
 
-![koa 实例对象调试图](../koa-analysis/images/koa-instance.jpeg)
+![koa 实例对象调试图](./images/koa-instance.jpeg)
 
 `VScode`也有一个代码调试神器插件[`Debug Visualizer`](https://marketplace.visualstudio.com/items?itemName=hediet.debug-visualizer)。
 
 安装好后插件后，按`ctrl + shift + p`，输入`Open a new Debug Visualizer View`，来使用，输入`app`，显示是这样的。
 
-![koa 实例对象可视化简版](../koa-analysis/images/koa-instance-debug.jpeg)
+![koa 实例对象可视化简版](./images/koa-instance-debug.jpeg)
 
 不过目前体验来看，相对还比较鸡肋，只能显示一级，而且只能显示对象，相信以后会更好。更多玩法可以查看它的文档。
 
