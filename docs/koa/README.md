@@ -199,7 +199,7 @@ app.use(async (ctx, next) => {
 
 我把koa实例对象比较完整的用`xmind`画出来了，大概看看就好，有个初步印象。
 
-![koa 实例对象](../koa-analysis/images/koa-instance-xmind.png)
+![koa 实例对象](./images/koa-instance-xmind.png)
 
 接着，我们可以看下`app 实例、context、request、request`的官方文档。
 
