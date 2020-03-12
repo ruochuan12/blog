@@ -1,6 +1,0 @@
-[submodule "koa-docs-Zh-CN"]
-	path = koa-docs-Zh-CN
-	url = https://github.com/demopark/koa-docs-Zh-CN
-[submodule "examples"]
-	path = examples
-	url = https://github.com/koajs/examples.git
