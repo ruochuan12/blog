@@ -1538,6 +1538,7 @@ FCC成都社区负责人水歌开源的[KoAJAX](https://github.com/EasyWebApp/Ko
 [掘金专栏](https://juejin.im/user/57974dc55bbb500063f522fd/posts)，欢迎关注~<br>
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，欢迎关注~<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，欢迎关注~<br>
+[语雀前端视野专栏](https://www.yuque.com/lxchuan12/blog)，新增语雀专栏，欢迎关注~<br>
 [github blog](https://github.com/lxchuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
 
 ## 欢迎加微信交流 微信公众号
