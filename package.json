@@ -24,9 +24,12 @@
   },
   "homepage": "https://github.com/lxchuan12/lxchuan12.github.io#readme",
   "devDependencies": {
-    "vuepress": "^1.0.4",
-    "@vuepress/plugin-back-to-top": "^1.0.0-rc.1",
-    "@vuepress/plugin-google-analytics": "^1.0.0-rc.1",
-    "@vuepress/plugin-medium-zoom": "^1.0.0-rc.1"
+    "@types/imagemin-pngquant": "^7.0.0",
+    "@vuepress/plugin-back-to-top": "^1.4.0",
+    "@vuepress/plugin-google-analytics": "^1.4.0",
+    "@vuepress/plugin-medium-zoom": "^1.4.0",
+    "image-webpack-loader": "^6.0.0",
+    "imagemin-pngquant": "^8.0.0",
+    "vuepress": "^1.4.0"
   }
 }

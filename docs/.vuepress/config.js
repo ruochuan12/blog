@@ -144,12 +144,33 @@ module.exports = {
 						text: '微博',
 						link: 'http://weibo.com/lxchuan12'
 					},
-					// {
-					// 	text: 'hexo 博客 lxchuan12.cn',
-					// 	link: 'http://lxchuan12.cn'
-					// },
 				],
-			}
+			},
+			{
+				text: '友链',
+				items: [
+					{
+						text: '程序员指北 koala',
+						link: 'http://www.inode.club',
+					},
+					{
+						text: '山月',
+						link: 'https://shanyue.tech',
+					},
+					{
+						text: 'lucifer',
+						link: 'http://lucifer.ren'
+					},
+					{
+						text: '童欧巴',
+						link: 'https://hungryturbo.com',
+					},
+					{
+						text: '编程之上',
+						link: 'https://ruizhengyun.cn'
+					},
+				],
+			},
         ],
 		// sidebar: 'auto',
 		sidebar: [
@@ -252,11 +273,20 @@ module.exports = {
         // sidebarDepth: 3,
         lastUpdated: '最后更新时间',
     },
-    configureWebpack: {
-      resolve: {
-        alias: {
-          '@images': '../images/',
-        }
-      }
+    configureWebpack: config => {
+		config.resolve.alias['@images'] = '../images/';
+		config.module.rules.push({
+			test: /\.(gif|png|jpe?g|svg)$/i,
+			use: [
+				'file-loader',
+				{
+					loader: 'image-webpack-loader',
+					options: {
+						bypassOnDebug: true, // webpack@1.x
+						// disable: true, // webpack@2.x and newer
+					},
+				},
+			]
+		});
     }
 }
