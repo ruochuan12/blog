@@ -2,7 +2,7 @@ console.log(__dirname, "dirname");
 module.exports = {
 	title: "若川的博客",
 	keywords:
-		"若川，罗小川chuan，罗小川，luoxiaochuan，lxchuan12。前端路上，PPT爱好者，所知甚少，唯善学。",
+		"若川，lxchuan12。源码、jquery源码、underscore源码、lodash源码、sentry源码、vuex源码、axios源码、koa源码、前端路上，PPT爱好者，所知甚少，唯善学。",
 	description: "若川的前端视野",
 	head: [
 		["link", { rel: "icon", href: "/favicon.ico" }],
@@ -287,7 +287,6 @@ module.exports = {
 		.use('url-loader')
 			.loader('url-loader')
 			.tap(options => {
-				console.log(options, 'options');
 				options.esModule = false;
 				return options;
 			})
@@ -295,47 +294,36 @@ module.exports = {
 			.use("image-webpack-loader")
 		 	.loader("image-webpack-loader")
 		 	.options({
-				mozjpeg: {
-					quality: 65
-				},
-				pngquant: {
-					quality: [0.65, 0.9],
-					speed: 4
-				},
-				svgo: {
-					plugins: [
-						{
-							removeViewBox: false
-						},
-						{
-							removeEmptyAttrs: false
-						}
-					]
-				},
-				gifsicle: {
-					optimizationLevel: 7,
-					interlaced: false
-				},
-				optipng: {
-					optimizationLevel: 7,
-					interlaced: false
-				},
-				webp: {
-					quality: 75
-				}
+				disable: true,
+				// mozjpeg: {
+				// 	quality: 65
+				// },
+				// pngquant: {
+				// 	quality: [0.65, 0.9],
+				// 	speed: 4
+				// },
+				// svgo: {
+				// 	plugins: [
+				// 		{
+				// 			removeViewBox: false
+				// 		},
+				// 		{
+				// 			removeEmptyAttrs: false
+				// 		}
+				// 	]
+				// },
+				// gifsicle: {
+				// 	optimizationLevel: 7,
+				// 	interlaced: false
+				// },
+				// optipng: {
+				// 	optimizationLevel: 7,
+				// 	interlaced: false
+				// },
+				// webp: {
+				// 	quality: 75
+				// }
 			}
 		);
-	// 	config.module
-	//  	.rule("images")
-	//  	.use("image-webpack-loader")
-	//  	.loader("image-webpack-loader")
-	//  	.options({
-	// 	 	disable: true
-	//  	})
-	//  	.end();
-// ————————————————
-// 版权声明：本文为CSDN博主「beichen3997」的原创文章，遵循 CC 4.0 BY-SA 版权协议，转载请附上原文出处链接及本声明。
-// 原文链接：https://blog.csdn.net/beichen3997/java/article/details/88821054
-		// config 是一个 ChainableConfig 的实例
 	},
 };
