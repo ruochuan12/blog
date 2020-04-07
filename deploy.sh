@@ -20,7 +20,7 @@ git commit -m '更新为 vuepress 博客'
 
 # 如果发布到 https://lxchuan12.github.io
 # git push -f git@github.com:lxchuan12/lxchuan12.github.io.git master
-git push -f https://github.com/lxchuan12/lxchuan12.github.io.git master
+git push -f https://${GITHUB_TOKEN}@github.com/lxchuan12/lxchuan12.github.io.git master
 
 # 如果发布到 https://<USERNAME>.github.io/<REPO>
 # git push -f git@github.com:<USERNAME>/<REPO>.git master:gh-pages
