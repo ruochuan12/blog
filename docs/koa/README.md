@@ -37,7 +37,7 @@
 
 ## 本文阅读最佳方式
 
-先`star`一下我的仓库，再把它`git clone https://github.com/lxchuan12/koa-analysis.git`克隆下来。不用管你是否用过`nodejs`。会一点点`promise、generator、async、await`等知识即可看懂。如果一点点也不会，可以边看阮一峰老师的[《ES6标准入门》](https://es6.ruanyifeng.com/#docs/generator)相关章节。**跟着文章节奏调试和示例代码调试，动手调试（用`vscode`或者`chrome`）印象更加深刻**。文章长段代码不用细看，可以调试时再细看。看这类源码文章百遍，可能不如自己多调试几遍。也欢迎加我微信交流`lxchuan12`。
+先`star`一下我的仓库，再把它`git clone https://github.com/lxchuan12/koa-analysis.git`克隆下来。不用管你是否用过`nodejs`。会一点点`promise、generator、async、await`等知识即可看懂。如果一点点也不会，可以边看阮一峰老师的[《ES6标准入门》](https://es6.ruanyifeng.com/#docs/generator)相关章节。**跟着文章节奏调试和示例代码调试，动手调试（用`vscode`或者`chrome`）印象更加深刻**。文章长段代码不用细看，可以调试时再细看。看这类源码文章百遍，可能不如自己多调试几遍。也欢迎加我微信交流`ruochuan12`。
 
 ```bash
 # 克隆我的这个仓库
@@ -716,7 +716,7 @@ git clone https://github.com/lxchuan12/koa-analysis.git
 
 再强烈建议下按照**本文阅读最佳方式**，克隆代码下来，**动手调试代码学习更加深刻**。
 
->如果读者发现有不妥或可改善之处，再或者哪里没写明白的地方，欢迎评论指出，也欢迎加我微信交流`lxchuan12`。另外觉得写得不错，对您有些许帮助，可以点赞、评论、转发分享，也是对笔者的一种支持，万分感谢。
+>如果读者发现有不妥或可改善之处，再或者哪里没写明白的地方，欢迎评论指出，也欢迎加我微信交流`ruochuan12`。另外觉得写得不错，对您有些许帮助，可以点赞、评论、转发分享，也是对笔者的一种支持，万分感谢。
 
 ### 解答下开头的提问
 
@@ -825,6 +825,6 @@ ctx.onerror = function {
 
 ## 欢迎加微信交流 微信公众号
 
-可能比较有趣的微信公众号，长按扫码关注（**回复pdf获取前端优质书籍pdf**）。欢迎加我微信`lxchuan12`（注明来源，基本来者不拒），拉您进【前端视野交流群】，长期交流学习~
+可能比较有趣的微信公众号，长按扫码关注（**回复pdf获取前端优质书籍pdf**）。欢迎加我微信`ruochuan12`（注明来源，基本来者不拒），拉您进【前端视野交流群】，长期交流学习~
 
 ![若川视野](https://github.com/lxchuan12/blog/raw/master/docs/about/wechat-official-accounts-mini.jpg)

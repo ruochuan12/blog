@@ -78,7 +78,7 @@ npm i -g http-server
 hs -p 8100
 
 # 在examples 文件夹中把引用的vuejs的index.html 文件 vue.min.js 改为 vue.js
-# 或者把dist文件夹的 vue.min.js ，替换成npm run dev编译后的dist/vue.js 
+# 或者把dist文件夹的 vue.min.js ，替换成npm run dev编译后的dist/vue.js
 
 # 浏览器打开 open http://localhost:8100/examples/
 
@@ -1373,6 +1373,6 @@ git clone https://github.com/lxchuan12/vuex-analysis.git
 
 ## 欢迎加微信交流 微信公众号
 
-可能比较有趣的微信公众号，长按扫码关注（**回复pdf获取前端优质书籍pdf**）。也可以加微信 `lxchuan12`，注明来源，拉您进【前端视野交流群】。
+可能比较有趣的微信公众号，长按扫码关注（**回复pdf获取前端优质书籍pdf**）。也可以加微信 `ruochuan12`，注明来源，拉您进【前端视野交流群】。
 
 ![若川视野](https://github.com/lxchuan12/blog/raw/master/docs/about/wechat-official-accounts-mini.jpg)
