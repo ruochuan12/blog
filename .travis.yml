@@ -1,0 +1,15 @@
+language: node_js
+node_js:
+  - 11
+script:
+  - npm run deploy
+cache:
+  directories:
+  - node_modules
+# branch: master
+branches:
+  only:
+    - master
+install:
+  - npm install
+branch: master
