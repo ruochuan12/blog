@@ -9,7 +9,7 @@ export default ({
   options,
   router
 }) => {
-	var script = document.createElement('script');
+	var script = document && document.createElement('script');
 	script.src = 'https://s19.cnzz.com/z_stat.php?id=1273798602&web_id=1273798602';
-	document.body.append(script);
+	document && document.body.append(script);
 }
