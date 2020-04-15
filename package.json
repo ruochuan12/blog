@@ -1,17 +1,20 @@
 {
-  "name": "lxchuan12.github.io",
+  "name": "blog",
   "version": "2.0.0",
-  "description": "vuepress lxchuan12.github.io",
+  "description": "vuepress blog",
   "main": "index.js",
   "scripts": {
+    "commit": "git-cz",
+    "release": "release-it",
+    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
     "test": "echo \"Error: no test specified\" && exit 1",
     "dev": "vuepress dev docs",
     "build": "vuepress build docs",
-    "deploy": "bash deploy.sh"
+    "deploy": "bash ./scripts/deploy.sh"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/lxchuan12/lxchuan12.github.io.git"
+    "url": "git+https://github.com/lxchuan12/blog.git"
   },
   "keywords": [
     "vuepress",
@@ -20,18 +23,27 @@
   "author": "lxchuan12@163.com",
   "license": "ISC",
   "bugs": {
-    "url": "https://github.com/lxchuan12/lxchuan12.github.io/issues"
+    "url": "https://github.com/lxchuan12/blog/issues"
   },
-  "homepage": "https://github.com/lxchuan12/lxchuan12.github.io#readme",
+  "homepage": "https://github.com/lxchuan12/blog#readme",
   "devDependencies": {
     "@types/file-loader": "^4.2.0",
     "@types/imagemin-pngquant": "^7.0.0",
     "@vuepress/plugin-back-to-top": "^1.4.0",
     "@vuepress/plugin-google-analytics": "^1.4.0",
     "@vuepress/plugin-medium-zoom": "^1.4.0",
+    "commitizen": "^4.0.4",
+    "conventional-changelog-cli": "^2.0.31",
+    "cz-conventional-changelog": "^3.1.0",
     "file-loader": "^6.0.0",
     "image-webpack-loader": "^6.0.0",
     "imagemin-pngquant": "^8.0.0",
+    "release-it": "^13.5.2",
     "vuepress": "^1.4.0"
+  },
+  "config": {
+    "commitizen": {
+      "path": "cz-conventional-changelog"
+    }
   }
 }
