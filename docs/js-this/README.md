@@ -107,7 +107,7 @@ student.other.doSth(); // 'other'
 // 用call类比则为：
 student.doSth.call(student);
 // 用call类比则为：
-student.other.doSth.call(other);
+student.other.doSth.call(student.other);
 ```
 但往往会有以下场景，把对象中的函数赋值成一个变量了。
 这样其实又变成普通函数了，所以使用普通函数的规则（默认绑定）。
