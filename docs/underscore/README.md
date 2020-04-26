@@ -16,7 +16,7 @@
 >7.[学习 koa 源码的整体架构，浅析koa洋葱模型原理和co原理](https://juejin.im/post/5e69925cf265da571e262fe6)<br>
 
 感兴趣的读者可以点击阅读。<br>
-其他源码计划中的有：[`express`](https://github.com/lxchuan12/express-analysis)、[`vue-rotuer`](https://github.com/lxchuan12/vue-router-analysis)、[`redux`](https://github.com/lxchuan12/redux-analysis)、  [`react-redux`](https://github.com/lxchuan12/react-redux-analysis) 等源码，不知何时能写完（哭泣），欢迎持续关注我（若川）。
+其他源码计划中的有：[`express`](https://github.com/lxchuan12/express-analysis)、[`vue-router`](https://github.com/lxchuan12/vue-router-analysis)、[`redux`](https://github.com/lxchuan12/redux-analysis)、  [`react-redux`](https://github.com/lxchuan12/react-redux-analysis) 等源码，不知何时能写完（哭泣），欢迎持续关注我（若川）。
 
 虽然看过挺多`underscore.js`分析类的文章，但总感觉少点什么。这也许就是**纸上得来终觉浅，绝知此事要躬行**吧。于是决定自己写一篇学习`underscore.js`整体架构的文章。
 

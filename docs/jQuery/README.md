@@ -14,7 +14,7 @@
 >7.[学习 koa 源码的整体架构，浅析koa洋葱模型原理和co原理](https://juejin.im/post/5e69925cf265da571e262fe6)<br>
 
 感兴趣的读者可以点击阅读。<br>
-其他源码计划中的有：[`express`](https://github.com/lxchuan12/express-analysis)、[`vue-rotuer`](https://github.com/lxchuan12/vue-router-analysis)、[`redux`](https://github.com/lxchuan12/redux-analysis)、  [`react-redux`](https://github.com/lxchuan12/react-redux-analysis) 等源码，不知何时能写完（哭泣），欢迎持续关注我（若川）。
+其他源码计划中的有：[`express`](https://github.com/lxchuan12/express-analysis)、[`vue-router`](https://github.com/lxchuan12/vue-router-analysis)、[`redux`](https://github.com/lxchuan12/redux-analysis)、  [`react-redux`](https://github.com/lxchuan12/react-redux-analysis) 等源码，不知何时能写完（哭泣），欢迎持续关注我（若川）。
 
 虽然现在基本不怎么使用`jQuery`了，但`jQuery`流行`10多年`的`JS库`，还是有必要学习它的源码的。也可以学着打造属于自己的`js`类库，求职面试时可以增色不少。
 

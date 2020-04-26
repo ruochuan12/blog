@@ -14,7 +14,7 @@
 >7.[学习 koa 源码的整体架构，浅析koa洋葱模型原理和co原理](https://juejin.im/post/5e69925cf265da571e262fe6)<br>
 
 感兴趣的读者可以点击阅读。<br>
-其他源码计划中的有：[`express`](https://github.com/lxchuan12/express-analysis)、[`vue-rotuer`](https://github.com/lxchuan12/vue-router-analysis)、[`redux`](https://github.com/lxchuan12/redux-analysis)、  [`react-redux`](https://github.com/lxchuan12/react-redux-analysis) 等源码，不知何时能写完（哭泣），欢迎持续关注我（若川）。
+其他源码计划中的有：[`express`](https://github.com/lxchuan12/express-analysis)、[`vue-router`](https://github.com/lxchuan12/vue-router-analysis)、[`redux`](https://github.com/lxchuan12/redux-analysis)、  [`react-redux`](https://github.com/lxchuan12/react-redux-analysis) 等源码，不知何时能写完（哭泣），欢迎持续关注我（若川）。
 
 **导读**<br>
 文章比较详细的介绍了`vuex`、`vue`源码调试方法和 `Vuex` 原理。并且详细介绍了 `Vuex.use` 安装和 `new Vuex.Store` 初始化、`Vuex.Store` 的全部`API`（如`dispatch`、`commit`等）的实现和辅助函数 `mapState`、`mapGetters`、 `mapActions`、`mapMutations`
