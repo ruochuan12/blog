@@ -36,6 +36,7 @@
     "conventional-changelog-cli": "^2.0.31",
     "cz-conventional-changelog": "^3.1.0",
     "file-loader": "^6.0.0",
+    "git-cz": "^4.3.1",
     "image-webpack-loader": "^6.0.0",
     "imagemin-pngquant": "^8.0.0",
     "release-it": "^13.5.2",
