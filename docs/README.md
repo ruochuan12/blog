@@ -9,6 +9,7 @@
 >[`freecodecamp`](https://www.freecodecamp.org/) 杭州社区组织者之一（`简单说就是FCC杭州社区与杭州互联网公司共同举办线下技术分享交流活动，帮助开发者提高，曾与阿里、宋小菜、丁香园、微医、个推等公司合作过`）。
 >
 > `vuepress`博客：[https://lxchuan12.cn](../)
+>
 > 如果打开比较慢，可以访问[http://lxchuan12.gitee.io/](http://lxchuan12.gitee.io/)，可能会快些
 
 您可以在以下网站（点击图片跳转）关注我：<br>
