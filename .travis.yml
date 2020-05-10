@@ -14,4 +14,4 @@ install:
   - npm install
 branch: master
 notifications:
-   webhooks: https://oapi.dingtalk.com/robot/send?access_token=${TRAVIS_TOKEN}
+   webhooks: https://oapi.dingtalk.com/robot/send?access_token=$TRAVIS_TOKEN
