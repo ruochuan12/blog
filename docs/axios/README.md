@@ -2,7 +2,7 @@
 
 ## 前言
 
->这是`学习源码整体架构系列`第六篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是实际仓库的代码。
+>你好，我是[若川](https://lxchuan12.cn)。这是`学习源码整体架构系列`第六篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是实际仓库的代码。
 
 `学习源码整体架构系列`文章如下：
 >1.[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://juejin.im/post/5d39d2cbf265da1bc23fbd42)<br>
@@ -13,8 +13,7 @@
 >6.[学习 axios 源码整体架构，打造属于自己的请求库](https://juejin.im/post/5df349b5518825123751ba66)<br>
 >7.[学习 koa 源码的整体架构，浅析koa洋葱模型原理和co原理](https://juejin.im/post/5e69925cf265da571e262fe6)<br>
 
-感兴趣的读者可以点击阅读。<br>
-其他源码计划中的有：[`express`](https://github.com/lxchuan12/express-analysis)、[`vue-router`](https://github.com/lxchuan12/vue-router-analysis)、[`redux`](https://github.com/lxchuan12/redux-analysis)、  [`react-redux`](https://github.com/lxchuan12/react-redux-analysis) 等源码，不知何时能写完（哭泣），欢迎持续关注我（若川）。
+感兴趣的读者可以点击阅读。下一篇可能是`vue-router`源码。
 
 本文比较长，手机上阅读，可以划到有图的地方直接看文中的几张图即可。建议点赞或收藏后在电脑上阅读，按照文中调试方式自己调试或许更容易吸收消化。
 
@@ -703,7 +702,7 @@ Axios.prototype.request = function request(config) {
     也就是保证了请求前拦截器先执行，然后发送请求，再响应拦截器执行这样的顺序<br>
     也就是为啥最后还是可以`then`，`catch`方法的缘故。<br>
 
-如果读者对`Promise`不熟悉，建议读阮老师的书籍《ES6 标准入门》。
+如果读者对`Promise`不熟悉，建议读阮老师的书籍《ES6 标准入门》。 
 [阮一峰老师 的 ES6 Promise-resolve](http://es6.ruanyifeng.com/#docs/promise#Promise-resolve) 和 [JavaScript Promise迷你书（中文版）](http://liubin.org/promises-book/)
 
 ```js
@@ -786,8 +785,8 @@ node ./examples/server.js -p 5000
 
 ```js
 var chain = [
-  '请求成功拦截2', '请求失败拦截2',
-  '请求成功拦截1', '请求失败拦截1',
+  '请求成功拦截2', '请求失败拦截2',  
+  '请求成功拦截1', '请求失败拦截1',  
   dispatch,  undefined,
   '响应成功拦截1', '响应失败拦截1',
   '响应成功拦截2', '响应失败拦截2',
@@ -1535,7 +1534,7 @@ FCC成都社区负责人水歌开源的[KoAJAX](https://github.com/EasyWebApp/Ko
 ## 关于
 
 作者：常以**若川**为名混迹于江湖。前端路上 | PPT爱好者 | 所知甚少，唯善学。<br>
-[若川的博客](https://lxchuan12.cn/posts/)，使用`vuepress`重构了，阅读体验可能更好些<br>
+[若川的博客](https://lxchuan12.cn)，使用`vuepress`重构了，阅读体验可能更好些<br>
 [掘金专栏](https://juejin.im/user/57974dc55bbb500063f522fd/posts)，欢迎关注~<br>
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，欢迎关注~<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，欢迎关注~<br>
@@ -1544,6 +1543,6 @@ FCC成都社区负责人水歌开源的[KoAJAX](https://github.com/EasyWebApp/Ko
 
 ## 欢迎加微信交流 微信公众号
 
-可能比较有趣的微信公众号，长按扫码关注（**回复pdf获取前端优质书籍pdf**）。欢迎加笔者微信`ruochuan12`（注明来源，基本来者不拒），拉您进【前端视野交流群】，长期交流学习~
+可能比较有趣的微信公众号，长按扫码关注（**回复pdf获取前端优质书籍pdf**）。欢迎加笔者微信`lxchuan12`（注明来源，基本来者不拒），拉您进【前端视野交流群】，长期交流学习~
 
 ![若川视野](https://github.com/lxchuan12/blog/raw/master/docs/about/wechat-official-accounts-mini.jpg)
