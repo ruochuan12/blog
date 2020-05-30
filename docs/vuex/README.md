@@ -2,7 +2,7 @@
 
 ## 前言
 
->这是`学习源码整体架构`第五篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是实际仓库的代码。
+>你好，我是[若川](https://lxchuan12.cn)。这是`学习源码整体架构`第五篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是实际仓库的代码。
 
 `学习源码整体架构系列`文章如下：
 >1.[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://juejin.im/post/5d39d2cbf265da1bc23fbd42)<br>
@@ -14,7 +14,7 @@
 >7.[学习 koa 源码的整体架构，浅析koa洋葱模型原理和co原理](https://juejin.im/post/5e69925cf265da571e262fe6)<br>
 
 感兴趣的读者可以点击阅读。<br>
-其他源码计划中的有：[`express`](https://github.com/lxchuan12/express-analysis)、[`vue-router`](https://github.com/lxchuan12/vue-router-analysis)、[`redux`](https://github.com/lxchuan12/redux-analysis)、  [`react-redux`](https://github.com/lxchuan12/react-redux-analysis) 等源码，不知何时能写完（哭泣），欢迎持续关注我（若川）。
+其他源码计划中的有：[`express`](https://github.com/lxchuan12/express-analysis)、[`vue-rotuer`](https://github.com/lxchuan12/vue-router-analysis)、[`redux`](https://github.com/lxchuan12/redux-analysis)、  [`react-redux`](https://github.com/lxchuan12/react-redux-analysis) 等源码，不知何时能写完（哭泣），欢迎持续关注我（若川）。
 
 **导读**<br>
 文章比较详细的介绍了`vuex`、`vue`源码调试方法和 `Vuex` 原理。并且详细介绍了 `Vuex.use` 安装和 `new Vuex.Store` 初始化、`Vuex.Store` 的全部`API`（如`dispatch`、`commit`等）的实现和辅助函数 `mapState`、`mapGetters`、 `mapActions`、`mapMutations`
@@ -78,7 +78,7 @@ npm i -g http-server
 hs -p 8100
 
 # 在examples 文件夹中把引用的vuejs的index.html 文件 vue.min.js 改为 vue.js
-# 或者把dist文件夹的 vue.min.js ，替换成npm run dev编译后的dist/vue.js
+# 或者把dist文件夹的 vue.min.js ，替换成npm run dev编译后的dist/vue.js 
 
 # 浏览器打开 open http://localhost:8100/examples/
 
@@ -1364,7 +1364,7 @@ git clone https://github.com/lxchuan12/vuex-analysis.git
 ## 关于
 
 作者：常以**若川**为名混迹于江湖。前端路上 | PPT爱好者 | 所知甚少，唯善学。<br>
-[个人博客-若川](https://lxchuan12.cn/posts/)，使用`vuepress`重构了，阅读体验可能更好些<br>
+[个人博客-若川](https://lxchuan12.cn)，使用`vuepress`重构了，阅读体验可能更好些<br>
 [掘金专栏](https://juejin.im/user/57974dc55bbb500063f522fd/posts)，欢迎关注~<br>
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，欢迎关注~<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，欢迎关注~<br>
@@ -1373,6 +1373,6 @@ git clone https://github.com/lxchuan12/vuex-analysis.git
 
 ## 欢迎加微信交流 微信公众号
 
-可能比较有趣的微信公众号，长按扫码关注（**回复pdf获取前端优质书籍pdf**）。也可以加微信 `ruochuan12`，注明来源，拉您进【前端视野交流群】。
+可能比较有趣的微信公众号，长按扫码关注（**回复pdf获取前端优质书籍pdf**）。也可以加微信 `lxchuan12`，注明来源，拉您进【前端视野交流群】。
 
-![若川视野](../about/wechat-official-accounts-mini.jpg)
+![若川视野](https://github.com/lxchuan12/blog/raw/master/docs/about/wechat-official-accounts-mini.jpg)
