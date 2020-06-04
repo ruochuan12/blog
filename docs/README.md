@@ -2,15 +2,21 @@
 
 后续文章`demo`和资源都放在这里[github blog](https://github.com/lxchuan12/blog)。欢迎`star`^_^
 
+## 微信公众号和微信交流群
+
+可能比较有趣的微信公众号，长按扫码关注（**回复pdf获取前端优质书籍pdf**）。欢迎加我微信`ruochuan12`（来者不拒），拉您进【前端视野交流群】，长期交流学习~
+
+![若川视野](./docs/about/wechat-official-accounts-mini.jpg)
+
 ## 关于我
 
-你好，我是**若川**。欢迎加我微信`ruochuan12`交流。江西人，某不那么知名的陶瓷大学毕业生，目前在`杭州`从事`前端开发`工作，也是一枚`PPT爱好者`。所知甚少，唯善学。常以**若川**为名混迹于江湖。更详细的可以点击[关于我](../about/)<br>
+你好，我是**若川**。江西人，某不那么知名的陶瓷大学毕业生，目前在`杭州`从事`前端开发`工作，也是一枚`PPT爱好者`。所知甚少，唯善学。常以**若川**为名混迹于江湖。更详细的可以点击[关于我](../about/)<br>
 
 >[`freecodecamp`](https://www.freecodecamp.org/) 杭州社区组织者之一（`简单说就是FCC杭州社区与杭州互联网公司共同举办线下技术分享交流活动，帮助开发者提高，曾与阿里、宋小菜、丁香园、微医、个推等公司合作过`）。
 >
 > `vuepress`博客：[https://lxchuan12.cn](../)
 >
-> 如果打开比较慢，可以访问[http://lxchuan12.gitee.io/](http://lxchuan12.gitee.io/)，可能会快些
+> 如果打开比较慢，可以访问[http://lxchuan12.gitee.io](http://lxchuan12.gitee.io)，可能会快些
 
 您可以在以下网站（点击图片跳转）关注我：<br>
 <a href="https://juejin.im/user/57974dc55bbb500063f522fd/posts" >
@@ -87,9 +93,3 @@
 <img src="../README-images/zsxq.png"  width="250px" height="325px" title="前端视野知识星球" alt="前端视野知识星球"/>
 
 主要发表一些前端所见所想，Vue、React、构建工具(比如：gulp、webpack)、设计模式等。一个人走得快，一群人走得远。
-
-## 微信公众号和微信交流群
-
-可能比较有趣的微信公众号，长按扫码关注。欢迎加我微信`ruochuan12`（注明来源，基本来者不拒），拉您进【前端视野交流群】，长期交流学习~
-
-![若川视野](./about/wechat-official-accounts-mini.jpg)
