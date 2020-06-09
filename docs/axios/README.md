@@ -1,6 +1,6 @@
 # 学习 axios 源码整体架构，打造属于自己的请求库
 
-## 前言
+## 1. 前言
 
 >你好，我是[若川](https://lxchuan12.cn)。这是`学习源码整体架构系列`第六篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是实际仓库的代码。
 
@@ -33,7 +33,7 @@
 >5.为什么支持浏览器中发送请求也支持`node`发送请求？<br>
 诸如这类问题。
 
-## chrome 和 vscode 调试 axios 源码方法
+## 2. chrome 和 vscode 调试 axios 源码方法
 
 前不久，笔者在知乎回答了一个问题[一年内的前端看不懂前端框架源码怎么办？](https://www.zhihu.com/question/350289336/answer/910970733)
 推荐了一些资料，阅读量还不错，大家有兴趣可以看看。主要有四点：<br>
@@ -44,7 +44,7 @@
 
 看源码，调试很重要，所以笔者详细写下 `axios` 源码调试方法，帮助一些可能不知道如何调试的读者。
 
-### chrome 调试浏览器环境的 axios
+### 2.1 chrome 调试浏览器环境的 axios
 
 调试方法
 
@@ -101,7 +101,7 @@ node ./examples/server.js -p 5000
 
 `axios` 是支持 `node` 环境发送请求的。接下来看如何用 `vscode` 调试 `node` 环境下的`axios`。
 
-### vscode 调试 node 环境的 axios
+### 2.2 vscode 调试 node 环境的 axios
 
 在根目录下 `axios-analysis/`
 创建`.vscode/launch.json`文件如下：
@@ -130,7 +130,7 @@ node ./examples/server.js -p 5000
 
 其实开源项目一般都有贡献指南`axios/CONTRIBUTING.md`，笔者只是把这个指南的基础上修改为引用`sourcemap`的文件可调试。
 
-## 先看 axios 结构是怎样的
+## 3. 先看 axios 结构是怎样的
 
 ```bash
 git clone https://github.com/lxchuan12/axios-analysis.git
@@ -162,7 +162,7 @@ console.log({axios: axios});
 **赋值语句可以一步跳过，看返回值即可，后续详细再看。**<br>
 **函数执行需要断点跟着看，也可以结合注释和上下文倒推这个函数做了什么。**<br>
 
-## axios 源码 初始化
+## 4. axios 源码 初始化
 
 看源码第一步，先看`package.json`。一般都会申明 `main` 主入口文件。
 
@@ -184,7 +184,7 @@ console.log({axios: axios});
 module.exports = require('./lib/axios');
 ```
 
-### `lib/axios.js`主文件
+### 4.1 `lib/axios.js`主文件
 
 `axios.js`文件 代码相对比较多。分为三部分展开叙述。
 
@@ -192,7 +192,7 @@ module.exports = require('./lib/axios');
 >2. 第二部分：是生成实例对象 `axios`、`axios.Axios`、`axios.create`等。<br>
 >3. 第三部分取消相关API实现，还有`all`、`spread`、导出等实现。<br>
 
-#### 第一部分
+#### 4.1.1 第一部分
 
 引入一些工具函数`utils`、`Axios`构造函数、默认配置`defaults`等。
 
@@ -213,7 +213,7 @@ var mergeConfig = require('./core/mergeConfig');
 var defaults = require('./defaults');
 ```
 
-#### 第二部分
+#### 4.1.2 第二部分
 
 是生成实例对象 `axios`、`axios.Axios`、`axios.create`等。
 
@@ -263,7 +263,7 @@ axios.create = function create(instanceConfig) {
 举个生活的例子，我们买手机，不需要知道手机是怎么做的，就是工厂模式。<br>
 看完第二部分，里面涉及几个工具函数，如`bind`、`extend`。接下来讲述这几个工具方法。<br>
 
-#### 工具方法之 bind
+#### 4.1.3 工具方法之 bind
 
 `axios/lib/helpers/bind.js`
 
@@ -300,7 +300,7 @@ fn(1,2,3,4,5,6, '若川');
 // 1 2 3 4 5 6 '若川'
 ```
 
-#### 工具方法之 utils.extend
+#### 4.1.4 工具方法之 utils.extend
 
 `axios/lib/utils.js`
 
@@ -319,7 +319,7 @@ function extend(a, b, thisArg) {
 
 其实就是遍历参数 `b` 对象，复制到 `a` 对象上，如果是函数就是则用 `bind` 调用。
 
-#### 工具方法之 utils.forEach
+#### 4.1.5 工具方法之 utils.forEach
 
 `axios/lib/utils.js`
 
@@ -366,7 +366,7 @@ function forEach(obj, fn) {
 
 如果对`Object`相关的`API`不熟悉，可以查看笔者之前写过的一篇文章。[JavaScript 对象所有API解析](https://www.lxchuan12.cn/js-object-api/)
 
-#### 第三部分
+#### 4.1.6 第三部分
 
 取消相关API实现，还有`all`、`spread`、导出等实现。
 
@@ -424,7 +424,7 @@ module.exports = function spread(callback) {
 
 上文`var context = new Axios(defaultConfig);`，接下来介绍核心构造函数`Axios`。
 
-### 核心构造函数 Axios
+### 4.2 核心构造函数 Axios
 
 `axios/lib/core/Axios.js`
 
@@ -483,7 +483,7 @@ module.exports = Axios;
 
 接下来看拦截器部分。
 
-### 拦截器管理构造函数 InterceptorManager
+### 4.3 拦截器管理构造函数 InterceptorManager
 
 请求前拦截，和请求后拦截。<br>
 在`Axios.prototype.request`函数里使用，具体怎么实现的拦截的，后文配合例子详细讲述。<br>
@@ -542,7 +542,7 @@ function InterceptorManager() {
 
 接下来声明了三个方法：使用、移除、遍历。
 
-#### InterceptorManager.prototype.use 使用
+#### 4.3.1 InterceptorManager.prototype.use 使用
 
 传递两个函数作为参数，数组中的一项存储的是`{fulfilled: function(){}, rejected: function(){}}`。返回数字 `ID`，用于移除拦截器。
 
@@ -562,7 +562,7 @@ InterceptorManager.prototype.use = function use(fulfilled, rejected) {
 };
 ```
 
-#### InterceptorManager.prototype.eject 移除
+#### 4.3.2 InterceptorManager.prototype.eject 移除
 
 根据 `use` 返回的 `ID` 移除 拦截器。
 
@@ -589,7 +589,7 @@ console.log(timer); // 数字 ID
 clearInterval(timer);
 ```
 
-#### InterceptorManager.prototype.forEach 遍历
+#### 4.3.3 InterceptorManager.prototype.forEach 遍历
 
 遍历执行所有拦截器，传递一个回调函数（每一个拦截器函数作为参数）调用，被移除的一项是`null`，所以不会执行，也就达到了移除的效果。
 
@@ -606,7 +606,7 @@ InterceptorManager.prototype.forEach = function forEach(fn) {
 };
 ```
 
-## 实例结合
+## 5. 实例结合
 
 上文叙述的调试时运行`npm start` 是用`axios/sandbox/client.html`路径的文件作为示例的，读者可以自行调试。
 
@@ -622,7 +622,7 @@ axios(options)
 });
 ```
 
-### 先看调用栈流程
+### 5.1 先看调用栈流程
 
 如果不想一步步调试，有个偷巧的方法。<br>
 知道 `axios` 使用了`XMLHttpRequest`。<br>
@@ -655,7 +655,7 @@ submit.onclick ((index):138)
 
 接下来看 `Axios.prototype.request` 具体实现。
 
-### Axios.prototype.request 请求核心方法
+### 5.2 Axios.prototype.request 请求核心方法
 
 这个函数是核心函数。
 主要做了这几件事：
@@ -696,7 +696,7 @@ Axios.prototype.request = function request(config) {
 };
 ```
 
-#### 组成`Promise`链，返回`Promise`实例
+#### 5.2.1 组成`Promise`链，返回`Promise`实例
 
 >这部分：用户设置的请求和响应拦截器、发送请求的`dispatchRequest`组成`Promise`链。也就是保证了请求前拦截器先执行，然后发送请求，再响应拦截器执行这样的顺序<br>
     也就是保证了请求前拦截器先执行，然后发送请求，再响应拦截器执行这样的顺序<br>
@@ -914,7 +914,7 @@ p1.catch(err => {
 
 `dispatchRequest(config)` 这里的`config`是请求成功拦截器返回的。接下来看`dispatchRequest`函数。
 
-### dispatchRequest 最终派发请求
+### 5.3 dispatchRequest 最终派发请求
 
 这个函数主要做了如下几件事情：<br>
 >1.如果已经取消，则 `throw` 原因报错，使`Promise`走向`rejected`。<br>
@@ -985,7 +985,7 @@ module.exports = function dispatchRequest(config) {
 };
 ```
 
-#### dispatchRequest 之 transformData 转换数据
+#### 5.3.1 dispatchRequest 之 transformData 转换数据
 
 上文的代码里有个函数 `transformData` ，这里解释下。其实就是遍历传递的函数数组 对数据操作，最后返回数据。
 
@@ -1034,7 +1034,7 @@ module.exports = function transformData(data, headers, fns) {
 };
 ```
 
-#### dispatchRequest 之 adapter 适配器执行部分
+#### 5.3.2 dispatchRequest 之 adapter 适配器执行部分
 
 适配器，在设计模式中称之为适配器模式。讲个生活中简单的例子，大家就容易理解。
 
@@ -1080,7 +1080,7 @@ module.exports = function transformData(data, headers, fns) {
 
 接下来看具体的 `adapter`。
 
-### adapter 适配器 真正发送请求
+### 5.4 adapter 适配器 真正发送请求
 
 ```js
 var adapter = config.adapter || defaults.adapter;
@@ -1184,7 +1184,7 @@ module.exports = function httpAdapter(config) {
 
 上文 `dispatchRequest` 有取消模块，我觉得是重点，所以放在最后来细讲：
 
-### dispatchRequest 之 取消模块
+### 5.5 dispatchRequest 之 取消模块
 
 可以使用`cancel token`取消请求。
 
@@ -1223,7 +1223,7 @@ axios.get('/get/server', {
 source.cancel('哎呀，我被若川取消了');
 ```
 
-#### 取消请求模块代码示例
+#### 5.5.1 取消请求模块代码示例
 
 结合源码取消流程大概是这样的。这段放在代码在`axios/examples/cancel-token/index.html`。
 
@@ -1310,7 +1310,7 @@ promise
 // err2 {message: "哎呀，我被若川取消了"}
 ```
 
-#### 接下来看取消模块的源码
+#### 5.5.2 接下来看取消模块的源码
 
 看如何通过生成`config.cancelToken`。
 
@@ -1443,9 +1443,9 @@ CancelToken.prototype.throwIfRequested = function throwIfRequested() {
 
 `axios`是非常优秀的请求库，但肯定也不能满足所有开发者的需求，接下来对比下其他库，看看其他开发者有什么具体需求。
 
-## 对比其他请求库
+## 6. 对比其他请求库
 
-### KoAjax
+### 6.1 KoAjax
 
 FCC成都社区负责人水歌开源的[KoAJAX](https://github.com/EasyWebApp/KoAJAX)。
 
@@ -1456,7 +1456,7 @@ FCC成都社区负责人水歌开源的[KoAJAX](https://github.com/EasyWebApp/Ko
 
 >幸运的是，水歌在研究如何[用 ES 2018 异步迭代器实现一个类 Koa 中间件引擎](https://tech-query.me/onion-stack/)的过程中，做出了一个更有实际价值的上层应用 —— KoAJAX。它的整个执行过程基于 Koa 式的中间件，而且它自己就是一个中间件调用栈。除了 RESTful API 常用的 .get()、.post()、.put()、.delete() 等快捷方法外，开发者就只需记住 .use() 和 next()，其它都是 ES 标准语法和 TS 类型推导。
 
-### umi-request 阿里开源的请求库
+### 6.2 umi-request 阿里开源的请求库
 
 [umi-request github 仓库](https://github.com/umijs/umi-request/blob/master/README_zh-CN.md)
 
@@ -1470,7 +1470,7 @@ FCC成都社区负责人水歌开源的[KoAJAX](https://github.com/EasyWebApp/Ko
 
 比如 `umi-request` 取消模块代码几乎与`axios`一模一样。
 
-## 总结
+## 7. 总结
 
 文章详细介绍了 `axios` 调试方法。详细介绍了 `axios` 构造函数，拦截器，取消等功能的实现。最后还对比了其他请求库。
 
