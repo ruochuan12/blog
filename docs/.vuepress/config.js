@@ -2,7 +2,7 @@ console.log(__dirname, "dirname");
 module.exports = {
 	title: "若川的博客",
 	keywords:
-		"若川，lxchuan12。源码、jquery源码、underscore源码、lodash源码、sentry源码、vuex源码、axios源码、koa源码、前端路上，PPT爱好者，所知甚少，唯善学。",
+		"若川，lxchuan12。源码、jquery源码、underscore源码、lodash源码、sentry源码、vuex源码、axios源码、koa源码、redux源码、前端路上，PPT爱好者，所知甚少，唯善学。",
 	description: "若川的前端视野，若川，lxchuan12。源码、jquery源码、underscore源码、lodash源码、sentry源码、vuex源码、axios源码、koa源码、前端路上，PPT爱好者，所知甚少，唯善学。",
 	head: [
 		["link", { rel: "icon", href: "/favicon.ico" }],
@@ -37,7 +37,7 @@ module.exports = {
 		nav: [
 			{ text: "目录", link: "/" },
 			// { text: '目录', link: '/posts/' },
-			{ text: "最新文章", link: "/koa/" },
+			{ text: "最新文章", link: "/redux/" },
 			// { text: '博文',
 			//   items: [
 			// 	{
@@ -191,6 +191,7 @@ module.exports = {
 				collapsable: true, // 可选的, 默认值是 true,
 				sidebarDepth: 2, // 可选的, 默认值是 1
 				children: [
+					"/redux/",
 					"/koa/",
 					"/axios/",
 					"/vuex/",
