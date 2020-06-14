@@ -855,7 +855,6 @@ enhancerStore.dispatch(action)
 [美团@莹莹 Redux从设计到源码](https://tech.meituan.com/2017/07/14/redux-design-code.html)，美团这篇是我基本写完文章后看到的，感觉写得很好，非常推荐<br>
 [redux 中文文档](https://www.redux.org.cn/)<br>
 [redux 英文文档](https://redux.js.org)<br>
-[Redux源码分析(1) - Redux介绍及使用](https://blog.csdn.net/zcs425171513/article/details/105619754)<br>
 [若川的学习redux源码仓库](http://github.com/lxchuan12/redux-analysis.git)
 
 ## 另一个系列
