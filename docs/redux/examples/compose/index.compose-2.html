@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script src="../js/middlewares.logger.example.js"></script>
+    <script>
+        function fn1(next) {
+            console.log(1);
+            return function(action){
+                console.log('will dispatch --- next----action----1', next, action);
+                const returnValue = next(action)
+                console.log('after dispatch --- next----action----1');
+                return returnValue;
+            };
+        }
+
+        function fn2(next) {
+            console.log(2);
+            return function(action){
+                console.log('will dispatch --- next----action----2', next, action);
+                const returnValue = next(action)
+                console.log('after dispatch --- next----action----2');
+                return returnValue;
+            };
+        }
+
+        function fn3(next) {
+            console.log(3);
+            return function(action){
+                console.log('will dispatch --- next----action----3', next, action);
+                const returnValue = next(action)
+                console.log('after dispatch --- next----action----3');
+                return returnValue;
+            };
+        }
+
+        function fn4(next) {
+            console.log(4);
+            return function(action){
+                console.log('will dispatch --- next----action----4', next, action);
+                const returnValue = next(action)
+                console.log('after dispatch --- next----action----4');
+                return returnValue;
+            };
+        }
+
+        function fn5(next) {
+            console.log(5);
+            return function(action){
+                console.log('will dispatch --- next----action----5', next, action);
+                const returnValue = next(action)
+                console.log('after dispatch --- next----action----5');
+                return returnValue;
+            };
+        }
+        const compose = (...funcs) => {
+            return funcs.reduce(function(preFnA, itemFnB, index){
+                return function (...args) {
+                    console.log('--------preFnA----------' + index, preFnA);
+                    console.log('--------itemFnB--------' + index, itemFnB.name);
+                    return preFnA(itemFnB(...args));
+                }
+            });
+        }
+        function dispatch(action){
+            console.log('action:', action);
+            return action;
+        }
+        const enhancerDispatch = compose(fn1, fn2, fn3, fn4, fn5)(dispatch);
+        console.log('enhancerDispatch', enhancerDispatch);
+        // dispatch({type: '若川'});
+        enhancerDispatch({type: '若川'})
+    </script>
+</body>
+
+</html>

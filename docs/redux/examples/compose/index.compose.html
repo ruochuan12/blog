@@ -1,0 +1,53 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Document</title>
+</head>
+
+<body>
+    <script>
+        function fn1() {
+            console.log(1);
+            return 1;
+        }
+
+        function fn2() {
+            console.log(2);
+            return 2;
+        }
+
+        function fn3() {
+            console.log(3);
+            return 3;
+        }
+
+        function fn4() {
+            console.log(4);
+            return 4;
+        }
+
+        function fn5() {
+            console.log(5);
+            return 5;
+        }
+        const compose = (...funcs) => {
+            return funcs.reduce(function(preFnA, itemFnB){
+                return function (...args) {
+                    return preFnA(itemFnB(...args));
+                }
+            });
+        }
+        function dispatch(action){
+            console.log('action:', action);
+            return action;
+        }
+        const enhancerDispatch = compose(fn1, fn2, fn3, fn4, fn5)(dispatch);
+        console.log('enhancerDispatch', enhancerDispatch);
+        dispatch({type: '若川'});
+    </script>
+</body>
+
+</html>

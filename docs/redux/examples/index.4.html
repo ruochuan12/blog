@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <title>Redux basic example</title>
+    <script src="./dist/redux.js"></script>
+  </head>
+  <body>
+    <div>
+      <p>
+        Clicked: <span id="value">0</span> times
+        <button id="increment">+</button>
+        <button id="decrement">-</button>
+        <button id="incrementIfOdd">Increment if odd</button>
+        <button id="incrementAsync">Increment async</button>
+      </p>
+    </div>
+    <script src="./js/index.4.bindActionCreators.combineReducers.example.js"></script>
+    <script>
+      var store = Redux.createStore(reducer)
+      
+      const actionCreators = {
+          'INCREMENT': function(){
+              return {
+                  type: 'INCREMENT',
+              };
+          },
+          'DECREMENT': function(){
+              return {
+                  type: 'DECREMENT',
+              };
+          }
+      }
+
+      const boundActionCreators = Redux.bindActionCreators(actionCreators, store.dispatch)
+      console.log('boundActionCreators:', boundActionCreators)
+
+      var valueEl = document.getElementById('value')
+
+      function render() {
+        valueEl.innerHTML = store.getState().counter.toString()
+      }
+
+      render()
+      store.subscribe(render)
+    </script>
+    <script src="./js/index.3.dom.listener.js">
+    </script>
+  </body>
+</html>
