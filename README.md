@@ -46,6 +46,8 @@
 
 **学习源码整体架构系列：**
 
+- 20.[学习 redux 源码整体架构，深入理解 redux 及其中间件原理](https://lxchuan12.cn/redux/)
+
 - 19.[学习 koa 源码的整体架构，浅析koa洋葱模型原理和co原理](https://lxchuan12.cn/koa/)
 
 - 18.[学习 axios 源码整体架构，打造属于自己的请求库](https://lxchuan12.cn/axios/)
