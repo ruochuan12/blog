@@ -7,40 +7,51 @@
 公司使用`Ubuntu`系统。自己安装了 `oh my zsh`[oh my zsh官网](http://ohmyz.sh/)。这里简述下安装方法
 ```bash
 echo $SHELL
-// /bin/bash 默认是bash
-// 查看下有哪些shells
+# /bin/bash 默认是bash
+# 查看下有哪些shells
 cat /etc/shells
-// # /etc/shells: valid login shells
-// /bin/sh
-// /bin/bash
-// /bin/rbash
-// /bin/dash
-// /usr/bin/tmux
-// /usr/bin/screen
-// /bin/zsh
-// /usr/bin/zsh
+# # /etc/shells: valid login shells
+# /bin/sh
+# /bin/bash
+# /bin/rbash
+# /bin/dash
+# /usr/bin/tmux
+# /usr/bin/screen
+# /bin/zsh
+# /usr/bin/zsh
 sudo apt-get install zsh
 zsh --version
-// 5.1.1
-// 安装后zsh 后cat /etc/shells 才有/bin/zsh /usr/bin/zsh
+# 5.1.1
+# 安装后zsh 后cat /etc/shells 才有/bin/zsh /usr/bin/zsh
 
-// 切换成zsh
-chsh -s /bin/zsh
-
+# 切换成zsh
+#
+chsh -s $(which zsh)
+# 或者这条命令
+# chsh -s /bin/zsh
 ```
 
 ```bash
-// 两种安装方案可供选择：
-// Via curl
+# 两种安装方案可供选择：
+# Via curl
 $ sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
-// Via Wget
+# Via Wget
 $ sh -c "$(wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
 ```
+如果上面两种情况还安装不了，可以使用如下方式。
+```bash
+git clone https://github.com/ohmyzsh/ohmyzsh.git ~/.oh-my-zsh
+cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc
+chsh -s $(which zsh)
+# 打开新的终端会应用新的zshrc配置
+```
+如果以上三种方式还装不了，可以来找我。也可以查看[oh my zsh文档](https://github.com/ohmyzsh/ohmyzsh)
+
 安装成功后，配置信息会在`~/.zshrc`。可以通过`vim ~/.zshrc`打开编辑`zsh`配置信息，可以看到默认配置了`git` 插件[Plugin:git](https://github.com/robbyrussell/oh-my-zsh/wiki/Plugin:git)。
 也就是说，可以更加简便的使用`git` 相关的一些别名。
 ```bash
-// 比如
+# 比如
 `git status`时，只需要输入`gst`。
 `git pull` 时，只需要输入`gl`。
 `git push 时，只需要输入`gp`等等。
@@ -79,9 +90,9 @@ git clone https://github.com/zsh-users/zsh-syntax-highlighting.git $ZSH_CUSTOM/p
 也就是安装到了这个目录下。还有很多高效插件，等您发掘~[oh my zsh官网](http://ohmyz.sh/)
 不过插件安装多了，感觉会有些卡顿~
 ```bash
-// 每次修改了这个`.zshrc`配置文件，需要重载一下，才能生效。
+# 每次修改了这个`.zshrc`配置文件，需要重载一下，才能生效。
 source .zshrc
-// 也可以封装成一个简写命令 alias
+# 也可以封装成一个简写命令 alias
 alias rl='source ~/.zshrc'
 ```
 也可以在这个配置文件中配置更多`alias`。
@@ -99,9 +110,9 @@ alias rl='source ~/.zshrc'
 
 `win10`安装了`ubuntu`子系统和`oh my zsh`后，则可以通过`/mnt/f/`访问`win10`下的`f`盘，或者其他盘。
 ```bash
-// 比如跳转到工作目录
+# 比如跳转到工作目录
 alias dgg='cd /mnt/f/git-source/github'
-// vscode 打开要编辑的文件或文件夹
+# vscode 打开要编辑的文件或文件夹
 code sticky-notes
 ```
 也就是相当于`win10`下解锁了`oh my zsh`。
@@ -113,13 +124,13 @@ code sticky-notes
 先设置下主题，右击选择`options`, `Looks > theme > dracula`
 我选择的是`dracula`主题，看起来比较舒适。还可以设置字体等。
 ```bash
-// 跳转到根路径
+# 跳转到根路径
 cd ~
-// 查看下是否有.bash_profile文件
+# 查看下是否有.bash_profile文件
 la
-// 如果没有.bash_profile文件，需要创建
+# 如果没有.bash_profile文件，需要创建
 touch .bash_profile
-// 打开编辑 （笔者这里安装了vscode，所以直接用其打开文件）
+# 打开编辑 （笔者这里安装了vscode，所以直接用其打开文件）
 code .bash_profile
 ```
 可以根据修改设置一些别名。
@@ -138,18 +149,18 @@ alias bashconfig='code ~/.bash_profile'
 这样每次修改保存后就只需要输入`rl`，即可重载生效了。
 还可以把一些工作目录封装，笔者的一些项目是放在`/f/git-source/github`文件下。
 ```bash
-// github上的项目
+# github上的项目
 alias dgg='cd F:/git-source/github'
-// 周报相关
+# 周报相关
 alias dcwk='cd F:/git-source/coding/weekly'
 ```
 每次进入项目，就直接`dgg`，即可跳转到这个目录，然后选择相应的目录即可。
 比如`dgg`进入工作目录，`cd analyse-vue-cli`进入项目目录,（输入`anal`按`tab`键智能提示）
 ```bash
-//  /f/git-source/github/analyse-vue-cli (dev)
-// 查看状态 git status
+#  /f/git-source/github/analyse-vue-cli (dev)
+# 查看状态 git status
 gst
-// 用vscode 打开这个文件夹，开始编辑~
+# 用vscode 打开这个文件夹，开始编辑~
 code ./
 ```
 git 相关的，
@@ -161,16 +172,16 @@ alias gaa='git add -all'
 alias gp='git push'
 alias gl='git pull'
 alias gcmsg='git commit -m'
-// 分支相关
+# 分支相关
 alias gb='git branch'
 alias gbr='git branch -r'
 alias gba='git branch -a'
-// checkout
+# checkout
 alias gco='git checkout'
 alias gcb='git checkout -b'
-// merge
+# merge
 alias gm='git merge'
-// diff
+# diff
 alias gd='git diff'
 alias gdw='git diff --word-diff'
 ```
@@ -181,7 +192,7 @@ alias gdw='git diff --word-diff'
 `git bash`，有没有类似`oh my zsh`的插件呢，笔者暂时没发现，如果您知道，欢迎告诉笔者。
 目录相关的操作，也可以设置一些别名。比如：
 ```bash
-// 回退到上一级
+# 回退到上一级
 alias ..='cd ..'
 alias ...='cd ../..'
 alias ....='cd ../../..'
@@ -200,7 +211,7 @@ alias ......='cd ../../../../..'
 ## `git`设置别名，使用`tig`神器
 
 ```bash
-// git status => git st
+# git status => git st
 git config --global alias.st status
 ```
 
