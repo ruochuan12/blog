@@ -1,10 +1,45 @@
-# oh my zsh 和 windows git bash 设置别名提高效率
+# 使用 ohmyzsh 打造 windows、ubuntu、mac 系统高效终端命令行工具
+
+>原标题名：
+>oh my zsh 和 windows git bash 设置别名提高效率
 
 >`写于2018年06月03日`
 
+>在我的微信交流群中听闻很多前端开发比较贫穷，没有买mac电脑（比如我），也没有用过`ohmyzsh`。于是就有了这篇写于2018年文章的改版。这篇文章没啥难度，很快就能看完，主要还是希望身为读者的你看完后可以安装开始使用高效终端工具。有了这么强大的终端工具后我发现`Windows`很好用呀，不需要买`mac`了。
+
+主要就是利用`Windows`的`linux`子系统功能，安装`Ubuntu`系统，安装`ohmyzsh`和一些插件。再安装`windows Terminal`工具。
+安装`vscode remote-wsl`插件。
+
+先看下效果。反正我是用了`ohmyzsh`后，离不开了。
+
+![最终终端效果](./images/ternimal.png)
+
+## windows 安装 Ubuntu 子系统 安装 windows Terminal
+
+搜索**启用或关闭 windows 功能**，勾选**适用于 Linux 的 Windows 子系统**，确定后重启电脑。
+
+搜索 `Ubuntu` 和 `windows Terminal` 并安装。
+`Ubuntu`安装好后会要求设置用户名和密码。
+
+![搜索 启用或关闭 windows 功能](./images/windows-feature.png)
+
+![勾选 适用于 Linux 的 Windows 子系统](./images/wsl.png)
+
+![搜索 Ubuntu ](./images/ubuntu-20.04.png)
+建议安装最新版 `Ubuntu 20.04`
+
+![Windows Terminal](./images/windows-Terminal.png)
+
+
+## 安装 vscode remote-wsl 插件
+
+下载安装[`vscode`](https://code.visualstudio.com/)，并且安装`remote-wsl`插件。
+
+![vscode remote-wsl 插件](./images/remote-wsl.png)
+
 ## 安装 `oh my zsh`
 
-公司使用`Ubuntu`系统。自己安装了 `oh my zsh`[oh my zsh官网](http://ohmyz.sh/)。这里简述下安装方法
+简述下`oh my zsh`[oh my zsh官网](http://ohmyz.sh/)的安装方法
 ```bash
 echo $SHELL
 # /bin/bash 默认是bash
@@ -19,36 +54,38 @@ cat /etc/shells
 # /usr/bin/screen
 # /bin/zsh
 # /usr/bin/zsh
-sudo apt-get install zsh
+# 安装 zsh
+sudo apt-get install zsh -y
+# 查看zsh版本
 zsh --version
 # 5.1.1
 # 安装后zsh 后cat /etc/shells 才有/bin/zsh /usr/bin/zsh
 
 # 切换成zsh
-#
 chsh -s $(which zsh)
 # 或者这条命令
-# chsh -s /bin/zsh
+# chsh -s /usr/bin/zsh
 ```
 
 ```bash
-# 两种安装方案可供选择：
+# 三种安装方案可供选择：
 # Via curl
 $ sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
 
 # Via Wget
 $ sh -c "$(wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
-```
-如果上面两种情况还安装不了，可以使用如下方式。
-```bash
+
+# 如果上面两种情况还安装不了，可以使用如下方式。
+
+# via git clone
 git clone https://github.com/ohmyzsh/ohmyzsh.git ~/.oh-my-zsh
 cp ~/.oh-my-zsh/templates/zshrc.zsh-template ~/.zshrc
 chsh -s $(which zsh)
 # 打开新的终端会应用新的zshrc配置
 ```
-如果以上三种方式还装不了，可以来找我。也可以查看[oh my zsh文档](https://github.com/ohmyzsh/ohmyzsh)
+如果以上三种方式还装不了，可以来找我(若川 微信`ruochuan12`)。也可以查看[oh my zsh文档](https://github.com/ohmyzsh/ohmyzsh)
 
-安装成功后，配置信息会在`~/.zshrc`。可以通过`vim ~/.zshrc`打开编辑`zsh`配置信息，可以看到默认配置了`git` 插件[Plugin:git](https://github.com/robbyrussell/oh-my-zsh/wiki/Plugin:git)。
+安装成功后，配置信息会在`~/.zshrc`。可以通过`code ~/.zshrc`(如果没安装vscode，可以用`vim ~/.zshrc`)打开编辑`zsh`配置信息，可以看到默认配置了`git` 插件[Plugin:git](https://github.com/robbyrussell/oh-my-zsh/wiki/Plugin:git)。
 也就是说，可以更加简便的使用`git` 相关的一些别名。
 ```bash
 # 比如
@@ -100,7 +137,7 @@ alias rl='source ~/.zshrc'
 `win10` 支持安装`ubuntu`等子系统，就可以安装`oh my zsh`, 学习`linux`了。
 ## `windows 10` 安装 `Ubuntu` 子系统，安装`oh my zsh`
 
-之前偶然发现自己电脑`windows 10` 有类似`linux` 功能（虽然这功能之前就有印象，但没去研究），这里有篇简短介绍文章：[微软官方 Ubuntu for Win10 版免费 Linux 子系统下载！一键安装运行超简单](https://www.iplaysoft.com/ubuntu-for-windows10.html)
+之前偶然发现自己电脑`windows 10` 有类似`linux` 功能（虽然这功能之前就有印象，但没去研究）。
 
 竟然也可以安装`oh my zsh`[官网](http://ohmyz.sh/)。想学习 `linux` 又不想安装 `linux` 系统，这时候可以用`win10`自带的`Ubuntu`。
 发现这篇写的比较详细，笔者就不再赘述了。
