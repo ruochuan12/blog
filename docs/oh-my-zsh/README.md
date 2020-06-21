@@ -7,8 +7,12 @@
 
 >在我的微信交流群中听闻很多前端开发比较贫穷，没有买mac电脑（比如我），也没有用过`ohmyzsh`。于是就有了这篇写于2018年文章的改版。这篇文章没啥难度，很快就能看完，主要还是希望身为读者的你看完后可以安装开始使用高效终端工具。有了这么强大的终端工具后我发现`Windows`很好用呀，不需要买`mac`了。
 
-主要就是利用`Windows`的`linux`子系统功能，安装`Ubuntu`系统，安装`ohmyzsh`和一些插件。再安装`windows Terminal`工具。
-安装`vscode remote-wsl`插件。
+主要就是：
+- 利用`Windows`的`linux`子系统功能
+- 安装`Ubuntu`系统，安装`ohmyzsh`和一些插件
+- 安装`windows Terminal`工具
+- 安装`vscode remote-wsl`插件
+- 安装 tig 查看 git 记录
 
 先看下效果。反正我是用了`ohmyzsh`后，离不开了。
 
@@ -16,9 +20,10 @@
 
 ## windows 安装 Ubuntu 子系统 安装 windows Terminal
 
-搜索**启用或关闭 windows 功能**，勾选**适用于 Linux 的 Windows 子系统**，确定后重启电脑。
+搜索**启用或关闭 windows 功能**，勾选**适用于 `Linux` 的 `Windows` 子系统**，确定后重启电脑。
 
-搜索 `Ubuntu` 和 `windows Terminal` 并安装。
+搜索 `Ubuntu` 和 `windows Terminal` 并安装（`windows Terminal` 可能要求win10系统比较高的版本，一般更新到最新版本即可）
+
 `Ubuntu`安装好后会要求设置用户名和密码。
 
 ![搜索 启用或关闭 windows 功能](./images/windows-feature.png)
@@ -30,7 +35,8 @@
 
 ![Windows Terminal](./images/windows-Terminal.png)
 
-
+`win10`安装了`ubuntu`子系统和`oh my zsh`后，则可以通过`/mnt/f/`访问`win10`下的`f`盘，或者其他盘。
+也就有上面的`pwd`效果图。
 ## 安装 vscode remote-wsl 插件
 
 下载安装[`vscode`](https://code.visualstudio.com/)，并且安装`remote-wsl`插件。
@@ -39,21 +45,15 @@
 
 ## 安装 `oh my zsh`
 
-简述下`oh my zsh`[oh my zsh官网](http://ohmyz.sh/)的安装方法
+简述下`oh my zsh`[oh my zsh官网](http://ohmyz.sh/)的安装方法。
+[github ohmyzsh](https://github.com/ohmyzsh/ohmyzsh)
+
+安装`oh my zsh`部分适用于`Ubuntu`和`mac`系统。
 ```bash
 echo $SHELL
 # /bin/bash 默认是bash
 # 查看下有哪些shells
 cat /etc/shells
-# # /etc/shells: valid login shells
-# /bin/sh
-# /bin/bash
-# /bin/rbash
-# /bin/dash
-# /usr/bin/tmux
-# /usr/bin/screen
-# /bin/zsh
-# /usr/bin/zsh
 # 安装 zsh
 sudo apt-get install zsh -y
 # 查看zsh版本
@@ -70,10 +70,10 @@ chsh -s $(which zsh)
 ```bash
 # 三种安装方案可供选择：
 # Via curl
-$ sh -c "$(curl -fsSL https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh)"
+$ sh -c "$(curl -fsSL https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh)"
 
 # Via Wget
-$ sh -c "$(wget https://raw.github.com/robbyrussell/oh-my-zsh/master/tools/install.sh -O -)"
+$ sh -c "$(wget https://raw.github.com/ohmyzsh/ohmyzsh/master/tools/install.sh -O -)"
 
 # 如果上面两种情况还安装不了，可以使用如下方式。
 
@@ -85,19 +85,19 @@ chsh -s $(which zsh)
 ```
 如果以上三种方式还装不了，可以来找我(若川 微信`ruochuan12`)。也可以查看[oh my zsh文档](https://github.com/ohmyzsh/ohmyzsh)
 
-安装成功后，配置信息会在`~/.zshrc`。可以通过`code ~/.zshrc`(如果没安装vscode，可以用`vim ~/.zshrc`)打开编辑`zsh`配置信息，可以看到默认配置了`git` 插件[Plugin:git](https://github.com/robbyrussell/oh-my-zsh/wiki/Plugin:git)。
+安装成功后，配置信息会在`~/.zshrc`。可以通过`code ~/.zshrc`(如果没安装vscode，可以用`vim ~/.zshrc`)打开编辑`zsh`配置信息，可以看到默认配置了`git` 插件[Plugin:git](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/git/)。
 也就是说，可以更加简便的使用`git` 相关的一些别名。
 ```bash
 # 比如
 `git status`时，只需要输入`gst`。
 `git pull` 时，只需要输入`gl`。
-`git push 时，只需要输入`gp`等等。
+`git push` 时，只需要输入`gp`等等。
 ```
-是因为配置里有这些简写，[oh my zsh plugin git.plugin.zsh](https://github.com/robbyrussell/oh-my-zsh/blob/master/plugins/git/git.plugin.zsh)。
+是因为配置里有这些简写，[oh my zsh plugin git.plugin.zsh](https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/git/git.plugin.zsh)。
 安装成功后，同时会创建`~/.oh-my-zsh`的文件夹，其实就是`.oh-my-zsh` 的 `git` 仓库`master`分支。
 可以发现文件夹中有一个`plugins`文件夹，内置了很多插件。可以自定义主题`theme`，具体可以看[example.zsh-theme](https://github.com/robbyrussell/oh-my-zsh/blob/master/themes/example.zsh-theme)。
 `custom`自定义相关。
-插件相关会安装在这里，[更多可以查看example.plugin.zsh](https://github.com/robbyrussell/oh-my-zsh/blob/master/custom/plugins/example/example.plugin.zsh)
+插件相关会安装在这里，[更多可以查看example.plugin.zsh](https://github.com/ohmyzsh/ohmyzsh/blob/master/custom/plugins/example/example.plugin.zsh)
 
 我暂时安装了这几个插件。
 ```bash
@@ -141,7 +141,10 @@ alias rl='source ~/.zshrc'
 
 竟然也可以安装`oh my zsh`[官网](http://ohmyz.sh/)。想学习 `linux` 又不想安装 `linux` 系统，这时候可以用`win10`自带的`Ubuntu`。
 发现这篇写的比较详细，笔者就不再赘述了。
-笔者安装`ubuntu 18.04`子系统后，文件目录在这个路径下。`C:\Users\lxchuan12\AppData\Local\Packages\CanonicalGroupLimited.Ubuntu18.04onWindows_79rhkp1fndgsc\LocalState\rootfs`
+笔者安装`ubuntu 18.04`子系统后，文件目录在这个路径下。`
+```
+C:\Users\lxchuan12\AppData\Local\Packages\CanonicalGroupLimited.Ubuntu18.04onWindows_79rhkp1fndgsc\LocalState\rootfs
+```
 [Win10 环境下安装配置 zsh](https://blog.csdn.net/sko121/article/details/78091083)
 
 
@@ -222,9 +225,9 @@ alias gm='git merge'
 alias gd='git diff'
 alias gdw='git diff --word-diff'
 ```
-更多可以把`oh my zsh`的插件一些命令拷贝过来，留`alias`相关的即可，[oh my zsh plugin git.plugin.zsh](https://github.com/robbyrussell/oh-my-zsh/blob/master/plugins/git/git.plugin.zsh)
-[Plugin:git wiki](https://github.com/robbyrussell/oh-my-zsh/wiki/Plugin:git)
-相当于解锁了`oh my zsh` 的`git`插件。还有很多插件，比如`npm`[点击查看](https://github.com/robbyrussell/oh-my-zsh/blob/master/plugins/npm/npm.plugin.zsh), `node 等`，都可以研究下。
+更多可以把`oh my zsh`的插件一些命令拷贝过来，留`alias`相关的即可，[oh my zsh plugin git.plugin.zsh](https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/git/git.plugin.zsh)
+[Plugin:git wiki](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/git/)
+相当于解锁了`oh my zsh` 的`git`插件。还有很多插件，比如`npm`[点击查看](https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/npm/npm.plugin.zsh), `node 等`，都可以研究下。
 
 `git bash`，有没有类似`oh my zsh`的插件呢，笔者暂时没发现，如果您知道，欢迎告诉笔者。
 目录相关的操作，也可以设置一些别名。比如：
@@ -257,7 +260,7 @@ git config --global alias.st status
 ## 小结
 磨刀不误砍柴工，花时间折腾研究工具，有利于提高开发效率。
 
-最新更新于 `2018-07-28 14:46:08`
+最新更新于 `2020-06-21 23:32:08`
 
 文章首发于`segmentfault` [win10 安装 oh my zsh 和 windows git bash 设置别名提高效率](https://segmentfault.com/a/1190000015155864)
 
