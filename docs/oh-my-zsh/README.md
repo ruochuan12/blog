@@ -5,7 +5,7 @@
 
 >`写于2018年06月03日`
 
->在我的微信交流群中听闻很多前端开发比较贫穷，没有买mac电脑（比如我），也没有用过`ohmyzsh`。于是就有了这篇写于2018年文章的改版。这篇文章没啥难度，很快就能看完，主要还是希望身为读者的你看完后可以安装开始使用高效终端工具。有了这么强大的终端工具后我发现`Windows`很好用呀，不需要买`mac`了。
+>在我的微信交流群中听闻很多前端开发比较贫穷，没有买mac电脑（比如我），也没有用过`ohmyzsh`。于是就有了这篇写于`2018年`文章的更新。这篇文章没啥难度，很快就能看完，主要还是希望读者你看完后可以安装开始使用高效终端工具。有了这么强大的终端工具后我发现`Windows`很好用呀，瞬间感觉都不需要买`mac`了。
 
 主要就是：
 - 利用`Windows`的`linux`子系统功能
@@ -94,7 +94,7 @@ chsh -s $(which zsh)
 `git pull` 时，只需要输入`gl`。
 `git push` 时，只需要输入`gp`等等。
 ```
-是因为配置里有这些简写，[oh my zsh plugin git.plugin.zsh](https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/git/git.plugin.zsh)。
+是因为配置里有这些简写，还有更多可以查看这里[oh my zsh plugin git.plugin.zsh文档配置](https://github.com/ohmyzsh/ohmyzsh/tree/master/plugins/git/)，[github oh my zsh plugin git.plugin.zsh文件地址](https://github.com/ohmyzsh/ohmyzsh/blob/master/plugins/git/git.plugin.zsh)。
 安装成功后，同时会创建`~/.oh-my-zsh`的文件夹，其实就是`.oh-my-zsh` 的 `git` 仓库`master`分支。
 可以发现文件夹中有一个`plugins`文件夹，内置了很多插件。可以自定义主题`theme`，具体可以看[example.zsh-theme](https://github.com/robbyrussell/oh-my-zsh/blob/master/themes/example.zsh-theme)。
 `custom`自定义相关。
