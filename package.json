@@ -40,7 +40,7 @@
     "image-webpack-loader": "^6.0.0",
     "imagemin-pngquant": "^8.0.0",
     "release-it": "^13.5.2",
-    "vuepress": "^1.4.0"
+    "vuepress": "^1.5.2"
   },
   "config": {
     "commitizen": {
