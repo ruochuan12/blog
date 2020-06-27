@@ -16,7 +16,7 @@
 
 先看下效果。反正我是用了`ohmyzsh`后，离不开了。
 
-![最终终端效果](./images/ternimal.png)
+![最终终端效果](./images/terminal.png)
 
 ## windows 安装 Ubuntu 子系统 安装 windows Terminal
 
@@ -144,7 +144,7 @@ code blog
 ```
 这也就是开头的效果图了。
 
-![最终终端效果](./images/ternimal.png)
+![最终终端效果](./images/terminal.png)
 
 那不是`win10`，也想通过设置别名来提高效率，是不是就没有办法了呢，可以使用`git bash`设置`alias`，安装`git`，自带`git bash`。
 
