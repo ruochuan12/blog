@@ -1,4 +1,5 @@
 console.log(__dirname, "dirname");
+const TinyimgPlugin = require('tinyimg-webpack-plugin');
 module.exports = {
 	title: "若川的博客",
 	keywords:
@@ -326,5 +327,13 @@ module.exports = {
 				// }
 			}
 		);
+	},
+	configureWebpack: {
+		plugins: [
+			new TinyimgPlugin({
+				enabled: process.env.NODE_ENV === "production",
+				logged: true
+			})
+		],
 	},
 };
