@@ -1,0 +1,33 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>promise 串行</title>
+</head>
+<body>
+    <script>
+        function fetchData(data = {}){
+            new Promise((resolve, reject) => {
+                setTimeout(() => {
+                    console.log(data);
+                    resolve(data);
+                }, 1000);
+            });
+        }
+        const promises = [
+            fetchData({name: 1}),
+            fetchData({name: 2}),
+            fetchData({name: 3}),
+        ];
+        for(const promise of promises){
+            promise.then((data) => {
+                console.log('then', data);
+            });
+        }
+        Promise.all(promises).then(res => {
+            console.log('res');
+        });
+    </script>
+</body>
+</html>
