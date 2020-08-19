@@ -52,4 +52,4 @@
 
 可能比较有趣的微信公众号，长按扫码关注。欢迎加我微信`ruochuan12`（注明来源，基本来者不拒），拉您进【前端视野交流群】，长期交流学习~
 
-![若川视野](./wechat-official-accounts-mini.jpg)
+![若川视野](./wechat-official-accounts-mini.png)
