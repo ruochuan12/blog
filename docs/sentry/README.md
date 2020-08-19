@@ -906,4 +906,4 @@ this._invokeClient('captureEvent')
 
 可能比较有趣的微信公众号，长按扫码关注（**回复pdf获取前端优质书籍pdf**）。欢迎加笔者微信`ruochuan12`（注明来源，基本来者不拒），拉您进【前端视野交流群】，长期交流学习~
 
-![若川视野](../about/wechat-official-accounts-mini.jpg)
+![若川视野](../about/wechat-official-accounts-mini.png)

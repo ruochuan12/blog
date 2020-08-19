@@ -200,4 +200,4 @@ PDFMerge(files, {output: `${__dirname}/3.pdf`})
 
 可能比较有趣的微信公众号，长按扫码关注。也可以加微信 `ruochuan12`，注明来源，拉您进【前端视野交流群】。
 
-![若川视野](../about/wechat-official-accounts-mini.jpg)
+![若川视野](../about/wechat-official-accounts-mini.png)
