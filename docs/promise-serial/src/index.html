@@ -6,28 +6,23 @@
     <title>promise 串行</title>
 </head>
 <body>
+	<script src="./js/request.js"></script>
     <script>
-        function fetchData(data = {}){
-            return new Promise((resolve, reject) => {
-                setTimeout(() => {
-                    console.log(data);
-                    resolve(data);
-                }, 1000);
-            });
-        }
-        const promises = Array(15).fill().map((_, i) =>  () => new Promise(resolve => {
-				console.log('promise ' + i + ' start');
-				setTimeout(() => {
-						console.log('promise ' + i + ' end');
-						resolve('output-'+i);
-					}, 500);
-			})
-		);
-        // for(const promise of promises){
-        //     promise.then((data) => {
-        //         console.log('then', data);
-        //     });
-        // }
+		const promises = [
+			request({data: {name: '若川1'}}),
+			request({data: {name: '若川2'}}),
+			request({data: {name: '若川3'}}),
+		];
+		// 串行
+		function promiseSerial(promises){
+			if(!Array.isArray(promises)){
+				throw new TypeError('Middleware stack must be an array!')
+			}
+			return promises.reduce((promise, fn) => {
+				return promise.then(() => request());
+			}, Promise.resolve())
+		}
+
         Promise.all(promises).then(res => {
             console.log('done');
         });
