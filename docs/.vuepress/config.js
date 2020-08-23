@@ -31,6 +31,13 @@ module.exports = {
 			// 		margin: 16
 			// 	}
 			// }
+		],
+		[
+			'@vuepress/pwa',
+			{
+				serviceWorker: true,
+				updatePopup: true
+			}
 		]
 	],
 	serviceWorker: true, // 是否开启 PWA
