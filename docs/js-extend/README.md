@@ -113,7 +113,7 @@ Object.prototype.__proto__ === null; // true
 - 2. 把子类实例`child`的原型对象(`Child.prototype`) 的原型(`__proto__`)指向了父类`parent`的原型对象(`Parent.prototype`)。
 
 这两点也就是图中用不同颜色标记的两条线。
-- 3. 子类构造函数`Child`继承了父类构造函数`Preant`的里的属性。使用`super`调用的(`ES5`则用`call`或者`apply`调用传参)。
+- 3. 子类构造函数`Child`继承了父类构造函数`Parent`的里的属性。使用`super`调用的(`ES5`则用`call`或者`apply`调用传参)。
 也就是图中用不同颜色标记的两条线。
 
 看过《JavaScript高级程序设计-第3版》 章节`6.3继承`的读者应该知道，这`2和3小点`，正是**寄生组合式继承**，书中例子没有`第1小点`。
