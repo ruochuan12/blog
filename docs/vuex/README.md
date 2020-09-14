@@ -2,7 +2,7 @@
 
 ## 前言
 
->你好，我是[若川](https://lxchuan12.cn)。这是`学习源码整体架构`第五篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是实际仓库的代码。
+>你好，我是[若川](https://lxchuan12.gitee.io)。这是`学习源码整体架构`第五篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是实际仓库的代码。
 
 >**要是有人说到怎么读源码，正在读文章的你能推荐我的源码系列文章，那真是太好了**。
 
@@ -84,7 +84,7 @@ npm i -g http-server
 hs -p 8100
 
 # 在examples 文件夹中把引用的vuejs的index.html 文件 vue.min.js 改为 vue.js
-# 或者把dist文件夹的 vue.min.js ，替换成npm run dev编译后的dist/vue.js 
+# 或者把dist文件夹的 vue.min.js ，替换成npm run dev编译后的dist/vue.js
 
 # 浏览器打开 open http://localhost:8100/examples/
 
