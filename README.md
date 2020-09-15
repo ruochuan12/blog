@@ -16,7 +16,7 @@
 
 ## 关于我
 
-你好，我是**若川**。江西人，某不那么知名的陶瓷大学毕业生，目前在`杭州`从事`前端开发`工作，也是一枚`PPT爱好者`。所知甚少，唯善学。常以**若川**为名混迹于江湖。更详细的可以点击[关于我](https://lxchuan12.cn/about/)<br>
+你好，我是**若川**。江西人，某不那么知名的陶瓷大学毕业生，目前在`杭州`从事`前端开发`工作，也是一枚`PPT爱好者`。所知甚少，唯善学。常以**若川**为名混迹于江湖。更详细的可以点击[关于我](https://lxchuan12.gitee.io/about/)<br>
 
 >[`freecodecamp`](https://www.freecodecamp.org/) 杭州社区组织者之一（`简单说就是FCC杭州社区与杭州互联网公司共同举办线下技术分享交流活动，帮助开发者提高，曾与阿里、宋小菜、丁香园、微医、个推等公司合作过`）。
 >
@@ -52,49 +52,49 @@
 
 **学习源码整体架构系列：**
 
-- 20.[学习 redux 源码整体架构，深入理解 redux 及其中间件原理](https://lxchuan12.cn/redux/)
+- 20.[学习 redux 源码整体架构，深入理解 redux 及其中间件原理](https://lxchuan12.gitee.io/redux/)
 
-- 19.[学习 koa 源码的整体架构，浅析koa洋葱模型原理和co原理](https://lxchuan12.cn/koa/)
+- 19.[学习 koa 源码的整体架构，浅析koa洋葱模型原理和co原理](https://lxchuan12.gitee.io/koa/)
 
-- 18.[学习 axios 源码整体架构，打造属于自己的请求库](https://lxchuan12.cn/axios/)
+- 18.[学习 axios 源码整体架构，打造属于自己的请求库](https://lxchuan12.gitee.io/axios/)
 
-- 17.[学习 vuex 源码整体架构，打造属于自己的状态管理库](https://lxchuan12.cn/vuex/)
+- 17.[学习 vuex 源码整体架构，打造属于自己的状态管理库](https://lxchuan12.gitee.io/vuex/)
 
-- 16.[学习 sentry 源码整体架构，打造属于自己的前端异常监控SDK](https://lxchuan12.cn/sentry/)
+- 16.[学习 sentry 源码整体架构，打造属于自己的前端异常监控SDK](https://lxchuan12.gitee.io/sentry/)
 
-- 15.[学习 lodash 源码整体架构，打造属于自己的函数式编程类库](https://lxchuan12.cn/lodash/)
+- 15.[学习 lodash 源码整体架构，打造属于自己的函数式编程类库](https://lxchuan12.gitee.io/lodash/)
 
-- 14.[学习 underscore 源码整体架构，打造属于自己的函数式编程类库](https://lxchuan12.cn/underscore/)
+- 14.[学习 underscore 源码整体架构，打造属于自己的函数式编程类库](https://lxchuan12.gitee.io/underscore/)
 
-- 13.[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://lxchuan12.cn/jQuery/)
+- 13.[学习 jQuery 源码整体架构，打造属于自己的 js 类库](https://lxchuan12.gitee.io/jQuery/)
 
 **面试官问系列：**
 
-- 12.[面试官问：JS的继承](https://lxchuan12.cn/js-extend/)
+- 12.[面试官问：JS的继承](https://lxchuan12.gitee.io/js-extend/)
 
-- 11.[面试官问：JS的this指向](https://lxchuan12.cn/js-this/)
+- 11.[面试官问：JS的this指向](https://lxchuan12.gitee.io/js-this/)
 
-- 10.[面试官问：能否模拟实现JS的call和apply方法](https://lxchuan12.cn/js-implement-call-apply/)
+- 10.[面试官问：能否模拟实现JS的call和apply方法](https://lxchuan12.gitee.io/js-implement-call-apply/)
 
-- 9.[面试官问：能否模拟实现JS的bind方法](https://lxchuan12.cn/js-implement-bind/)
+- 9.[面试官问：能否模拟实现JS的bind方法](https://lxchuan12.gitee.io/js-implement-bind/)
 
-- 8.[面试官问：能否模拟实现JS的new操作符](https://lxchuan12.cn/js-implement-new/)
+- 8.[面试官问：能否模拟实现JS的new操作符](https://lxchuan12.gitee.io/js-implement-new/)
 
 **其他：**
 
-- 7.[前端使用puppeteer 爬虫生成《React.js 小书》PDF并合并](https://lxchuan12.cn/puppeteer-create-pdf-and-merge/)
+- 7.[前端使用puppeteer 爬虫生成《React.js 小书》PDF并合并](https://lxchuan12gitee.ion/puppeteer-create-pdf-and-merge/)
 
-- 6.[分析vue-cli@2.9.3 搭建的webpack项目工程](https://lxchuan12.cn/vue-cli-2-webpack/)
+- 6.[分析vue-cli@2.9.3 搭建的webpack项目工程](https://lxchuan12.gitee.io/vue-cli-2-webpack/)
 
-- 5.[oh my zsh 和 windows git bash 设置别名提高效率](https://lxchuan12.cn/oh-my-zsh/)
+- 5.[oh my zsh 和 windows git bash 设置别名提高效率](https://lxchuan12.gitee.io/oh-my-zsh/)
 
-- 4.[vue 2.x项目 vue-qriously 生成二维码并下载、cliploard复制粘贴](https://lxchuan12.cn/vue-2-qrcode/)
+- 4.[vue 2.x项目 vue-qriously 生成二维码并下载、cliploard复制粘贴](https://lxchuan12gitee.ion/vue-2-qrcode/)
 
-- 3.[参加有赞前端技术开放日所感所想](https://lxchuan12.cn/20180421-youzan-front-end-tech-open-day/)
+- 3.[参加有赞前端技术开放日所感所想](https://lxchuan12.gitee.io/20180421-youzan-front-end-tech-open-day/)
 
-- 2.[JavaScript 对象所有API解析](https://lxchuan12.cn/js-object-api/)
+- 2.[JavaScript 对象所有API解析](https://lxchuan12.gitee.io/js-object-api/)
 
-- 1.[《JavaScript语言精粹 修订版》 读书笔记](https://lxchuan12.cn/js-book/)
+- 1.[《JavaScript语言精粹 修订版》 读书笔记](https://lxchuan12.gitee.io/js-book/)
 
 ## 免费的知识星球 前端视野
 

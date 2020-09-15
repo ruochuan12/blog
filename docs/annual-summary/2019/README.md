@@ -10,10 +10,10 @@
 
 [回顾2014，约定2015](http://user.qzone.qq.com/1019963719/blog/1422275707)（QQ空间日志）<br>
 [2015年总结，淡化旧标签，无惧未来](http://user.qzone.qq.com/1019963719/blog/1451822274)（QQ空间日志）<br>
-[2016年度总结，毕业工作](https://www.lxchuan12.cn/annual-summary/2016/)<br>
-[2017年度总结，一如既往](https://www.lxchuan12.cn/annual-summary/2017/)<br>
-[2018年度总结，平淡无奇](https://www.lxchuan12.cn/annual-summary/2018/)<br>
-[2019年度总结，波澜不惊](https://www.lxchuan12.cn/annual-summary/2019/)<br>
+[2016年度总结，毕业工作](https://www.lxchuan12.gitee.io/annual-summary/2016/)<br>
+[2017年度总结，一如既往](https://www.lxchuan12.gitee.io/annual-summary/2017/)<br>
+[2018年度总结，平淡无奇](https://www.lxchuan12.gitee.io/annual-summary/2018/)<br>
+[2019年度总结，波澜不惊](https://www.lxchuan12.gitee.io/annual-summary/2019/)<br>
 
 虽然包含比较多的个人信息，但读者朋友看到或许会觉得似乎认识我很久，当然一般人也不会都看。
 
@@ -149,7 +149,7 @@
 
 掘金终于突破了1000粉丝，这一年阅读量4万多一点。
 
-8月4日，用`vuepress`重构了[博客 lxchuan12.cn](https://lxchuan12.cn)，相比以前，阅读体验更好些。
+8月4日，用`vuepress`重构了[博客 lxchuan12.gitee.io](https://lxchuan12.gitee.io)，相比以前，阅读体验更好些。
 
 纵向对比，这些对比于2018年，都是一些进步。
 
@@ -175,7 +175,7 @@
 >10月14日，滨江前端技术沙龙。<br>
 
 杭州前端类技术大会比较多，一般有空我都会去参加，虽然可能不能学到很多，但还是能开阔视野。
-**为什么这么热衷这类大会**？之前写过一篇文章。[参加有赞前端技术开放日所感所想](https://www.lxchuan12.cn/20180421-youzan-front-end-tech-open-day/)，摘抄里面的一段。
+**为什么这么热衷这类大会**？之前写过一篇文章。[参加有赞前端技术开放日所感所想](https://www.lxchuan12.gitee.io/20180421-youzan-front-end-tech-open-day/)，摘抄里面的一段。
 >可能拿之前D2填写的参会理由可以很好的解答这个问题。
 
 >**D2报名填写的参会理由:**
@@ -307,7 +307,7 @@
 ## 关于
 
 作者：常以**若川**为名混迹于江湖。前端路上 | PPT爱好者 | 所知甚少，唯善学。<br>
-[若川的博客](https://lxchuan12.cn)，使用`vuepress`重构了，阅读体验可能更好些<br>
+[若川的博客](https://lxchuan12.gitee.io)，使用`vuepress`重构了，阅读体验可能更好些<br>
 [掘金专栏](https://juejin.im/user/57974dc55bbb500063f522fd/posts)，欢迎关注~<br>
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，欢迎关注~<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，欢迎关注~<br>
