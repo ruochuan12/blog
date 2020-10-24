@@ -4,15 +4,11 @@
 
 ## 微信公众号和微信交流群
 
-**近期福利**：[截止到9月8日20:00，公众号在看留言抽奖送JavaScript红宝书第4版](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650745703&idx=1&sn=23948a6bcb7e951f5166acfee7d6be17&chksm=886628ebbf11a1fdf6ca7258e78a3f34305611daad9f031b5cfa6e3b3039514fc11912a72337&scene=0&xtrack=1&exportkey=AXnDmqFurg90qeL1UdlKdZ4%3D&pass_ticket=BOS5G1deegXFPSnihICBU6SlJ0fYOXZq6j8ixuarmlG2Ks2IhU3RJl92Cm9mXKZf&wx_header=0#rd)
-
-[点此抽奖送JavaScript红宝书第4版](https://lucky.nocode.com/v2/s/7ZtrbOwyvNe)
-
-[或者可以直接购买JavaScript红宝书第4版](https://www.ituring.com.cn/book/2472?utm_source=rcsy0904)
-
 可能比较有趣的微信公众号，长按扫码关注（**回复pdf获取前端优质书籍pdf**）。欢迎加我微信`ruochuan12`（来者不拒），拉您进【前端视野交流群】，长期交流学习~
 
 ![若川视野](https://github.com/lxchuan12/blog/raw/master/docs/about/wechat-official-accounts-mini.png)
+
+博客不经常更新，但公众号经常会更新，欢迎关注。
 
 ## 关于我
 
