@@ -2,7 +2,7 @@
 
 ## 1. 前言
 
->你好，我是[若川](https://lxchuan12.gitee.io)。这是`学习源码整体架构系列`第六篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是实际仓库的代码。
+>你好，我是[若川](https://lxchuan12.cn)。这是`学习源码整体架构系列`第六篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是实际仓库的代码。
 
 >**要是有人说到怎么读源码，正在读文章的你能推荐我的源码系列文章，那真是太好了**。
 
@@ -523,7 +523,7 @@ axios.interceptors.response.use(function (response) {
 });
 ```
 
-如果想把拦截器，可以用`eject`方法。
+如果想把拦截器移除，可以用`eject`方法。
 
 ```js
 const myInterceptor = axios.interceptors.request.use(function () {/*...*/});
@@ -709,7 +709,7 @@ Axios.prototype.request = function request(config) {
     也就是保证了请求前拦截器先执行，然后发送请求，再响应拦截器执行这样的顺序<br>
     也就是为啥最后还是可以`then`，`catch`方法的缘故。<br>
 
-如果读者对`Promise`不熟悉，建议读阮老师的书籍《ES6 标准入门》。
+如果读者对`Promise`不熟悉，建议读阮老师的书籍《ES6 标准入门》。 
 [阮一峰老师 的 ES6 Promise-resolve](http://es6.ruanyifeng.com/#docs/promise#Promise-resolve) 和 [JavaScript Promise迷你书（中文版）](http://liubin.org/promises-book/)
 
 ```js
@@ -792,8 +792,8 @@ node ./examples/server.js -p 5000
 
 ```js
 var chain = [
-  '请求成功拦截2', '请求失败拦截2',
-  '请求成功拦截1', '请求失败拦截1',
+  '请求成功拦截2', '请求失败拦截2',  
+  '请求成功拦截1', '请求失败拦截1',  
   dispatch,  undefined,
   '响应成功拦截1', '响应失败拦截1',
   '响应成功拦截2', '响应失败拦截2',
@@ -1552,4 +1552,4 @@ FCC成都社区负责人水歌开源的[KoAJAX](https://github.com/EasyWebApp/Ko
 
 可能比较有趣的微信公众号，长按扫码关注（**回复pdf获取前端优质书籍pdf**）。欢迎加笔者微信`ruochuan12`（注明来源，基本来者不拒），拉您进【前端视野交流群】，长期交流学习~
 
-![若川视野](../about/wechat-official-accounts-mini.png)
+![若川视野](https://github.com/lxchuan12/blog/raw/master/docs/about/wechat-official-accounts-mini.jpg)
