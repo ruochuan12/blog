@@ -709,7 +709,7 @@ Axios.prototype.request = function request(config) {
     也就是保证了请求前拦截器先执行，然后发送请求，再响应拦截器执行这样的顺序<br>
     也就是为啥最后还是可以`then`，`catch`方法的缘故。<br>
 
-如果读者对`Promise`不熟悉，建议读阮老师的书籍《ES6 标准入门》。 
+如果读者对`Promise`不熟悉，建议读阮老师的书籍《ES6 标准入门》。
 [阮一峰老师 的 ES6 Promise-resolve](http://es6.ruanyifeng.com/#docs/promise#Promise-resolve) 和 [JavaScript Promise迷你书（中文版）](http://liubin.org/promises-book/)
 
 ```js
@@ -792,8 +792,8 @@ node ./examples/server.js -p 5000
 
 ```js
 var chain = [
-  '请求成功拦截2', '请求失败拦截2',  
-  '请求成功拦截1', '请求失败拦截1',  
+  '请求成功拦截2', '请求失败拦截2',
+  '请求成功拦截1', '请求失败拦截1',
   dispatch,  undefined,
   '响应成功拦截1', '响应失败拦截1',
   '响应成功拦截2', '响应失败拦截2',
@@ -1552,4 +1552,4 @@ FCC成都社区负责人水歌开源的[KoAJAX](https://github.com/EasyWebApp/Ko
 
 可能比较有趣的微信公众号，长按扫码关注（**回复pdf获取前端优质书籍pdf**）。欢迎加笔者微信`ruochuan12`（注明来源，基本来者不拒），拉您进【前端视野交流群】，长期交流学习~
 
-![若川视野](https://github.com/lxchuan12/blog/raw/master/docs/about/wechat-official-accounts-mini.jpg)
+![若川视野](../about/wechat-official-accounts-mini.png)
