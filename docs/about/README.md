@@ -36,7 +36,7 @@
 同时建有一个微信交流群。(2019-06-20更新)
 欢迎加入，可以加我微信`ruochuan12`，邀请您进群。
 
-[掘金社区@若川](https://juejin.im/user/57974dc55bbb500063f522fd/posts)，有时也活跃在掘金社区，欢迎关注。
+[掘金社区@若川](https://juejin.im/user/1415826704971918/posts)，有时也活跃在掘金社区，欢迎关注。
 
 [知乎@若川](https://www.zhihu.com/people/lxchuan12/activities)，偶尔逛逛知乎，也发发文章，目前很少回答问题。
 

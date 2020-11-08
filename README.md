@@ -21,7 +21,7 @@
 > 如果打开比较慢，可以访问[http://lxchuan12.gitee.io](http://lxchuan12.gitee.io)，可能会快些
 
 您可以在以下网站（点击图片跳转）关注我：<br>
-<a href="https://juejin.im/user/57974dc55bbb500063f522fd/posts" >
+<a href="https://juejin.im/user/1415826704971918/posts" >
   <img src="./README-images/juejin.svg"  width="110px" height="50px" title="掘金专栏，欢迎关注～" alt="掘金专栏，欢迎关注～"/>
 </a>
 <span style="margin-left: 30px"></span>

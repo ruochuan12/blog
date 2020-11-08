@@ -132,7 +132,7 @@ module.exports = {
 			},
 			{
 				text: "掘金",
-				link: "https://juejin.im/user/57974dc55bbb500063f522fd/posts"
+				link: "https://juejin.im/user/1415826704971918/posts"
 			},
 			{
 				text: "知乎",
