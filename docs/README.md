@@ -1,42 +1,28 @@
 ##  若川诚邀你加群，长期交流学习
 
-可能比较有趣的微信公众号，长按扫码关注（**回复pdf获取前端优质书籍pdf**）。欢迎加我微信`ruochuan12`（来者不拒），拉您进【前端视野交流群】，长期交流学习~
-
-![若川视野](./about/wechat-official-accounts-mini.png)
-
-博客不经常更新，但公众号经常会更新，欢迎关注。
-
-## 关于我
-
 你好，我是**若川**。江西人，某不那么知名的陶瓷大学毕业生，目前在`杭州`从事`前端开发`工作，也是一枚`PPT爱好者`。所知甚少，唯善学。常以**若川**为名混迹于江湖。更详细的可以点击[关于我](../about/)<br>
-
->[`freecodecamp`](https://www.freecodecamp.org/) 杭州社区组织者之一（`简单说就是FCC杭州社区与杭州互联网公司共同举办线下技术分享交流活动，帮助开发者提高，曾与阿里、宋小菜、丁香园、微医、个推等公司合作过`）。
 >
-> `vuepress`博客：[https://lxchuan12.gitee.io](../)
->
-> 如果打开比较慢，可以访问[http://lxchuan12.gitee.io](http://lxchuan12.gitee.io)，可能会快些
+> 博客：[https://lxchuan12.gitee.io](../)，**建议收藏该地址**，也可以百度搜索[**若川**](https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&tn=SE_Pclogo_6ysd4c7a&wd=%E8%8B%A5%E5%B7%9D&oq=%25E4%25BB%258A%25E6%2597%25A5%25E6%2596%25B0%25E9%25B2%259C%25E4%25BA%258B&rsv_pq=d5d2506b003fe4bc&rsv_t=9f60noZ4n6uVgTXKStiYbZUcvyfAkfkMCTUyAQKh6Bb2Kvsfkhq%2FmkhNpAfcTyhz2cKYaBIMw73l&rqlang=cn&rsv_enter=1&rsv_dl=tb&rsv_sug3=1&rsv_sug2=0&rsv_btype=t&inputT=1388&rsv_sug4=1388)，找到我。
 
-您可以在以下网站（点击图片跳转）关注我：<br>
-<a href="https://juejin.im/user/1415826704971918/posts" >
-  <img src="../README-images/juejin.svg"  width="110px" height="50px" title="掘金专栏，欢迎关注～" alt="掘金专栏，欢迎关注～"/>
-</a>
-<span style="margin-left: 30px"></span>
-<a href="https://zhuanlan.zhihu.com/lxchuan12" >
-  <img src="../README-images/zhihu.png"  width="110px" height="50px" title="知乎前端视野专栏，欢迎关注～" alt="知乎前端视野专栏，欢迎关注～"/>
-</a>
-<span style="margin-left: 30px"></span>
-<a href="https://segmentfault.com/blog/lxchuan12" >
-  <img src="../README-images/segmentfault.png"  width="110px" height="50px" title="segmentfault专栏，欢迎关注～" alt="segmentfault专栏，欢迎关注～"/>
-</a>
-<span style="margin-left: 30px"></span>
-<a href="https://www.yuque.com/lxchuan12/blog" >
-  <img src="../README-images/yuque.png"  width="110px" height="50px" title="语雀专栏，欢迎关注～" alt="语雀专栏，欢迎关注～"/>
-</a>
+另外，你可以在以下网站（点击图片跳转）关注我（你的关注是对我的肯定）：<br>
 
-## 知乎相对高赞高阅读量的问答
+[![公众号](https://img.shields.io/badge/公众号-@若川视野-000000.svg?style=flat-square&logo=WeChat)](https://image-static.segmentfault.com/355/182/3551821948-5df888aa1dc88_articlex)
+[![知乎](https://img.shields.io/badge/dynamic/json?color=0084ff&label=知乎@若川&query=%24.data.totalSubs&url=https%3A%2F%2Fapi.spencerwoo.com%2Fsubstats%2F%3Fsource%3Dzhihu%26queryKey%3Dlxchuan12)](https://www.zhihu.com/people/lxchuan12)
+[![掘金](https://img.shields.io/badge/%E6%8E%98%E9%87%91-@%E8%8B%A5%E5%B7%9D-000000.svg?style=flat-square&logo=Juejin)](https://juejin.cn/user/1415826704971918/posts)
+[![segmentfault](https://img.shields.io/badge/segmentfault-@%E8%8B%A5%E5%B7%9D-000000.svg?style=flat-square&logo=Segmentfault)](https://segmentfault.com/blog/lxchuan12)
+[![语雀](https://img.shields.io/badge/语雀-@%E8%8B%A5%E5%B7%9D-000000.svg?style=flat-square&logo=Segmentfault)](https://www.yuque.com/lxchuan12/blog)
+[![github](https://img.shields.io/github/stars/lxchuan12/blog?label=Stars&style=flat-square&logo=GitHub)](https://github.com/lxchuan12/blog)
 
-[若川知乎回答：一年内的前端看不懂前端框架源码怎么办？](https://www.zhihu.com/question/350289336/answer/910970733)<br>
+我运营了公众号【若川视野】，回复【pdf】限时获取前端优质书籍pdf，经常更新，值得你关注学习，每天进步一点点。
+欢迎加我微信`ruochuan12`，拉你进【若川视野前端交流群】，**长期交流学习，经常有福利**~
+
+<img src="./about/wechat-mini.jpg"  width="120px" height="120px" title="我的公众号若川视野，值得你关注" alt="我的公众号若川视野，值得你关注"/>
+
+## 知乎高赞问答
+
 [若川知乎回答：做了两年前端开发，平时就是拿 Vue 写写页面和组件，简历的项目经历应该怎么写得好看？](https://www.zhihu.com/question/384048633/answer/1134746899)<br>
+[若川知乎问答：有哪些必看的js库？](https://www.zhihu.com/question/429436558/answer/1575251772)<br>
+[若川知乎回答：一年内的前端看不懂前端框架源码怎么办？](https://www.zhihu.com/question/350289336/answer/910970733)<br>
 [若川知乎回答：怎么才能学好前端？](https://www.zhihu.com/question/372962058/answer/1026884916)<br>
 如果觉得不错，可以点个赞^_^
 
