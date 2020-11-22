@@ -16,6 +16,8 @@
 我运营了公众号【若川视野】，<img src="./README-images/wechat-mini.jpg"  width="120px" height="120px" title="我的公众号若川视野，值得你关注" alt="我的公众号若川视野，值得你关注"/>
 关注回复【pdf】限时获取前端优质书籍pdf。**公众号经常更新，值得你关注学习，每天进步一点点**。
 
+欢迎加我微信`ruochuan12`，拉你进【若川视野前端交流群】，**长期交流学习，经常有福利**~
+
 ## 知乎高赞回答
 [若川知乎回答：做了两年前端开发，平时就是拿 Vue 写写页面和组件，简历的项目经历应该怎么写得好看？](https://www.zhihu.com/question/384048633/answer/1134746899)<br>
 [若川知乎问答：有哪些必看的js库？](https://www.zhihu.com/question/429436558/answer/1575251772)<br>
