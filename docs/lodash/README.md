@@ -4,6 +4,8 @@
 
 >你好，我是[若川](https://lxchuan12.gitee.io)。这是`学习源码整体架构系列`第三篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。文章学习的是打包整合后的代码，不是实际仓库中的拆分的代码。
 
+>[本文仓库地址](https://github.com/lxchuan12/lodash-analysis.git)：`git clone https://github.com/lxchuan12/lodash-analysis.git`
+
 >**要是有人说到怎么读源码，正在读文章的你能推荐我的源码系列文章，那真是太好了**。
 
 `学习源码整体架构系列`文章如下：
