@@ -7,7 +7,11 @@ module.exports = {
 	description: "若川的前端视野，若川，lxchuan12。源码、jquery源码、underscore源码、lodash源码、sentry源码、vuex源码、axios源码、koa源码、redux源码、前端路上，PPT爱好者，所知甚少，唯善学。",
 	head: [
 		["link", { rel: "icon", href: "/favicon.ico" }],
-		["link", { rel: "mainfest", href: "/mainfest.json" }]
+		["link", { rel: "mainfest", href: "/mainfest.json" }],
+		// [
+		// 	'script',
+		// 	{ charset: 'utf-8', src: 'https://my.openwrite.cn/js/readmore.js' },
+		// ],
 	],
 	port: 4000,
 	markdown: {
@@ -43,9 +47,9 @@ module.exports = {
 	serviceWorker: true, // 是否开启 PWA
 	themeConfig: {
 		nav: [
-			{ text: "目录", link: "/" },
 			// { text: '目录', link: '/posts/' },
-			{ text: "最新文章", link: "/redux/" },
+			{ text: "公众号：若川视野", link: "https://image-static.segmentfault.com/355/182/3551821948-5df888aa1dc88_articlex" },
+			{ text: "目录", link: "/" },
 			// { text: '博文',
 			//   items: [
 			// 	{
