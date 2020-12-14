@@ -3,8 +3,8 @@ const TinyimgPlugin = require('tinyimg-webpack-plugin');
 module.exports = {
 	title: "若川的博客",
 	keywords:
-		"若川，lxchuan12。源码、jquery源码、underscore源码、lodash源码、sentry源码、vuex源码、axios源码、koa源码、redux源码、前端路上，PPT爱好者，所知甚少，唯善学。",
-	description: "若川的前端视野，若川，lxchuan12。源码、jquery源码、underscore源码、lodash源码、sentry源码、vuex源码、axios源码、koa源码、redux源码、前端路上，PPT爱好者，所知甚少，唯善学。",
+		"若川，公众号若川视野。学习源码整体架构系列。包含jquery源码、underscore源码、lodash源码、sentry源码、vuex源码、axios源码、koa源码、redux源码。前端路上，PPT爱好者，所知甚少，唯善学。",
+	description: "若川，公众号若川视野。学习源码整体架构系列。包含jquery源码、underscore源码、lodash源码、sentry源码、vuex源码、axios源码、koa源码、redux源码。前端路上，PPT爱好者，所知甚少，唯善学。",
 	head: [
 		["link", { rel: "icon", href: "/favicon.ico" }],
 		["link", { rel: "mainfest", href: "/mainfest.json" }],
