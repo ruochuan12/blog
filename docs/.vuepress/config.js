@@ -183,6 +183,10 @@ module.exports = {
 						link: "https://hungryturbo.com"
 					},
 					{
+						text: "scarsu",
+						link: "https://www.scarsu.com/"
+					},
+					{
 						text: "编程之上",
 						link: "https://ruizhengyun.cn"
 					}
