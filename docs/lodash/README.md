@@ -1,10 +1,8 @@
 # 学习 lodash  源码整体架构，打造属于自己的函数式编程类库
 
-## 前言
+## 1. 前言
 
 >你好，我是[若川](https://lxchuan12.gitee.io)。这是`学习源码整体架构系列`第三篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。文章学习的是打包整合后的代码，不是实际仓库中的拆分的代码。
-
->[本文仓库地址](https://github.com/lxchuan12/lodash-analysis.git)：`git clone https://github.com/lxchuan12/lodash-analysis.git`
 
 >**要是有人说到怎么读源码，正在读文章的你能推荐我的源码系列文章，那真是太好了**。
 
@@ -35,7 +33,7 @@
 **导读：**
 >文章主要学习了`runInContext()` 导出`_`  `lodash`函数使用`baseCreate`方法原型继承`LodashWrapper`和`LazyWrapper`，`mixin`挂载方法到`lodash.prototype`、后文用结合例子解释`lodash.prototype.value(wrapperValue)`和`Lazy.prototype.value(lazyValue)`惰性求值的源码具体实现。
 
-## 匿名函数执行
+## 2. 匿名函数执行
 
 ```js
 ;(function() {
@@ -49,7 +47,7 @@
 var _ = runInContext();
 ```
 
-## runInContext 函数
+## 3. runInContext 函数
 
 这里的简版源码，只关注函数入口和返回值。
 
@@ -69,7 +67,7 @@ var runInContext = (function runInContext(context) {
 
 再看`lodash`函数中的返回值 `new LodashWrapper(value)`。
 
-### LodashWrapper 函数
+### 3.1 LodashWrapper 函数
 
 ```js
 function LodashWrapper(value, chainAll) {
@@ -103,7 +101,7 @@ LodashWrapper.prototype.constructor = LodashWrapper;
 
 接着往上找`baseCreate、baseLodash`这两个函数。
 
-### baseCreate 原型继承
+### 3.2 baseCreate 原型继承
 
 ```js
 //  立即执行匿名函数
@@ -149,7 +147,7 @@ LodashWrapper.prototype.constructor = LodashWrapper;
 笔者画了一张图，表示这个关系。
 ![lodash 原型关系图](./lodash-v4.17.15-prototype.png)
 
-#### 衍生的 isObject 函数
+#### 3.2.1 衍生的 isObject 函数
 
 判断`typeof value`不等于`null`，并且是`object`或者`function`。
 ```js
@@ -159,7 +157,7 @@ function isObject(value) {
 }
 ```
 
-### Object.create() 用法举例
+### 3.3 Object.create() 用法举例
 
 [面试官问：能否模拟实现JS的new操作符](https://juejin.im/post/5bde7c926fb9a049f66b8b52) 之前这篇文章写过的一段，所以这里收缩起来了。
 <details>
@@ -215,9 +213,9 @@ if (typeof Object.create !== "function") {
 
 `lodash`上有很多方法和属性，但在`lodash.prototype`也有很多与`lodash`上相同的方法。肯定不是在`lodash.prototype`上重新写一遍。而是通过`mixin`挂载的。
 
-## mixin
+## 4. mixin
 
-### mixin 具体用法
+### 4.1 mixin 具体用法
 
 ```js
 _.mixin([object=lodash], source, [options={}])
@@ -245,7 +243,7 @@ _.mixin([object=lodash], source, [options={}])
 
 >(*): 返回 object.
 
-### mixin 源码
+### 4.2 mixin 源码
 
 <details>
 <summary>点击这里展开mixin源码，后文注释解析</summary>
@@ -295,7 +293,7 @@ function mixin(object, source, options) {
 
 感兴趣的读者可以自行看这些函数衍生的其他函数的源码。
 
-### mixin 衍生的函数 keys
+### 4.3 mixin 衍生的函数 keys
 
 在 `mixin` 函数中 其实最终调用的就是 `Object.keys`
 ```js
@@ -304,7 +302,7 @@ function keys(object) {
 }
 ```
 
-### mixin 衍生的函数 baseFunctions
+### 4.4 mixin 衍生的函数 baseFunctions
 
 返回函数数组集合
 ```js
@@ -315,7 +313,7 @@ function baseFunctions(object, props) {
 }
 ```
 
-### mixin 衍生的函数 isFunction
+### 4.5 mixin 衍生的函数 isFunction
 
 判断参数是否是函数
 ```js
@@ -330,7 +328,7 @@ function isFunction(value) {
 }
 ```
 
-### mixin 衍生的函数 arrayEach
+### 4.6 mixin 衍生的函数 arrayEach
 
 类似 [].forEarch
 ```js
@@ -347,7 +345,7 @@ function arrayEach(array, iteratee) {
 }
 ```
 
-### mixin 衍生的函数 arrayPush
+### 4.7 mixin 衍生的函数 arrayPush
 
 类似 [].push
 ```js
@@ -363,7 +361,7 @@ function arrayPush(array, values) {
 }
 ```
 
-### mixin 衍生的函数 copyArray
+### 4.8 mixin 衍生的函数 copyArray
 
 拷贝数组
 
@@ -380,7 +378,7 @@ function copyArray(source, array) {
 }
 ```
 
-### mixin 源码解析
+### 4.9 mixin 源码解析
 
 `lodash` 源码中两次调用 `mixin`
 
@@ -505,7 +503,7 @@ function mixin(object, source, options) {
 
 小结：简单说就是把`lodash`上的静态方法赋值到`lodash.prototype`上。分两次第一次是支持链式调用（`lodash.after`等 `153 `个支持链式调用的方法），第二次是不支持链式调用的方法（`lodash.add`等`152`个不支持链式调用的方法）。
 
-## lodash 究竟在_和_.prototype挂载了多少方法和属性
+## 5. lodash 究竟在_和_.prototype挂载了多少方法和属性
 
 再来看下`lodash`究竟挂载在`_`函数对象上有多少静态方法和属性，和挂载`_.prototype`上有多少方法和属性。
 
@@ -550,7 +548,7 @@ console.log(prototypeMethods); // ["after", "all", "allKeys", "any", "assign", .
 
 ![`lodash`的方法和属性挂载关系图](./lodash-v4.17.15-lodash.prototype-mixin.png)
 
-## 请出贯穿下文的简单的例子
+## 6. 请出贯穿下文的简单的例子
 
 ```js
 var result = _.chain([1, 2, 3, 4, 5])
@@ -586,7 +584,7 @@ console.log(result, 'result');
 简单说这里的`map`方法，添加 `LazyWrapper` 的方法到 `lodash.prototype`存储下来，最后调用 `value`时再调用。
 具体看下文源码实现。
 
-## 添加 `LazyWrapper` 的方法到 `lodash.prototype`
+## 7. 添加 `LazyWrapper` 的方法到 `lodash.prototype`
 
 主要是如下方法添加到到 `lodash.prototype` 原型上。
 
@@ -706,7 +704,7 @@ baseForOwn(LazyWrapper.prototype, function(func, methodName) {
 
 链式调用最后都是返回实例对象，实际的处理数据的函数都没有调用，而是被存储存储下来了，最后调用`value`方法，才执行这些函数。
 
-## lodash.prototype.value 即 wrapperValue
+## 8. lodash.prototype.value 即 wrapperValue
 
 ```js
 function baseWrapperValue(value, actions) {
@@ -728,7 +726,7 @@ lodash.prototype.toJSON = lodash.prototype.valueOf = lodash.prototype.value = wr
 
 如果是惰性求值，则调用的是 `LazyWrapper.prototype.value` 即 `lazyValue`。
 
-## LazyWrapper.prototype.value 即 lazyValue 惰性求值
+## 9. LazyWrapper.prototype.value 即 lazyValue 惰性求值
 
 <details>
 <summary>点击这里展开lazyValue源码及注释</summary>
@@ -853,7 +851,7 @@ var result = _.chain([1, 2, 3, 4, 5])
 .value();
 ```
 
-## 总结
+## 10. 总结
 
 行文至此，基本接近尾声，最后总结一下。
 >文章主要学习了`runInContext()` 导出`_`  `lodash`函数使用`baseCreate`方法原型继承`LodashWrapper`和`LazyWrapper`，`mixin`挂载方法到`lodash.prototype`、后文用结合例子解释`lodash.prototype.value(wrapperValue)`和`Lazy.prototype.value(lazyValue)`惰性求值的源码具体实现。
@@ -862,7 +860,7 @@ var result = _.chain([1, 2, 3, 4, 5])
 
 如果读者发现有不妥或可改善之处，再或者哪里没写明白的地方，欢迎评论指出。另外觉得写得不错，对您有些许帮助，可以点赞、评论、转发分享，也是对笔者的一种支持。万分感谢。
 
-## 推荐阅读
+## 11. 推荐阅读
 
 [lodash github仓库](https://github.com/lodash/lodash)<br>
 [lodash 官方文档](https://lodash.com/docs/4.17.15)<br>
