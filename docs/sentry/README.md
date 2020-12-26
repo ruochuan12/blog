@@ -1,6 +1,6 @@
 # 学习 sentry 源码整体架构，打造属于自己的前端异常监控SDK
 
-## 前言
+## 1. 前言
 
 >你好，我是[若川](https://lxchuan12.gitee.io)。这是`学习源码整体架构系列`第四篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。文章学习的是打包整合后的代码，不是实际仓库中的拆分的代码。
 
@@ -36,12 +36,12 @@
 
 看源码前先来梳理下前端错误监控的知识。
 
-## 前端错误监控知识
+## 2. 前端错误监控知识
 
 摘抄自 [慕课网视频教程：前端跳槽面试必备技巧](https://coding.imooc.com/class/129.html)<br/>
 [别人做的笔记：前端跳槽面试必备技巧-4-4 错误监控类](https://articles.jerryshi.com/learning/fe/js-interview-skill.html#_4-4-%E9%94%99%E8%AF%AF%E7%9B%91%E6%8E%A7%E7%B1%BB)
 
-### 前端错误的分类
+### 2.1 前端错误的分类
 
 >**1.即时运行错误：代码错误**
 
@@ -65,7 +65,7 @@
 
 最后`allIms`和`loadedImgs`对比即可找出图片资源未加载项目
 
-### Error事件捕获代码示例
+### 2.2 Error事件捕获代码示例
 
 ```js
 window.addEventListener('error', function(e) {
@@ -73,7 +73,7 @@ window.addEventListener('error', function(e) {
 }, true) // 这里只有捕获才能触发事件，冒泡是不能触发
 ```
 
-### 上报错误的基本原理
+### 2.3 上报错误的基本原理
 
 1.采用`Ajax`通信的方式上报
 
@@ -82,7 +82,7 @@ window.addEventListener('error', function(e) {
 `Image`上报错误方式：
 ` (new Image()).src = 'https://lxchuan12.cn/error?name=若川'`
 
-## Sentry 前端异常监控基本原理
+## 3. Sentry 前端异常监控基本原理
 
 >1.重写 `window.onerror` 方法、重写 `window.onunhandledrejection` 方法
 
@@ -185,7 +185,7 @@ XHRTransport.prototype.sendEvent = function (event) {
 
 >如果看到这里，暂时不想关注后面的源码细节，直接看后文小结1和2的两张图。或者可以点赞或收藏这篇文章，后续想看了再看。
 
-## Sentry 源码入口和出口
+## 4. Sentry 源码入口和出口
 
 ```js
 var Sentry = (function(exports){
@@ -208,7 +208,7 @@ var Sentry = (function(exports){
 }({}));
 ```
 
-## Sentry.init 初始化 之 init 函数
+## 5. Sentry.init 初始化 之 init 函数
 
 初始化
 
@@ -240,7 +240,7 @@ function init(options) {
 }
 ```
 
-### getGlobalObject、inNodeEnv 函数
+### 5.1 getGlobalObject、inNodeEnv 函数
 
 很多地方用到这个函数`getGlobalObject`。其实做的事情也比较简单，就是获取全局对象。浏览器中是`window`。
 
@@ -276,7 +276,7 @@ function getGlobalObject() {
 
 继续看 `initAndBind` 函数
 
-## initAndBind 函数之 new BrowserClient(options)
+## 6. initAndBind 函数之 new BrowserClient(options)
 
 ```js
 function initAndBind(clientClass, options) {
@@ -292,7 +292,7 @@ function initAndBind(clientClass, options) {
 接着先看 构造函数 `BrowserClient`。
 另一条线 `getCurrentHub().bindClient()` 先不看。
 
-### BrowserClient 构造函数
+### 6.1 BrowserClient 构造函数
 
 ```js
 var BrowserClient = /** @class */ (function (_super) {
@@ -319,7 +319,7 @@ var BrowserClient = /** @class */ (function (_super) {
 
 看`BrowserBackend`之前，先提一下继承、继承静态属性和方法。
 
-### __extends、extendStatics 打包代码实现的继承
+### 6.2 __extends、extendStatics 打包代码实现的继承
 
 未打包的源码是使用`ES6 extends`实现的。这是打包后的对`ES6`的`extends`的一种实现。
 
@@ -361,7 +361,7 @@ var hasProto = '__proto__' in {};
 
 看完打包代码实现的继承，继续看 `BrowserBackend` 构造函数
 
-### BrowserBackend  构造函数 （浏览器后端）
+### 6.3 BrowserBackend  构造函数 （浏览器后端）
 
 ```js
 var BrowserBackend = /** @class */ (function (_super) {
@@ -396,7 +396,7 @@ var BrowserBackend = /** @class */ (function (_super) {
 
 `BrowserBackend` 又继承自 `BaseBackend`。
 
-#### BaseBackend  构造函数 （基础后端）
+#### 6.3.1 BaseBackend  构造函数 （基础后端）
 
 ```js
 /**
@@ -435,7 +435,7 @@ var BaseBackend = /** @class */ (function () {
 
 通过一系列的继承后，回过头来看 `BaseClient` 构造函数。
 
-#### BaseClient 构造函数（基础客户端）
+#### 6.3.2 BaseClient 构造函数（基础客户端）
 
 ```js
 var BaseClient = /** @class */ (function () {
@@ -464,7 +464,7 @@ var BaseClient = /** @class */ (function () {
 }());
 ```
 
-### 小结1. new BrowerClient 经过一系列的继承和初始化
+### 6.4 小结1. new BrowerClient 经过一系列的继承和初始化
 
 可以输出下具体`new clientClass(options)`之后的结果：
 
@@ -485,7 +485,7 @@ function initAndBind(clientClass, options) {
 
 ![sentry new BrowserClient 实例图 By@若川](./images/BrowserClient-instance.png)
 
-## initAndBind 函数之 getCurrentHub().bindClient()
+## 7. initAndBind 函数之 getCurrentHub().bindClient()
 
 继续看 `initAndBind` 的另一条线。
 
@@ -500,7 +500,7 @@ function initAndBind(clientClass, options) {
 
 获取当前的控制中心 `Hub`，再把`new BrowserClient()` 的实例对象绑定在`Hub`上。
 
-### getCurrentHub 函数
+### 7.1 getCurrentHub 函数
 
 ```js
 // 获取当前Hub 控制中心
@@ -523,7 +523,7 @@ function getCurrentHub() {
 }
 ```
 
-### 衍生的函数 getMainCarrier、getHubFromCarrier
+### 7.2 衍生的函数 getMainCarrier、getHubFromCarrier
 
 <!-- 获取主载体 -->
 ```js
@@ -552,7 +552,7 @@ function getHubFromCarrier(carrier) {
 }
 ```
 
-### bindClient 绑定客户端在当前控制中心上
+### 7.3 bindClient 绑定客户端在当前控制中心上
 
 ```js
 Hub.prototype.bindClient = function (client) {
@@ -570,7 +570,7 @@ Hub.prototype.getStackTop = function () {
 };
 ```
 
-### 小结2. 经过一系列的继承和初始化
+### 7.4 小结2. 经过一系列的继承和初始化
 
 再回过头来看 `initAndBind`函数
 
@@ -600,7 +600,7 @@ function initAndBind(clientClass, options) {
 Sentry.captureMessage('Hello, 若川!');
 ```
 
-## captureMessage 函数
+## 8. captureMessage 函数
 
 通过之前的阅读代码，知道会最终会调用`Fetch`接口，所以直接断点调试即可，得出如下调用栈。
 接下来描述调用栈的主要流程。
@@ -736,7 +736,7 @@ BaseBackend.prototype.sendEvent = function (event) {
 
 => FetchTransport.prototype.sendEvent 最终发送了请求
 
-### FetchTransport.prototype.sendEvent
+### 8.1 FetchTransport.prototype.sendEvent
 
 ```js
 FetchTransport.prototype.sendEvent = function (event) {
@@ -758,7 +758,7 @@ FetchTransport.prototype.sendEvent = function (event) {
 
 看完 `Ajax 上报` 主线，再看本文的另外一条主线 `window.onerror` 捕获。
 
-## window.onerror 和 window.onunhandledrejection 捕获 错误
+## 9. window.onerror 和 window.onunhandledrejection 捕获 错误
 
 例子：调用一个未申明的变量。
 
@@ -777,7 +777,7 @@ new Promise(() => {
 })
 ```
 
-### captureEvent
+### 9.1 captureEvent
 
 >调用栈主要流程：
 
@@ -860,7 +860,7 @@ this._invokeClient('captureEvent')
 
 可谓是殊途同归，行文至此就基本已经结束，最后总结一下。
 
-## 总结
+## 10. 总结
 
 `Sentry-JavaScript`源码高效利用了`JS`的原型链机制。可谓是惊艳，值得学习。
 
@@ -877,7 +877,7 @@ this._invokeClient('captureEvent')
 
 如果读者发现有不妥或可改善之处，再或者哪里没写明白的地方，欢迎评论指出。另外觉得写得不错，对您有些许帮助，可以点赞、评论、转发分享，也是对笔者的一种支持。万分感谢。
 
-## 推荐阅读
+## 11. 推荐阅读
 
 [知乎滴滴云：超详细！搭建一个前端错误监控系统](https://zhuanlan.zhihu.com/p/51446011)<br/>
 [掘金BlackHole1：JavaScript集成Sentry](https://juejin.im/post/5b7f63c96fb9a019f709b14b)<br/>
