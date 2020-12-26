@@ -62,7 +62,7 @@ module.exports = {
 			// 	},
 			//     {
 			//       text: '学习 jQuery 源码整体架构，打造属于自己的 js 类库',
-			// 	  link: '/jQuery/'
+			// 	  link: '/jquery/'
 			//     },
 			// 	{
 			// 		text: '高考七年后、工作三年后的感悟',
@@ -217,7 +217,7 @@ module.exports = {
 					"/sentry/",
 					"/lodash/",
 					"/underscore/",
-					"/jQuery/"
+					"/jquery/"
 				]
 			},
 			{
