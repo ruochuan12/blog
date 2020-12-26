@@ -2,7 +2,7 @@
 
 >`写于2019年8月8日`
 
-## 前言
+## 1. 前言
 
 >你好，我是[若川](https://lxchuan12.gitee.io)。这是`学习源码整体架构系列`第二篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是打包整合后的代码，不是实际仓库中的拆分的代码。
 
@@ -43,7 +43,7 @@ _.chain([1, 2, 3]).reverse().value();
 
 读者也可以顺着文章思路，自行打开下载源码进行调试，这样印象更加深刻。
 
-## 链式调用
+## 2. 链式调用
 
 `_.chain` 函数源码：
 
@@ -59,7 +59,7 @@ _.chain = function(obj) {
 
 带着问题，笔者看了下定义 `_` 函数对象的代码。
 
-## `_` 函数对象 支持`OOP`
+## 3. `_` 函数对象 支持`OOP`
 
 ```js
 var _ = function(obj) {
@@ -139,7 +139,7 @@ var chainResult = function(instance, obj) {
 
 [why delete obj[0]](https://github.com/jashkenas/underscore/issues/2773)
 
-## 基于流的编程
+## 4. 基于流的编程
 
 至此就算是分析完了链式调用`_.chain()`和`_` 函数对象。这种把数据存储在实例对象`{_wrapped: '', _chain: true}` 中，`_chain`判断是否支持链式调用，来传递给下一个函数处理。这种做法叫做 **基于流的编程**。
 
@@ -178,7 +178,7 @@ var chainResult = function(instance, obj) {
 而`_(obj) `是返回的实例对象`{_wrapped: obj}`呀。怎么会有`chain()`方法，肯定有地方挂载了这个方法到`_.prototype`上或者其他操作，这就是`_.mixin()`。
 
 
-## `_.mixin` 挂载所有的静态方法到 `_.prototype`， 也可以挂载自定义的方法
+## 5. `_.mixin` 挂载所有的静态方法到 `_.prototype`， 也可以挂载自定义的方法
 
 `_.mixin` 混入。但侵入性太强，经常容易出现覆盖之类的问题。记得之前`React`有`mixin`功能，`Vue`也有`mixin`功能。但版本迭代更新后基本都是慢慢的都不推荐或者不支持`mixin`。
 
@@ -217,7 +217,7 @@ _.mixin(_);
 
 ![underscore.js 链式调用图解](./underscore.js-chain.png)
 
-### _.mixin 挂载自定义方法
+### 5.1 _.mixin 挂载自定义方法
 
 挂载自定义方法：
 举个例子：
@@ -231,7 +231,7 @@ _.log() // 哎呀，我被调用了
 _().log() // 哎呀，我被调用了
 ```
 
-### _.functions(obj)
+### 5.2 _.functions(obj)
 
 ```js
 _.functions = _.methods = function(obj) {
@@ -244,7 +244,7 @@ _.functions = _.methods = function(obj) {
 ```
 `_.functions` 和 `_.methods` 两个方法，遍历对象上的方法，放入一个数组，并且排序。返回排序后的数组。
 
-### `underscore.js` 究竟在`_`和`_.prototype`挂载了多少方法和属性
+### 5.3 `underscore.js` 究竟在`_`和`_.prototype`挂载了多少方法和属性
 
 再来看下`underscore.js`究竟挂载在`_函数对象`上有多少静态方法和属性，和挂载`_.prototype`上有多少方法和属性。
 
@@ -284,9 +284,9 @@ console.log(prototypeMethods); // ["after", "all", "allKeys", "any", "assign", .
 
 ![`underscore.js` 原型关系图](./underscore.js-prototype.png)
 
-## 整体架构概览
+## 6. 整体架构概览
 
-### 匿名函数自执行
+### 6.1 匿名函数自执行
 
 ```js
 (function(){
@@ -300,7 +300,7 @@ console.log(prototypeMethods); // ["after", "all", "allKeys", "any", "assign", .
 关于自执行函数不是很了解的读者可以参看这篇文章。
 [[译] JavaScript：立即执行函数表达式（IIFE）](https://segmentfault.com/a/1190000003985390)
 
-### root 处理
+### 6.2 root 处理
 
 ```js
 var root = typeof self == 'object' && self.self === self && self ||
@@ -311,7 +311,7 @@ var root = typeof self == 'object' && self.self === self && self ||
 
 支持`浏览器环境`、`node`、`Web Worker`、`node vm`、`微信小程序`。
 
-### 导出
+### 6.3 导出
 
 ```js
 if (typeof exports != 'undefined' && !exports.nodeType) {
@@ -327,7 +327,7 @@ if (typeof exports != 'undefined' && !exports.nodeType) {
 关于`root处理`和`导出`的这两段代码的解释，推荐看这篇文章[冴羽：underscore 系列之如何写自己的 underscore](https://juejin.im/post/5a0bae515188252964213855)，讲得真的太好了。笔者在此就不赘述了。
 总之，`underscore.js`作者对这些处理也不是一蹴而就的，也是慢慢积累，和其他人提`ISSUE`之后不断改进的。
 
-### 支持 `amd` 模块化规范
+### 6.4 支持 `amd` 模块化规范
 
 ```js
 if (typeof define == 'function' && define.amd) {
@@ -337,7 +337,7 @@ if (typeof define == 'function' && define.amd) {
 }
 ```
 
-### _.noConflict 防冲突函数
+### 6.5 _.noConflict 防冲突函数
 
 源码：
 ```js
@@ -362,7 +362,7 @@ underscore.isArray([]) // true
 </script>
 ```
 
-## 总结
+## 7. 总结
 
 全文根据官网提供的链式调用的例子， `_.chain([1, 2, 3]).reverse().value();`较为深入的调试和追踪代码，分析链式调用（`_.chain()` 和 `_(obj).chain()`）、`OOP`、基于流式编程、和`_.mixin(_)`在`_.prototype`挂载方法，最后整体架构分析。学习`underscore.js`整体架构，利于打造属于自己的函数式编程类库。
 
@@ -455,7 +455,7 @@ underscore.isArray([]) // true
 
 读者发现有不妥或可改善之处，欢迎评论指出。另外觉得写得不错，可以点赞、评论、转发，也是对笔者的一种支持。
 
-## 推荐阅读
+## 8. 推荐阅读
 
 [underscorejs.org 官网](https://underscorejs.org/)<br>
 [undersercore-analysis](https://yoyoyohamapi.gitbooks.io/undersercore-analysis/content/)<br>
