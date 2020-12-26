@@ -1,0 +1,20 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>index.noConflict.jquery</title>
+</head>
+<body>
+    <script>
+        var $ = '我是其他的$，jQuery不要覆盖我';
+    </script>
+    <script src="./jquery-3.4.1.js">
+    </script>
+    <script>
+        $.noConflict();
+        console.log($); // 我是其他的$，jQuery不要覆盖我
+    </script>
+</body>
+</html>

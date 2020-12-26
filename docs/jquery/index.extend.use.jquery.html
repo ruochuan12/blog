@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>jQuery.extend例子</title>
+</head>
+<body>
+    <div id="app">
+        extend 用法：<br>
+        jQuery.extend( target [, object1 ] [, objectN ] )        Returns: Object
+        <br>
+        <a href="https://api.jquery.com/jQuery.extend/" target="_blank">jQuery.extend API</a>
+        <br>
+        jQuery.extend( [deep ], target, object1 [, objectN ] )       Returns: Object
+        <br>
+        <a href="https://api.jquery.com/jQuery.extend/" target="_blank">jQuery.fn.extend API</a>
+    </div>
+<!--     <script src="./jquery-3.4.1.js">
+    </script> -->
+    <script src="https://unpkg.com/jquery@3.4.1/dist/jquery.js"></script>
+    <script>
+        //  extend 用法：
+        // ```
+        // jQuery.extend( target [, object1 ] [, objectN ] )        Returns: Object
+
+        // jQuery.extend( [deep ], target, object1 [, objectN ] )       Returns: Object
+        // ```
+
+        // 1. jQuery.extend( target)
+        var result1 = $.extend({
+            job: '前端开发工程师',
+        });
+
+        console.log(result1, 'result1', result1.job); // $函数 加了一个属性 job  // 前端开发工程师
+
+        // 2. jQuery.extend( target, object1)
+        var result2 = $.extend({
+            name: '若川',
+        },
+        {
+            job: '前端开发工程师',
+        });
+
+        console.log(result2, 'result2'); // { name: '若川', job: '前端开发工程师' }
+
+        // deep 深拷贝
+        // 3. jQuery.extend( [deep ], target, object1 [, objectN ] )
+        var result3 = $.extend(true,  {
+            name: '若川',
+            other: {
+                mac: 0,
+                ubuntu: 1,
+                windows: 1,
+            },
+        }, {
+            job: '前端开发工程师',
+            other: {
+                mac: 1,
+                linux: 1,
+                windows: 0,
+            }
+        });
+        console.log(result3, 'result3');
+        // deep true
+        // {
+        //     "name": "若川",
+        //     "other": {
+        //         "mac": 1,
+        //         "ubuntu": 1,
+        //         "windows": 0,
+        //         "linux": 1
+        //     },
+        //     "job": "前端开发工程师"
+        // }
+        // deep false
+        // {
+        //     "name": "若川",
+        //     "other": {
+        //         "mac": 1,
+        //         "linux": 1,
+        //         "windows": 0
+        //     },
+        //     "job": "前端开发工程师"
+        // }
+
+    </script>
+</body>
+</html>
