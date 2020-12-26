@@ -1,5 +1,7 @@
 # 学习 jQuery 源码整体架构，打造属于自己的 js 类库
 
+## 1. 前言
+
 >`写于2019年7月29日`
 
 >你好，我是[若川](https://lxchuan12.gitee.io)。这是`学习源码整体架构系列`第一篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是打包整合后的代码，不是实际仓库中的拆分的代码。
@@ -31,7 +33,7 @@
 
 [`jQuery` `github`仓库](https://github.com/jquery/jquery)
 
-## 自执行匿名函数
+## 2. 自执行匿名函数
 
 ```js
 (function(global, factory){
@@ -53,9 +55,9 @@ if ( !noGlobal ) {
 // 其中`noGlobal`参数只有在这里用到。
 ```
 
-## 支持多种环境下使用 比如 commonjs、amd规范
+## 3. 支持多种环境下使用 比如 commonjs、amd规范
 
-### commonjs 规范支持
+### 3.1 commonjs 规范支持
 `commonjs`实现 主要代表 `nodejs`
 ```js
 // global是全局变量，factory 是函数
@@ -83,7 +85,7 @@ if ( !noGlobal ) {
 } )( typeof window !== "undefined" ? window : this, function( window, noGlobal ) {});
 ```
 
-### amd 规范 主要代表 requirejs
+### 3.2 amd 规范 主要代表 requirejs
 ```js
 if ( typeof define === "function" && define.amd ) {
 	define( "jquery", [], function() {
@@ -91,11 +93,11 @@ if ( typeof define === "function" && define.amd ) {
 	} );
 }
 ```
-### cmd 规范 主要代表 seajs
+### 3.3 cmd 规范 主要代表 seajs
 
 很遗憾，`jQuery`源码里没有暴露对`seajs`的支持。但网上也有一些方案。这里就不具体提了。毕竟现在基本不用`seajs`了。
 
-## 无 new 构造
+## 4. 无 new 构造
 实际上也是可以 `new`的，因为`jQuery`是函数。而且和不用`new`效果是一样的。
 new显示返回对象，所以和直接调用`jQuery`函数作用效果是一样的。
 如果对`new`操作符具体做了什么不明白。可以参看我之前写的文章。
@@ -162,7 +164,7 @@ function initMixin (Vue) {
 };
 ```
 
-## 核心函数之一 extend
+## 5. 核心函数之一 extend
 
 用法：
 ```js
@@ -236,7 +238,7 @@ console.log(result3, 'result3');
 
 结论：`extend`函数既可以实现给`jQuery`函数可以实现浅拷贝、也可以实现深拷贝。可以给jQuery上添加静态方法和属性，也可以像`jQuery.fn`(也就是`jQuery.prototype`)上添加属性和方法，这个功能归功于`this`，`jQuery.extend`调用时`this`指向是`jQuery`，`jQuery.fn.extend`调用时`this`指向则是`jQuery.fn`。
 
-### 浅拷贝实现
+### 5.1 浅拷贝实现
 
 知道这些，其实实现浅拷贝还是比较容易的：
 ```js
@@ -288,7 +290,7 @@ if ( copy !== undefined ) {
 ```
 为了方便读者调试，代码同样放在[jQuery.extend浅拷贝代码实现codepen](https://codepen.io/lxchuan12/pen/VoPPmQ)，可在线运行。
 
-### 深拷贝实现
+### 5.2 深拷贝实现
 
 ```js
 $.extend = function(){
@@ -387,7 +389,7 @@ $.extend = function(){
 ```
 为了方便读者调试，这段代码同样放在[jQuery.extend深拷贝代码实现codepen](https://codepen.io/lxchuan12/pen/jgyyyN)，可在线运行。
 
-### 深拷贝衍生的函数 isFunction
+### 5.3 深拷贝衍生的函数 isFunction
 
 判断参数是否是函数。
 ```js
@@ -401,7 +403,7 @@ var isFunction = function isFunction( obj ) {
 };
 ```
 
-### 深拷贝衍生的函数 jQuery.isPlainObject
+### 5.4 深拷贝衍生的函数 jQuery.isPlainObject
 
 `jQuery.isPlainObject(obj)`
 测试对象是否是纯粹的对象（通过 "{}" 或者 "new Object" 创建的）。
@@ -447,7 +449,7 @@ jQuery.extend( {
 
 `extend`函数，也可以自己删掉写一写，算是`jQuery`中一个比较核心的函数了。而且用途广泛，可以内部使用也可以，外部使用扩展 插件等。
 
-## 链式调用
+## 6. 链式调用
 
 `jQuery`能够链式调用是因为一些函数执行结束后 `return this`。
 比如
@@ -470,7 +472,7 @@ jQuery.fn.extend({
 ```
 
 
-## `jQuery.noConflict` 很多`js`库都会有的防冲突函数
+## 7. `jQuery.noConflict` 很多`js`库都会有的防冲突函数
 
 [jQuery.noConflict API](https://api.jquery.com/jQuery.noConflict/)
 
@@ -516,7 +518,7 @@ jQuery.noConflict = function( deep ) {
 };
 ```
 
-## 总结
+## 8. 总结
 
 全文主要通过浅析了`jQuery`整体结构，自执行匿名函数、无`new`构造、支持多种规范（如commonjs、amd规范）、核心函数之`extend`、链式调用、`jQuery.noConflict`等方面。
 
