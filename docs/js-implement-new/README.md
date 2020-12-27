@@ -2,7 +2,7 @@
 
 >`写于2018年11月05日`
 
-## 前言
+## 1. 前言
 
 >这是面试官问系列的第一篇，旨在帮助读者提升`JS`基础知识，包含`new、call、apply、this、继承`相关知识。<br>
 `面试官问系列`文章如下：感兴趣的读者可以点击阅读。<br>
@@ -22,7 +22,7 @@ new Vue({
 **那么面试官可能会问是否想过`new`到底做了什么，怎么模拟实现呢。**
 >附上之前写文章写过的一段话：已经有很多模拟实现`new`操作符的文章，为什么自己还要写一遍呢。学习就好比是座大山，人们沿着不同的路登山，分享着自己看到的风景。你不一定能看到别人看到的风景，体会到别人的心情。只有自己去登山，才能看到不一样的风景，体会才更加深刻。
 
-## new 做了什么
+## 2. new 做了什么
 
 先看简单**例子1**：
 ```js
@@ -49,7 +49,9 @@ typeof Object === 'function' // true
 ```
 从这里例子中，我们可以看出：一个函数用`new`操作符来调用后，生成了一个全新的对象。而且`Student`和`Object`都是函数，只不过`Student`是我们自定义的，`Object`是`JS`本身就内置的。
 再来看下控制台输出图，感兴趣的读者可以在控制台试试。
-![例子1 控制台输出图](https://user-gold-cdn.xitu.io/2018/11/4/166dde2ad5d6bd84?w=573&h=870&f=png&s=143219)
+
+![例子1 控制台输出图](./images/demo1.png)
+
 与`new Object()` 生成的对象不同的是`new Student()`生成的对象中间还嵌套了一层`__proto__`，它的`constructor`是`Student`这个函数。
 ```js
 // 也就是说：
@@ -57,7 +59,7 @@ student.constructor === Student;
 Student.prototype.constructor === Student;
 ```
 
-### 小结1：从这个简单例子来看，`new`操作符做了两件事：
+### 2.1 小结1：从这个简单例子来看，`new`操作符做了两件事：
 
 1. 创建了一个全新的对象。
 2. 这个对象会被执行`[[Prototype]]`（也就是`__proto__`）链接。
@@ -75,7 +77,7 @@ console.log(student); // {name: '若川'}
 ```
 由此可以看出：这里`Student`函数中的`this`指向`new Student()`生成的对象`student`。
 
-### 小结2：从这个例子来看，`new`操作符又做了一件事：
+### 2.2 小结2：从这个例子来看，`new`操作符又做了一件事：
 
 1. 生成的新对象会绑定到函数调用的`this`。
 
@@ -100,11 +102,15 @@ student2.__proto__ === Student.prototype; // true
 Object.getPrototypeOf(student1) === Student.prototype; // true
 Object.getPrototypeOf(student2) === Student.prototype; // true
 ```
-![例子3 控制台输出图](https://user-gold-cdn.xitu.io/2018/11/4/166de20191257b2a?w=628&h=898&f=png&s=120541)
-关于JS的原型关系笔者之前看到这张图，觉得很不错，分享给大家。
-![JavaScript原型关系图](https://user-gold-cdn.xitu.io/2018/11/4/166dee0c1854fab5?w=1019&h=741&f=png&s=43421)
 
-### 小结3：这个例子3再一次验证了**小结1**中的**第2点**。也就是这个对象会被执行`[[Prototype]]`（也就是`__proto__`）链接。并且通过`new Student()`创建的每个对象将最终被`[[Prototype]]`链接到这个`Student.protytype`对象上。
+![例子3 控制台输出图](./images/demo2.png)
+
+关于JS的原型关系我之前看到这张图，觉得很不错，分享给大家。
+
+![JavaScript原型关系图](./images/f.png)
+
+
+### 2.3 小结3：这个例子3再一次验证了**小结1**中的**第2点**。也就是这个对象会被执行`[[Prototype]]`（也就是`__proto__`）链接。并且通过`new Student()`创建的每个对象将最终被`[[Prototype]]`链接到这个`Student.protytype`对象上。
 
 细心的同学可能会发现这三个例子中的函数都没有返回值。那么有返回值会是怎样的情形呢。
 那么接下来请看**例子4**
@@ -130,9 +136,9 @@ function Student(name){
 var student = new Student('若川');
 console.log(student); {name: '若川'}
 ```
-笔者测试这七种类型后[MDN JavaScript类型](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/A_re-introduction_to_JavaScript)，得出的结果是：前面六种基本类型都会正常返回`{name: '若川'}`，后面的`Object`(包含`Functoin`, `Array`, `Date`, `RegExg`, `Error`)都会直接返回这些值。
+我测试这七种类型后[MDN JavaScript类型](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/A_re-introduction_to_JavaScript)，得出的结果是：前面六种基本类型都会正常返回`{name: '若川'}`，后面的`Object`(包含`Functoin`, `Array`, `Date`, `RegExg`, `Error`)都会直接返回这些值。
 
-### 由此得出 小结4：
+### 2.4 由此得出 小结4：
 
 1. 如果函数没有返回对象类型`Object`(包含`Functoin`, `Array`, `Date`, `RegExg`, `Error`)，那么`new`表达式中的函数调用会自动返回这个新的对象。
 
@@ -143,7 +149,7 @@ console.log(student); {name: '若川'}
 4. 通过`new`创建的每个对象将最终被`[[Prototype]]`链接到这个函数的`prototype`对象上。
 5. 如果函数没有返回对象类型`Object`(包含`Functoin`, `Array`, `Date`, `RegExg`, `Error`)，那么`new`表达式中的函数调用会自动返回这个新的对象。
 
-## new 模拟实现
+## 3. new 模拟实现
 
 知道了这些现象，我们就可以模拟实现`new`操作符。直接贴出代码和注释
 ```js
@@ -207,9 +213,9 @@ Object.getPrototypeOf(student2) === Student.prototype; // true
 可以看出，很符合`new`操作符。读者发现有不妥或可改善之处，欢迎指出。
 回顾这个模拟`new`函数`newOperator`实现，最大的功臣当属于`Object.create()`这个`ES5`提供的`API`。
 
-## Object.create() 用法举例
+## 4. Object.create() 用法举例
 
-笔者之前整理的一篇文章中也有讲过，可以翻看[JavaScript 对象所有API解析](https://segmentfault.com/a/1190000010753942)
+我之前整理的一篇文章中也有讲过，可以翻看[JavaScript 对象所有API解析](https://segmentfault.com/a/1190000010753942)
 
 [MDN Object.create()](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Global_Objects/Object/create)
 
@@ -253,7 +259,7 @@ if (typeof Object.create !== "function") {
 ```
 到此，文章就基本写完了。感谢读者看到这里。
 
-## 最后总结一下：
+## 5. 最后总结一下：
 
 1. `new`做了什么：
 >1. 创建了一个全新的对象。
@@ -281,7 +287,7 @@ function newOperator(ctor){
     return newObj;
 }
 ```
-读者发现有不妥或可改善之处，欢迎指出。另外觉得写得不错，可以点个赞，也是对笔者的一种支持。
+读者发现有不妥或可改善之处，欢迎指出。另外觉得写得不错，可以点个赞，也是对我的一种支持。
 
 ## 关于
 
