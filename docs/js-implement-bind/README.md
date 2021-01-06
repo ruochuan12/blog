@@ -45,7 +45,7 @@ console.log(Function.prototype.bind.name);  // bind
 console.log(Function.prototype.bind().name);  // bound
 ```
 
-![`Function.prototype.bind`](https://user-gold-cdn.xitu.io/2018/11/18/16726f4175f9c34d?w=1109&h=518&f=png&s=67135)
+![`Function.prototype.bind`](./demo1.png)
 
 ### 因此可以得出结论1：
 
