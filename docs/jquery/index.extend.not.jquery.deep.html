@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta http-equiv="X-UA-Compatible" content="ie=edge">
+    <title>jQuery.extend深拷贝代码实现</title>
+</head>
+<body>
+    <div id="app">
+        extend 用法：<br>
+        jQuery.extend( target [, object1 ] [, objectN ] )        Returns: Object
+        <br>
+        <a href="https://api.jquery.com/jQuery.extend/" target="_blank">jQuery.extend API</a>
+        <br>
+        jQuery.extend( [deep ], target, object1 [, objectN ] )       Returns: Object
+        <br>
+        <a href="https://api.jquery.com/jQuery.extend/" target="_blank">jQuery.fn.extend API</a>
+    </div>
+<!--     <script src="./jquery-3.4.1.js">
+    </script> -->
+    <script src="https://unpkg.com/jquery@3.4.1/dist/jquery.js"></script>
+    <script>
+        // 浅拷贝实现
+        $.extend = function(){
+            // options 是扩展的对象object1，object2...
+            var options,
+            // object对象上的键
+            name,
+            // copy object对象上的值，也就是是需要拷贝的值
+            copy,
+            // 深拷贝新增的四个变量 deep、src、copyIsArray、clone
+            deep = false,
+            // 源目标，需要往上面赋值的
+            src,
+            // 需要拷贝的值的类型是函数
+            copyIsArray,
+            //
+            clone,
+            // 扩展目标对象，可能不是对象，所以或空对象
+            target = arguments[0] || {},
+            // 定义i为1
+            i = 1,
+            // 定义实参个数length
+            length = arguments.length;
+
+            // 处理深拷贝情况
+            if ( typeof target === "boolean" ) {
+                deep = target;
+
+                // Skip the boolean and the target
+                // target目标对象开始后移
+                target = arguments[ i ] || {};
+                i++;
+            }
+
+            // Handle case when target is a string or something (possible in deep copy)
+            // target不等于对象，且target不是函数的情况下，强制将其赋值为空对象。
+            if ( typeof target !== "object" && !isFunction( target ) ) {
+                target = {};
+            }
+
+            // 只有一个参数时
+            if(i === length){
+                target = this;
+                i--;
+            }
+            for(; i < length; i++){
+                // 不是underfined 也不是null
+                if((options = arguments[i]) !=  null){
+                    for(name in options){
+                        copy = options[name];
+                        // 防止死循环，continue 跳出当前此次循环
+                        if ( name === "__proto__" || target === copy ) {
+                            continue;
+                        }
+
+                        // Recurse if we're merging plain objects or arrays
+                        // 这里deep为true，并且需要拷贝的值有值，并且是纯粹的对象
+                        // 或者需拷贝的值是数组
+                        if ( deep && copy && ( jQuery.isPlainObject( copy ) ||
+                            ( copyIsArray = Array.isArray( copy ) ) ) ) {
+
+                            // 源目标，需要往上面赋值的
+                            src = target[ name ];
+
+                            // Ensure proper type for the source value
+                            // 拷贝的值，并且src不是数组，clone对象改为空数组。
+                            if ( copyIsArray && !Array.isArray( src ) ) {
+                                clone = [];
+                                // 拷贝的值不是数组，对象不是纯粹的对象。
+                            } else if ( !copyIsArray && !jQuery.isPlainObject( src ) ) {
+                                // clone 赋值为空对象
+                                clone = {};
+                            } else {
+                                // 否则 clone = src
+                                clone = src;
+                            }
+                            // 把下一次循环时，copyIsArray 需要重新赋值为false
+                            copyIsArray = false;
+
+                            // Never move original objects, clone them
+                            // 递归调用自己
+                            target[ name ] = jQuery.extend( deep, clone, copy );
+
+                        // Don't bring in undefined values
+                        }
+                        else if ( copy !== undefined ) {
+                            target[ name ] = copy;
+                        }
+                    }
+                }
+
+            }
+            // 最后返回目标对象
+            return target;
+        }
+    </script>
+    <script>
+        //  extend 用法：
+        // ```
+        // jQuery.extend( target [, object1 ] [, objectN ] )
+
+        // jQuery.extend( [deep ], target, object1 [, objectN ] )
+        // ```
+
+        // 1. jQuery.extend( target)
+        var result1 = $.extend({
+            job: '前端开发工程师',
+        });
+
+        console.log(result1, 'result1', result1.job); // $函数 加了一个属性 job  // 前端开发工程师
+
+        // 2. jQuery.extend( target, object1)
+        var result2 = $.extend({
+            name: '若川',
+        },
+        {
+            job: '前端开发工程师',
+        });
+
+        console.log(result2, 'result2'); // { name: '若川', job: '前端开发工程师' }
+
+        // deep 深拷贝
+        // 3. jQuery.extend( [deep ], target, object1 [, objectN ] )
+        var result3 = $.extend(true,  {
+            name: '若川',
+            other: {
+                mac: 0,
+                ubuntu: 1,
+                windows: 1,
+            },
+        }, {
+            job: '前端开发工程师',
+            other: {
+                mac: 1,
+                linux: 1,
+                windows: 0,
+            }
+        });
+        console.log(result3, 'result3');
+        // deep true
+        // {
+        //     "name": "若川",
+        //     "other": {
+        //         "mac": 1,
+        //         "ubuntu": 1,
+        //         "windows": 0,
+        //         "linux": 1
+        //     },
+        //     "job": "前端开发工程师"
+        // }
+        // deep false
+        // {
+        //     "name": "若川",
+        //     "other": {
+        //         "mac": 1,
+        //         "linux": 1,
+        //         "windows": 0
+        //     },
+        //     "job": "前端开发工程师"
+        // }
+
+    </script>
+</body>
+</html>
