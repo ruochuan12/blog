@@ -166,10 +166,10 @@ module.exports = {
 			{
 				text: "友链",
 				items: [
-					{
-						text: "程序员指北 koala",
-						link: "http://www.inode.club"
-					},
+					// {
+					// 	text: "程序员指北 koala",
+					// 	link: "http://www.inode.club"
+					// },
 					{
 						text: "山月",
 						link: "https://shanyue.tech"
@@ -185,6 +185,10 @@ module.exports = {
 					{
 						text: "scarsu",
 						link: "https://www.scarsu.com/"
+					},
+					{
+						text: "itclanCoder",
+						link: "https://coder.itclan.cn/"
 					},
 					{
 						text: "编程之上",
