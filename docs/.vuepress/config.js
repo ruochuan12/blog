@@ -187,6 +187,10 @@ module.exports = {
 						link: "https://www.scarsu.com/"
 					},
 					{
+						text: "lencx的博客",
+						link: "https://mtc.nofwl.com/",
+					},
+					{
 						text: "itclanCoder",
 						link: "https://coder.itclan.cn/"
 					},
