@@ -324,6 +324,7 @@ module.exports = {
 		 	.loader("image-webpack-loader")
 		 	.options({
 				disable: true,
+				esModule: false,
 				// mozjpeg: {
 				// 	quality: 65
 				// },
