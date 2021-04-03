@@ -1,12 +1,12 @@
 # 若川的2020年度总结，水波不兴
-
 ## 前言
+
 从`2014年`开始，每一年都会写年度总结，坚持了6个年头。<br />
 <br />[回顾2014，约定2015](http://user.qzone.qq.com/1019963719/blog/1422275707)（QQ空间日志）<br />[2015年总结，淡化旧标签，无惧未来](http://user.qzone.qq.com/1019963719/blog/1451822274)（QQ空间日志）<br />[2016年度总结，毕业工作](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650747244&idx=1&sn=a4cea36b8f9fc2caae4df7a63f302829&chksm=886632e0bf11bbf6cce245c3b6cc6a8544b9f78cf1ba12448a14fe8739dda6e871391759c0a4&scene=178&cur_album_id=1668518390266724360#rd)<br />[2017年度总结，一如既往](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650747311&idx=1&sn=3fb8aa2c7338185a7e4cc85dd5913f75&chksm=88663223bf11bb3507424135dafd4a93bf0812c96b01d4ab3e608568f62d99ac065aa24fe70a&scene=178&cur_album_id=1668518390266724360#rd)<br />[2018年度总结，平淡无奇](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650747386&idx=1&sn=f219582bb2460790c85857e80d036bc8&chksm=88663276bf11bb60fc5244de4456defae50d740ebd7f885b8525e790657a4190c74e255efdba&scene=178&cur_album_id=1668518390266724360#rd)<br />[2019年度总结，波澜不惊](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650744661&idx=1&sn=44de0fed0597c97eac3e19ecc3ab20c5&chksm=886624d9bf11adcfed52ca4b43d7f83500d3f30697f08c1b3a8ed63e3ce22325848b624bb502&scene=178&cur_album_id=1668518390266724360#rd)<br />2020年度总结，水波不兴（本文）<br />
 <br />如今第7年了，最近总是想着2020年度总结的点点滴滴，思考这一年要写点什么不一样的，可是思前想后觉得这一年好像也没有什么不一样啊。2019年度总结文章中就写了2020年度总结的标题可能取名为「`水波不兴`」。内心深处就感觉水波不兴不错。可能是内心深处有个湖，湖面平静，有时会激起水花和波浪，但终究会恢复平静，也就是说平平淡淡是常态。年度总结往年基本是元旦3天假期就动笔了。<br />
 <br />说起跨年和元旦，回忆起这几年的最后一天。<br />把时间拨回到`2016年12月31日`，那时同行四人去了良渚博物馆。<br />把时间拨回到`2017年12月31日`，那时几个在杭州的大学同学一起聚餐、K歌。<br />把时间拨回到`2018年12月31日`，几个同事一起去西湖边跨年，最后同事开车把我们送回。之后听到朋友说他们去西湖边跨年，人太多打不到车，最后凌晨四五点才回去，说再也不去西湖边跨年了。<br />时间再拨回到`2019年12月31日`，有了以往的“经验”，跨年的气息也没有那么浓厚，就自己在住处跨过了一年。第二天元旦，朋友开车带我去塘栖古镇逛了逛，开启了2020年。<br />
 
-![杭州塘栖古镇夕阳西下，开启2020年](https://cdn.nlark.com/yuque/0/2021/jpeg/201201/1612021645642-d3ff122b-e8c5-4836-9220-b3ee40ad1552.jpeg#align=left&display=inline&height=1728&margin=%5Bobject%20Object%5D&name=IMG_20200101_213533.jpg&originHeight=1728&originWidth=2304&size=1132555&status=done&style=none&width=2304)
+![杭州塘栖古镇夕阳西下，开启2020年](./images/xiyang.jpg)
 
 记得远在2019年12月份，那时我在微博上看到武汉发生不明肺炎。2020年，1月20日回家过春节时，看到各种群里有讨论要口罩，当时没想那么多也来不及买口罩，于是没有戴口罩回到了家。**谁也不曾想，疫情会影响全世界**。
 而`2020年12月31日`，也是在住处跨过了一年。不平凡的一年过去了。<br />
@@ -16,7 +16,7 @@
 个人是比较建议读者朋友们都写年度总结的，不一定要发布出来，给自己看也不错，或者给未来的自己看兴许也是一种回顾。非常欣慰有读者朋友特意到我的博客看有没有写年度总结，也有读者朋友在公众号留言说看完了我往年的年度总结，想看我的2020年的。可如今写出来了，怕是要对不住他们`如此期待`了。<br />
 <br />`2016年`学习了一门年度计划的课程，提到人生的8个方面，分别是**身体健康、财务理财、人际社群、工作事业、家庭生活、学习成长、体验突破、休闲放松**。觉得这8方面还是挺合理的，于是从[2016年度总结](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650747244&idx=1&sn=a4cea36b8f9fc2caae4df7a63f302829&chksm=886632e0bf11bbf6cce245c3b6cc6a8544b9f78cf1ba12448a14fe8739dda6e871391759c0a4&scene=178&cur_album_id=1668518390266724360#rd)开始，都是按这8个方面来写年度总结。另外作为读者朋友的你也可以搜索微信小程序：滴答目标九宫格，看到的就是这八方面。<br />
 
-![滴答目标九宫格图](https://cdn.nlark.com/yuque/0/2021/jpeg/201201/1612106782260-ea4d8f86-29d0-4430-a43f-b074996b5c2d.jpeg#align=left&display=inline&height=538&margin=%5Bobject%20Object%5D&name=Screenshot_20210131_232422.jpg&originHeight=2234&originWidth=1080&size=159351&status=done&style=none&width=260)
+![滴答目标九宫格图](./images/dida.jpg)
 
 ，也可以看[邹小强老师的这篇文章《小工具：随时都可以看到漂亮的目标板》](http://www.gtdlife.com/2017/4754/dida-mubiao-jiugongge/)。
 ## 身体 · 健康
@@ -28,20 +28,20 @@
 ## 工作 · 事业
 我的年度总结很少写公司工作方面。本职工作就是某不知名小公司的一名小前端开发工程师，负责小程序和网站开发等。<br />这一年，在工作方面，由于公司变动，我担任了前端开发的面试官，负责给公司招人。记得2017年第一次面试别人时，自己都是很紧张的。当初刚毕业时求职面试，如今身份转换，时间真快。<br />`wakatime`2020年使用`Vscode`编码时间统计，总共1572小时，和2019年相比基本持平。平均每天5个多小时在使用编辑器`VSCode`，其中2月13日最多，竟然11小时16分钟，记得这一天在家远程办公工作内容很多。花在自己博客的时间为45小时，相比2019年107小时有所下降。这里统计的是实际上聚焦使用VSCode的时间，应该还算是多的。在此放下统计地址[https://wakatime.com/a-look-back-at-2020](https://wakatime.com/a-look-back-at-2020)，方便不知道地址的读者朋友访问使用wakatime。<br />
 
-![若川的wakatime 2020统计](https://cdn.nlark.com/yuque/0/2021/png/201201/1612090621179-ac48966b-8f46-4839-a3f8-eed4d65414d9.png#align=left&display=inline&height=732&margin=%5Bobject%20Object%5D&name=image.png&originHeight=732&originWidth=936&size=73612&status=done&style=none&width=936)
+![若川的wakatime 2020统计](./images/wakatime.png)
 
 按照以往的惯例，顺带贴下公司代码提交记录和个人github代码提交记录。
 
-![公司gitlab的代码提交记录](https://cdn.nlark.com/yuque/0/2021/png/201201/1612092247873-cf33ce4c-af13-435c-9e26-406ca88e9608.png#align=left&display=inline&height=210&margin=%5Bobject%20Object%5D&name=image.png&originHeight=210&originWidth=988&size=14232&status=done&style=none&width=988)
+![公司gitlab的代码提交记录](./images/gitlab.png)
 
-![github的代码提交记录](https://cdn.nlark.com/yuque/0/2021/png/201201/1612092080927-71123c2f-82c7-4226-9d61-228e9d224499.png#align=left&display=inline&height=259&margin=%5Bobject%20Object%5D&name=image.png&originHeight=259&originWidth=1008&size=33079&status=done&style=none&width=1008)
+![github的代码提交记录](./images/github.png)
 
 ### 技术自媒体，慢慢打造个人品牌
 **微信：再小的个体，也有自己的品牌**。我从[2016年度总结](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650747244&idx=1&sn=a4cea36b8f9fc2caae4df7a63f302829&chksm=886632e0bf11bbf6cce245c3b6cc6a8544b9f78cf1ba12448a14fe8739dda6e871391759c0a4&scene=178&cur_album_id=1668518390266724360#rd)起，就一直写了「慢慢打造个人品牌」，真正有所收益时是2020年。
 #### 公众号 8w+ 阅读
 这一年，比较佛系的运营了公众号「**若川视野**」，有了工作之外的一些收益。清博大数据和新榜年度报告中都显示公众号全年累计8w+阅读，相比2019年增加2183.73%，虽然可能不是那么准确，但应该也相差不大。
 
-![清博大数据统计](https://cdn.nlark.com/yuque/0/2021/jpeg/201201/1612108277715-f2a2fff3-f8fe-4bd6-a7a2-586aca47afe6.jpeg#align=left&display=inline&height=723&margin=%5Bobject%20Object%5D&name=Screenshot_20210131_234824.jpg&originHeight=2231&originWidth=1080&size=385145&status=done&style=none&width=350)
+![清博大数据统计](./images/qingbo.jpg)
 
 年初1月11日时，接了公众号第一次广告300元，但后续基本没有持续更新，比较佛系，接的广告也比较少。**运营公众号其实是非常耗时耗力的**。即使是转载文章，每天基本都要花上一小时左右选文章发文章。如果是自己写原创文章，基本每篇文章都需要10小时左右，甚至更多。作为一名互联网打工人，时间可是稀缺资源啊。
 
@@ -57,14 +57,14 @@
 #### 知乎 63w+ 阅读
 这一年，知乎「**若川**」粉丝比去年多了2000+，现在是8377，阅读量比2019年增长了63w+，2019年时还是4w+阅读。主要有几篇回答被知乎推荐了。最高的一篇突破了31w+阅读量，如下图所示。虽然我觉得回答的也不是很好。也许是2019年写了`《学习源码整体架构系列》`的**厚积薄发**的表现。<br />
 
-![知乎回答阅读统计](https://cdn.nlark.com/yuque/0/2021/jpeg/201201/1612361885667-1e4739ca-6d3c-415c-aa90-e09c40fcd28b.jpeg)
+![知乎回答阅读统计](./images/zhihu.jpg)
 
 其中高赞的两篇回答，也同步发表在公众号，不过知乎上是最新版本。<br />[若川知乎问答：2年前端经验，做的项目没什么技术含量，怎么办？](https://mp.weixin.qq.com/s/PY02WfJb96xXuF5OR5DDmQ)<br />[若川知乎高赞：有哪些必看的 JS 库？](https://mp.weixin.qq.com/s/OVH6gP0R29oRSzNhoob4SQ)<br />顺便再放下我的`《学习源码整体架构系列》`链接，`koa源码`和`redux源码`是2020年写的。2019年下半年写了6篇，2020年只写了2篇，2021年会不会继续写下去是个谜。<br />1.[学习 jQuery 源码整体架构，打造属于自己的 js 类库](http://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650744496&idx=1&sn=0f149e9436cb77bf9fc1bfb47aedd334&chksm=8866253cbf11ac2a53b385153cd8e9a0c4018b6b566750cf0b5d61d17afa2e90b52d36db8054&scene=21#wechat_redirect)<br />2.[学习 underscore 源码整体架构，打造属于自己的函数式编程类库](http://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650744505&idx=1&sn=26801ad6c2a5eb9cf64e7556b6478d39&chksm=88662535bf11ac23eea3f76335f6777e2acbf4ee660b5616148e14ffbefc0e8520806db21056&scene=21#wechat_redirect)<br />3.[学习 lodash 源码整体架构，打造属于自己的函数式编程类库](http://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650744514&idx=1&sn=776336d888d06bfe72cb4d5b07a4b90c&chksm=8866254ebf11ac5822fc078082603f77a4b4d9b487c9f4d7069acb12c727c46c75946fa9b0cd&scene=21#wechat_redirect)<br />4.[学习 sentry 源码整体架构，打造属于自己的前端异常监控SDK](http://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650744551&idx=1&sn=4d79c2fa97d7c737aab70055c7ec7fa3&chksm=8866256bbf11ac7d9e2269f3638a705d5e5f45056d53ad2faf17b814e4c46ec6b0ba52571bde&scene=21#wechat_redirect)<br />5.[学习 vuex 源码整体架构，打造属于自己的状态管理库](http://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650744584&idx=1&sn=b14f8a762f132adcf0f7e3e075ee2ded&chksm=88662484bf11ad922ed27d45873af838298949eea381545e82a511cabf0c6fc6876a8370c6fb&scene=21#wechat_redirect)<br />6.[学习 axios 源码整体架构，打造属于自己的请求库](http://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650744604&idx=1&sn=51d8d865c9848fd59f7763f5fb9ce789&chksm=88662490bf11ad86061ae76ff71a1177eeddab02c38d046eecd0e1ad25dc16f7591f91e9e3b2&scene=21#wechat_redirect)<br />[7.学习 koa 源码的整体架构，浅析koa洋葱模型原理和co原理](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650744703&idx=1&sn=cfb9580241228993e4d376017234ff79&chksm=886624f3bf11ade5f5e37520f6b1291417bcea95f222906548b863f4b61d20e7508eb419eb85&token=192125900&lang=zh_CN&scene=21#wechat_redirect)<br />[8.学习 redux 源码整体架构，深入理解 redux 及其中间件原理](http://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650745007&idx=1&sn=1fd6f3caeff6ab61b8d5f644a1dbb7df&chksm=88662b23bf11a23573509a01f941d463b0c61e890b2069427c78c26296197077da359c522fe8&scene=21#wechat_redirect)
 
 #### 其他
 这一年，2017年时就开通了免费的知识星球「**前端视野 · 若川**」的人数也陆陆续续有增长，但更新少了，主要时间和精力放在了公众号更新上。<br />这一年，在语雀平台发布的`koa源码`文章，被选为「**语雀精选**」，比较难得。<br />
 
-![koa源码语雀精选标识](https://cdn.nlark.com/yuque/0/2021/png/201201/1612088219099-ce54dbb0-746c-4c05-bda8-7d1ab8af6033.png#align=left&display=inline&height=140&margin=%5Bobject%20Object%5D&name=image.png&originHeight=140&originWidth=729&size=27261&status=done&style=none&width=729)
+![koa源码语雀精选标识](./images/yuque.png)
 
 这一年，在掘金平台上只发了3篇文章，相比2019年多了1000+关注，阅读量却多了近10w+，现在累计14w+。
 ## 家庭 · 生活
