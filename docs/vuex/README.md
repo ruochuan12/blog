@@ -1,10 +1,12 @@
 # 学习 vuex 源码整体架构，打造属于自己的状态管理库
 
-## 前言
+## 1. 前言
 
->你好，我是[若川](https://lxchuan12.gitee.io)。这是`学习源码整体架构`第五篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是实际仓库的代码。
+>你好，我是[若川](https://mp.weixin.qq.com/s/c3hFML3XN9KCUetDOZd-DQ)，微信搜索[「若川视野」]((https://mp.weixin.qq.com/s/c3hFML3XN9KCUetDOZd-DQ))关注我，专注前端技术分享。欢迎加我微信`ruochuan12`，加群交流学习。
 
->[本文仓库地址](https://github.com/lxchuan12/vuex-analysis.git)：`git clone https://github.com/lxchuan12/vuex-analysis.git`
+>这是`学习源码整体架构`第五篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是实际仓库的代码。
+
+->[本文仓库地址](https://github.com/lxchuan12/vuex-analysis.git)：`git clone https://github.com/lxchuan12/vuex-analysis.git`
 
 >**要是有人说到怎么读源码，正在读文章的你能推荐我的源码系列文章，那真是太好了**。
 
@@ -28,7 +30,7 @@
 文章比较详细的介绍了`vuex`、`vue`源码调试方法和 `Vuex` 原理。并且详细介绍了 `Vuex.use` 安装和 `new Vuex.Store` 初始化、`Vuex.Store` 的全部`API`（如`dispatch`、`commit`等）的实现和辅助函数 `mapState`、`mapGetters`、 `mapActions`、`mapMutations`
 `createNamespacedHelpers`。
 
-## chrome 浏览器调试 vuex 源码方法
+## 2. chrome 浏览器调试 vuex 源码方法
 
 [Vue文档：在 VS Code 中调试 Vue 项目](https://cn.vuejs.org/v2/cookbook/debugging-in-vscode.html)<br>
 从上文中同理可得调试 `vuex` 方法，这里详细说下，便于帮助到可能不知道如何调试源码的读者。<br>
@@ -60,7 +62,7 @@ npm run dev
 
 本文主要就是通过[`Shopping Cart`](https://github.com/lxchuan12/vuex-analysis/blob/master/vuex/examples/shopping-cart/app.js)，(路径`vuex/examples/shopping-cart`)例子调试代码的。
 
-### 顺便提一下调试 vue 源码（v2.6.10）的方法
+### 2.1 顺便提一下调试 vue 源码（v2.6.10）的方法
 
 ```bash
 git clone https://github.com/vuejs/vue.git
@@ -86,7 +88,7 @@ npm i -g http-server
 hs -p 8100
 
 # 在examples 文件夹中把引用的vuejs的index.html 文件 vue.min.js 改为 vue.js
-# 或者把dist文件夹的 vue.min.js ，替换成npm run dev编译后的dist/vue.js
+# 或者把dist文件夹的 vue.min.js ，替换成npm run dev编译后的dist/vue.js 
 
 # 浏览器打开 open http://localhost:8100/examples/
 
@@ -99,7 +101,7 @@ hs -p 8100
 
 正文开始～
 
-## vuex 原理
+## 3. vuex 原理
 
 简单说明下 `vuex` 原理
 
@@ -148,7 +150,7 @@ function resetStoreVM (store, state, hot) {
 这里的 `computed` 就是处理后的用户定义的 `getters`。
 而 `class Store`上的一些函数（API）主要都是围绕修改`vm.$store._vm._data.$$state`和`computed(getter)`服务的。
 
-## Vue.use 安装
+## 3. Vue.use 安装
 
 笔者画了一张图表示下`Vuex`对象，是`Vue`的一个插件。
 
@@ -196,7 +198,7 @@ function initUse (Vue) {
 }
 ```
 
-### install 函数
+### 3.1 install 函数
 
 `vuex/src/store.js`
 
@@ -214,7 +216,7 @@ export function install (_Vue) {
 
 接下来看 `applyMixin` 函数
 
-### applyMixin 函数
+### 3.2 applyMixin 函数
 
 `vuex/src/mixin.js`
 
@@ -266,7 +268,7 @@ console.log('vm.$store === vm.$children[0].$children[1].$store', vm.$store === v
 // true
 ```
 
-## Vuex.Store 构造函数
+## 4. Vuex.Store 构造函数
 
 先看最终 `new Vuex.Store` 之后的 `Store` 实例对象关系图：先大致有个印象。
 ![new Vuex.Store之后的 Store 实例对象关系图](./images/vuex-store.instance.png)
@@ -416,7 +418,7 @@ resetStoreVM(this, state)
 
 阅读时可以断点调试，赋值语句`this._modules = new ModuleCollection(options)`，如果暂时不想看，可以直接看返回结果。`installModule`，`resetStoreVM`函数则可以断点调试。
 
-### class ModuleCollection
+### 4.1 class ModuleCollection
 
 收集模块，构造模块树结构。
 >注册根模块 参数 `rawRootModule` 也就是 `Vuex.Store` 的 `options` 参数<br>
@@ -462,7 +464,7 @@ register (path, rawModule, runtime = true) {
 }
 ```
 
-#### class Module
+#### 4.1.1 class Module
 
 ```js
 // Base data struct for store's module, package with some attribute and method
@@ -494,7 +496,7 @@ export default class Module {
 
 ![ModuleCollection](./images/vuex-store-module-collection-instance.png)
 
-### installModule 函数
+### 4.2 installModule 函数
 
 ```js
 function installModule (store, rootState, path, module, hot) {
@@ -511,7 +513,7 @@ function installModule (store, rootState, path, module, hot) {
 }
 ```
 
-#### 注册 state
+#### 4.2.1 注册 state
 
 ```js
 // set state
@@ -553,7 +555,7 @@ const local = module.context = makeLocalContext(store, namespace, path)
 >生成本地的dispatch、commit、getters和state。<br>
 >主要作用就是抹平差异化，不需要用户再传模块参数。<br>
 
-#### 遍历注册 mutation
+#### 4.2.2 遍历注册 mutation
 
 ```js
 module.forEachMutation((mutation, key) => {
@@ -588,7 +590,7 @@ function registerMutation (store, type, handler, local) {
 }
 ```
 
-#### 遍历注册 action
+#### 4.2.3 遍历注册 action
 
 ```js
 module.forEachAction((action, key) => {
@@ -655,7 +657,7 @@ function registerAction (store, type, handler, local) {
 }
 ```
 
-#### 遍历注册 getter
+#### 4.2.4 遍历注册 getter
 
 ```js
 module.forEachGetter((getter, key) => {
@@ -701,7 +703,7 @@ function registerGetter (store, type, rawGetter, local) {
 }
 ```
 
-#### 遍历注册 子模块
+#### 4.2.5 遍历注册 子模块
 
 ```js
 module.forEachChild((child, key) => {
@@ -709,7 +711,7 @@ module.forEachChild((child, key) => {
 })
 ```
 
-### resetStoreVM 函数
+### 4.3 resetStoreVM 函数
 
 `resetStoreVM(this, state, hot)`<br>
 >初始化 `store._vm` 响应式的<br>
@@ -799,11 +801,11 @@ function resetStoreVM (store, state, hot) {
 
 到此，构造函数源代码看完了，接下来看 `Vuex.Store` 的 一些 `API` 实现。
 
-## Vuex.Store 实例方法
+## 5. Vuex.Store 实例方法
 
 [Vuex API 文档](https://vuex.vuejs.org/zh/api/)
 
-### commit
+### 5.1 commit
 
 提交 `mutation`。
 
@@ -849,7 +851,7 @@ store.commit({
 
 `unifyObjectStyle`函数将参数统一，返回 `{ type, payload, options }`。
 
-### dispatch
+### 5.2 dispatch
 
 分发 `action`。
 
@@ -898,7 +900,7 @@ dispatch (_type, _payload) {
 }
 ```
 
-### replaceState
+### 5.3 replaceState
 
 替换 `store` 的根状态，仅用状态合并或时光旅行调试。
 
@@ -910,7 +912,7 @@ replaceState (state) {
 }
 ```
 
-### watch
+### 5.4 watch
 
 响应式地侦听 fn 的返回值，当值改变时调用回调函数。
 
@@ -929,7 +931,7 @@ watch (getter, cb, options) {
 }
 ```
 
-### subscribe
+### 5.5 subscribe
 
 订阅 `store` 的 `mutation`。
 
@@ -954,7 +956,7 @@ function genericSubscribe (fn, subs) {
 }
 ```
 
-### subscribeAction
+### 5.6 subscribeAction
 
 订阅 `store` 的 `action`。
 
@@ -965,7 +967,7 @@ subscribeAction (fn) {
 }
 ```
 
-### registerModule
+### 5.7 registerModule
 
 注册一个动态模块。
 
@@ -992,7 +994,7 @@ registerModule (path, rawModule, options = {}) {
 }
 ```
 
-### unregisterModule
+### 5.8 unregisterModule
 
 卸载一个动态模块。
 
@@ -1019,7 +1021,7 @@ unregisterModule (path) {
 }
 ```
 
-### hotUpdate
+### 5.9 hotUpdate
 
 热替换新的 `action` 和 `mutation`。
 
@@ -1033,11 +1035,11 @@ hotUpdate (newOptions) {
 }
 ```
 
-## 组件绑定的辅助函数
+## 6. 组件绑定的辅助函数
 
 文件路径：[`vuex/src/helpers.js`](https://github.com/lxchuan12/vuex-analysis/blob/master/vuex/src/helpers.js)
 
-### mapState
+### 6.1 mapState
 
 为组件创建计算属性以返回 `Vuex store` 中的状态。
 
@@ -1184,7 +1186,7 @@ computed: {
 }
 ```
 
-### mapGetters
+### 6.2 mapGetters
 
 为组件创建计算属性以返回 `getter` 的返回值。
 
@@ -1229,7 +1231,7 @@ computed: {
 }
 ```
 
-### mapActions
+### 6.3 mapActions
 
 创建组件方法分发 `action`。
 
@@ -1257,7 +1259,7 @@ export const mapActions = normalizeNamespace((namespace, actions) => {
 })
 ```
 
-### mapMutations
+### 6.4 mapMutations
 
 创建组件方法提交 `mutation`。
 mapMutations 和 mapActions 类似，只是 dispatch 换成了 commit。
@@ -1308,7 +1310,7 @@ return typeof val === 'function'
 
 由此可见：这些辅助函数极大地方便了开发者。
 
-### createNamespacedHelpers
+### 6.5 createNamespacedHelpers
 
 创建基于命名空间的组件绑定辅助函数。
 
@@ -1324,7 +1326,7 @@ export const createNamespacedHelpers = (namespace) => ({
 
 就是把这些辅助函数放在一个对象中。
 
-## 插件
+## 7. 插件
 
 插件部分文件路径是：<br>
 `vuex/src/plugins/devtool`<br>
@@ -1332,7 +1334,7 @@ export const createNamespacedHelpers = (namespace) => ({
 
 文章比较长了，这部分就不再叙述。具体可以看笔者的仓库 [vuex-analysis `vuex/src/plugins/`](https://github.com/lxchuan12/vuex-analysis/blob/master/vuex/src/plugins/logger.js) 的源码注释。
 
-## 总结
+## 8. 总结
 
 文章比较详细的介绍了`vuex`、`vue`源码调试方法和 `Vuex` 原理。并且详细介绍了 `Vuex.use` 安装和 `new Vuex.Store` 初始化、`Vuex.Store` 的全部`API`（如`dispatch`、`commit`等）的实现和辅助函数 `mapState`、`mapGetters`、 `mapActions`、`mapMutations`
 `createNamespacedHelpers`。
@@ -1349,7 +1351,7 @@ git clone https://github.com/lxchuan12/vuex-analysis.git
 
 如果读者发现有不妥或可改善之处，再或者哪里没写明白的地方，欢迎评论指出。另外觉得写得不错，对您有些许帮助，可以点赞、评论、转发分享，也是对笔者的一种支持，万分感谢。
 
-## 推荐阅读
+## 9. 推荐阅读
 
 [vuex 官方文档](https://vuex.vuejs.org/zh/)<br>
 [vuex github 仓库](https://github.com/vuejs/vuex)<br>
@@ -1373,7 +1375,7 @@ git clone https://github.com/lxchuan12/vuex-analysis.git
 
 作者：常以**若川**为名混迹于江湖。前端路上 | PPT爱好者 | 所知甚少，唯善学。<br>
 [个人博客-若川](https://lxchuan12.gitee.io)，使用`vuepress`重构了，阅读体验可能更好些<br>
-[掘金专栏](https://juejin.im/user/1415826704971918/posts)，欢迎关注~<br>
+[掘金专栏](https://juejin.im/user/57974dc55bbb500063f522fd/posts)，欢迎关注~<br>
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，欢迎关注~<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，欢迎关注~<br>
 [语雀前端视野专栏](https://www.yuque.com/lxchuan12/blog)，新增语雀专栏，欢迎关注~<br>
@@ -1383,4 +1385,4 @@ git clone https://github.com/lxchuan12/vuex-analysis.git
 
 可能比较有趣的微信公众号，长按扫码关注（**回复pdf获取前端优质书籍pdf**）。也可以加微信 `ruochuan12`，注明来源，拉您进【前端视野交流群】。
 
-![若川视野](../about/wechat-official-accounts-mini.png)
+![若川视野](https://github.com/lxchuan12/blog/raw/master/docs/about/wechat-official-accounts-mini.jpg)
