@@ -103,7 +103,7 @@ console.log(part3); // [3, 2, 1]
 并将例子代入这段代码可得（怎么有种高中做数学题的既视感^_^）：
 
 ```js
-_.chain([1,2,3]).reverse().value()s
+_.chain([1,2,3]).reverse().value()
 ```
 
 ```js
@@ -200,7 +200,7 @@ _.mixin = function(obj) {
 		//	var instance = _(obj);
 		//	instance._chain = true;
 		//	return instance;
-		};
+		// };
 		return chainResult(this, func.apply(_, args));
 	};
 	});
