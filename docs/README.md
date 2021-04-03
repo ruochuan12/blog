@@ -1,5 +1,6 @@
 ##  若川诚邀你加群，长期交流学习
-你好，我是**若川**。微信搜索「若川视野」<img src="./about/wechat-mini.jpg"  width="120px" height="120px" title="我的公众号若川视野，值得你关注" alt="我的公众号若川视野，值得你关注"/>关注我，长期交流学习。江西人，某不那么知名的陶瓷大学毕业生，目前在`杭州`从事`前端开发`工作。常以**若川**为名混迹于江湖。更详细的可以点击[关于我](../about/)<br>
+
+你好，我是[**若川**](https://mp.weixin.qq.com/s/c3hFML3XN9KCUetDOZd-DQ)。微信搜索「若川视野」<img src="./about/wechat-mini.jpg"  width="120px" height="120px" title="我的公众号若川视野，值得你关注" alt="我的公众号若川视野，值得你关注"/>关注我，专注前端技术分享。欢迎加我微信`ruochuan12`，加群交流学习。江西人，某不那么知名的陶瓷大学毕业生，目前在`杭州`从事`前端开发`工作。常以**若川**为名混迹于江湖。更详细的可以点击[关于我](../about/)<br>
 我历时一年才写了《**学习源码整体架构系列**》八篇文章，包含[jQuery](../jquery)、[underscore](../underscore)、[lodash](../lodash)、[sentry](../sentry)、[vuex](../vuex)、[axios](../axios)、[koa](../koa)、[redux](../redux)源码，详细的写了我是如何看源码的，并且绘制了大量的关系图和原理图，应该算是比较好的**学习源码**的文章。[更多可参考我的这篇知乎回答：有哪些必看的js库？](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650746362&idx=1&sn=afe3a26cdbde1d423aae4fa99355f369&chksm=88662e76bf11a760a7f0a8565b9e8d52f5e4f056dc2682f213eec6475127d71f6f1d203d6c3a&token=1233343990&lang=zh_CN#rd)
 
 > 我的博客地址：[https://lxchuan12.gitee.io](../)，**建议加个书签**，也可以百度搜索[**若川**](https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&tn=SE_Pclogo_6ysd4c7a&wd=%E8%8B%A5%E5%B7%9D&oq=%25E4%25BB%258A%25E6%2597%25A5%25E6%2596%25B0%25E9%25B2%259C%25E4%25BA%258B&rsv_pq=d5d2506b003fe4bc&rsv_t=9f60noZ4n6uVgTXKStiYbZUcvyfAkfkMCTUyAQKh6Bb2Kvsfkhq%2FmkhNpAfcTyhz2cKYaBIMw73l&rqlang=cn&rsv_enter=1&rsv_dl=tb&rsv_sug3=1&rsv_sug2=0&rsv_btype=t&inputT=1388&rsv_sug4=1388)，找到我。
@@ -14,8 +15,6 @@
 [![github](https://img.shields.io/github/stars/lxchuan12/blog?label=Stars&style=flat-square&logo=GitHub)](https://github.com/lxchuan12/blog)
 
 我运营了公众号「若川视野」，关注回复「pdf」限时获取前端优质书籍pdf。**公众号经常更新，值得你关注学习，每天进步一点点**。
-
-欢迎加我微信`ruochuan12`，拉你进「若川视野前端交流群」，**长期交流学习，经常有福利**~
 
 ## 知乎高赞问答
 [若川知乎回答：做了两年前端开发，平时就是拿 Vue 写写页面和组件，简历的项目经历应该怎么写得好看？](https://www.zhihu.com/question/384048633/answer/1134746899)<br>
