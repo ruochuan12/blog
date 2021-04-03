@@ -1,8 +1,10 @@
 # 学习 koa 源码的整体架构，浅析koa洋葱模型原理和co原理
 
-## 前言
+## 1. 前言
 
->你好，我是[若川](https://lxchuan12.gitee.io)。这是`学习源码整体架构系列`第七篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是实际仓库的代码。
+>你好，我是[若川](https://lxchuan12.gitee.io)，微信搜索[「若川视野」](https://mp.weixin.qq.com/s/c3hFML3XN9KCUetDOZd-DQ)关注我，专注前端技术分享。欢迎加我微信`ruochuan12`，加群交流学习。
+
+>这是`学习源码整体架构系列`第七篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是实际仓库的代码。
 
 >[本文仓库地址](https://github.com/lxchuan12/koa-analysis.git)：`git clone https://github.com/lxchuan12/koa-analysis.git`
 
@@ -40,7 +42,7 @@
 
 本文仓库在这里[若川的 koa-analysis github 仓库 https://github.com/lxchuan12/koa-analysis](https://github.com/lxchuan12/koa-analysis)。求个`star`呀。
 
-## 本文阅读最佳方式
+## 2. 本文阅读最佳方式
 
 先`star`一下我的仓库，再把它`git clone https://github.com/lxchuan12/koa-analysis.git`克隆下来。不用管你是否用过`nodejs`。会一点点`promise、generator、async、await`等知识即可看懂。如果一点点也不会，可以边看阮一峰老师的[《ES6标准入门》](https://es6.ruanyifeng.com/#docs/generator)相关章节。**跟着文章节奏调试和示例代码调试，动手调试（用`vscode`或者`chrome`）印象更加深刻**。文章长段代码不用细看，可以调试时再细看。看这类源码文章百遍，可能不如自己多调试几遍。也欢迎加我微信交流`ruochuan12`。
 
@@ -63,7 +65,7 @@ hs koa/examples/
 - `koa-convert`文件夹是用来调试`koa-convert`和`co`源码的。<br>
 - `co-generator`文件夹是模拟实现`co`的示例代码。<br>
 
-## vscode 调试 koa 源码方法
+## 3. vscode 调试 koa 源码方法
 
 之前，我在知乎回答了一个问题[一年内的前端看不懂前端框架源码怎么办？](https://www.zhihu.com/question/350289336/answer/910970733)
 推荐了一些资料，阅读量还不错，大家有兴趣可以看看。主要有四点：<br>
@@ -103,7 +105,7 @@ git clone https://github.com/koajs/examples.git
 
 继续看文档会发现**使用指南**讲述`编写中间件`。
 
-### 使用文档中的中间件`koa-compose`例子来调试
+### 3.1 使用文档中的中间件`koa-compose`例子来调试
 
 学习 `koa-compose` 前，先看两张图。
 
@@ -174,7 +176,7 @@ git clone https://github.com/koajs/examples.git
 喜欢看视频的读者也可以看慕课网这个视频[node.js调试入门](https://www.imooc.com/learn/1093)，讲得还是比较详细的。<br>
 不过我感觉在`chrome`调试`nodejs`项目体验不是很好（可能是我方式不对），所以我大部分具体的代码时都放在`html`文件`script`形式，在`chrome`调试了。
 
-## 先看看 `new Koa()` 结果`app`是什么
+## 4. 先看看 `new Koa()` 结果`app`是什么
 
 看源码我习惯性看**它的实例对象结构**，一般所有属性和方法都放在实例对象上了，而且会通过原型链查找形式查找最顶端的属性和方法。
 
@@ -213,13 +215,13 @@ app.use(async (ctx, next) => {
 
 接着，我们可以看下`app 实例、context、request、request`的官方文档。
 
-### app 实例、context、request、request 官方API文档
+### 4.1 app 实例、context、request、request 官方API文档
 
 - [index API](https://github.com/demopark/koa-docs-Zh-CN/blob/master/api/index.md) | [context API](https://github.com/demopark/koa-docs-Zh-CN/blob/master/api/context.md) | [request API](https://github.com/demopark/koa-docs-Zh-CN/blob/master/api/request.md) | [response API](https://github.com/demopark/koa-docs-Zh-CN/blob/master/api/response.md)
 
 可以真正使用的时候再去仔细看文档。
 
-## koa 主流程梳理简化
+## 5. koa 主流程梳理简化
 
 通过`F5启动调试（直接跳到下一个断点处）`、`F10单步跳过`、`F11单步调试`等，配合重要的地方断点，调试完整体代码，其实比较容易整理出如下主流程的代码。
 
@@ -265,7 +267,7 @@ function respond(ctx){
 
 重点就在`listen`函数里的`compose`这个函数，接下来我们就详细来**欣赏**下这个函数。
 
-## koa-compose 源码（洋葱模型实现）
+## 6. koa-compose 源码（洋葱模型实现）
 
 通过`app.use()` 添加了若干函数，但是要把它们串起来执行呀。像上文的`gif`图一样。
 
@@ -345,7 +347,7 @@ fnMiddleware(ctx).then(handleResponse).catch(onerror);
 
 搞懂了`koa-compose` 洋葱模型实现的代码，其他代码就不在话下了。
 
-## 错误处理
+## 7. 错误处理
 
 [中文文档 错误处理](https://github.com/demopark/koa-docs-Zh-CN/blob/master/error-handling.md)
 
@@ -403,7 +405,7 @@ app.use(async (ctx, next) => {
 而`ctx.onerror`函数中又调用了`this.app.emit('error', err, this)`，所以在最外围`app.on('error'，err => {})`可以捕获中间件链中的错误。
 因为`koa`继承自`events模块`，所以有'emit'和`on`等方法）
 
-## koa2 和 koa1 的简单对比
+## 8. koa2 和 koa1 的简单对比
 
 [中文文档中描述了 koa2 和 koa1 的区别](https://github.com/demopark/koa-docs-Zh-CN/blob/master/migration.md)
 
@@ -419,7 +421,7 @@ app.use(function *(next) {
 });
 ```
 
-### koa-convert 源码
+### 8.1 koa-convert 源码
 
 在`vscode/launch.json`文件，找到这个`program`字段，修改为`"program": "${workspaceFolder}/koa/examples/koa-convert/app.js"`。
 
@@ -459,7 +461,7 @@ function convert(){
 
 最后还是通过`co`来转换的。所以接下来看`co`的源码。
 
-### co 源码
+### 8.2 co 源码
 
 [tj大神写的co 仓库](https://github.com/tj/co)
 
@@ -503,7 +505,7 @@ asyncFunc(); // 输出结果
 
 也就是说`co`需要做的事情，是让`generator`向`async、await`函数一样自动执行。
 
-### 模拟实现简版 co（第一版）
+### 8.3 模拟实现简版 co（第一版）
 
 这时，我们来模拟实现第一版的`co`。根据`generator`的特性，其实容易写出如下代码。
 
@@ -529,7 +531,7 @@ coSimple(generatorFunc);
 // {name: "若川"}"generatorFunc-res"
 ```
 
-### 模拟实现简版 co（第二版）
+### 8.4 模拟实现简版 co（第二版）
 
 但是实际上，不会上面那么简单的。有可能是多个`yield`和传参数的情况。
 传参可以通过这如下两行代码来解决。
@@ -571,7 +573,7 @@ function coSimple(gen){
 coSimple(generatorFunc, ' 哎呀，我真的是后缀');
 ```
 
-### 模拟实现简版 co（第三版）
+### 8.5 模拟实现简版 co（第三版）
 
 问题是肯定不止两次，无限次的`yield`的呢，这时肯定要把重复的封装起来。而且返回是`promise`，这就实现了如下版本的代码。
 
@@ -618,7 +620,7 @@ coSimple(generatorFunc, ' 哎呀，我真的是后缀');
 
 但第三版的模拟实现简版`co`中，还没有考虑报错和一些参数合法的情况。
 
-### 最终来看下`co`源码
+### 8.6 最终来看下`co`源码
 
 这时来看看`co`的源码，报错和错误的情况，错误时调用`reject`，是不是就好理解了一些呢。
 
@@ -695,13 +697,13 @@ function co(gen) {
 }
 ```
 
-## koa 和 express 简单对比
+## 9. koa 和 express 简单对比
 
 [中文文档 koa 和 express 对比](https://github.com/demopark/koa-docs-Zh-CN/blob/master/koa-vs-express.md)
 
 文档里写的挺全面的。简单来说`koa2`语法更先进，更容易深度定制（`egg.js`、`think.js`、底层框架都是`koa`）。
 
-## 总结
+## 10. 总结
 
 文章通过`授人予鱼不如授人予鱼`的方式，告知如何调试源码，看完了`koa-compose`洋葱模型实现，`koa-convert`和`co`等源码。
 
@@ -723,7 +725,7 @@ git clone https://github.com/lxchuan12/koa-analysis.git
 
 >如果读者发现有不妥或可改善之处，再或者哪里没写明白的地方，欢迎评论指出，也欢迎加我微信交流`ruochuan12`。另外觉得写得不错，对您有些许帮助，可以点赞、评论、转发分享，也是对笔者的一种支持，万分感谢。
 
-### 解答下开头的提问
+### 10.1 解答下开头的提问
 
 仅供参考
 
@@ -782,7 +784,7 @@ ctx.onerror = function {
 
 答完，面试官可能觉得小伙子还是蛮懂`koa`的啊。当然也可能继续追问，直到答不出...
 
-### 还能做些什么 ？
+### 10.2 还能做些什么 ？
 
 学完了整体流程，`koa-compose`、`koa-convert`和`co`的源码。
 
@@ -800,7 +802,7 @@ ctx.onerror = function {
 
 学无止境~~~
 
-## 推荐阅读
+## 11. 推荐阅读
 
 [koa 官网](https://koajs.com/) | [koa 仓库](https://github.com/koajs/koa) | [koa 组织](https://github.com/koajs) | [koa2 中文文档](https://github.com/demopark/koa-docs-Zh-CN) | [co 仓库](https://github.com/tj/co)<br>
 [知乎@姚大帅：可能是目前市面上比较有诚意的Koa2源码解读](https://zhuanlan.zhihu.com/p/34797505)<br>
@@ -822,7 +824,7 @@ ctx.onerror = function {
 
 作者：常以**若川**为名混迹于江湖。前端路上 | PPT爱好者 | 所知甚少，唯善学。<br>
 [若川的博客](https://lxchuan12.gitee.io)，使用`vuepress`重构了，阅读体验可能更好些<br>
-[掘金专栏](https://juejin.im/user/1415826704971918/posts)，欢迎关注~<br>
+[掘金专栏](https://juejin.cn/user/1415826704971918/posts)，欢迎关注~<br>
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，欢迎关注~<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，欢迎关注~<br>
 [语雀前端视野专栏](https://www.yuque.com/lxchuan12/blog)，新增语雀专栏，欢迎关注~<br>
@@ -832,4 +834,4 @@ ctx.onerror = function {
 
 可能比较有趣的微信公众号，长按扫码关注（**回复pdf获取前端优质书籍pdf**）。欢迎加我微信`ruochuan12`（注明来源，基本来者不拒），拉您进【前端视野交流群】，长期交流学习~
 
-![若川视野](../about/wechat-official-accounts-mini.png)
+![若川视野](https://github.com/lxchuan12/blog/raw/master/docs/about/wechat-official-accounts-mini.jpg)
