@@ -6,7 +6,7 @@
 
 >这是`学习源码整体架构`第五篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是实际仓库的代码。
 
-->[本文仓库地址](https://github.com/lxchuan12/vuex-analysis.git)：`git clone https://github.com/lxchuan12/vuex-analysis.git`
+>[本文仓库地址](https://github.com/lxchuan12/vuex-analysis.git)：`git clone https://github.com/lxchuan12/vuex-analysis.git`
 
 >**要是有人说到怎么读源码，正在读文章的你能推荐我的源码系列文章，那真是太好了**。
 
