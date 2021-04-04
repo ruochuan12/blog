@@ -2,6 +2,8 @@
 
 >`写于2018-04-21 20:08:26`
 
+>你好，我是[若川](https://lxchuan12.gitee.io)，微信搜索[「若川视野」](https://mp.weixin.qq.com/s/c3hFML3XN9KCUetDOZd-DQ)关注我，专注前端技术分享。欢迎加我微信`ruochuan12`，加群交流学习。
+
 从2016年毕业在杭州工作以来，就比较热衷于参与杭州各类线下技术分享类活动。
 之前参加过网易云课堂学习节、拉勾网理想之上、[coding.net](https://coding.net/) 技术小馆、阿里`D2`两次、阿里`work like alibaba`沙龙、`freeCodeCamp`线下分享等...自己也参与到**`freeCodeCamp`(简称`FCC`)**，[点击访问freeCodeCamp](https://freecodecamp.cn/)，**杭州线下分享活动的组织中**。
 

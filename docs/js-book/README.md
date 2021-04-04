@@ -2,6 +2,8 @@
 
 >`写于2017年07月23日`
 
+>你好，我是[若川](https://lxchuan12.gitee.io)，微信搜索[「若川视野」](https://mp.weixin.qq.com/s/c3hFML3XN9KCUetDOZd-DQ)关注我，专注前端技术分享。欢迎加我微信`ruochuan12`，加群交流学习。
+
 > 之前看到这篇文章，[前端网老姚浅谈：怎么学JavaScript？](https://zhuanlan.zhihu.com/p/23265155?refer=dreawer)，说到怎么学习JavaScript，那就是**看书、分析源码。**
 >**10本书读2遍的好处，应该大于一本书读20遍。**
 >**看书主动学习，看视频是被动学习。**

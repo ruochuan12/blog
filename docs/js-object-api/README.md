@@ -1,5 +1,7 @@
 # JavaScript 对象所有API解析【2020版】
 
+>你好，我是[若川](https://lxchuan12.gitee.io)，微信搜索[「若川视野」](https://mp.weixin.qq.com/s/c3hFML3XN9KCUetDOZd-DQ)关注我，专注前端技术分享。欢迎加我微信`ruochuan12`，加群交流学习。
+
 >`写于 2017年08月20日`，虽然是2017年写的文章，但现在即将`2020年`依旧不过时，现在补充了`2019年`新增的`ES10` `Object.fromEntries()`。
 
 近日发现有挺多人对对象基础`API`不熟悉，举个开发中常见的需求，经常会有类似的封装`http`到原型`Vue.prototype`，一般人是这样封装的，但容易被篡改。

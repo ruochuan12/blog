@@ -2,6 +2,7 @@
 
 >`写于2018年08月29日`
 
+>你好，我是[若川](https://lxchuan12.gitee.io)，微信搜索[「若川视野」](https://mp.weixin.qq.com/s/c3hFML3XN9KCUetDOZd-DQ)关注我，专注前端技术分享。欢迎加我微信`ruochuan12`，加群交流学习。
 ## 1、`puppeteer` 是什么？
 
 `puppeteer`: `Google` 官方出品的 `headless` `Chrome` `node` 库<br/>

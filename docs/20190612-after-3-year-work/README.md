@@ -2,6 +2,8 @@
 
 写于`2019-06-12 23:44:27`
 
+>你好，我是[若川](https://lxchuan12.gitee.io)，微信搜索[「若川视野」](https://mp.weixin.qq.com/s/c3hFML3XN9KCUetDOZd-DQ)关注我，专注前端技术分享。欢迎加我微信`ruochuan12`，加群交流学习。
+
 >这是一篇写在我的微信公众号【若川视野】的文章，现在同步发布在博客。 [高考七年后、工作三年后的感悟](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650744481&idx=1&sn=8a9599fe22d7b89afd65d1e72763be34&chksm=8866252dbf11ac3b6e39848004dc58950a96140be9ac83158a4c2e166d0ef41b6d0febe94507&token=666904113&lang=zh_CN#rd)
 
 以下是正文：
