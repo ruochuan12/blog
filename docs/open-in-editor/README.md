@@ -2,7 +2,7 @@
 theme: smartblue
 highlight: dracula
 ---
-# 学习 launch-editor 源码整体架构，探究 vue-devtools「在编辑器中打开组件」功能实现原理
+# 据说 99% 的人不知道 vue-devtools 还能直接打开对应组件文件？本文原理揭秘
 
 ## 1. 前言
 >你好，我是[若川](https://lxchuan12.gitee.io)，微信搜索[「若川视野」](https://mp.weixin.qq.com/s/c3hFML3XN9KCUetDOZd-DQ)关注我，专注前端技术分享，一个愿景是帮助5年内前端开阔视野走向前列的公众号。欢迎加我微信`ruochuan12`，长期交流学习。
@@ -18,7 +18,7 @@ highlight: dracula
 阅读本文后你将学到：
 1. 如何解决该功能报错问题<br>
 2. 如何调试学习源码<br>
-3. `launch-editor` 等实现原理<br>
+3. `launch-editor-middleware、launch-editor` 等实现原理<br>
 
 ### 1.1 短时间找不到页面对应源文件的场景
 
@@ -30,7 +30,7 @@ highlight: dracula
 
 ![open-in-editor](./images/open-src-app.vue.png)
 
-你也许会问，我不用`vue`，我用`react`有没有类似功能啊，有啊，请看[react-dev-inspector](https://github.com/zthxxx/react-dev-inspector)。
+你也许会问，我不用`vue`，我用`react`有没有类似功能啊，有啊，请看[react-dev-inspector](https://github.com/zthxxx/react-dev-inspector)。你可能还会问，支持哪些编辑器呀，主流的 `vscode、webstorm、atom、sublime` 等都支持，更多可以看[这个列表 Supported editors](https://github.com/yyx990803/launch-editor#supported-editors)。
 
 本文就是根据学习尤大写的 [launch-editor](https://github.com/yyx990803/launch-editor) 源码，本着**知其然，知其所以然**的宗旨，探究 `vue-devtools`「在编辑器中打开组件」功能实现原理。
 
@@ -281,8 +281,12 @@ function launchEditor (file, specifiedEditor, onErrorCallback) {
 onErrorCallback = wrapErrorCallback(onErrorCallback)
 ```
 
-这段的代码，我相信读者朋友能看懂，我单独拿出来讲述，主要是因为**这种包裹函数的形式在很多源码里都很常见**。
+这段的代码，就是传递错误回调函数，`wrapErrorCallback` 返回给一个新的函数，`wrapErrorCallback` 执行时，再去执行 onErrorCallback(cb)。
+
+我相信读者朋友能看懂，我单独拿出来讲述，主要是因为**这种包裹函数的形式在很多源码里都很常见**。
+
 这里也就是文章开头终端错误图`Could not open App.vue in the editor.`输出的代码位置。
+
 
 ```js
 // vue3-project/node_modules/launch-editor/index.js
@@ -456,6 +460,12 @@ code path/to/file
 可以再看看 [umijs/launch-editor](https://github.com/umijs/launch-editor) 和 [react-dev-utils/launchEditor.js](https://github.com/facebook/create-react-app/blob/master/packages/react-dev-utils/launchEditor.js) 。他们的代码几乎类似。
 
 也可以利用`Node.js`做一些提高开发效率等工作，同时可以学习`child_process`等模块。
+
+**也不要禁锢自己的思维，把前端禁锢在页面中，应该把视野拓宽**。
+
+**`Node.js`是我们前端人探索操作文件、操作网络等的好工具**。
+
+>如果读者朋友发现有不妥或可改善之处，再或者哪里没写明白的地方，欢迎评论指出。另外觉得写得不错，对您有些许帮助，可以点赞、评论、转发分享，也是对我的一种支持，万分感谢。如果能关注我的前端公众号：[「若川视野」](https://mp.weixin.qq.com/s/c3hFML3XN9KCUetDOZd-DQ)，就更好啦。
 
 ## 关于
 
