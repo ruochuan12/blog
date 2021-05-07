@@ -54,16 +54,39 @@ To specify an editor, specify the EDITOR env variable or add "editor" field to y
 
 ![控制台不能打开编辑器的错误提示](./images/open-in-editor-error.png)
 
->这里说明下写这篇文章时用的是 `Windows` 电脑，在`Ubuntu`子系统下使用的终端工具。同时推荐我的文章[使用 ohmyzsh 打造 windows、ubuntu、mac 系统高效终端命令行工具](https://mp.weixin.qq.com/s/MHngeDABRV3z2HmN5DRrEw)，**用过的都说好**。
+>这里说明下写这篇文章时用的是 `Windows` 电脑，`VSCode` 编辑器，在`Ubuntu`子系统下使用的终端工具。同时推荐我的文章[使用 ohmyzsh 打造 windows、ubuntu、mac 系统高效终端命令行工具](https://mp.weixin.qq.com/s/MHngeDABRV3z2HmN5DRrEw)，**用过的都说好**。
 
-**解决办法也简单，就是这句英文的意思**。具体说明编辑器，在环境变量中说明指定编辑器。在`vue`项目的根目录下，对应本文则是：`vue3-project`，添加`.env.delelopment`文件，其内容是`EDITOR=code`。
+**解决办法也简单，就是这句英文的意思**。
+
+#### 1.3.1 方法一：先确保在终端能用命令打开你使用的编辑器，文中以`VSCode`为例
+
+如果你的命令行本身就不能运行`code`等命令打开编辑器，那肯定是报错的。这时需要把`VSCode`注入到命令行终端中。
+注入方法也简单。我的交流群里有小伙伴提供了`mac`电脑的截图。
+
+`mac` 电脑在 `VSCode` `command + shift + p`，`Windows` 则是 `ctrl + shift + p`。然后输入`shell`，选择安装`code`。如下图：
+
+[Install 'code' command in PATH](./images/path-install-code.png)
+
+这样就能在终端中打开`VSCode`的了。
+
+如果能在终端打开使用命令编辑器能打开，但实际上还是报错，那么大概率是没有识别到你的编辑器。
+那么可以通过方法二设置指定编辑器。
+
+#### 1.3.2 方法二：具体说明编辑器，在环境变量中说明指定编辑器
+
+在`vue`项目的根目录下，对应本文则是：`vue3-project`，添加`.env.delelopment`文件，其内容是`EDITOR=code`。**这里重点说明下，我的 `vue-cli` 版本是`4.5.12`，好像在`vue-cli 3.5`及以上版本才支持自定义`EDITOR`这样的环境变量**。
+
 ```sh
 # .env.development
 # 当然，我的命令行终端已经有了code这个命令。
 EDITOR=code
 ```
 
-不用指定编辑器的对应路径（`c/Users/lxchu/AppData/Local/Programs/Microsoft VS Code/bin/code`），因为会报错。为什么会报错，因为我看了源码且试过。因为会被根据空格截断，变成`c/Users/lxchu/AppData/Local/Programs/Microsoft`，当然就报错了。
+>不用指定编辑器的对应路径（`c/Users/lxchu/AppData/Local/Programs/Microsoft VS Code/bin/code`），因为会报错。为什么会报错，因为我看了源码且试过。因为会被根据空格截断，变成`c/Users/lxchu/AppData/Local/Programs/Microsoft`，当然就报错了。
+
+也有可能你的编辑器路径有中文路径导致报错，可以在环境变量中添加你的编辑器路径。
+
+**如果你通过以上方法，还没解决报错问题。欢迎留言，或者加我微信 `ruochuan12` 交流。毕竟电脑环境不一，很难保证所有人都能正常执行，但我们知道了其原理，就很容易解决问题**。
 
 接下来我们从源码角度探究「在编辑器中打开组件」功能的实现原理。
 
