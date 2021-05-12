@@ -352,6 +352,7 @@ if (!editor) {
 ```js
 // vue3-project/node_modules/launch-editor/guess.js
 const shellQuote = require('shell-quote')
+const childProcess = require('child_process')
 
 module.exports = function guessEditor (specifiedEditor) {
   // 如果指定了编辑器，则解析一下，这里没有传入。如果自己指定了路径。
@@ -364,7 +365,22 @@ module.exports = function guessEditor (specifiedEditor) {
   // `ps x` on macOS and Linux
   // `Get-Process` on Windows
   try {
-    //  省略...
+    //  代码有删减
+    if (process.platform === 'darwin') {
+      const output = childProcess.execSync('ps x').toString()
+      // 省略
+    } else if (process.platform === 'win32') {
+      const output = childProcess
+        .execSync('powershell -Command "Get-Process | Select-Object Path"', {
+          stdio: ['pipe', 'pipe', 'ignore']
+        })
+        .toString()
+        // 省略
+    } else if (process.platform === 'linux') {
+      const output = childProcess
+        .execSync('ps x --no-heading -o comm --sort=comm')
+        .toString()
+    }
   } catch (error) {
     // Ignore...
   }
@@ -461,7 +477,7 @@ if (process.platform === 'win32') {
 }
 ```
 
-行文至此，就基本接近尾声了。
+行文至此，就基本接近尾声了。原理其实就是利用`nodejs`中的`child_process`，执行了类似`code path/to/file`命令。
 
 ## 7. 总结
 
