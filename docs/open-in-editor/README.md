@@ -175,6 +175,10 @@ code -v
 
 这时就搜到了`vue3-project/node_modules/@vue/cli-service/lib/commands/serve.js`中有使用这个中间件。
 
+如下图所示：
+
+![搜索node_modules下的文件 - launch-editor-middleware 中间件](./images/search.png)
+
 ## 4. vue-devtools 开箱即用具体源码实现
 
 接着我们来看`Vue CLI 3`中**开箱即用**具体源码实现。
