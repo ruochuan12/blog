@@ -2,7 +2,6 @@
 theme: smartblue
 highlight: dracula
 ---
-# 学习 Vuex 4 源码整体架构，深入理解其原理及provide/inject原理
 # 看了 vuex4 源码后，vuex4 和 provide/inject 原来就是妙用了原型链？
 
 ## 1. 前言
