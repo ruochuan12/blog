@@ -2,7 +2,7 @@
 theme: smartblue
 highlight: dracula
 ---
-# 看了 vuex4 源码后，vuex4 和 provide/inject 原来就是妙用了原型链？
+# 一文读懂vuex4源码，原来provide/inject就是妙用了原型链？
 
 ## 1. 前言
 
@@ -109,11 +109,6 @@ store.dispatch('我被修改了');
 4、为什么每个组件对象里都有`Store`实例对象了(渲染组件对象过程)。
 
 5、为什么在组件中写的`provide`提供的数据，能被子级组件获取到。
-
-TODO:
-那么每个组件如何获取组件实例中的`Store`实例，`composition API`中本质上则是使用`inject`函数。
-
-全局的`Store` 实例对象。通过`Vue.reactive()`监测数据。
 
 ## 3. Vuex 4 重大改变
 
@@ -644,7 +639,7 @@ mount(rootContainer, isHydrate) {
 
 这时，也有一个讨巧的方法，在`runtime-core.esm-bundler.js`文件中，搜索 `provide(`可以搜到如下代码：
 
-这段代码其实看起来很复杂的样式，实际上主要就是把用户在组件中写的`provides`对象或者函数返回值遍历, 生成类似这样的实例对象：
+这段代码其实看起来很复杂的样子，实际上主要就是把用户在组件中写的`provides`对象或者函数返回值遍历, 生成类似这样的实例对象：
 
 ```js
 // 当前组件实例
