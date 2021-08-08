@@ -215,7 +215,7 @@ actions: {
 
 好啦，文章到这里就基本写完啦~相对简短一些。应该也比较好理解。
 
-## 最后再总结下 this 指向
+## 5. 最后再总结下 this 指向
 摘抄下[面试官问：this 指向](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650744695&idx=1&sn=63c761b9129c3c55ad7a2c21ddb4d82b&chksm=886624fbbf11aded9c57e7846c98961848cee7871f5e10bac3bdb949e9135fbc2095ae677102&token=1471663946&lang=zh_CN&scene=21#wechat_redirect)文章结尾。
 
 如果要判断一个运行中函数的 `this` 绑定， 就需要找到这个函数的直接调用位置。 找到之后
