@@ -218,6 +218,7 @@ module.exports = {
 				collapsable: true, // 可选的, 默认值是 true,
 				sidebarDepth: 2, // 可选的, 默认值是 1
 				children: [
+					"/vue-devtools/",
 					"/vuex4/",
 					"/open-in-editor/",
 					"/redux/",
