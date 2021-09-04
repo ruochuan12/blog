@@ -1,6 +1,6 @@
 ##  若川诚邀你加群，长期交流学习
 
-最近组织了[源码共读《1个月，200+人，一起读了4周源码》](https://link.zhihu.com/?target=https%3A//mp.weixin.qq.com/s%3F__biz%3DMzA5MjQwMzQyNw%3D%3D%26mid%3D2650756550%26idx%3D1%26sn%3D9acc5e30325963e455f53ec2f64c1fdd%26chksm%3D8866564abf11df5c41307dba3eb84e8e14de900e1b3500aaebe802aff05b0ba2c24e4690516b%26token%3D1266363653%26lang%3Dzh_CN%23rd)活动，感兴趣的可以加我微信 [ruochuan12](https://link.zhihu.com/?target=https%3A//mp.weixin.qq.com/s%3F__biz%3DMzA5MjQwMzQyNw%3D%3D%26mid%3D2650756550%26idx%3D1%26sn%3D9acc5e30325963e455f53ec2f64c1fdd%26chksm%3D8866564abf11df5c41307dba3eb84e8e14de900e1b3500aaebe802aff05b0ba2c24e4690516b%26token%3D1266363653%26lang%3Dzh_CN%23rd) 参与，长期交流学习。
+最近组织了[源码共读活动《1个月，200+人，一起读了4周源码》](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650756550&idx=1&sn=9acc5e30325963e455f53ec2f64c1fdd&chksm=8866564abf11df5c41307dba3eb84e8e14de900e1b3500aaebe802aff05b0ba2c24e4690516b&token=917686367&lang=zh_CN#rd)，感兴趣的可以加我微信 [ruochuan12](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650756550&idx=1&sn=9acc5e30325963e455f53ec2f64c1fdd&chksm=8866564abf11df5c41307dba3eb84e8e14de900e1b3500aaebe802aff05b0ba2c24e4690516b&token=917686367&lang=zh_CN#rd) 加微信群参与，长期交流学习。
 
 可能比较有趣的微信公众号，长按扫码关注（**回复pdf获取前端优质书籍pdf**）。欢迎加我微信`ruochuan12`（来者不拒），拉您进【前端视野交流群】，长期交流学习~
 
