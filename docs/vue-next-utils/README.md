@@ -2,7 +2,9 @@
 
 ## 1. 前言
 
-大家好，我是[若川](https://lxchuan12.gitee.io)。欢迎加我微信 `ruochuan12`，长期交流学习。
+大家好，我是[若川](https://lxchuan12.gitee.io)。欢迎关注我的[公众号若川视野](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/12/13/16efe57ddc7c9eb3~tplv-t2oaga2asx-image.image "https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/12/13/16efe57ddc7c9eb3~tplv-t2oaga2asx-image.image")，最近组织了[**源码共读活动**《1个月，200+人，一起读了4周源码》](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650756550&idx=1&sn=9acc5e30325963e455f53ec2f64c1fdd&chksm=8866564abf11df5c41307dba3eb84e8e14de900e1b3500aaebe802aff05b0ba2c24e4690516b&token=917686367&lang=zh_CN#rd)，感兴趣的可以加我微信 [ruochuan12](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650756550&idx=1&sn=9acc5e30325963e455f53ec2f64c1fdd&chksm=8866564abf11df5c41307dba3eb84e8e14de900e1b3500aaebe802aff05b0ba2c24e4690516b&token=917686367&lang=zh_CN#rd) 加微信群参与，长期交流学习。
+
+之前写的[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093) 包含`jQuery`、`underscore`、`lodash`、`vuex`、`sentry`、`axios`、`redux`、`koa`、`vue-devtools`、`vuex4`十篇源码文章。
 
 写相对很难的源码，耗费了自己的时间和精力，也没收获多少阅读点赞，其实是一件挺受打击的事情。从阅读量和读者受益方面来看，不能促进作者持续输出文章。
 
@@ -398,7 +400,7 @@ isDate(new Date()); // true
 
 // `instanceof` 操作符左边是右边的实例。但不是很准，但一般够用了。原理是根据原型链向上查找的。
 
-isDate({__proto__ : new Date()); // true
+isDate({__proto__: new Date()}); // true
 // 实际上是应该是 Object 才对。
 // 所以用 instanceof 判断数组也不准确。
 // 再比如
@@ -411,7 +413,7 @@ isDate({__proto__ : new Date()); // true
 
 ```js
 const isFunction = (val) => typeof val === 'function';
-// 判断数组有多种方法，但这个是比较常用也相对兼容性好的。
+// 判断函数有多种方法，但这个是比较常用也相对兼容性好的。
 ```
 
 ### 3.16 isString 判断是不是字符串
@@ -662,6 +664,15 @@ console.log(result, 'result'); // 'onClick'
 
 ### 3.27 hasChanged 判断是不是有变化
 
+`hasChanged` 这个方法，值得一提的是：我刚写这篇文章时，还没有用`Object.is`，后来看 `git` 记录发现有人 [提PR](
+https://github.com/vuejs/vue-next/pull/3837) 修改为`Object.is`了，尤大合并了。
+
+```js
+const hasChanged = (value, oldValue) => !Object.is(value, oldValue);
+```
+
+以下是原先的源码。
+
 ```js
 // compare whether a value has changed, accounting for NaN.
 const hasChanged = (value, oldValue) => value !== oldValue && (value === value || oldValue === oldValue);
@@ -891,6 +902,8 @@ const getGlobalThis = () => {
 [正则表达式前端使用手册](https://juejin.cn/post/6844903469824868365)
 
 [老姚：《JavaScript 正则表达式迷你书》问世了！](https://juejin.cn/post/6844903501034684430)
+
+[老姚浅谈：怎么学JavaScript？](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650754216&idx=1&sn=9163fb9d843bb2e0b07a5dec862ea9cc&chksm=88664f24bf11c632df132a8c34443a5dd9ef34437f811b3c05a4d409e2e27794bb9d005712b6&token=917686367&lang=zh_CN#rd)
 
 [JavaScript 对象所有API解析](https://mp.weixin.qq.com/s/Y3nL3GPcxiqb3zK6pEuycg) https://lxchuan12.gitee.io/js-object-api/
 
