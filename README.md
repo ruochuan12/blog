@@ -30,6 +30,8 @@
 
 **学习源码整体架构系列：**
 
+- 27.[50行代码串行Promise，koa洋葱模型原来是这么实现？](https://lxchuan12.gitee.io/koa-compose/)
+
 - 26.[Vue 3.2 发布了，那尤雨溪是怎么发布 Vue.js 的？](https://lxchuan12.gitee.io/vue-next-release/)
 
 - 25.[初学者也能看懂的 Vue3 源码中那些实用的基础工具函数](https://lxchuan12.gitee.io/vue-next-utils/)
