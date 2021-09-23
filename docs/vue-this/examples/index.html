@@ -1,0 +1,26 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>vue</title>
+</head>
+<body>
+    <script src="https://unpkg.com/vue@2.6.14/dist/vue.js"></script>
+    <script>
+        const vm = new Vue({
+            data: {
+                name: '我是若川',
+            },
+            methods: {
+                sayName(){
+                    console.log(this.name);
+                }
+            },
+        });
+        console.log(vm.name);
+        console.log(vm.sayName());
+    </script>
+</body>
+</html>
