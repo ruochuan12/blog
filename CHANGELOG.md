@@ -1,3 +1,7 @@
+## [3.0.1](https://github.com/lxchuan12/blog/compare/3.0.0...3.0.1) (2021-10-01)
+
+
+
 # [3.0.0](https://github.com/lxchuan12/blog/compare/e0ce78951fe0815398c5bd5a40453d87b79eea55...3.0.0) (2021-09-25)
 
 
