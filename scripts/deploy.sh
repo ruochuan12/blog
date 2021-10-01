@@ -3,6 +3,10 @@
 # 确保脚本抛出遇到的错误
 set -e
 
+VERSION=$(grep version package.json | sed -E 's/^.*"([^"]+)".*$/\1/')
+
+# echo $VERSION
+
 # 生成静态文件
 npm run build
 
@@ -16,7 +20,7 @@ git init
 git config user.name 'luoxiaochuan'
 git config user.email 'lxchuan12@163.com'
 git add -A
-git commit -m $(grep version ../package.json | sed -E 's/^.*"([^"]+)".*$/\1/')
+git commit -m $VERSION
 
 # 如果发布到 https://lxchuan12.github.io
 # git push -f git@github.com:lxchuan12/lxchuan12.github.io.git master
