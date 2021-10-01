@@ -1,8 +1,3 @@
----
-highlight: darcula
-theme: smartblue
----
-
 # 50行代码串行Promise，koa洋葱模型原来是这么实现？
 
 ## 1. 前言
@@ -94,14 +89,14 @@ git subtree add --prefix=compose https://github.com/koajs/compose.git main
 
 [更多 nodejs 调试相关 可以查看官方文档](https://code.visualstudio.com/docs/nodejs/nodejs-debugging)
 
-顺便提一下几个调试相关按钮。
+顺便详细解释下几个调试相关按钮。
 
-- 1. 继续（F5）
-- 2. 单步跳过（F10）
-- 3. 单步调试（F11）
-- 4. 单步跳出（Shift + F11）
-- 5. 重启（Ctrl + Shift + F5）
-- 6. 断开链接（Shift + F5）
+- 1. 继续（F5）: 点击后代码会直接执行到下一个断点所在位置，如果没有下一个断点，则认为本次代码执行完成。
+- 2. 单步跳过（F10）：点击后会跳到当前代码下一行继续执行，不会进入到函数内部。
+- 3. 单步调试（F11）：点击后进入到当前函数的内部调试，比如在 `compose` 这一行中执行单步调试，会进入到 `compose` 函数内部进行调试。
+- 4. 单步跳出（Shift + F11）：点击后跳出当前调试的函数，与单步调试对应。
+- 5. 重启（Ctrl + Shift + F5）：顾名思义。
+- 6. 断开链接（Shift + F5）：顾名思义。
 
 接下来，我们跟着测试用例学源码。
 
