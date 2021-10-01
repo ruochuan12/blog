@@ -15,3 +15,10 @@ install:
 branch: master
 notifications:
    webhooks: https://oapi.dingtalk.com/robot/send?access_token=$TRAVIS_TOKEN
+deploy:
+  provider: releases
+  api_key: $GITHUB_TOKEN
+  file: "FILE TO UPLOAD"
+  skip_cleanup: true
+  on:
+    tags: true
