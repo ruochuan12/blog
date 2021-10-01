@@ -44,6 +44,8 @@
 
 **学习源码整体架构系列：**
 
+- 28.[为什么 Vue2 this 能够直接获取到 data 和 methods](../vue-this/)
+
 - 27.[50行代码串行Promise，koa洋葱模型原来是这么实现？](../koa-compose/)
 
 - 26.[Vue 3.2 发布了，那尤雨溪是怎么发布 Vue.js 的？](../vue-next-release/)
