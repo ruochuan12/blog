@@ -1,14 +1,8 @@
----
-highlight: darcula
-theme: smartblue
----
-# Vue 3.2 发布了，那尤雨溪是怎么发布 Vue.js 的？
-
 ## 1. 前言
 
-大家好，我是[若川](https://lxchuan12.gitee.io)。欢迎关注我的[公众号若川视野](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/12/13/16efe57ddc7c9eb3~tplv-t2oaga2asx-image.image "https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/12/13/16efe57ddc7c9eb3~tplv-t2oaga2asx-image.image")，最近组织了[**源码共读活动**《1个月，200+人，一起读了4周源码》](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650756550&idx=1&sn=9acc5e30325963e455f53ec2f64c1fdd&chksm=8866564abf11df5c41307dba3eb84e8e14de900e1b3500aaebe802aff05b0ba2c24e4690516b&token=917686367&lang=zh_CN#rd)，感兴趣的可以加我微信 [ruochuan12](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650756550&idx=1&sn=9acc5e30325963e455f53ec2f64c1fdd&chksm=8866564abf11df5c41307dba3eb84e8e14de900e1b3500aaebe802aff05b0ba2c24e4690516b&token=917686367&lang=zh_CN#rd) 加微信群参与，长期交流学习。
+大家好，我是[若川](https://lxchuan12.gitee.io)。欢迎关注我的[公众号若川视野](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650756550&idx=1&sn=9acc5e30325963e455f53ec2f64c1fdd&chksm=8866564abf11df5c41307dba3eb84e8e14de900e1b3500aaebe802aff05b0ba2c24e4690516b&token=1266363653&lang=zh_CN#rd)，最近组织了**源码共读**活动[1个月，200+人，一起读了4周源码](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650756550&idx=1&sn=9acc5e30325963e455f53ec2f64c1fdd&chksm=8866564abf11df5c41307dba3eb84e8e14de900e1b3500aaebe802aff05b0ba2c24e4690516b&token=1266363653&lang=zh_CN#rd)，感兴趣的可以加我微信 [ruochuan12](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650756550&idx=1&sn=9acc5e30325963e455f53ec2f64c1fdd&chksm=8866564abf11df5c41307dba3eb84e8e14de900e1b3500aaebe802aff05b0ba2c24e4690516b&token=1266363653&lang=zh_CN#rd)，长期交流学习。
 
-之前写的[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093) 包含`jQuery`、`underscore`、`lodash`、`vuex`、`sentry`、`axios`、`redux`、`koa`、`vue-devtools`、`vuex4`十篇源码文章。
+之前写的[《学习源码整体架构系列》](https://mp.weixin.qq.com/mp/appmsgalbum?__biz=MzA5MjQwMzQyNw==&action=getalbum&album_id=1342211915371675650&scene=173&from_msgid=2650756199&from_itemidx=1&count=3&nolastread=1#wechat_redirect) 包含`jQuery`、`underscore`、`lodash`、`vuex`、`sentry`、`axios`、`redux`、`koa`、`vue-devtools`、`vuex4`十篇源码文章。
 
 写相对很难的源码，耗费了自己的时间和精力，也没收获多少阅读点赞，其实是一件挺受打击的事情。从阅读量和读者受益方面来看，不能促进作者持续输出文章。
 
@@ -30,7 +24,7 @@ theme: smartblue
 
 环境准备之前，我们先预览下`vuejs`的发布流程。
 
-![vue 发布流程](./images/vue-release.png)
+![vue 发布流程](https://files.mdnice.com/user/625/2e7c8b98-6cb1-4ff3-8c2a-4160e3071d97.png)
 
 ## 2. 环境准备
 
@@ -47,14 +41,13 @@ theme: smartblue
 node -v
 # v14.16.0
 # 全局安装 yarn
-
-# 建议克隆我的项目
-git clone https://github.com/lxchuan12/vue-next-analysis.git
-cd vue-next-analysis/vue-next
-
-# 或者克隆官方项目
+# 克隆项目
 git clone https://github.com/vuejs/vue-next.git
 cd vue-next
+
+# 或者克隆我的项目
+git clone https://github.com/lxchuan12/vue-next-analysis.git
+cd vue-next-analysis/vue-next
 
 # 安装 yarn
 npm install --global yarn
@@ -115,11 +108,11 @@ code -v
 
 找到 `vue-next/package.json` 文件打开，然后在 `scripts` 上方，会有`debug`（调试）按钮，点击后，选择 `release`。即可进入调试模式。
 
-![debugger](./images/release-debugger.png)
+![debugger](https://files.mdnice.com/user/625/dc3d5a96-b130-4800-a7a8-48052464e774.png)
 
 这时终端会如下图所示，有 `Debugger attached.` 输出。这时放张图。
 
-![terminal](./images/debugger-terminal.png)
+![terminal](https://files.mdnice.com/user/625/0fbf603e-14d7-43e7-a3b3-3cc176270c79.png)
 
 [更多 nodejs 调试相关  可以查看官方文档](https://code.visualstudio.com/docs/nodejs/nodejs-debugging)
 
@@ -376,9 +369,9 @@ main().catch(err => {
 
 调试时，我们看下这段的两张截图，就好理解啦。
 
-![终端输出选择版本号](./images/terminal-output.png)
+![终端输出选择版本号](https://files.mdnice.com/user/625/73fcc02e-9cea-4bcb-8312-e0d3f5f144e4.png)
 
-![终端输入确认版本号](./images/terminal-yes.png)
+![终端输入确认版本号](https://files.mdnice.com/user/625/117dd9dc-48d1-42b1-9b92-eb4808f90880.png)
 
 ```js
 // 根据上文 mini 这句代码意思是 yarn run release 3.2.4 
@@ -483,7 +476,7 @@ function updatePackage(pkgRoot, version) {
 
 一图胜千言。我们执行`yarn release --dry` 后 `git diff` 查看的 `git` 修改，部分截图如下。
 
-![更新的版本号举例](./images/vue-dep.png)
+![更新的版本号举例](https://files.mdnice.com/user/625/2699599b-c104-41df-a66e-4ffac66d4eda.png)
 
 #### 4.4.2 updateDeps 更新内部 vue 相关依赖的版本号
 
@@ -573,7 +566,7 @@ for (const pkg of packages) {
 这段函数比较长，可以不用细看，简单说就是 `yarn publish` 发布包。
 我们 `yarn release --dry`后，这块函数在终端输出的如下：
 
-![发布终端输出命令](./images/publish.png)
+![发布终端输出命令](https://files.mdnice.com/user/625/57203a44-ae3c-42d4-beeb-e294c30b11a2.png)
 
 值得一提的是，如果是 `vue` 默认有个 `tag` 为 `next`。当 `Vue 3.x` 是默认时删除。
 
@@ -686,7 +679,7 @@ console.log()
 
 我们 `yarn release --dry`后，这块函数在终端输出的如下：
 
-![发布到github](./images/pushing-to-github.png)
+![发布到github](https://files.mdnice.com/user/625/b4f2e3a8-ef6d-49bf-b46b-9426012954d9.png)
 
 到这里我们就拆解分析完 `main` 函数了。
 
@@ -707,7 +700,7 @@ console.log()
 
 用一张图总结则是：
 
-![vue 发布流程](./images/vue-release.png)
+![vue 发布流程](https://files.mdnice.com/user/625/2e7c8b98-6cb1-4ff3-8c2a-4160e3071d97.png)
 
 看完`vue-next/scripts/release.js`，感兴趣还可以看`vue-next/scripts`文件夹下其他代码，相对行数不多，但收益较大。
 
@@ -725,13 +718,7 @@ console.log()
 
 `vuejs`发布的文件很多代码我们可以直接复制粘贴修改，优化我们自己发布的流程。比如写小程序，相对可能发布频繁，完全可以使用这套代码，配合[miniprogram-ci](https://developers.weixin.qq.com/miniprogram/dev/devtools/ci.html)，再加上一些自定义，加以优化。
 
-关于小程序 ci 上传，再分享两篇文章。
-
-[基于 CI 实现微信小程序的持续构建](https://help.coding.net/docs/best-practices/ci/1minute/wechat-mini-program.html)
-
-[小打卡小程序自动化构建及发布的工程化实践](https://www.yuque.com/jinxuanzheng/gvhmm5/uy4qu9#8yQ8M) 虽然文章里不是最新的 miniprogram-ci，但这篇场景写得比较全面。
-
-当然版本发布也可以用开源的 [release-it](https://github.com/release-it/release-it)。
+当然也可以用开源的 [release-it](https://github.com/release-it/release-it)。
 
 同时，我们可以：
 
@@ -748,5 +735,3 @@ console.log()
 等等规范自己项目的流程。如果一个候选人，通过看`vuejs`发布的源码，积极主动优化自己项目。我觉得面试官会认为这个候选人比较加分。
 
 看开源项目源码的好处在于：一方面可以拓展视野，另外一方面可以为自己所用，收益相对较高。
-
-最后欢迎加我微信 [ruochuan12](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650756550&idx=1&sn=9acc5e30325963e455f53ec2f64c1fdd&chksm=8866564abf11df5c41307dba3eb84e8e14de900e1b3500aaebe802aff05b0ba2c24e4690516b&token=917686367&lang=zh_CN#rd) 交流，参与 [源码共读](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650756550&idx=1&sn=9acc5e30325963e455f53ec2f64c1fdd&chksm=8866564abf11df5c41307dba3eb84e8e14de900e1b3500aaebe802aff05b0ba2c24e4690516b&token=917686367&lang=zh_CN#rd) 活动，大家一起学习源码，共同进步。
