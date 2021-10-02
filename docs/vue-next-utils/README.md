@@ -1,3 +1,8 @@
+---
+theme: smartblue
+highlight: dracula
+---
+
 # 初学者也能看懂的 Vue3 源码中那些实用的基础工具函数
 
 ## 1. 前言
@@ -53,13 +58,14 @@
 node -v
 # v14.16.0
 # 全局安装 yarn
-# 克隆项目
+
+# 推荐克隆我的项目
+git clone https://github.com/lxchuan12/vue-next-analysis.git
+cd vue-next-analysis/vue-next
+
+# 或者克隆官方项目
 git clone https://github.com/vuejs/vue-next.git
 cd vue-next
-
-# 或者克隆我的项目
-git clone https://github.com/lxchuan12/vue-next-analysis.git
-cd vue-next-analysis
 
 npm install --global yarn
 yarn # install the dependencies of the project
@@ -162,8 +168,8 @@ console.log(EMPTY_OBJ_2.props.name); // '若川'
 console.log(EMPTY_OBJ_2.props2); // undefined
 console.log(EMPTY_OBJ_2);
 /**
- *
- * {
+ * 
+ * { 
  *  props: {
      mp: "若川视野",
      name: "若川"
@@ -510,7 +516,7 @@ toRawType('');  'String'
 [mdn typeof 文档](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/typeof)，文档比较详细，也实现了一个很完善的`type`函数，本文就不赘述了。
 
 ```js
-// typeof 返回值目前有以下8种
+// typeof 返回值目前有以下8种 
 'undefined'
 'object'
 'boolean'
@@ -526,7 +532,7 @@ toRawType('');  'String'
 ```js
 const objectToString = Object.prototype.toString;
 const toTypeString = (value) => objectToString.call(value);
-//
+// 
 const isPlainObject = (val) => toTypeString(val) === '[object Object]';
 
 // 前文中 有 isObject 判断是不是对象了。
@@ -555,7 +561,7 @@ isIntegerKey('011'); // false
 isIntegerKey('11'); // true
 // 其中 parseInt 第二个参数是进制。
 // 字符串能用数组取值的形式取值。
-//  还有一个 charAt 函数，但不常用
+//  还有一个 charAt 函数，但不常用 
 'abc'.charAt(0) // 'a'
 // charAt 与数组形式不同的是 取不到值会返回空字符串''，数组形式取值取不到则是 undefined
 ```
@@ -683,7 +689,7 @@ hasChanged(1, 1); // false
 hasChanged(1, 2); // true
 hasChanged(+0, -0); // false
 // Obect.is 认为 +0 和 -0 不是同一个值
-Object.is(+0, -0); // false
+Object.is(+0, -0); // false           
 // Object.is 认为  NaN 和 本身 相比 是同一个值
 Object.is(NaN, NaN); // true
 // 场景
@@ -940,3 +946,5 @@ const getGlobalThis = () => {
 同时还分享了`vue`源码的调试技巧，推荐了一些书籍和看书籍的方法。
 
 源码也不是那么可怕。平常我们工作中也是经常能使用到这些工具函数。通过学习一些简单源码，拓展视野的同时，还能落实到自己工作开发中，收益相对比较高。
+
+最后欢迎加我微信 [ruochuan12](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650756550&idx=1&sn=9acc5e30325963e455f53ec2f64c1fdd&chksm=8866564abf11df5c41307dba3eb84e8e14de900e1b3500aaebe802aff05b0ba2c24e4690516b&token=917686367&lang=zh_CN#rd) 交流，参与 [源码共读](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650756550&idx=1&sn=9acc5e30325963e455f53ec2f64c1fdd&chksm=8866564abf11df5c41307dba3eb84e8e14de900e1b3500aaebe802aff05b0ba2c24e4690516b&token=917686367&lang=zh_CN#rd) 活动，大家一起学习源码，共同进步。
