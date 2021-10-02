@@ -26,7 +26,7 @@ git commit -m "Release $VERSION"
 # git push -f git@github.com:lxchuan12/lxchuan12.github.io.git master
 # git push -f https://${GITHUB_TOKEN}@github.com/lxchuan12/lxchuan12.github.io.git master
 
-git remote add origin https://lxchuan12:${{ GITEE_TOKEN }}@gitee.com/lxchuan12/lxchuan12.git
+git remote add origin https://lxchuan12:${ GITEE_TOKEN }@gitee.com/lxchuan12/lxchuan12.git
 git push origin HEAD:master --force
 
 # 同步gitee.com/lxchuan12/lxchuan12
