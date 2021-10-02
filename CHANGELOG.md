@@ -1,3 +1,14 @@
+## [3.0.2](https://github.com/lxchuan12/blog/compare/3.0.1...3.0.2) (2021-10-02)
+
+
+### Features
+
+* docs/vue-devtools-install 同步于 vue-next-analysis/md/devtools :construction: ([c120902](https://github.com/lxchuan12/blog/commit/c120902eee8a51b4f423b27fe1e761e8a0bc501b))
+* docs/vue-next-release 同步于 vue-next-analysis/md/release :construction: ([0479875](https://github.com/lxchuan12/blog/commit/0479875b45baffe42ac9d3a57f702a434ee5d444))
+* docs/vue-next-utils 同步于 vue-next-analysis/md/utils :construction: ([8264f09](https://github.com/lxchuan12/blog/commit/8264f09cebada601a80d088f2022bd48efd438a0))
+
+
+
 ## [3.0.1](https://github.com/lxchuan12/blog/compare/3.0.0...3.0.1) (2021-10-01)
 
 
