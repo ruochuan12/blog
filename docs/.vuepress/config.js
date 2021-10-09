@@ -18,6 +18,7 @@ module.exports = {
 		lineNumbers: false
 	},
 	plugins: [
+		require('./components/plugin-side/index.js'),
 		"@vuepress/back-to-top",
 		[
 			"@vuepress/google-analytics",
