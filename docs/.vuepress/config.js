@@ -12,6 +12,13 @@ module.exports = {
 		// 	'script',
 		// 	{ charset: 'utf-8', src: 'https://my.openwrite.cn/js/readmore.js' },
 		// ],
+		// 添加cnzz统计
+		[
+			"script",
+			{
+			src: "https://s19.cnzz.com/z_stat.php?id=1273798602&web_id=1273798602"
+			}
+		]
 	],
 	port: 4000,
 	markdown: {
