@@ -1,3 +1,14 @@
+## [3.0.3](https://github.com/lxchuan12/blog/compare/3.0.2...3.0.3) (2021-10-10)
+
+
+### Features
+
+* 🎸 友盟统计优化 ([e8be129](https://github.com/lxchuan12/blog/commit/e8be12936831700ba94e1c77b6231570db45790f))
+* 🎸 右侧组件移除部分代码等优化 ([9533175](https://github.com/lxchuan12/blog/commit/95331758f245a2340b44020c257e3eeb87ff0b6b))
+* 🎸 添加侧边栏显示添加微信加源码共读群 ([c9eab49](https://github.com/lxchuan12/blog/commit/c9eab495f1448aabde6dd34bdf801c65efecd232))
+
+
+
 ## [3.0.2](https://github.com/lxchuan12/blog/compare/3.0.1...3.0.2) (2021-10-02)
 
 
