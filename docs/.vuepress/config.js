@@ -16,7 +16,8 @@ module.exports = {
 		[
 			"script",
 			{
-			src: "https://s19.cnzz.com/z_stat.php?id=1273798602&web_id=1273798602"
+				src: "https://s19.cnzz.com/z_stat.php?id=1273798602&web_id=1273798602",
+				defer: "defer",
 			}
 		]
 	],
