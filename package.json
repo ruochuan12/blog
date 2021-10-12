@@ -44,6 +44,14 @@
     "tinyimg-webpack-plugin": "0.0.5",
     "vuepress": "^1.5.2"
   },
+  "release-it": {
+    "npm": {
+      "publish": false
+    },
+    "hooks": {
+      "after:bump": "yarn changelog"
+    }
+  },
   "config": {
     "commitizen": {
       "path": "cz-conventional-changelog"
