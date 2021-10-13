@@ -44,6 +44,8 @@
 
 **学习源码整体架构系列：**
 
+- 29.[Vue 团队公开快如闪电的全新脚手架工具 create-vue，未来将替代 Vue-CLI，才300余行代码，学它！](../create-vue/)
+
 - 28.[为什么 Vue2 this 能够直接获取到 data 和 methods](../vue-this/)
 
 - 27.[50行代码串行Promise，koa洋葱模型原来是这么实现？](../koa-compose/)
