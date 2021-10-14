@@ -49,7 +49,11 @@ module.exports = {
 			'@vuepress/pwa',
 			{
 				serviceWorker: true,
-				updatePopup: true
+				// https://v1.vuepress.vuejs.org/zh/plugin/official/plugin-pwa.html
+				updatePopup: {
+					message: "发现博客有更新啦",
+					buttonText: "刷新"
+				}
 			}
 		]
 	],
