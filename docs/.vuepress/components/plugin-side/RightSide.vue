@@ -1,6 +1,6 @@
 <template>
   <div class="ruochuan12-side">
-    <img class="ruochuan12-side-image" src="./lxchuan12-qrcode.jpg"/>
+    <img class="ruochuan12-side-image" src="./ruochuan12-qrcode.png"/>
 	<div class="text-center">
 		<span>扫码加我微信</span><br>
 		<span>拉你进源码共读群</span><br>
