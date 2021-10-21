@@ -44,6 +44,8 @@
 
 **学习源码整体架构系列：**
 
+- 30.[尤雨溪几年前开发的“玩具 vite”，才100多行代码，却十分有助于理解 vite 原理](../vue-dev-server/)
+
 - 29.[Vue 团队公开快如闪电的全新脚手架工具 create-vue，未来将替代 Vue-CLI，才300余行代码，学它！](../create-vue/)
 
 - 28.[为什么 Vue2 this 能够直接获取到 data 和 methods](../vue-this/)
