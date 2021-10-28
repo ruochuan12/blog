@@ -3,7 +3,7 @@ highlight: darcula
 theme: smartblue
 ---
 
-# 尤雨溪推荐神器 ni ，有了它无需在不同项目切换使用 npm/yarn/pnpm ，简单好用！
+# 尤雨溪推荐神器 ni ，能替代 npm/yarn/pnpm ？简单好用！源码揭秘！
 
 ## 1. 前言
 
