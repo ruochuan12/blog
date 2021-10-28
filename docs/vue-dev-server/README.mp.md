@@ -136,7 +136,7 @@ app.listen(3000, () => {
 
 ![调试](./images/package.json-test.png)
 
-![VSCode 调试 Node.js 说明](./images/node.js-debugger.png)
+![VSCode 调试 Node.js 说明](./images/node.js-debugger.jpg)
 
 点击`进入函数（F11）`按钮可以进入 `vueMiddleware` 函数。**如果发现断点走到不是本项目的文件中，不想看，看不懂的情况，可以退出或者重新来过**。**可以用浏览器无痕（隐私）模式（快捷键`Ctrl + Shift + N`，防止插件干扰）打开 `http://localhost:3000`，可以继续调试 `vueMiddleware` 函数返回的函数**。
 
