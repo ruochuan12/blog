@@ -36,7 +36,24 @@ theme: smartblue
 4. 等等
 ```
 
-## 2. 使用
+
+## 2. 原理
+
+[github 仓库 ni#how](https://github.com/antfu/ni#how)
+
+**ni** 假设您使用锁文件（并且您应该）
+
+在它运行之前，它会检测你的 `yarn.lock` / `pnpm-lock.yaml` / `package-lock.json` 以了解当前的包管理器，并运行相应的命令。
+
+**单从这句话中，我们可以得知这个工具必然要做三件事**：
+
+```bash
+1. 根据锁文件猜测用哪个包管理器 npm/yarn/pnpm 
+2. 抹平不同的包管理器的命令差异
+3. 最终运行相应的脚本
+```
+
+## 3. 使用
 
 看 [ni github文档](https://github.com/antfu/ni)。
 
@@ -61,7 +78,7 @@ npm i -g @antfu/ni
 
 ![命令测试图示](./images/terminal-debugger.png)
 
-### 2.1 ni - install
+### 3.1 ni - install
 
 ```bash
 ni
@@ -79,7 +96,7 @@ ni axios
 # pnpm i axios
 ```
 
-### 2.2 nr - run
+### 3.2 nr - run
 
 ```bash
 nr dev --port=3000
@@ -103,7 +120,7 @@ nr -
 # rerun the last command
 ```
 
-### 2.3 nx - execute
+### 3.3 nx - execute
 
 ```bash
 nx jest
@@ -111,22 +128,6 @@ nx jest
 # npx jest
 # yarn dlx jest
 # pnpm dlx jest
-```
-
-## 3. 原理
-
-[github 仓库 ni#how](https://github.com/antfu/ni#how)
-
-**ni** 假设您使用锁文件（并且您应该）
-
-在它运行之前，它会检测你的 `yarn.lock` / `pnpm-lock.yaml` / `package-lock.json` 以了解当前的包管理器，并运行相应的命令。
-
-**单从这句话中，我们可以得知这个工具必然要做三件事**：
-
-```bash
-1. 根据锁文件猜测用哪个包管理器 npm/yarn/pnpm 
-2. 抹平不同的包管理器的命令差异
-3. 最终运行相应的脚本
 ```
 
 ## 4. 阅读源码前的准备工作
