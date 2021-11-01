@@ -36,7 +36,6 @@ theme: smartblue
 4. 等等
 ```
 
-
 ## 2. 原理
 
 [github 仓库 ni#how](https://github.com/antfu/ni#how)
@@ -45,13 +44,55 @@ theme: smartblue
 
 在它运行之前，它会检测你的 `yarn.lock` / `pnpm-lock.yaml` / `package-lock.json` 以了解当前的包管理器，并运行相应的命令。
 
-**单从这句话中，我们可以得知这个工具必然要做三件事**：
+单从这句话中可能有些不好理解，还是不知道它是个什么。我解释一下。
+
+```bash
+使用 `ni` 在项目中安装依赖时：
+   假设你的项目中有锁文件 `yarn.lock`，那么它最终会执行 `yarn install` 命令。
+   假设你的项目中有锁文件 `pnpm-lock.yaml`，那么它最终会执行 `pnpm i` 命令。
+   假设你的项目中有锁文件 `package-lock.json`，那么它最终会执行 `npm i` 命令。
+
+使用 `ni -g vue-cli` 安装全局依赖时
+    默认使用 `npm i -g vue-cli`
+
+当然不只有 `ni` 安装依赖。
+    还有 `nr` - run
+    `nx` - execute
+    `nu` - upgrade
+    `nci` - clean install
+    `nrm` - remove
+```
+
+**我看源码发现：`ni`相关的命令，都可以在末尾追加`\?`，表示只打印，不是真正执行**。
+
+所以全局安装 `ni` 后，可以尽情测试，比如 `ni \?`，`nr dev --port=3000 \?`，因为打印，所以可以在各种目录下执行，有助于理解 `ni` 源码。我测试了如下图所示：
+
+![命令测试图示](./images/terminal-debugger-v2.png)
+
+假设项目目录下没有锁文件，默认就会让用户从`npm、yarn、pnpm`选择，然后执行相应的命令。
+但如果在`~/.nirc`文件中，设置了全局默认的配置，则使用默认配置执行对应命令。
+
+**Config**
+
+```ini
+; ~/.nirc
+
+; fallback when no lock found
+defaultAgent=npm # default "prompt"
+
+; for global installs
+globalAgent=npm
+```
+
+**因此，我们可以得知这个工具必然要做三件事**：
 
 ```bash
 1. 根据锁文件猜测用哪个包管理器 npm/yarn/pnpm 
 2. 抹平不同的包管理器的命令差异
 3. 最终运行相应的脚本
 ```
+
+接着继续看看 `README` 其他命令的使用，就会好理解。
 
 ## 3. 使用
 
@@ -70,13 +111,7 @@ npm i -g @antfu/ni
 
 如果全局安装遭遇冲突，我们可以加上 `--force` 参数强制安装。
 
-**我看源码发现：以下命令，都可以在末尾追加`\?`，表示只打印，不是真正执行**。
-
 举几个常用的例子。
-
-所以全局安装后，可以尽情测试，比如 `ni \?`，`nr dev --port=3000 \?`，`nx jest \?`，因为打印，所以可以在各种目录下执行，有助于理解 `ni` 源码。
-
-![命令测试图示](./images/terminal-debugger.png)
 
 ### 3.1 ni - install
 
@@ -144,7 +179,7 @@ pnpm i
 # 当然也可以直接用 ni
 
 # 或者克隆官方仓库
-git clone https://github.com/vuejs/ni.git
+git clone https://github.com/antfu/ni.git
 cd ni
 # npm i -g pnpm
 # 安装依赖
