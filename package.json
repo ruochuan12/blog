@@ -56,5 +56,8 @@
     "commitizen": {
       "path": "cz-conventional-changelog"
     }
+  },
+  "dependencies": {
+    "vue-typed-js": "^0.1.2"
   }
 }
