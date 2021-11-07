@@ -26,6 +26,7 @@ module.exports = {
 		lineNumbers: false
 	},
 	plugins: [
+		require('./components/plugin-typed/index.js'),
 		require('./components/plugin-side/index.js'),
 		"@vuepress/back-to-top",
 		[

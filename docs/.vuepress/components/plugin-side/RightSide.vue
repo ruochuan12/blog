@@ -2,7 +2,13 @@
   <div class="ruochuan12-side">
     <img class="ruochuan12-side-image" src="./ruochuan12-qrcode.png"/>
 	<div class="text-center">
-		<span>扫码加我微信</span><br>
+    <vue-typed-js :loop="true" 
+        :typeSpeed="100"    
+      :backSpeed="20"
+      :strings="['欢迎扫码加我微信']">
+      <span class="typing"></span>
+    </vue-typed-js>
+    <!-- <span>欢迎扫码加我微信</span><br> -->
 		<span>拉你进源码共读群</span><br>
 		<span>一起学习源码</span><br>
 	</div>
@@ -38,6 +44,8 @@ export default {
 	text-align: center;
 }
 .ruochuan12-side {
+  background: #fff;
+  padding: 10px;
   cursor: pointer;
   position: fixed;
   top: 50%;
