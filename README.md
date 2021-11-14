@@ -30,6 +30,8 @@
 
 **学习源码整体架构系列：**
 
+- 35.[新手向：前端程序员必学基本技能——调试JS代码](https://lxchuan12.gitee.io/debug/)
+
 - 34.[从22行有趣的源码库中，我学到了 callback promisify 化的 Node.js 源码实现](https://lxchuan12.gitee.io/promisify/)
 
 - 33.[每次启动项目的服务，电脑竟然乖乖的帮我打开了浏览器，100行源码揭秘！](https://lxchuan12.gitee.io/open/)
