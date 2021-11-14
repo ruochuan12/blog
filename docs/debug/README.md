@@ -1,6 +1,6 @@
 # 新手向：前端程序员必学基本技能——调试JS代码
 
-## 前言
+## 1. 前言
 
 >大家好，我是[若川](https://lxchuan12.gitee.io)。欢迎关注我的[公众号若川视野](https://lxchuan12.gitee.io)，最近组织了[源码共读活动](https://juejin.cn/pin/7005372623400435725)，感兴趣的可以加我微信 [ruochuan12](https://juejin.cn/pin/7005372623400435725) 参与，如今已进行三个月，大家一起交流学习，共同进步，很多人都表示收获颇丰。
 
@@ -16,14 +16,14 @@
 1. 学会基本调试技能
 ```
 
-## 推荐安装或者更新到最新版 VSCode
+## 2. 推荐安装或者更新到最新版 VSCode
 
 官网下载安装 [VSCode](https://code.visualstudio.com/)。
 
 >如果你的`VSCode`不是中文（不习惯英文），可以安装[简体中文插件](https://marketplace.visualstudio.com/items?itemName=MS-CEINTL.vscode-language-pack-zh-hans)。<br>
 >如果 `VSCode` 没有这个调试功能。建议更新到最新版的 `VSCode`（目前最新版本 `v1.62.2`）。
 
-## 配置 auto-attach
+## 3. 配置 auto-attach
 
 `VSCode` 调试 JS 的方法有很多，目前比较推荐的就是无需配置的 `auto-attach`。
 
@@ -37,7 +37,7 @@
 
 更多可以查看官方文档：[nodejs-debugging](https://code.visualstudio.com/docs/nodejs/nodejs-debugging)
 
-## 调试 Node.js 代码
+## 4. 调试 Node.js 代码
 
 我特意新建了一个仓库。供读者动手实践。
 
@@ -52,7 +52,7 @@ yarn install
 
 一般提前在入口文件打好断点。
 
-### 调试操作方式
+### 4.1 调试操作方式
 
 **操作方式一：package.json**
 
@@ -72,7 +72,7 @@ yarn install
 
 接着我们看按钮介绍。
 
-### 调试按钮介绍
+### 4.2 调试按钮介绍
 
 详细解释下几个调试相关按钮。
 
@@ -87,7 +87,7 @@ yarn install
 
 调试走到不是想看的文件时（或者完全不是这个目录下的文件时），可以选择单步退出按钮或者重新调试。
 
-## 其他调试
+## 5. 其他调试
 
 由于很多项目都配置了代码压缩，难于调试。所以开发环境下，一般通过配置生成 `sourcemap` 来调试代码。大部分开源项目（比如vue、vue-next源码）也会在贡献指南中说明如何开启 `sourcemap`。
 
@@ -112,7 +112,7 @@ module.exports = {
 
 `chrome` 调试代码其实也类似。在 `chrome devtools` 的 `source` 面板找到相应文件，去打断点再调试。
 
-## 其他参考链接
+## 6. 其他参考链接
 
 如何调试代码看以下这些参考链接，动手练习可以学会，Node.js 也类似。
 
@@ -124,7 +124,7 @@ module.exports = {
 
 [慕课网 nodejs 调试入门](https://www.imooc.com/learn/1093)
 
-## 总结
+## 7. 总结
 
 文章比较详细的介绍了 `VSCode` 调试 `Node.js` 调试代码的基本技能，`Chrome` 调试代码其实也是类似。**调试代码是前端程序员基本技能，必须掌握**。组织了源码共读活动发现很多人都不会，或者说不熟悉。让我感到十分诧异。所以写下这篇文章分享给读者。
 
