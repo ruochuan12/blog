@@ -49,7 +49,7 @@ theme: smartblue
 import remoteGitTags from 'remote-git-tags';
 
 console.log(await remoteGitTags('https://github.com/lxchuan12/blog.git'));
-//=> Map {'3.0.5' => '6020cc35c027e4300d70ef43a3873c8f15d1eeb2', …}
+//=> Map {'3.0.5' => 'c39343e7e81d898150191d744efbdfe6df395119', …}
 ```
 
 ## 3. 源码
