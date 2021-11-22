@@ -61,7 +61,7 @@ To specify an editor, specify the EDITOR env variable or add "editor" field to y
 #### 1.3.1 方法一：先确保在终端能用命令打开你使用的编辑器，文中以`VSCode`为例
 
 如果你的命令行本身就不能运行`code`等命令打开编辑器，那肯定是报错的。这时需要把`VSCode`注入到命令行终端中。
-注入方法也简单。我的交流群里有小伙伴提供了`mac`电脑的截图。
+注入方法也简单。我的交流群里有小伙伴提供了`mac`电脑的截图。**windows 用户安装VSCode后，终端默认支持 code 命令无需此操作**。
 
 `mac` 电脑在 `VSCode` `command + shift + p`，`Windows` 则是 `ctrl + shift + p`。然后输入`shell`，选择安装`code`。如下图：
 
@@ -74,7 +74,7 @@ To specify an editor, specify the EDITOR env variable or add "editor" field to y
 
 #### 1.3.2 方法二：具体说明编辑器，在环境变量中说明指定编辑器
 
-在`vue`项目的根目录下，对应本文则是：`vue3-project`，添加`.env.delelopment`文件，其内容是`EDITOR=code`。**这里重点说明下，我的 `vue-cli` 版本是`4.5.12`，好像在`vue-cli 3.5`及以上版本才支持自定义`EDITOR`这样的环境变量**。
+在`vue`项目的根目录下，对应本文则是：`vue3-project`，添加`.env.development`文件，其内容是`EDITOR=code`。**这里重点说明下，我的 `vue-cli` 版本是`4.5.12`，好像在`vue-cli 3.5`及以上版本才支持自定义`EDITOR`这样的环境变量**。
 
 ```sh
 # .env.development
@@ -199,7 +199,11 @@ before (app, server) {
 }
 ```
 
-点击`vue-devtools`中的时，会有一个请求，`http://localhost:8080/__open-in-editor?file=src/App.vue`，不出意外就会打开该组件啦。
+本文项目使用的是Vue3，如果无法访问谷歌应用商店，如果未安装 vue3 对应的 vue-devtools，[可以点此下载安装Vue3对应版本的vue-devtools](https://chrome.zzzmh.cn/info?token=ljjemllljcmogpfapbkkighbhhppjdbg)
+
+[若平时项目开发使用的是vue2，可以点此下载安装vue2版本的vue-devtools](https://chrome.zzzmh.cn/info?token=nhdogjmejiglipccpnnnanhbledajbpd)
+
+点击`vue-devtools`中的图中 `open in editor` 按钮时，会有一个请求，`http://localhost:8080/__open-in-editor?file=src/App.vue`，不出意外就会打开该组件啦。
 
 ![open src/App.vue in editor](./images/open-src-app.vue.png)
 
