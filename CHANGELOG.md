@@ -1,3 +1,16 @@
+## [3.0.6](https://github.com/lxchuan12/blog/compare/3.0.5...3.0.6) (2021-11-22)
+
+
+### Features
+
+* 🎸 新增 element-new 文章 ([caca82c](https://github.com/lxchuan12/blog/commit/caca82c53473f9a69d5e2ec88f8afe9261dcf640))
+* 🎸 添加 remote-git-tags promisify 文章 ([659ddba](https://github.com/lxchuan12/blog/commit/659ddba9e5192edbde3bf895ab9fcc8206e9bf3b))
+* 🎸 添加调试文章 ([d50f261](https://github.com/lxchuan12/blog/commit/d50f261d2982176c84146ac8d7af9b3638190ae0))
+* 🎸 首页和侧栏二维码添加 typed 打字效果 ([ef0f216](https://github.com/lxchuan12/blog/commit/ef0f21605818a91340b1b6aeca41a0481be1f085))
+* docs/element-new 同步于 element-analysis/md/new :construction: ([de7d535](https://github.com/lxchuan12/blog/commit/de7d535f70c3435c5e557de0bc1bef7d576947dd))
+
+
+
 ## [3.0.5](https://github.com/lxchuan12/blog/compare/3.0.4...3.0.5) (2021-11-04)
 
 
