@@ -261,7 +261,7 @@ Files.forEach(file => {
 });
 ```
 
-![创建的文件](./images/package.png)
+![创建的文件](./images/packages.png)
 
 ### 3.8 把新增的组件添加到 nav.config.json
 
