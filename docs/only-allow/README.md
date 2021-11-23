@@ -3,7 +3,7 @@ highlight: darcula
 theme: smartblue
 ---
 
-# 从 vue3 和 vite 项目中，我学到了一行代码统一规范团队包管理器的神器
+# 从 vue3 和 vite 源码中，我学到了一行代码统一规范团队包管理器的神器
 ## 1. 前言
 
 >大家好，我是[若川](https://lxchuan12.gitee.io)。最近组织了[源码共读活动](https://juejin.cn/pin/7005372623400435725)，感兴趣的可以加我微信 [ruochuan12](https://juejin.cn/pin/7005372623400435725) 参与，或者关注我的[公众号若川视野](https://lxchuan12.gitee.io)，回复“源码”参与。已进行三个月，大家一起交流学习，共同进步，很多人都表示收获颇丰。
