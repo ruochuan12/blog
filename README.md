@@ -30,7 +30,7 @@
 
 **学习源码整体架构系列：**
 
-- 37.[从 vue3 和 vite 项目中，我学到了一行代码统一规范团队包管理器的神器](https://lxchuan12.gitee.io/only-allow/)
+- 37.[从 vue3 和 vite 源码中，我学到了一行代码统一规范团队包管理器的神器](https://lxchuan12.gitee.io/only-allow/)
 
 - 36.[每次新增页面复制粘贴？100多行源码的 element-ui 新增组件功能告诉你减少重复工作](https://lxchuan12.gitee.io/element-new/)
 
