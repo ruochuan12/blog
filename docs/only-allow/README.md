@@ -162,7 +162,7 @@ If you want to force [yarn](https://yarnpkg.com/), add:
 
 可以提前在 `only-allow/bin.js` 文件打上断点 `const usedPM = whichPMRuns()`
 
-按快捷键 ctrl + ` 快捷键打开终端。输入如下 `yarn add release-it -D` 命令，即可调试 `only-allow/bin.js`。
+按快捷键 ctrl + \` 快捷键打开终端。输入如下 `yarn add release-it -D` 命令，即可调试 `only-allow/bin.js`。
 
 ![调试截图](./images/debugger.png)
 
@@ -170,7 +170,7 @@ If you want to force [yarn](https://yarnpkg.com/), add:
 
 如下图所示：
 
-[终端报错截图](./images/error.png)
+![终端报错截图](./images/error.png)
 
 更多调试细节可以看我的这篇文章：[新手向：前端程序员必学基本技能——调试JS代码](https://juejin.cn/post/7030584939020042254)
 
