@@ -79,7 +79,7 @@ if (!/pnpm/.test(process.env.npm_execpath || '')) {
 
 >`process.argv` 属性返回一个数组，由命令行执行脚本时的各个参数组成。它的第一个成员总是 `node`，第二个成员是脚本文件名，其余成员是脚本文件的参数。
 
-这段代码能文章开头场景提出的问题，但是总不能每个项目都复制粘贴这段代码吧。我们是不是可以封装成 npm 包使用。
+这段代码能解决文章开头场景提出的问题，但是总不能每个项目都复制粘贴这段代码吧。我们是不是可以封装成 npm 包使用。
 当时我也没想太多，也没有封装 npm 包。直到我翻看 [vite](https://github.com/vitejs/vite/blob/main/package.json#L12) 源码发现了 [only-allow](https://github.com/pnpm/only-allow) 这个包。**一行代码统一规范包管理器**。
 
 ```js
@@ -182,6 +182,7 @@ If you want to force [yarn](https://yarnpkg.com/), add:
 // only-allow/bin.js
 #!/usr/bin/env node
 const whichPMRuns = require('which-pm-runs')
+// 输出边框盒子
 const boxen = require('boxen')
 
 const argv = process.argv.slice(2)
