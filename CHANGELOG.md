@@ -1,3 +1,12 @@
+## [3.0.9](https://github.com/lxchuan12/blog/compare/3.0.8...3.0.9) (2021-12-11)
+
+
+### Features
+
+* 🎸 新增 install-pkg 文章 ([9984cc9](https://github.com/lxchuan12/blog/commit/9984cc9fabe209b4049ba516bbb9cdc66c1063ee))
+
+
+
 ## [3.0.8](https://github.com/lxchuan12/blog/compare/3.0.7...3.0.8) (2021-12-05)
 
 
