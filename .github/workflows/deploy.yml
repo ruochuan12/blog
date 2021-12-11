@@ -1,35 +1,24 @@
-name: 'ci'
+name: Deploy
+
 on:
   push:
     branches:
-      - '**'
+      - master
   pull_request:
     branches:
       - master
+
 jobs:
-  test:
-    runs-on: ${{ matrix.os }}
-    strategy:
-      matrix:
-        os:
-          - ubuntu-latest
-          - macos-latest
-          - windows-latest
-        node-version:
-          - 14
-        include:
-          - node-version: 12
-            os: ubuntu-latest
-          - node-version: 16
-            os: ubuntu-latest
-    name: Node ${{ matrix.node-version }} on ${{ matrix.os }}
+  deploy:
+    runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v1
-      - uses: actions/setup-node@v2
+      - uses: actions/checkout@v2
+      - name: Set node version to 12
+        uses: actions/setup-node@v2
         with:
-          node-version: ${{ matrix.node-version }}
+          node-version: 12
           cache: 'npm'
-      - run: npm install
+      - run: npm install --frozen-lockfile
       - run: npm run deploy
         env:
           TOKEN_GITHUB: ${{secrets.TOKEN_GITHUB}}
