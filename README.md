@@ -30,6 +30,8 @@
 
 **学习源码整体架构系列：**
 
+- 39.[Vue团队核心成员开发的39行小工具 install-pkg 安装包，值得一学！](https://lxchuan12.gitee.io/install-pkg/)
+
 - 38.[从 vue-cli 源码中，我发现了27行读取 json 文件有趣的 npm 包](https://lxchuan12.gitee.io/read-pkg/)
 
 - 37.[从 vue3 和 vite 源码中，我学到了一行代码统一规范团队包管理器的神器](https://lxchuan12.gitee.io/only-allow/)
