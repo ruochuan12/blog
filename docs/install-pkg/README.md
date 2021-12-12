@@ -40,12 +40,14 @@ import { installPackage } from '@antfu/install-pkg'
 await installPackage('vite', { silent: true })
 ```
 
-[npm @antfu/install-pkg](https://www.npmjs.com/package/@antfu/install-pkg)
+我们看看[npmjs.com @antfu/install-pkg](https://www.npmjs.com/package/@antfu/install-pkg) 有哪些包依赖的这个包。
 
-目前只有以下这两个项目使用了。
+我们可以发现目前只有以下这两个项目使用了。
+
 [unplugin-icons](https://www.npmjs.com/package/unplugin-icons)
 [@chenyueban/lint](https://www.npmjs.com/package/%40chenyueban%2Flint)
 
+我们克隆项目来看源码。
 ## 3 克隆项目
 
 ```bash
@@ -101,6 +103,8 @@ src
 export * from './detect'
 export * from './install'
 ```
+
+我们来看 `install.ts` 文件，`installPackage` 方法。
 ### 4.2 installPackage 安装包
 
 ```js
@@ -147,17 +151,16 @@ export async function installPackage(names: string | string[], options: InstallP
 
 支持安装多个，也支持指定包管理器，支持额外的参数。
 
-**execa 执行脚本**
+其中 [github execa](https://github.com/sindresorhus/execa) 是执行脚本 
+>Process execution for humans
 
-Process execution for humans
-
-[github execa](https://github.com/sindresorhus/execa)
+也就是说：最终执行类似以下的脚本。
 
 ```bash
 pnpm install -D --prefer-offine release-it react antd
 ```
 
-我们接着来看 探测包管理器 `detectPackageManager` 函数如何实现的。
+我们接着来看 `detect.ts`文件 探测包管理器 `detectPackageManager` 函数如何实现的。
 ### 4.3 detectPackageManager 探测包管理器
 
 根据当前目录锁文件，探测包管理器。
@@ -187,18 +190,26 @@ export async function detectPackageManager(cwd = process.cwd()) {
 ```bash
 /
 └── Users
-    └── ruochuan
-        ├── package.json
+    └── install-pkg
+        ├── pnpm-lock.yaml
 ```
 
 ```js
 import {findUp} from 'find-up';
 
-console.log(await findUp('package.json'));
-//=> '/Users/ruochuan/package.json'
+console.log(await findUp('pnpm-lock.yaml'));
+//=> '/Users/install-pkg/pnpm-lock.yaml'
 ```
 
-一句话总结原理就是：通过锁文件自动检测使用何种包管理器（npm、yarn、pnpm），最终用 [execa](https://github.com/sindresorhus/execa) 执行类似如下的命令。
+`path.basename('/Users/install-pkg/pnpm-lock.yaml')` 则是 `pnpm-lock.yaml`。
+
+所以在有`pnpm-lock.yaml`文件的项目中，`detectPackageManager` 函数最终返回的是 `pnpm`。
+
+至此我们可以用一句话总结原理就是：通过锁文件自动检测使用何种包管理器（npm、yarn、pnpm），最终用 [execa](https://github.com/sindresorhus/execa) 执行类似如下的命令。
+
+```bash
+pnpm install -D --prefer-offine release-it react antd
+```
 
 看完源码，我们接着来解释下 `package.json` 中的 `scripts` 命令。
 ## 5. package.json script 命令解析
@@ -221,7 +232,7 @@ console.log(await findUp('package.json'));
 
 ### 5.1 ni 神器
 
-[ithub ni](https://github.com/antfu/ni)
+[github ni](https://github.com/antfu/ni)
 
 我之前写过源码文章。
 
@@ -381,12 +392,12 @@ nci
 最后 `npx conventional-github-releaser -p angular`
 [conventional-github-releaser](https://www.npmjs.com/package/conventional-github-releaser)
 
-生成 changelog
+生成 `changelog`。
 
 至此我们就学习完了 [install-pkg](https://github.com/antfu/install-pkg) 包。
 ## 7. 总结
 
-整体代码比较简单。原理就是 通过锁文件自动检测使用何种包管理器（npm、yarn、pnpm），最终用 [execa](https://github.com/sindresorhus/execa) 执行类似如下的命令。
+整体代码比较简单。原理就是通过锁文件自动检测使用何种包管理器（npm、yarn、pnpm），最终用 [execa](https://github.com/sindresorhus/execa) 执行类似如下的命令。
 
 ```bash
 pnpm install -D --prefer-offine release-it react antd
