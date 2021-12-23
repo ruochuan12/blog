@@ -236,6 +236,7 @@ module.exports = {
 				collapsable: true, // 可选的, 默认值是 true,
 				sidebarDepth: 2, // 可选的, 默认值是 1
 				children: [
+					'/delay/',
 					'/install-pkg/',
 					'/read-pkg/',
 					'/only-allow/',
