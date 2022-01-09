@@ -320,6 +320,7 @@ module.exports = {
 				collapsable: true, // 可选的, 默认值是 true,
 				sidebarDepth: 2, // 可选的, 默认值是 1
 				children: [
+					"/annual-summary/2021/",
 					"/annual-summary/2020/",
 					"/annual-summary/2019/",
 					"/annual-summary/2018/",
