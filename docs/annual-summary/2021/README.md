@@ -2,12 +2,11 @@
 
 ## 前言
 
-
-从`2014年`开始，每一年都会写年度总结，已经坚持了7个年头。<br />
+从`2014年`开始，每一年都会写年度总结，已经坚持了7个年头。正如孔子所说：逝者如斯夫，不舍昼夜。<br />
 <br />[回顾2014，约定2015](http://user.qzone.qq.com/1019963719/blog/1422275707)（QQ空间日志）<br />[2015年总结，淡化旧标签，无惧未来](http://user.qzone.qq.com/1019963719/blog/1451822274)（QQ空间日志）<br />[2016年度总结，毕业工作](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650747244&idx=1&sn=a4cea36b8f9fc2caae4df7a63f302829&chksm=886632e0bf11bbf6cce245c3b6cc6a8544b9f78cf1ba12448a14fe8739dda6e871391759c0a4&scene=178&cur_album_id=1668518390266724360#rd)<br />[2017年度总结，一如既往](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650747311&idx=1&sn=3fb8aa2c7338185a7e4cc85dd5913f75&chksm=88663223bf11bb3507424135dafd4a93bf0812c96b01d4ab3e608568f62d99ac065aa24fe70a&scene=178&cur_album_id=1668518390266724360#rd)<br />[2018年度总结，平淡无奇](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650747386&idx=1&sn=f219582bb2460790c85857e80d036bc8&chksm=88663276bf11bb60fc5244de4456defae50d740ebd7f885b8525e790657a4190c74e255efdba&scene=178&cur_album_id=1668518390266724360#rd)<br />[2019年度总结，波澜不惊](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650744661&idx=1&sn=44de0fed0597c97eac3e19ecc3ab20c5&chksm=886624d9bf11adcfed52ca4b43d7f83500d3f30697f08c1b3a8ed63e3ce22325848b624bb502&scene=178&cur_album_id=1668518390266724360#rd)<br />[2020年度总结，水波不兴](https://mp.weixin.qq.com/s/QmLPNJgFcJXCSwo0aq4-Xg)<br />
 <br />如今第8年了，2021年的年度总结比往年晚一些，此刻正在江西老家继续把写完，本打算在回家前写完。无奈，1月份，工作比较忙，周末和工作日完全都提不起兴趣继续撰写。回到家手机都很少拿起，电脑更是很少打开。
 
-正如，回想过去的这一年的点点滴滴。
+回想起过去的这一年的点点滴滴。
 
 这一年，去了沈阳和西安两个城市出差，分别出差约2个月和10多天，坐了很多次飞机，体验过10多个小时的高铁。
 
@@ -17,7 +16,7 @@
 
 这一年，获得了掘金年度人气创作者第4名，获得了 `InfoQ` 签约作者。
 
-这一年，我的文章在知乎阅读是108w+，去年是63w+，掘金阅读超过了50w+，去年是14w+。
+这一年，我的文章在知乎阅读是108w+，去年是63w+，掘金阅读超过了51w+，去年是14w+。
 
 希望之后多写一些技术文。多拓宽一些视野，多拥抱技术社区。多帮助一些人学会看源码、不惧怕源码。
 
@@ -34,7 +33,7 @@
 
 ## 身体 · 健康
 
-睡眠不规律，很多时候都睡得很晚。好多时候都是1点左右才入睡的。偶尔有早起的时候就感觉一天很长。希望改进。
+睡眠不规律，很多时候都睡得很晚。好多时候都是1点左右才入睡的。偶尔有早起的时候就感觉一天很长。希望22年有所改进。
 
 ## 财务 · 理财
 
@@ -46,6 +45,8 @@
 
 ## 工作 · 事业
 
+### 出差两次，一次996两个月，一次十多天
+
 回顾2020年，工作是相对比较忙的，整体来说，有一些消极。所以对我而言，并不喜欢一直很忙的工作。2021年好一些。
 
 "新生代农民工"。
@@ -54,16 +55,22 @@
 
 一个人的时间精力非常有限。被工作占据了很多时间，就容易对其他事提不起精神。
 
-
 ### 赚钱的本质、认知、视野
 
 解决了问题，提供了的价值。
+
+程序员赚钱的方式有
 
 ### 技术自媒体，慢慢打造个人品牌
 
 #### 公众号
 
-这一年公众号涨粉了一万粉左右，但远远不够。还有很长的路走。再涨一万粉很难，不一定能够实现。
+这一年，截止到目前有一千多微信好友。两个微信号累计8700+好友。也有12个微信交流群，17个源码共读大群，共计4000多小伙伴，相比其他公众号号主来说算很少了。相比2019年，两个微信号累计3500+好友。也有6个微信交流群，共计1000+小伙伴，相比其他公众号号主来说算很少了。现如今是`微信8.0`了，支持一万个微信好友可看朋友圈，也不知道猴年马月会加满一万个微信好友，不过期待这一天早日到来。
+
+这一年公众号涨粉了一万粉左右，但远远不够。还有很长的路走。再涨一万粉很难，不一定能够实现。另外，广告投放基本减少了。都没什么广告可接了。而且广告投放多了会产生一定的"耐药性"，也就是说很难投放出效果，难投放出效果后单价无法上涨。
+
+创作者、投放方、读者朋友。
+希望读者朋友也不要有那么多恶意。
 
 公众号技术圈内好些都离职做起了自由职业，很多收入到超过了本职工作的好几倍。也许在未来的某一天，我也可以达到这样的情况，也许无法达不到。
 
@@ -72,13 +79,36 @@
 
 算到一月份，其实是6个月。源码共读每周一期，进行到了22期。
 
-7月底，竟然坚持了五个月。自己写微信机器人，起初
+7月底，竟然坚持了五个月。自己写微信机器人，起初也是摸索中前进。
 
 ### 掘金最受欢迎年度创作者
 
+[学习源码整体架构系列](https://juejin.cn/column/6960551178908205093)
+
+
+1. [据说 99\% 的人不知道 vue-devtools 还能直接打开对应组件文件？本文原理揭秘](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650751278&idx=1&sn=3ac07b110e84e3ded5fa4ec4407ce13b&chksm=886642a2bf11cbb4cea35f0d208815c39c9cd13a0522e7cdc4a466bc55cb5b3071143a38bb04&scene=178&cur_album_id=1342211915371675650#rd)
+2. [一文读懂vuex4源码，原来provide/inject就是妙用了原型链？](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650751710&idx=1&sn=ce85d2e463cedff7faf09332a0d302e9&chksm=88664152bf11c844c08da1caf42adc6ea982074ccb5291b02873a7997ba28a6f6563a991375f&scene=178&cur_album_id=1342211915371675650#rd)
+3. [面对 this 指向丢失，尤雨溪在 Vuex 源码中是怎么处理的](https://mp.weixin.qq.com/s/pf27XwzO0DVku4i8Q_GIPA)
+4. [尤雨溪开发的 vue-devtools 如何安装，为何打开文件的功能鲜有人知？](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650755710&idx=1&sn=a73db2c7d244c4559e908882f19c1adc&chksm=886651f2bf11d8e4c8685965841c9c4f2e5310e1b87c9232d52d78cc660b4b882d8bc7dbf6d6&scene=178&cur_album_id=1983422074127777794#rd)
+5. [初学者也能看懂的 Vue3 源码中那些实用的基础工具函数](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650756199&idx=1&sn=d3cac0cf2937e9835e1db89e2a486810&chksm=886657ebbf11defd013baaefeb6a86947acc505bbd1c26b37e21b7eab5bb7de431eb97b79858&scene=178&cur_album_id=1342211915371675650#rd)
+6. [Vue 3.2 发布了，那尤雨溪是怎么发布 Vue.js 的？](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650756473&idx=1&sn=00d7187e81d99151e3f459384959437b&chksm=886656f5bf11dfe3eb78637706f6e6fa264e9b7faccf10ee56886a146c81289d768b46ad7a5f&scene=178&cur_album_id=1342211915371675650#rd)
+7. [50行代码串行Promise，koa洋葱模型原来是这么实现？](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650757234&idx=1&sn=e99421799034eb19ce4c1ede71a4ef57&chksm=88665bfebf11d2e879118071b994468116e371d96e67c8cd104c3ea99bffa4dbc287e03c41a4&scene=178&cur_album_id=1342211915371675650#rd)
+8. [为什么 Vue2 this 能够直接获取到 data 和 methods ? 源码揭秘！](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650757441&idx=1&sn=3d401646101b7d69b792f2bcb1440fdc&chksm=88665acdbf11d3db240378c7ccde769c7e02d3ca271e1f9f9df28e51b3ceff73cc80f6d712d3&scene=178&cur_album_id=1342211915371675650#rd)
+9. [Vue 团队公开快如闪电的全新脚手架工具 create-vue，未来将替代 Vue-CLI，才300余行代码，学它！](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650757773&idx=1&sn=7fe83ff71d1b5dd5b29b623886cb18c5&chksm=88665901bf11d017d07232864b8c41720ea9b82cc157defe6f885ccd72d3f3cd982a6278d84c&scene=178&cur_album_id=1342211915371675650#rd)
+10. [尤雨溪几年前开发的“玩具 vite”，才100多行代码，却十分有助于理解 vite 原理](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650758126&idx=1&sn=e506d684b281d84406689fb07d64c9dc&chksm=88665862bf11d174fbc3408338be4519ebfa4fbd609508abac2d4178fea992166aa828a30178&scene=178&cur_album_id=1342211915371675650#rd)
+11. [尤雨溪推荐神器 ni ，能替代 npm/yarn/pnpm ？简单好用！源码揭秘！](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650758387&idx=1&sn=a4634c7ae6d0e1b989f1a4b3a380600d&chksm=88665f7fbf11d669fcb10c8d69b21dd0637ed37a1ae0b6595cbc888cb35feff0efa6bbcbe40d&scene=178&cur_album_id=1342211915371675650#rd)
+12. [初学者也能看懂的 Vue2 源码中那些实用的基础工具函数](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650758578&idx=1&sn=55da8a6926d481bb30e3f5747c636e59&chksm=88665e3ebf11d7286f5835c25fb00e13f36df380bdc68eeba03f0a644b92d9851a5d61ce70e9&scene=178&cur_album_id=1342211915371675650#rd)
+13. [每次启动项目的服务时，电脑竟然乖乖的帮我打开了浏览器，100行源码揭秘！](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650758644&idx=1&sn=38520156a2ef9ae212a822ff283fa08d&chksm=88665e78bf11d76e73fa9e8ce7c2bef314ceb3bb49b177a4e8f0157b33e3525523e507c3a3a1&scene=178&cur_album_id=1342211915371675650#rd)
+14. [面试官：请实现一个通用函数把 callback 转成 promise](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650758894&idx=1&sn=53f590f5c13d95c2d9abe886770c3a65&chksm=88665d62bf11d474ba1373786bec6979aaebe0e51274a80de96419cf8850c5707343a1dd392c&scene=178&cur_album_id=1342211915371675650#rd)
+15. [新手向：前端程序员必学基本技能——调试JS代码](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650758814&idx=1&sn=3814b9c13cc14f33f6c73caff565ff96&chksm=88665d12bf11d404f93b9701dbe68ca80bf81ff6d630d0b378c58cb3b987b3fc4901a837dd25&scene=178&cur_album_id=1342211915371675650#rd)
+16. [每次新增页面复制粘贴？100多行源码的 element-ui 新增组件功能告诉你减少重复工作](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650759137&idx=1&sn=b48536f81b6d93c457d2692b1918790e&chksm=88665c6dbf11d57b1bd528101042833a5367d49f3a2ea7c1962dc2451a95ea7ddb7f20c1de56&scene=178&cur_album_id=1342211915371675650#rd)
+17. [从 vue3 和 vite 源码中，我学到了一行代码统一规范团队包管理器的神器](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650759368&idx=1&sn=b03b43d64c7351154d00eab65dacf9b7&chksm=88666344bf11ea5267c45cfe47b276699b1a8f091754b6d784b615ff7bc332d9fc6a425d67ee&scene=178&cur_album_id=1993885549304086529#rd)
+18. [从 vue-cli 源码中，我发现了27行读取 json 文件有趣的 npm 包](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650759428&idx=1&sn=3de94e0ae091cff2b1608251b62d1c05&chksm=88666288bf11eb9e0100cf57a4bab41effaabad3badf8850677b7aa6e61115b3a918b94cccdd&scene=178&cur_album_id=1342211915371675650#rd)
+19. [Vue团队核心成员开发的39行小工具 install-pkg 安装包，值得一学！](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650759756&idx=1&sn=32f5a898309ba6f75c9fe3a8c2a9b620&chksm=886661c0bf11e8d64c46bef5788fac104843bb4c9ed709b8228e024953955c0b92223b70b634&scene=178&cur_album_id=1993885549304086529#rd)
+20. [面试官：请手写一个带取消功能的延迟函数，axios 取消功能的原理是什么](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650760000&idx=1&sn=d854d3bd3789c67e491700d82bc29cc4&chksm=886660ccbf11e9dacaafcff539edac0816ae9c3c0e1dafe1e0035c82ee74b3446f090a291dc9&scene=178&cur_album_id=1342211915371675650#rd)
+21. [面试官：项目中常用的 .env 文件原理是什么？如何实现？](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650760089&idx=1&sn=a8dbeb56395facf0cbf1fdd688323e71&chksm=88666015bf11e9033385d3141311307643f5cd909705660b77c364fd054df6abd4811380393c&scene=178&cur_album_id=1342211915371675650#rd)
 
 ### 拥抱社区
-
 
 ### 35岁焦虑
 
@@ -93,7 +123,7 @@
 
 ## 家庭 · 生活
 
-很多读者看到`家庭 · 生活`这一部分以为我已经结婚了，事实上并没有。时间很快，转眼毕业好几年了，年龄也确实算大了，时常觉得自己一无所有。也经常被家里人催婚。
+很多读者看到`家庭 · 生活`这一部分以为我已经结婚了，事实上并没有。时间很快，转眼毕业好几年了，年龄也确实算大了，时常觉得自己一无所有、一事无成。也经常被家里人**催婚**。
 
 春节
 
@@ -118,7 +148,13 @@
 
 ## 休闲 · 放松
 
-看了《赘婿》、《觉醒年代》、《琅琊榜之风起长林》等。
+电视剧看了《赘婿》、《觉醒年代》、《扫黑风暴》《琅琊榜之风起长林》等。
+
+爬了两次山。
+
+公司团建，看了一次海。
+
+出差去了沈阳和西安。
 
 ## 总结
 
@@ -136,4 +172,4 @@
 **最后农历新年即将到来，预祝各位读者朋友过一个快乐中国年。在新的一年，遇见更好的自己**。
 
 >若川<br />
->2022年1月30日
+>2022年2月15日（元宵节）
