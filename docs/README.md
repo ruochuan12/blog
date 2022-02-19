@@ -1,4 +1,4 @@
-##  若川诚邀你加群，长期交流学习
+##  若川诚邀你加前端源码共读群，长期交流学习
 
 <div style="height: 60px">
 <vue-typed-js :loop="true"
