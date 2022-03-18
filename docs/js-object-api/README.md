@@ -238,7 +238,7 @@ glass.fullness; // 'half'
 
 ### Object.getPrototypeOf(obj) (ES5)
 
-之前在`ES3`中，我们往往需要通过`Object.prototype.isPrototypeOf()`去猜测某个给定的对象的原型是什么，如今在`ES5`中，我们可以直接询问改对象“你的原型是什么？”
+之前在`ES3`中，我们往往需要通过`Object.prototype.isPrototypeOf()`去猜测某个给定的对象的原型是什么，如今在`ES5`中，我们可以直接询问该对象“你的原型是什么？”
 ```js
 Object.getPrototypeOf([]) === Array.prototype; // true
 Object.getPrototypeOf(Array.prototype) === Object.prototype; // true
