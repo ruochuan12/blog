@@ -278,7 +278,11 @@ function isPromise (val) {
 }
 
 // 例子：
-isPromise(new Promise()) // true
+// 判断是不是Promise对象
+const p1 = new Promise(function (resolve, reject) {
+    resolve('若川');
+});
+isPromise(p1); // true
 ```
 
 这里用 `isDef` 判断其实相对 `isObject` 来判断 来说有点不严谨。但是够用。
