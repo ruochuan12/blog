@@ -6,13 +6,13 @@ theme: smartblue
 # 面试官：项目中常用的 .env 文件原理是什么？如何实现？
 
 ## 1. 前言
->大家好，我是[若川](https://lxchuan12.gitee.io)。[正在参加掘金年度人气作者活动，可以点此帮我投票](https://www.yuque.com/docs/share/9492e1e0-3499-47df-954d-b3f14487e9de)。**为了能帮助到更多对源码感兴趣、想学会看源码、提升自己前端技术能力的同学**。我倾力组织了[源码共读活动](https://www.yuque.com/ruochuan12/topics/1)，感兴趣的可以加我微信 [ruochuan12](https://juejin.cn/pin/7005372623400435725) 参与。每周大家一起学习200行左右的源码，已进行5个月。
+>大家好，我是[若川](https://lxchuan12.gitee.io)。[正在参加掘金年度人气作者活动，可以点此帮我投票](https://www.yuque.com/docs/share/9492e1e0-3499-47df-954d-b3f14487e9de)。**为了能帮助到更多对源码感兴趣、想学会看源码、提升自己前端技术能力的同学**。我倾力组织了[源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以加我微信 [ruochuan12](https://juejin.cn/pin/7005372623400435725) 参与。每周大家一起学习200行左右的源码，已进行5个月。
 
 想学源码，极力推荐关注我写的专栏（目前2K人关注）[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093) 包含`jQuery`、`underscore`、`lodash`、`vuex`、`sentry`、`axios`、`redux`、`koa`、`vue-devtools`、`vuex4`、`koa-compose`、`vue 3.2 发布`、`vue-this`、`create-vue`、`玩具vite`等20余篇源码文章。
 
 [本文仓库 https://github.com/lxchuan12/dotenv-analysis.git，求个star^_^](https://github.com/lxchuan12/dotenv-analysis.git)
 
-[源码共读活动](https://www.yuque.com/ruochuan12/topics/1) 每周一期，已进行到18期。于是搜寻各种值得我们学习，且代码行数不多的源码。[dotenv 主文件仅118行](https://github.com/motdotla/dotenv/blob/master/lib/main.js)，非常值得我们学习。
+[源码共读活动](https://juejin.cn/post/7079706017579139102) 每周一期，已进行到18期。于是搜寻各种值得我们学习，且代码行数不多的源码。[dotenv 主文件仅118行](https://github.com/motdotla/dotenv/blob/master/lib/main.js)，非常值得我们学习。
 
 阅读本文，你将学到：
 ```bash
