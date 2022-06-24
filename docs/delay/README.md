@@ -6,13 +6,13 @@ theme: smartblue
 # 面试官：请手写一个带取消功能的延迟函数，axios 取消功能的原理是什么
 ## 1. 前言
 
->大家好，我是[若川](https://lxchuan12.gitee.io)。**为了能帮助到更多对源码感兴趣、想学会看源码、提升自己前端技术能力的同学**。我倾力组织了[源码共读活动](https://www.yuque.com/ruochuan12/topics/1)，感兴趣的可以加我微信 [ruochuan12](https://juejin.cn/pin/7005372623400435725) 参与。每周大家一起学习200行左右的源码，共同进步，已进行4个月，很多人都表示收获颇丰。
+>大家好，我是[若川](https://lxchuan12.gitee.io)。**为了能帮助到更多对源码感兴趣、想学会看源码、提升自己前端技术能力的同学**。我倾力组织了[源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以加我微信 [ruochuan12](https://juejin.cn/pin/7005372623400435725) 参与。每周大家一起学习200行左右的源码，共同进步，已进行4个月，很多人都表示收获颇丰。
 
 想学源码，极力推荐关注我写的专栏（目前1.9K人关注）[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093) 包含`jQuery`、`underscore`、`lodash`、`vuex`、`sentry`、`axios`、`redux`、`koa`、`vue-devtools`、`vuex4`、`koa-compose`、`vue 3.2 发布`、`vue-this`、`create-vue`、`玩具vite`等20余篇源码文章。
 
 [本文仓库 https://github.com/lxchuan12/delay-analysis.git，求个star^_^](https://github.com/lxchuan12/delay-analysis.git)
 
-[源码共读活动](https://www.yuque.com/ruochuan12/topics/1) 每周一期，已进行到17期。于是搜寻各种值得我们学习，且代码行数不多的源码。[delay 主文件仅70多行](https://github.com/sindresorhus/delay/blob/main/index.js)，非常值得我们学习。
+[源码共读活动](https://juejin.cn/post/7079706017579139102) 每周一期，已进行到17期。于是搜寻各种值得我们学习，且代码行数不多的源码。[delay 主文件仅70多行](https://github.com/sindresorhus/delay/blob/main/index.js)，非常值得我们学习。
 
 阅读本文，你将学到：
 ```bash
