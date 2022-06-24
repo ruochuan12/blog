@@ -7,13 +7,13 @@ theme: smartblue
 
 ## 1. 前言
 
->大家好，我是[若川](https://lxchuan12.gitee.io)。**为了能帮助到更多对源码感兴趣、想学会看源码、提升自己前端技术能力的同学**。我倾力组织了[源码共读活动](https://www.yuque.com/ruochuan12/topics/1)，感兴趣的可以加我微信 [ruochuan12](https://juejin.cn/pin/7005372623400435725) 参与，欢迎关注我的[公众号若川视野](https://lxchuan12.gitee.io)。每周大家一起学习200行左右的源码，共同进步，已进行4个月，很多人都表示收获颇丰。
+>大家好，我是[若川](https://lxchuan12.gitee.io)。**为了能帮助到更多对源码感兴趣、想学会看源码、提升自己前端技术能力的同学**。我倾力组织了[源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以加我微信 [ruochuan12](https://juejin.cn/pin/7005372623400435725) 参与，欢迎关注我的[公众号若川视野](https://lxchuan12.gitee.io)。每周大家一起学习200行左右的源码，共同进步，已进行4个月，很多人都表示收获颇丰。
 
 想学源码，极力推荐关注我写的专栏（目前1.9K人关注）[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093) 包含`jQuery`、`underscore`、`lodash`、`vuex`、`sentry`、`axios`、`redux`、`koa`、`vue-devtools`、`vuex4`、`koa-compose`、`vue 3.2 发布`、`vue-this`、`create-vue`、`玩具vite`等20余篇源码文章。
 
 [本文仓库 https://github.com/lxchuan12/install-pkg-analysis.git，求个star^_^](https://github.com/lxchuan12/install-pkg-analysis.git)
 
-[源码共读活动](https://www.yuque.com/ruochuan12/topics/1) 每周一期，已进行到16期。Vue团队核心成员 `Anthony Fu` 开发的 [install-pkg](https://github.com/antfu/install-pkg) 小工具，主文件源码仅39行，非常值得我们学习。
+[源码共读活动](https://juejin.cn/post/7079706017579139102) 每周一期，已进行到16期。Vue团队核心成员 `Anthony Fu` 开发的 [install-pkg](https://github.com/antfu/install-pkg) 小工具，主文件源码仅39行，非常值得我们学习。
 
 阅读本文，你将学到：
 ```bash
@@ -418,4 +418,4 @@ pnpm install -D --prefer-offine release-it react antd
 
 建议读者克隆 [我的仓库](https://github.com/lxchuan12/install-pkg-analysis.git) 动手实践调试源码学习。
 
-最后可以持续关注我[@若川](https://juejin.cn/column/6960551178908205093)。欢迎加我微信 [ruochuan12](https://juejin.cn/pin/7005372623400435725) 交流，参与 [源码共读](https://www.yuque.com/ruochuan12/topics/1) 活动，每周大家一起学习200行左右的源码，共同进步。
+最后可以持续关注我[@若川](https://juejin.cn/column/6960551178908205093)。欢迎加我微信 [ruochuan12](https://juejin.cn/pin/7005372623400435725) 交流，参与 [源码共读](https://juejin.cn/post/7079706017579139102) 活动，每周大家一起学习200行左右的源码，共同进步。
