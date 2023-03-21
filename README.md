@@ -30,6 +30,8 @@
 
 **学习源码整体架构系列：**
 
+- 42.[你可能从未使用过的调试 Vue3 (开源项目) 源码的方式](https://lxchuan12.gitee.io/vue-debugger/)
+
 - 41.[面试官：项目中常用的 .env 文件原理是什么？如何实现？](https://lxchuan12.gitee.io/dotenv/)
 
 - 40.[面试官：请手写一个带取消功能的延迟函数，axios 取消功能的原理是什么](https://lxchuan12.gitee.io/delay/)
