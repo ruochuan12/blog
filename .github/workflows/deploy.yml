@@ -22,7 +22,7 @@ jobs:
     #   - run: npm run deploy
     #     env:
     #       GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
-	steps:
+	  steps:
 		- name: Build and Deploy
 		uses: actions/checkout@master
 
