@@ -18,7 +18,7 @@ theme: smartblue
 ```bash
 1. 如何学习调试源码
 2. 学会如何获取 package.json
-3. 学到 import.meta 
+3. 学到 import.meta
 4. 学到引入 json 文件的提案
 5. JSON.parse 更友好的错误提示
 6. 规范化 package 元数据
@@ -91,7 +91,7 @@ cd read-pkg && yarn
 
 ```js
 {
-	"name": 
+	"name":
 	"scripts": {
 		"test": "xo && ava && tsd"
 	}
@@ -178,8 +178,8 @@ url 模块提供用于网址处理和解析的实用工具。
 
 **url.fileURLToPath(url)**
 
-url <URL> | <string> 要转换为路径的文件网址字符串或网址对象。
-返回: <string> 完全解析的特定于平台的 Node.js 文件路径。
+url `<URL>` | `<string>` 要转换为路径的文件网址字符串或网址对象。
+返回: `<string>` 完全解析的特定于平台的 Node.js 文件路径。
 此函数可确保正确解码百分比编码字符，并确保跨平台有效的绝对路径字符串。
 ### 4.2 import.meta.url
 
@@ -255,7 +255,7 @@ import process from 'node:process';
 
 [path 中文文档](http://nodejs.cn/api/path.html)
 
-path 模块提供了用于处理文件和目录的路径的实用工具。 
+path 模块提供了用于处理文件和目录的路径的实用工具。
 
 ### 5.3 fs 文件模块
 
@@ -318,7 +318,7 @@ function normalize (data, warn, strict) {
 ```bash
 1. 如何学习调试源码
 2. 学会如何获取 package.json
-3. 学到 import.meta 
+3. 学到 import.meta
 4. 学到引入 json 文件的提案
 5. JSON.parse 更友好的错误提示
 6. 规范化 package 元数据
