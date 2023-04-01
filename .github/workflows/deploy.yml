@@ -13,17 +13,17 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-	  - name: Build and Deploy
-		uses: actions/checkout@master
-		- name: vuepress-deploy
-		uses: jenkey2011/vuepress-deploy@master
-		env:
-			ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-			TARGET_REPO: lxchuan12/lxchuan12.github.io
-			TARGET_BRANCH: master
-			BUILD_SCRIPT: npm install && npm run build
-			BUILD_DIR: docs/.vuepress/dist
-			CNAME: https://lxchuan12.cn
+      - name: Checkout
+        uses: actions/checkout@master
+      - name: vuepress-deploy
+        uses: jenkey2011/vuepress-deploy@master
+        env:
+          ACCESS_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+          TARGET_REPO: lxchuan12/lxchuan12.github.io
+          TARGET_BRANCH: master
+          BUILD_SCRIPT: npm install && npm run build
+          BUILD_DIR: docs/.vuepress/dist
+          CNAME: https://lxchuan12.cn
 
       - name: Sync to Gitee
         uses: wearerequired/git-mirror-action@master
