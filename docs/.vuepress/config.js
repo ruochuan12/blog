@@ -12,6 +12,8 @@ module.exports = {
 		// 	'script',
 		// 	{ charset: 'utf-8', src: 'https://my.openwrite.cn/js/readmore.js' },
 		// ],
+		/**
+		 *
 		// 添加cnzz统计
 		[
 			"script",
@@ -19,6 +21,23 @@ module.exports = {
 				src: "https://s19.cnzz.com/z_stat.php?id=1273798602&web_id=1273798602",
 				defer: "defer",
 			}
+		],
+		 */
+		// 添加百度统计
+		["script",
+			{
+				defer: "defer",
+			},
+			`<script>
+			var _hmt = _hmt || [];
+			(function() {
+			  var hm = document.createElement("script");
+			  hm.src = "https://hm.baidu.com/hm.js?b0077938fa555dbb43c9dd96d20e9b79";
+			  var s = document.getElementsByTagName("script")[0];
+			  s.parentNode.insertBefore(hm, s);
+			})();
+			</script>
+			`
 		]
 	],
 	port: 4000,

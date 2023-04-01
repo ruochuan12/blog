@@ -1,9 +1,9 @@
 <template>
   <div class="ruochuan12-side">
-    <img class="ruochuan12-side-image" src="./ruochuan12-qrcode.png"/>
+    <img class="ruochuan12-side-image" src="./ruochuan02.jpg"/>
 	<div class="text-center">
-    <vue-typed-js :loop="true" 
-        :typeSpeed="100"    
+    <vue-typed-js :loop="true"
+        :typeSpeed="100"
       :backSpeed="20"
       :strings="['欢迎扫码加我微信']">
       <span class="typing"></span>
