@@ -29,20 +29,21 @@
   "devDependencies": {
     "@types/file-loader": "^4.2.1",
     "@types/imagemin-pngquant": "^7.0.0",
-    "@vuepress/plugin-back-to-top": "^1.8.2",
-    "@vuepress/plugin-google-analytics": "^1.8.2",
-    "@vuepress/plugin-medium-zoom": "^1.8.2",
-    "@vuepress/plugin-pwa": "^1.8.2",
-    "commitizen": "^4.2.3",
-    "conventional-changelog-cli": "^2.1.1",
+    "@vuepress/plugin-back-to-top": "^1.9.9",
+    "@vuepress/plugin-google-analytics": "^1.9.9",
+    "@vuepress/plugin-medium-zoom": "^1.9.9",
+    "@vuepress/plugin-pwa": "^1.9.9",
+    "commitizen": "^4.3.0",
+    "conventional-changelog-cli": "^2.2.2",
     "cz-conventional-changelog": "^3.3.0",
     "file-loader": "^6.2.0",
-    "git-cz": "^4.7.6",
+    "git-cz": "^4.9.0",
     "image-webpack-loader": "^6.0.0",
     "imagemin-pngquant": "^8.0.0",
-    "release-it": "^13.7.1",
+    "release-it": "^15.10.0",
     "tinyimg-webpack-plugin": "0.0.5",
-    "vuepress": "^1.5.2"
+    "vuepress": "^1.9.9",
+    "vuepress-theme-reco": "^1.6.17"
   },
   "release-it": {
     "npm": {
@@ -58,6 +59,7 @@
     }
   },
   "dependencies": {
-    "vue-typed-js": "^0.1.2"
+    "vue-typed-js": "^0.1.2",
+    "vuepress-theme-hope": "^1.31.0-beta.2"
   }
 }
