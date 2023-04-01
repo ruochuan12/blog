@@ -24,7 +24,7 @@ git commit -m "Release $VERSION"
 
 # 如果发布到 https://lxchuan12.github.io
 # git push -f git@github.com:lxchuan12/lxchuan12.github.io.git master
-git push -f https://${GITHUB_TOKEN}@github.com/lxchuan12/lxchuan12.github.io.git master
+git push -f https://username:${GITHUB_TOKEN}@github.com/lxchuan12/lxchuan12.github.io.git master
 
 # 暂时手动同步，直接push不会自动部署
 # git remote add origin https://lxchuan12:${GITEE_TOKEN}@gitee.com/lxchuan12/lxchuan12.git
