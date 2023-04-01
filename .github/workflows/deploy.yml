@@ -21,7 +21,7 @@ jobs:
       - run: npm install --frozen-lockfile
       - run: npm run deploy
         env:
-          TOKEN_GITHUB: ${{secrets.TOKEN_GITHUB}}
+          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
       - name: Sync to Gitee
         uses: wearerequired/git-mirror-action@master
         env:
