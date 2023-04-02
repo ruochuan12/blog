@@ -22,7 +22,7 @@ jobs:
         uses: actions/setup-node@v2
         with:
           node-version: 16
-      - run: npm install --frozen-lockfile
+      - run: npm ci --frozen-lockfile
       - run: npm run deploy
         env:
           GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
