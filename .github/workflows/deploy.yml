@@ -11,7 +11,7 @@ on:
 
 permissions:
   contents: write
-  action: write
+  actions: write
 
 jobs:
   deploy:
