@@ -28,6 +28,18 @@
 
 ## 文章列表
 
+**vant 组件库源码分析系列：**
+
+- 47.[vant4.0 正式发布了，分析其源码学会用 vue3 写一个图片懒加载组件！](https://lxchuan12.gitee.io/vant/lazyload/)
+
+- 46.[分析 vant4 源码，学会用 vue3 + ts 开发毫秒级渲染的倒计时组件，真是妙啊](https://lxchuan12.gitee.io/vant/count-down/)
+
+- 45.[分析 vant4 源码，如何用 vue3 + ts 开发一个瀑布流滚动加载的列表组件？](https://lxchuan12.gitee.io/vant/list/)
+
+- 44.[跟着 vant4 源码学习如何用 vue3+ts 开发一个 loading 组件，仅88行代码](https://lxchuan12.gitee.io/vant/loading/)
+
+- 43.[vant 4 即将正式发布，支持暗黑主题，那么是如何实现的呢](https://lxchuan12.gitee.io/vant/dark-theme/)
+
 **学习源码整体架构系列：**
 
 - 42.[你可能从未使用过的调试 Vue3 (开源项目) 源码的方式](https://lxchuan12.gitee.io/vue-debugger/)
