@@ -272,7 +272,11 @@ module.exports = {
 				collapsable: true, // 可选的, 默认值是 true,
 				sidebarDepth: 2, // 可选的, 默认值是 1
 				children: [
+					'/react-use/',
 					'/vue-debugger/',
+					'/vant-weapp-stepper/',
+					'/create-vite/',
+					'/mini-ci/',
 					'/dotenv/',
 					'/delay/',
 					'/install-pkg/',
