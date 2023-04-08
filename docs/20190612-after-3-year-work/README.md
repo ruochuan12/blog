@@ -2,7 +2,7 @@
 
 写于`2019-06-12 23:44:27`
 
->你好，我是[若川](https://lxchuan12.gitee.io)，微信搜索[「若川视野」](https://mp.weixin.qq.com/s/c3hFML3XN9KCUetDOZd-DQ)关注我，专注前端技术分享。欢迎加我微信`ruochuan12`，加群交流学习。
+>大家好，我是[若川](https://lxchuan12.gitee.io)。我倾力持续组织了一年[每周大家一起学习200行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（4.1k+人）第一的专栏，写有20余篇源码文章。
 
 >这是一篇写在我的微信公众号【若川视野】的文章，现在同步发布在博客。 [高考七年后、工作三年后的感悟](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650744481&idx=1&sn=8a9599fe22d7b89afd65d1e72763be34&chksm=8866252dbf11ac3b6e39848004dc58950a96140be9ac83158a4c2e166d0ef41b6d0febe94507&token=666904113&lang=zh_CN#rd)
 
