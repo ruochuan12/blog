@@ -96,7 +96,7 @@ module.exports = {
 			},
 			{
 				text: "掘金",
-				link: "https://juejin.im/user/1415826704971918/posts"
+				link: "https://juejin.cn/user/1415826704971918/columns"
 			},
 			{
 				text: "Github",
