@@ -1,4 +1,4 @@
-// console.log(__dirname, "dirname");
+console.log(__dirname, "dirname");
 const TinyimgPlugin = require('tinyimg-webpack-plugin');
 module.exports = {
 	title: "若川的博客",
@@ -441,4 +441,5 @@ module.exports = {
 			})
 		],
 	},
+	shouldPrefetch: ()=> false,
 };
