@@ -1,9 +1,9 @@
-console.log(__dirname, "dirname");
+// console.log(__dirname, "dirname");
 const TinyimgPlugin = require('tinyimg-webpack-plugin');
 module.exports = {
 	title: "若川的博客",
 	// theme: 'vuepress-theme-reco',
-	// theme: 'vuepress-theme-hope',
+	theme: 'vuepress-theme-hope',
 	keywords:
 		"若川，微信搜索「若川视野」关注我，长期交流学习。写有《学习源码整体架构系列》。包含jquery源码、underscore源码、lodash源码、sentry源码、vuex源码、axios源码、koa源码、redux源码、vue-devtools源码、vuex4源码。前端路上，PPT爱好者，所知甚少，唯善学。",
 	description: "若川，微信搜索「若川视野」关注我，长期交流学习。写有《学习源码整体架构系列》。包含jquery源码、underscore源码、lodash源码、sentry源码、vuex源码、axios源码、koa源码、redux源码。前端路上，PPT爱好者，所知甚少，唯善学。",
@@ -81,11 +81,28 @@ module.exports = {
 	],
 	serviceWorker: true, // 是否开启 PWA
 	themeConfig: {
+		hostname: "lxchuan12.gitee.io",
 		subSidebar: 'auto',
 		nav: [
 			// { text: '目录', link: '/posts/' },
-			{ text: "公众号：若川视野", link: "https://image-static.segmentfault.com/355/182/3551821948-5df888aa1dc88_articlex" },
 			{ text: "目录", link: "/" },
+			{
+				text: "关于我",
+				link: "/about/"
+			},
+			{
+				text: '曾经写的"诗词"',
+				link: "/poetry/2012-2016/"
+			},
+			{
+				text: "掘金",
+				link: "https://juejin.im/user/1415826704971918/posts"
+			},
+			{
+				text: "Github",
+				link: "https://github.com/lxchuan12/blog"
+			},
+			{ text: "公众号：若川视野", link: "https://image-static.segmentfault.com/355/182/3551821948-5df888aa1dc88_articlex" },
 			// { text: '博文',
 			//   items: [
 			// 	{
@@ -158,22 +175,6 @@ module.exports = {
 			// 	}
 			//   ]
 			// },
-			{
-				text: "关于我",
-				link: "/about/"
-			},
-			{
-				text: '曾经写的"诗词"',
-				link: "/poetry/2012-2016/"
-			},
-			{
-				text: "Github",
-				link: "https://github.com/lxchuan12/blog"
-			},
-			{
-				text: "掘金",
-				link: "https://juejin.im/user/1415826704971918/posts"
-			},
 			{
 				text: "知乎",
 				link: "https://www.zhihu.com/people/lxchuan12/activities"

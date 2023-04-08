@@ -1,10 +1,10 @@
-##  若川诚邀你加前端源码共读群，长期交流学习
+#  若川诚邀你加前端源码共读群，长期交流学习
 
 <div style="height: 60px">
 <vue-typed-js :loop="true"
     :typeSpeed="100"
     :backSpeed="20"
-    :loopCount="10" :strings="['你好，我是若川。欢迎扫码加我微信~', '拉你进源码共读群，一起学习源码~']">
+    :loopCount="10" :strings="['你好，我是若川。欢迎扫码加我微信 ruochuan02 ~', '拉你进源码共读群，一起学习源码~']">
   <h3 class="typing"></h3>
 </vue-typed-js>
 </div>
