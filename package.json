@@ -43,7 +43,8 @@
     "release-it": "^15.10.0",
     "tinyimg-webpack-plugin": "0.0.5",
     "vuepress": "^1.9.9",
-    "vuepress-theme-reco": "^1.6.17"
+    "vuepress-theme-reco": "^1.6.17",
+    "vuepress-theme-hope": "^1.31.0-beta.2"
   },
   "release-it": {
     "npm": {
@@ -59,7 +60,6 @@
     }
   },
   "dependencies": {
-    "vue-typed-js": "^0.1.2",
-    "vuepress-theme-hope": "^1.31.0-beta.2"
+    "vue-typed-js": "^0.1.2"
   }
 }
