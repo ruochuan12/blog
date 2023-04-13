@@ -21,8 +21,9 @@ jobs:
       - name: Set node version to 14
         uses: actions/setup-node@v3
         with:
-          node-version: 14
-      - run: npm ci --frozen-lockfile
+          node-version: 16
+      #   - run: npm ci --frozen-lockfile
+      - run: yarn install
       - run: npm run deploy
         env:
         #   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
