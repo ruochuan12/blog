@@ -31,7 +31,10 @@
 我们可以得知具体要做什么，新增 `hook` 关联哪些文件。
 
 ```shell
-# 可以克隆官方项目
+# 推荐克隆我的仓库
+git clone https://github.com/lxchuan12/react-use-analysis.git
+cd react-use-analysis/react-use
+# 也可以克隆官方项目
 git clone https://github.com/streamich/react-use.git
 cd react-use
 yarn install
@@ -151,7 +154,7 @@ storiesOf('Lifecycle/useEffectOnce', module)
 
 ### 3.1 useIdle
 
-[useIdle docs](https://streamich.github.io/react-use/?path=/story/sensors-useidle--docs) | 
+[useIdle docs](https://streamich.github.io/react-use/?path=/story/sensors-useidle--docs) |
 [useIdle demo](https://streamich.github.io/react-use/?path=/story/sensors-useidle--demo)
 
 >tracks whether user is being inactive.
@@ -230,7 +233,7 @@ export default useIdle;
 
 ### 3.2 useLocation
 
-[useLocation docs](https://streamich.github.io/react-use/?path=/story/sensors-uselocation--docs) | 
+[useLocation docs](https://streamich.github.io/react-use/?path=/story/sensors-uselocation--docs) |
 [useLocation demo](https://streamich.github.io/react-use/?path=/story/sensors-uselocation--demo)
 
 >React sensor hook that tracks brower's location.
@@ -355,7 +358,7 @@ export function useFirstMountState(): boolean {
 
 ### 4.2 usePrevious
 
-[usePrevious docs](https://streamich.github.io/react-use/?path=/story/state-useprevious--docs) | 
+[usePrevious docs](https://streamich.github.io/react-use/?path=/story/state-useprevious--docs) |
 [usePrevious demo](https://streamich.github.io/react-use/?path=/story/state-useprevious--demo)
 
 >React state hook that returns the previous state as described in the React hooks FAQ.
@@ -379,7 +382,7 @@ export default function usePrevious<T>(state: T): T | undefined {
 
 ### 4.3 useSet
 
-[useSet docs](https://streamich.github.io/react-use/?path=/story/state-useset--docs) | 
+[useSet docs](https://streamich.github.io/react-use/?path=/story/state-useset--docs) |
 [useSet demo](https://streamich.github.io/react-use/?path=/story/state-useset--demo)
 
 >React state hook that tracks a Set.
@@ -432,7 +435,7 @@ export default useSet;
 
 ### 4.4 useToggle
 
-[useToggle docs](https://streamich.github.io/react-use/?path=/story/state-usetoggle--docs) | 
+[useToggle docs](https://streamich.github.io/react-use/?path=/story/state-usetoggle--docs) |
 [useToggle demo](https://streamich.github.io/react-use/?path=/story/state-usetoggle--demo)
 
 >tracks state of a boolean.
@@ -460,7 +463,7 @@ export default useToggle;
 
 `useMountedState` 属于 `lifecycle` 模块，但这个 `hook` 在 `useAsyncFn` 中使用，所以放到这里讲述。
 
-[useMountedState docs](https://streamich.github.io/react-use/?path=/story/lifecycle-usemountedstate--docs) | 
+[useMountedState docs](https://streamich.github.io/react-use/?path=/story/lifecycle-usemountedstate--docs) |
 [useMountedState demo](https://streamich.github.io/react-use/?path=/story/lifecycle-usemountedstate--demo)
 
 >NOTE!: despite having State in its name this hook does not cause component re-render. This component designed to be used to avoid state updates on unmounted components.
@@ -536,7 +539,7 @@ export default function useAsyncFn<T extends FunctionReturningPromise>(
 
 ### 5.3 useAsync
 
-[useAsync docs](https://streamich.github.io/react-use/?path=/story/side-effects-useasync--docs) | 
+[useAsync docs](https://streamich.github.io/react-use/?path=/story/side-effects-useasync--docs) |
 [useAsync demo](https://streamich.github.io/react-use/?path=/story/side-effects-useasync--demo)
 
 >React hook that resolves an async function or a function that returns a promise;
@@ -567,7 +570,7 @@ export default function useAsync<T extends FunctionReturningPromise>(
 
 ### 5.4 useAsyncRetry
 
-[useAsyncRetry docs](https://streamich.github.io/react-use/?path=/story/side-effects-useasyncretry--docs) | 
+[useAsyncRetry docs](https://streamich.github.io/react-use/?path=/story/side-effects-useasyncretry--docs) |
 [useAsyncRetry demo](https://streamich.github.io/react-use/?path=/story/side-effects-useasyncretry--demo)
 
 >Uses useAsync with an additional retry method to easily retry/refresh the async function;
@@ -656,7 +659,7 @@ export default function useTimeoutFn(fn: Function, ms: number = 0): UseTimeoutFn
 
 ### 5.6 useDebounce
 
-[useDebounce docs](https://streamich.github.io/react-use/?path=/story/side-effects-usedebounce--docs) | 
+[useDebounce docs](https://streamich.github.io/react-use/?path=/story/side-effects-usedebounce--docs) |
 [useDebounce demo](https://streamich.github.io/react-use/?path=/story/side-effects-usedebounce--demo)
 
 >React hook that delays invoking a function until after wait milliseconds have elapsed since the last time the debounced function was invoked.
@@ -683,7 +686,7 @@ export default function useDebounce(
 
 ### 5.7 useThrottle
 
-[useThrottle docs](https://streamich.github.io/react-use/?path=/story/side-effects-usethrottle--docs) | 
+[useThrottle docs](https://streamich.github.io/react-use/?path=/story/side-effects-usethrottle--docs) |
 [useThrottle demo](https://streamich.github.io/react-use/?path=/story/side-effects-usethrottle--demo)
 
 >React hooks that throttle.
@@ -735,7 +738,7 @@ export default useThrottle;
 
 ### 6.1 useFullscreen
 
-[useFullscreen docs](https://streamich.github.io/react-use/?path=/story/ui-usefullscreen--docs) | 
+[useFullscreen docs](https://streamich.github.io/react-use/?path=/story/ui-usefullscreen--docs) |
 [useFullscreen demo](https://streamich.github.io/react-use/?path=/story/ui-usefullscreen--demo)
 
 >Display an element full-screen, optional fallback for fullscreen video on iOS.
@@ -833,7 +836,7 @@ export default useFullscreen;
 
 ### 7.1 useLifecycles
 
-[useLifecycles docs](https://streamich.github.io/react-use/?path=/story/lifecycle-uselifecycles--docs) | 
+[useLifecycles docs](https://streamich.github.io/react-use/?path=/story/lifecycle-uselifecycles--docs) |
 [useLifecycles demo](https://streamich.github.io/react-use/?path=/story/lifecycle-uselifecycles--demo)
 
 >React lifecycle hook that call mount and unmount callbacks, when component is mounted and un-mounted, respectively.
@@ -860,7 +863,7 @@ export default useLifecycles;
 
 ### 7.2 useCustomCompareEffect
 
-[useCustomCompareEffect docs](https://streamich.github.io/react-use/?path=/story/lifecycle-usecustomcompareeffect--docs) | 
+[useCustomCompareEffect docs](https://streamich.github.io/react-use/?path=/story/lifecycle-usecustomcompareeffect--docs) |
 [useCustomCompareEffect demo](https://streamich.github.io/react-use/?path=/story/lifecycle-usecustomcompareeffect--demo)
 
 >A modified useEffect hook that accepts a comparator which is used for comparison on dependencies instead of reference equality.
@@ -894,7 +897,7 @@ export default useCustomCompareEffect;
 
 ### 7.3 useDeepCompareEffect
 
-[useDeepCompareEffect docs](https://streamich.github.io/react-use/?path=/story/lifecycle-usedeepcompareeffect--docs) | 
+[useDeepCompareEffect docs](https://streamich.github.io/react-use/?path=/story/lifecycle-usedeepcompareeffect--docs) |
 [useDeepCompareEffect demo](https://streamich.github.io/react-use/?path=/story/lifecycle-usedeepcompareeffect--demo)
 
 >A modified useEffect hook that is using deep comparison on its dependencies instead of reference equality.
@@ -922,7 +925,7 @@ export default useDeepCompareEffect;
 
 ### 8.1 useUpdate
 
-[useUpdate docs](https://streamich.github.io/react-use/?path=/story/animation-useupdate--docs) | 
+[useUpdate docs](https://streamich.github.io/react-use/?path=/story/animation-useupdate--docs) |
 [useUpdate demo](https://streamich.github.io/react-use/?path=/story/animation-useupdate--demo)
 
 >React utility hook that returns a function that forces component to re-render when called.
