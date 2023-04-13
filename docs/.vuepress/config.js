@@ -3,7 +3,7 @@ const TinyimgPlugin = require('tinyimg-webpack-plugin');
 module.exports = {
 	title: "若川的博客",
 	// theme: 'vuepress-theme-reco',
-	// theme: 'vuepress-theme-hope',
+	theme: 'vuepress-theme-hope',
 	keywords:
 		"若川，微信搜索「若川视野」关注我，长期交流学习。写有《学习源码整体架构系列》。包含jquery源码、underscore源码、lodash源码、sentry源码、vuex源码、axios源码、koa源码、redux源码、vue-devtools源码、vuex4源码。前端路上，PPT爱好者，所知甚少，唯善学。",
 	description: "若川，微信搜索「若川视野」关注我，长期交流学习。写有《学习源码整体架构系列》。包含jquery源码、underscore源码、lodash源码、sentry源码、vuex源码、axios源码、koa源码、redux源码。前端路上，PPT爱好者，所知甚少，唯善学。",
