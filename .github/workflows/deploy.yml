@@ -23,7 +23,7 @@ jobs:
         with:
           node-version: 16
       #   - run: npm ci --frozen-lockfile
-      - run: yarn install
+      - run: npm install
       - run: npm run deploy
         env:
         #   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
