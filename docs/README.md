@@ -149,6 +149,6 @@
 
 ## 免费的知识星球 前端视野
 
-<img src="../README-images/zsxq.png"  width="250" height="325" title="前端视野知识星球" alt="前端视野知识星球"/>
+<img src="../README-images/zsxq.png" width="250" height="325" title="前端视野知识星球" alt="前端视野知识星球"/>
 
 主要发表一些前端所见所想，Vue、React、构建工具(比如：gulp、webpack)、设计模式等。一个人走得快，一群人走得远。
