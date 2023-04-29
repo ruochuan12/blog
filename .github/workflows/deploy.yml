@@ -4,11 +4,11 @@ on:
     workflow_dispatch:
     push:
         branches:
-            - master
+            - main
             - vuepress-v2
     pull_request:
         branches:
-            - master
+            - main
             - vuepress-v2
 
 permissions:
