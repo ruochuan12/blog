@@ -43,8 +43,8 @@ jobs:
                   NODE_OPTIONS: --max_old_space_size=8192
                   #   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
                   GITHUB_TOKEN: ${{secrets.TOKEN_GITHUB}}
-                  run: |-
-                      pnpm run deploy
+              run: |-
+                  pnpm run deploy
 
             - name: Sync to Gitee
               uses: wearerequired/git-mirror-action@master
