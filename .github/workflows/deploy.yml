@@ -22,31 +22,29 @@ jobs:
             - name: Checkout
               uses: actions/checkout@v3
               with:
-                fetch-depth: 0
-                # 如果你文档需要 Git 子模块，取消注释下一行
-                # submodules: true
+                  fetch-depth: 0
+                  # 如果你文档需要 Git 子模块，取消注释下一行
+                  # submodules: true
 
             - name: 安装 pnpm
               uses: pnpm/action-setup@v2
               with:
-                version: 8
-                run_install: true
-
+                  version: 8
+                  run_install: true
 
             - name: 设置 Node.js
               uses: actions/setup-node@v3
               with:
-                node-version: 18
-                cache: pnpm
-
+                  node-version: 18
+                  cache: pnpm
 
             - name: 构建文档
-                env:
+              env:
                   NODE_OPTIONS: --max_old_space_size=8192
                   #   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
                   GITHUB_TOKEN: ${{secrets.TOKEN_GITHUB}}
-                run: |-
-                  pnpm run deploy
+                  run: |-
+                      pnpm run deploy
 
             - name: Sync to Gitee
               uses: wearerequired/git-mirror-action@master
