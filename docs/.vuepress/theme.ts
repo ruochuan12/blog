@@ -187,4 +187,5 @@ export default hopeTheme({
 	},
 
 	fullscreen: true,
+	contributors: false,
 });
