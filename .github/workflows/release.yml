@@ -1,25 +1,26 @@
 name: Release
 
 permissions:
-  contents: write
+    contents: write
 
 on:
-  push:
-    tags:
-      - 'v*'
+    workflow_dispatch:
+    push:
+        tags:
+            - "*"
 
 jobs:
-  release:
-    runs-on: ubuntu-latest
-    steps:
-      - uses: actions/checkout@v3
-        with:
-          fetch-depth: 0
+    release:
+        runs-on: ubuntu-latest
+        steps:
+            - uses: actions/checkout@v3
+              with:
+                  fetch-depth: 0
 
-      - uses: actions/setup-node@v3
-        with:
-          node-version: 16.x
+            - uses: actions/setup-node@v3
+              with:
+                  node-version: 16.x
 
-      - run: npx changelogithub
-        env:
-          GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
+            - run: npx changelogithub
+              env:
+                  GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
