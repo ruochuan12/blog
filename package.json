@@ -4,9 +4,8 @@
     "description": "blog",
     "type": "module",
     "main": "index.js",
-    "workspaces": [
-        "packages/*"
-    ],
+    "private": true,
+    "packageManager": "pnpm@8.2.0",
     "scripts": {
         "commit": "git-cz",
         "build": "vuepress build docs",
