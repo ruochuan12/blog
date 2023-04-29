@@ -1,6 +1,6 @@
 import { defineUserConfig } from "vuepress";
 // import pluginTyped from "./components/plugin-typed/index.js";
-// import pluginSide from "./components/plugin-side/index.js";
+import pluginSide from "./components/plugin-side/src/node/index";
 // import { backToTopPlugin } from "@vuepress/plugin-back-to-top";
 import { googleAnalyticsPlugin } from "@vuepress/plugin-google-analytics";
 import { searchProPlugin } from "vuepress-plugin-search-pro";
@@ -67,7 +67,7 @@ export default defineUserConfig({
 	shouldPrefetch: false,
 	plugins: [
 		// pluginTyped,
-		// pluginSide,
+		pluginSide,
 		// backToTopPlugin(),
 		googleAnalyticsPlugin({
 			// 配置项
