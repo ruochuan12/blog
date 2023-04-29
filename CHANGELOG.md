@@ -1,3 +1,24 @@
+
+
+# [3.1.0](https://github.com/lxchuan12/blog/compare/3.0.10...3.1.0) (2023-04-29)
+
+
+### Features
+
+* 🎸 更新升级为 vuepress-v2 同时使用 vuepress-theme-hope v2 主题 ([0516933](https://github.com/lxchuan12/blog/commit/0516933c01471b14d6e0b91987a5936f77b169d1))
+* 🎸 替换二维码和替换为百度统计 ([69d02f8](https://github.com/lxchuan12/blog/commit/69d02f89dbf0dbd22ee67ff0526dca06a4c7cc7e))
+* 🎸 添加 search 和修复 deploy 和图片等 ([8a28e46](https://github.com/lxchuan12/blog/commit/8a28e46be71df99e84016d3b3b30923553a75b96))
+* 🎸 新增 你可能从未使用过的调试 Vue3 (开源项目) 源码的方式 ([cab2551](https://github.com/lxchuan12/blog/commit/cab2551fa6ee005bb2790049594b3e828b830a4d))
+* 🎸 新增 你可能从未使用过的调试 Vue3 (开源项目) 源码的方式 链接 ([a4e02d8](https://github.com/lxchuan12/blog/commit/a4e02d8d170511f809fd9dd943363f3c7a45b68f))
+* 🎸 新增 dotenv 文章 ([63733d9](https://github.com/lxchuan12/blog/commit/63733d92a08df8187bc367f617d1766cf89abbf2))
+* 🎸 新增 dotenv 文章 config ([b6bccd7](https://github.com/lxchuan12/blog/commit/b6bccd70115e56708d39023653e65b0accf3d956))
+* 🎸 新增原先的4篇文章 ([eb744fc](https://github.com/lxchuan12/blog/commit/eb744fcd1a24af63f7af0e3953098afe175a25ae))
+
+
+### Reverts
+
+* Revert "chore: 🤖 更新 .github/workflows/deploy.yml" ([204d4d3](https://github.com/lxchuan12/blog/commit/204d4d31671d9d627cdbe617bb37215e1d761f3d))
+
 ## [3.0.10](https://github.com/lxchuan12/blog/compare/3.0.9...3.0.10) (2021-12-23)
 
 
@@ -144,6 +165,3 @@
 * 添加 Tinyimg webpack插件实现压缩图片功能 ([a2b0cbc](https://github.com/lxchuan12/blog/commit/a2b0cbcf631bff1368e60f0c9a21ef6f28d352ce))
 * 源码文章添加仓库地址 ([3522204](https://github.com/lxchuan12/blog/commit/3522204b5872bb0cc9a89d7be6637d3635489187))
 * 移除 koa-compose 中的 拷贝错误的 redux 相关文件 ([b7e8e68](https://github.com/lxchuan12/blog/commit/b7e8e683111eabff1a8fa95807bc1a804a2aded4))
-
-
-
