@@ -1,15 +1,16 @@
 {
   "name": "blog",
   "version": "3.0.10",
-  "description": "vuepress blog",
+  "description": "blog",
+  "type": "module",
   "main": "index.js",
   "scripts": {
     "commit": "git-cz",
-    "release": "release-it",
-    "changelog": "conventional-changelog -p angular -i CHANGELOG.md -s -r 0",
-    "test": "echo \"Error: no test specified\" && exit 1",
-    "dev": "vuepress dev docs",
     "build": "vuepress build docs",
+    "clean-dev": "vuepress dev docs --clean-cache",
+    "dev": "vuepress dev docs",
+    "update-package": "pnpm dlx vp-update",
+    "release": "release-it",
     "deploy": "bash ./scripts/deploy.sh"
   },
   "repository": {
@@ -27,39 +28,14 @@
   },
   "homepage": "https://github.com/lxchuan12/blog#readme",
   "devDependencies": {
-    "@types/file-loader": "^4.2.1",
-    "@types/imagemin-pngquant": "^7.0.0",
-    "@vuepress/plugin-back-to-top": "^1.9.9",
-    "@vuepress/plugin-google-analytics": "^1.9.9",
-    "@vuepress/plugin-medium-zoom": "^1.9.9",
-    "@vuepress/plugin-pwa": "^1.9.9",
-    "commitizen": "^4.3.0",
-    "conventional-changelog-cli": "^2.2.2",
-    "cz-conventional-changelog": "^3.3.0",
-    "file-loader": "^6.2.0",
-    "git-cz": "^4.9.0",
-    "image-webpack-loader": "^6.0.0",
-    "imagemin-pngquant": "^8.0.0",
-    "release-it": "^15.10.0",
-    "tinyimg-webpack-plugin": "0.0.5",
-    "vuepress": "^1.9.9",
-    "vuepress-theme-reco": "^1.6.17",
-    "vuepress-theme-hope": "^1.31.0-beta.2"
-  },
-  "release-it": {
-    "npm": {
-      "publish": false
-    },
-    "hooks": {
-      "after:bump": "yarn changelog"
-    }
-  },
-  "config": {
-    "commitizen": {
-      "path": "cz-conventional-changelog"
-    }
-  },
-  "dependencies": {
-    "vue-typed-js": "^0.1.2"
+    "@release-it/conventional-changelog": "^5.1.1",
+    "@types/vue": "^2.0.0",
+    "@vuepress/client": "2.0.0-beta.61",
+    "@vuepress/plugin-back-to-top": "2.0.0-beta.61",
+    "@vuepress/plugin-google-analytics": "2.0.0-beta.61",
+    "release-it": "^15.10.1",
+    "vue": "^3.2.47",
+    "vuepress": "2.0.0-beta.61",
+    "vuepress-theme-hope": "2.0.0-beta.206"
   }
 }

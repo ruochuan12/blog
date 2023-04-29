@@ -5,9 +5,11 @@ on:
   push:
     branches:
       - master
+      - vuepress-v2
   pull_request:
     branches:
       - master
+      - vuepress-v2
 
 permissions:
   contents: write
@@ -17,14 +19,20 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v3with:
+          fetch-depth: 0
       - name: Set node version to 14
         uses: actions/setup-node@v3
         with:
           node-version: 16
       #   - run: npm ci --frozen-lockfile
-      - run: npm install
-      - run: npm run deploy
+	  - name: 安装 pnpm
+        uses: pnpm/action-setup@v2
+        with:
+          version: 8
+          run_install: true
+      - run: pnpm install
+      - run: pnpm run deploy
         env:
         #   GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
           GITHUB_TOKEN: ${{secrets.TOKEN_GITHUB}}
