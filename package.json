@@ -1,43 +1,44 @@
 {
-    "name": "blog",
-    "version": "3.0.10",
-    "description": "blog",
-    "type": "module",
-    "main": "index.js",
-    "private": true,
-    "packageManager": "pnpm@8.2.0",
-    "scripts": {
-        "commit": "git-cz",
-        "build": "vuepress build docs",
-        "clean-dev": "vuepress dev docs --clean-cache",
-        "dev": "vuepress dev docs",
-        "update-package": "pnpm dlx vp-update",
-        "release": "release-it",
-        "deploy": "bash ./scripts/deploy.sh"
-    },
-    "repository": {
-        "type": "git",
-        "url": "git+https://github.com/lxchuan12/blog.git"
-    },
-    "keywords": [
-        "vuepress",
-        "lxchuan12"
-    ],
-    "author": "lxchuan12@163.com",
-    "license": "ISC",
-    "bugs": {
-        "url": "https://github.com/lxchuan12/blog/issues"
-    },
-    "homepage": "https://github.com/lxchuan12/blog#readme",
-    "devDependencies": {
-        "@release-it/conventional-changelog": "^5.1.1",
-        "@vuepress/client": "2.0.0-beta.61",
-        "@vuepress/plugin-back-to-top": "2.0.0-beta.61",
-        "@vuepress/plugin-google-analytics": "2.0.0-beta.61",
-        "release-it": "^15.10.1",
-        "vue": "^3.2.47",
-        "vuepress": "2.0.0-beta.61",
-        "vuepress-plugin-search-pro": "2.0.0-beta.206",
-        "vuepress-theme-hope": "2.0.0-beta.206"
-    }
+	"name": "blog",
+	"version": "3.0.10",
+	"description": "blog",
+	"type": "module",
+	"main": "index.js",
+	"private": true,
+	"packageManager": "pnpm@8.2.0",
+	"scripts": {
+		"commit": "git-cz",
+		"build": "vuepress build docs",
+		"clean-dev": "vuepress dev docs --clean-cache",
+		"dev": "vuepress dev docs",
+		"update-package": "pnpm dlx vp-update",
+		"release": "release-it",
+		"deploy": "bash ./scripts/deploy.sh",
+		"preinstall": "npx only-allow pnpm"
+	},
+	"repository": {
+		"type": "git",
+		"url": "git+https://github.com/lxchuan12/blog.git"
+	},
+	"keywords": [
+		"vuepress",
+		"lxchuan12"
+	],
+	"author": "lxchuan12@163.com",
+	"license": "ISC",
+	"bugs": {
+		"url": "https://github.com/lxchuan12/blog/issues"
+	},
+	"homepage": "https://github.com/lxchuan12/blog#readme",
+	"devDependencies": {
+		"@release-it/conventional-changelog": "^5.1.1",
+		"@vuepress/client": "2.0.0-beta.61",
+		"@vuepress/plugin-back-to-top": "2.0.0-beta.61",
+		"@vuepress/plugin-google-analytics": "2.0.0-beta.61",
+		"release-it": "^15.10.1",
+		"vue": "^3.2.47",
+		"vuepress": "2.0.0-beta.61",
+		"vuepress-plugin-search-pro": "2.0.0-beta.206",
+		"vuepress-theme-hope": "2.0.0-beta.206"
+	}
 }
