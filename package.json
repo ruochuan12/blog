@@ -31,7 +31,6 @@
     "homepage": "https://github.com/lxchuan12/blog#readme",
     "devDependencies": {
         "@release-it/conventional-changelog": "^5.1.1",
-        "@types/vue": "^2.0.0",
         "@vuepress/client": "2.0.0-beta.61",
         "@vuepress/plugin-back-to-top": "2.0.0-beta.61",
         "@vuepress/plugin-google-analytics": "2.0.0-beta.61",
