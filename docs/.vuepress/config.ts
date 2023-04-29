@@ -1,11 +1,14 @@
 import { defineUserConfig } from "vuepress";
 // import pluginTyped from "./components/plugin-typed/index.js";
 // import pluginSide from "./components/plugin-side/index.js";
-import { backToTopPlugin } from "@vuepress/plugin-back-to-top";
+// import { backToTopPlugin } from "@vuepress/plugin-back-to-top";
 import { googleAnalyticsPlugin } from "@vuepress/plugin-google-analytics";
+import { searchProPlugin } from "vuepress-plugin-search-pro";
 import theme from "./theme.js";
 
 export default defineUserConfig({
+	// 设置正在使用的语言
+	lang: "zh-CN",
 	base: "/",
 	title: "若川的博客",
 	keywords:
@@ -66,11 +69,15 @@ export default defineUserConfig({
 	plugins: [
 		// pluginTyped,
 		// pluginSide,
-		backToTopPlugin(),
+		// backToTopPlugin(),
 		googleAnalyticsPlugin({
 			// 配置项
 			// ga: "UA-145436866-1", // UA-00000000-0
 			id: "UA-145436866-1",
+		}),
+		searchProPlugin({
+			// 配置选项
+			indexContent: true,
 		}),
 	],
 });
