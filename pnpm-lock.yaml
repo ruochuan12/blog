@@ -13,6 +13,9 @@ devDependencies:
   '@vuepress/plugin-google-analytics':
     specifier: 2.0.0-beta.61
     version: 2.0.0-beta.61
+  '@vuepress/utils':
+    specifier: 2.0.0-beta.61
+    version: 2.0.0-beta.61
   release-it:
     specifier: ^15.10.1
     version: 15.10.1

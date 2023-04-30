@@ -35,6 +35,7 @@
 		"@vuepress/client": "2.0.0-beta.61",
 		"@vuepress/plugin-back-to-top": "2.0.0-beta.61",
 		"@vuepress/plugin-google-analytics": "2.0.0-beta.61",
+		"@vuepress/utils": "2.0.0-beta.61",
 		"release-it": "^15.10.1",
 		"vue": "^3.2.47",
 		"vuepress": "2.0.0-beta.61",
