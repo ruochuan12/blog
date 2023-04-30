@@ -39,17 +39,19 @@
 
 **vant 组件库源码分析系列：**
 
-- 51.[vant4.0 正式发布了，分析其源码学会用 vue3 写一个图片懒加载组件！](../vant/lazyload/)
+- 52.[vant4.0 正式发布了，分析其源码学会用 vue3 写一个图片懒加载组件！](../vant/lazyload/)
 
-- 50.[分析 vant4 源码，学会用 vue3 + ts 开发毫秒级渲染的倒计时组件，真是妙啊](../vant/count-down/)
+- 51.[分析 vant4 源码，学会用 vue3 + ts 开发毫秒级渲染的倒计时组件，真是妙啊](../vant/count-down/)
 
-- 49.[分析 vant4 源码，如何用 vue3 + ts 开发一个瀑布流滚动加载的列表组件？](../vant/list/)
+- 50.[分析 vant4 源码，如何用 vue3 + ts 开发一个瀑布流滚动加载的列表组件？](../vant/list/)
 
-- 48.[跟着 vant4 源码学习如何用 vue3+ts 开发一个 loading 组件，仅88行代码](../vant/loading/)
+- 49.[跟着 vant4 源码学习如何用 vue3+ts 开发一个 loading 组件，仅88行代码](../vant/loading/)
 
-- 47.[vant 4 即将正式发布，支持暗黑主题，那么是如何实现的呢](../vant/dark-theme/)
+- 48.[vant 4 即将正式发布，支持暗黑主题，那么是如何实现的呢](../vant/dark-theme/)
 
 **学习源码整体架构系列：**
+
+- 47.[神器啊，从未想过 VSCode 还能这样直接打开仓库URL，原理揭秘~](../open-in-github/)
 
 - 46.[自从学了 react-use 源码，我写自定义 React Hooks 越来越顺了~](../react-use/)
 
