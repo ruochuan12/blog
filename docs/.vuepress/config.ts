@@ -1,5 +1,5 @@
 import { defineUserConfig } from "vuepress";
-// import pluginTyped from "./components/plugin-typed/index.js";
+// import pluginTyped from "./components/plugin-typed/node/index";
 import pluginSide from "./components/plugin-side/src/node/index";
 // import { backToTopPlugin } from "@vuepress/plugin-back-to-top";
 import { googleAnalyticsPlugin } from "@vuepress/plugin-google-analytics";
@@ -64,7 +64,7 @@ export default defineUserConfig({
 	],
 	theme,
 	// Enable it with pwa
-	shouldPrefetch: false,
+	// shouldPrefetch: false,
 	plugins: [
 		// pluginTyped,
 		pluginSide,
