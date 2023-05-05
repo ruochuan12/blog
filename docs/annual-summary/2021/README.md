@@ -212,7 +212,7 @@
 
 ![InfoQ 签约作者](./images/InfoQ.jpg)
 
-另外，由于好久之前在FCC杭州社区组织者的一些贡献，和一些文章输出。有幸入选了[「`freeCodeCamp` 全球社区 2021 贡献者」](https://mp.weixin.qq.com/s/ado_tg-iComZFZszEqABLQ)。`freeCodeCamp` 是一个免费学习编程的网站 `https://chinese.freeCodeCamp.org`。
+另外，由于好久之前在`fCC`杭州社区组织者的一些贡献，和一些文章输出。有幸入选了[「`freeCodeCamp` 全球社区 2021 贡献者」](https://mp.weixin.qq.com/s/ado_tg-iComZFZszEqABLQ)。`freeCodeCamp` 是一个免费学习编程的网站 `https://www.freecodecamp.org/chinese/`。
 
 这一年，我的文章在知乎阅读是 `110w+`，去年是 `63w+`，掘金阅读超过了 `52w+`，去年是 `14w+`。
 

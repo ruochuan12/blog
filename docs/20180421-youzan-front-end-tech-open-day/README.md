@@ -5,7 +5,7 @@
 >大家好，我是[若川](https://lxchuan12.gitee.io)。我倾力持续组织了一年[每周大家一起学习200行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（4.1k+人）第一的专栏，写有20余篇源码文章。
 
 从2016年毕业在杭州工作以来，就比较热衷于参与杭州各类线下技术分享类活动。
-之前参加过网易云课堂学习节、拉勾网理想之上、[coding.net](https://coding.net/) 技术小馆、阿里`D2`两次、阿里`work like alibaba`沙龙、`freeCodeCamp`线下分享等...自己也参与到**`freeCodeCamp`(简称`FCC`)**，[点击访问freeCodeCamp](https://freecodecamp.cn/)，**杭州线下分享活动的组织中**。
+之前参加过网易云课堂学习节、拉勾网理想之上、[coding.net](https://coding.net/) 技术小馆、阿里`D2`两次、阿里`work like alibaba`沙龙、`freeCodeCamp`线下分享等...自己也参与到**`freeCodeCamp`(简称`fCC`)**，[点击访问freeCodeCamp](https://www.freecodecamp.org/chinese/)，**杭州线下分享活动的组织中**。
 
 ### 为什么这么热衷于参加这类活动呢？
 

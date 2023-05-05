@@ -837,7 +837,7 @@ var LIFECYCLE_HOOKS = [
 
 比如：可以自己注册一个`github`账号，分章节小节，抄写书中的代码，提交到`github`，练习了才会更有感觉。
 
-再比如 [freeCodeCamp 中文在线学习网站](https://chinese.freecodecamp.org) 网站。看书是系统学习非常好的方法。后来我就是看源码较多，写文章分享出来给大家。
+再比如 [freeCodeCamp 中文在线学习网站](https://www.freecodecamp.org/chinese/) 网站。看书是系统学习非常好的方法。后来我就是看源码较多，写文章分享出来给大家。
 
 ## 5. 总结
 

@@ -1457,8 +1457,7 @@ CancelToken.prototype.throwIfRequested = function throwIfRequested() {
 ## 6. 对比其他请求库
 
 ### 6.1 KoAjax
-
-FCC成都社区负责人水歌开源的[KoAJAX](https://github.com/EasyWebApp/KoAJAX)。
+`fCC`成都社区负责人水歌开源的[KoAJAX](https://github.com/EasyWebApp/KoAJAX)。
 
 [如何用开源软件办一场技术大会？](https://mp.weixin.qq.com/s/hxCwiokl4uPXJscTQi42-A)
 以下这篇文章中摘抄的一段。

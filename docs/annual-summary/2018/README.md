@@ -127,11 +127,11 @@
 
 5月20日，掘金杭州前端技术分享活动。
 
-**这一年，加入到了freecodecamp杭州社区的活动组织中，和组织者一起举办了两场活动。**
+**这一年，加入到了freeCodeCamp杭州社区的活动组织中，和组织者一起举办了两场活动。**
 
-3月19日，FCC与宋小菜联合举办线下分享活动。
+3月19日，`fCC`与宋小菜联合举办线下分享活动。
 
-11月10日，全国联动，[freeCodeConf](https://conf.freecodecamp.one/)杭州站技术分享活动。
+11月10日，全国联动，[freeCodeConf](https://www.freecodecamp.org/chinese/)杭州站技术分享活动。
 
 当时下班后写后续报道公众号文章[首届freeCodeConf杭州站圆满结束，精彩回顾](https://mp.weixin.qq.com/s/HPLyoWATWWnjm2FH1kKxlw)，写了三天。主持稿也是我写的。主持人是我请的大学同学。
 
