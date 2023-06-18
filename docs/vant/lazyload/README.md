@@ -16,12 +16,15 @@ theme: smartblue
 
 相比于原生 `JS` 等源码。我们或许更应该学习，正在使用的组件库的源码，因为有助于帮助我们写业务和写自己的组件。
 
-如果是 `Vue` 技术栈，开发移动端的项目，大多会选用 `vant` 组件库，目前（2022-11-29） `star` 多达 `20.5k`，[已经正式发布 4.0 了](https://vant-contrib.gitee.io/vant/#/zh-CN)。我们可以挑选 `vant` 组件库学习，我会写一个[组件库源码系列专栏](https://juejin.cn/column/7140264842954276871)，欢迎大家关注。
+如果是 `Vue` 技术栈，开发移动端的项目，大多会选用 `vant` 组件库，目前（2022-11-29） `star` 多达 `20.5k`，[已经正式发布 4.0 了](https://vant-contrib.gitee.io/vant/#/zh-CN)。我们可以挑选 `vant` 组件库学习，我会写一个[vant 组件库源码系列专栏](https://juejin.cn/column/7140264842954276871)，欢迎大家关注。
 
-- [vant 4 即将正式发布，支持暗黑主题，那么是如何实现的呢](https://juejin.cn/post/7158239404484460574)
-- [跟着 vant4 源码学习如何用 vue3+ts 开发一个 loading 组件，仅88行代码](https://juejin.cn/post/7160465286036979748)
-- [分析 vant4 源码，如何用 vue3 + ts 开发一个瀑布流滚动加载的列表组件？](https://juejin.cn/post/7165661072785932296)
-- [分析 vant4 源码，学会用 vue3 + ts 开发毫秒级渲染的倒计时组件，真是妙啊](https://juejin.cn/post/7169003604303413278)
+**vant 组件库源码分析系列：**
+
+- 1.[vant 4 即将正式发布，支持暗黑主题，那么是如何实现的呢](https://juejin.cn/post/7158239404484460574)
+- 2.[跟着 vant 4 源码学习如何用 vue3+ts 开发一个 loading 组件，仅88行代码](https://juejin.cn/post/7160465286036979748)
+- 3.[分析 vant 4 源码，如何用 vue3 + ts 开发一个瀑布流滚动加载的列表组件？](https://juejin.cn/post/7165661072785932296)
+- 4.[分析 vant 4 源码，学会用 vue3 + ts 开发毫秒级渲染的倒计时组件，真是妙啊](https://juejin.cn/post/7169003604303413278)
+- 5.[vant 4.0 正式发布了，分析其源码学会用 vue3 写一个图片懒加载组件！](https://juejin.cn/post/7171227417246171149)
 
 这次我们来学习 `Lazyload` 懒加载组件，[可以点此查看 `lazyload` 文档体验](https://vant-contrib.gitee.io/vant/#/zh-CN/lazyload)。
 
@@ -183,7 +186,7 @@ export const Lazyload = {
 
     // 把 lazy 实例对象添加到全局上
     app.config.globalProperties.$Lazyload = lazy;
-    
+
     // 注册懒加载组件
     if (options.lazyComponent) {
       app.component('LazyComponent', LazyComponent(lazy));
@@ -193,7 +196,7 @@ export const Lazyload = {
     if (options.lazyImage) {
       app.component('LazyImage', LazyImage(lazy));
     }
-    
+
     // 注册指令 lazy
     app.directive('lazy', {
       beforeMount: lazy.add.bind(lazy),
