@@ -120,7 +120,7 @@ plugins=(
 顺带讲下后面两个插件的安装方法
 安装 `zsh-autosuggestions`
 ```bash
-git clone git://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions
+git clone https://github.com/zsh-users/zsh-autosuggestions $ZSH_CUSTOM/plugins/zsh-autosuggestions
 ```
 安装`zsh-syntax-highlighting`
 ```bash
