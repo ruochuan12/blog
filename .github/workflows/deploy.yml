@@ -15,9 +15,9 @@ on:
 #     contents: write
 #     actions: write
 permissions:
-	contents: read
-	pages: write
-	id-token: write
+    contents: read
+    pages: write
+    id-token: write
 
 jobs:
     deploy:
