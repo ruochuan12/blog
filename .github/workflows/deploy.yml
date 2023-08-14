@@ -11,9 +11,13 @@ on:
             - main
             - vuepress-v2
 
+# permissions:
+#     contents: write
+#     actions: write
 permissions:
-    contents: write
-    actions: write
+	contents: read
+	pages: write
+	id-token: write
 
 jobs:
     deploy:
