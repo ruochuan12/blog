@@ -17,7 +17,7 @@
 
 感兴趣的读者可以点击阅读。
 
-![若川视野](https://github.com/lxchuan12/blog/raw/master/docs/about/wechat-official-accounts-mini.jpg)
+![若川视野](https://github.com/ruochuan12/blog/raw/master/docs/about/wechat-official-accounts-mini.jpg)
 
 ## 笔者精选文章
 
@@ -48,7 +48,7 @@
 [掘金专栏](https://juejin.im/user/1415826704971918/posts)，欢迎关注~
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，欢迎关注~
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，欢迎关注~
-[github blog](https://github.com/lxchuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
+[github blog](https://github.com/ruochuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
 
 ## 欢迎加微信交流和关注微信公众号
 
@@ -73,7 +73,7 @@
 [掘金专栏](https://juejin.im/user/1415826704971918/posts)，欢迎关注~
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，欢迎关注~
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，欢迎关注~
-[github blog](https://github.com/lxchuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
+[github blog](https://github.com/ruochuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
 
 ## 欢迎加微信交流和关注公众号
 

@@ -6,7 +6,7 @@
 
 >这是`学习源码整体架构系列`第六篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是实际仓库的代码。
 
->[本文仓库地址](https://github.com/lxchuan12/axios-analysis.git)：`git clone https://github.com/lxchuan12/axios-analysis.git`
+>[本文仓库地址](https://github.com/ruochuan12/axios-analysis.git)：`git clone https://github.com/ruochuan12/axios-analysis.git`
 
 >**要是有人说到怎么读源码，正在读文章的你能推荐我的源码系列文章，那真是太好了**。
 
@@ -21,7 +21,7 @@
 >8.[学习 redux 源码整体架构，深入理解 redux 及其中间件原理](https://juejin.im/post/5ee63b7d51882542fc6265ad)
 
 感兴趣的读者可以点击阅读。<br>
-其他源码计划中的有：[`express`](https://github.com/lxchuan12/express-analysis)、[`vue-rotuer`](https://github.com/lxchuan12/vue-router-analysis)、[`react-redux`](https://github.com/lxchuan12/react-redux-analysis) 等源码，不知何时能写完（哭泣），欢迎持续关注我（若川）。
+其他源码计划中的有：[`express`](https://github.com/ruochuan12/express-analysis)、[`vue-rotuer`](https://github.com/ruochuan12/vue-router-analysis)、[`react-redux`](https://github.com/ruochuan12/react-redux-analysis) 等源码，不知何时能写完（哭泣），欢迎持续关注我（若川）。
 
 源码类文章，一般阅读量不高。已经有能力看懂的，自己就看了。不想看，不敢看的就不会去看源码。<br>
 所以我的文章，尽量写得让想看源码又不知道怎么看的读者能看懂。
@@ -34,7 +34,7 @@
 本文学习的版本是`v0.19.0`。克隆的官方仓库的`master`分支。
 截至目前（2019年12月14日），最新一次`commit`是`2019-12-09 15:52 ZhaoXC` `dc4bc49673943e352`，`fix: fix ignore set withCredentials false (#2582)`。
 
-本文仓库在这里[若川的 axios-analysis github 仓库](https://github.com/lxchuan12/axios-analysis)。求个`star`呀。
+本文仓库在这里[若川的 axios-analysis github 仓库](https://github.com/ruochuan12/axios-analysis)。求个`star`呀。
 
 如果你是求职者，项目写了运用了`axios`，面试官可能会问你：
 >1.为什么 `axios` 既可以当函数调用，也可以当对象使用，比如`axios({})`、`axios.get`。<br>
@@ -63,7 +63,7 @@
 
 ```bash
 # 可以克隆笔者的这个仓库代码
-git clone https://github.com/lxchuan12/axios-analysis.git
+git clone https://github.com/ruochuan12/axios-analysis.git
 cd axios-analaysis/axios
 npm install
 npm start
@@ -144,7 +144,7 @@ node ./examples/server.js -p 5000
 ## 3. 先看 axios 结构是怎样的
 
 ```bash
-git clone https://github.com/lxchuan12/axios-analysis.git
+git clone https://github.com/ruochuan12/axios-analysis.git
 cd axios-analaysis/axios
 npm install
 npm start
@@ -1132,7 +1132,7 @@ var defaults = {
 
 主要提醒下：`onabort`是请求取消事件，`withCredentials`是一个布尔值，用来指定跨域 `Access-Control` 请求是否应带有授权信息，如 `cookie` 或授权 `header` 头。
 
-这块代码有删减，具体可以看[若川的`axios-analysis`仓库](https://github.com/lxchuan12/axios-analysis/blob/master/axios/lib/adapters/xhr.js)，也可以克隆笔者的`axios-analysis`仓库调试时再具体分析。
+这块代码有删减，具体可以看[若川的`axios-analysis`仓库](https://github.com/ruochuan12/axios-analysis/blob/master/axios/lib/adapters/xhr.js)，也可以克隆笔者的`axios-analysis`仓库调试时再具体分析。
 
 ```js
 module.exports = function xhrAdapter(config) {
@@ -1184,7 +1184,7 @@ module.exports = function xhrAdapter(config) {
 
 `http`
 
-`http`这里就不详细叙述了，感兴趣的读者可以自行查看，[若川的`axios-analysis`仓库](https://github.com/lxchuan12/axios-analysis/blob/master/axios/lib/adapters/http.js)。
+`http`这里就不详细叙述了，感兴趣的读者可以自行查看，[若川的`axios-analysis`仓库](https://github.com/ruochuan12/axios-analysis/blob/master/axios/lib/adapters/http.js)。
 
 ```js
 module.exports = function httpAdapter(config) {
@@ -1506,7 +1506,7 @@ CancelToken.prototype.throwIfRequested = function throwIfRequested() {
 
 `axios` 源码相对不多，打包后一千多行，比较容易看完，非常值得学习。
 
-建议 `clone` [若川的 axios-analysis github 仓库](https://github.com/lxchuan12/axios-analysis)，按照文中方法自己调试，印象更深刻。<br>
+建议 `clone` [若川的 axios-analysis github 仓库](https://github.com/ruochuan12/axios-analysis)，按照文中方法自己调试，印象更深刻。<br>
 
 基于`Promise`，构成`Promise`链，巧妙的设置请求拦截，发送请求，再试试响应拦截器。
 
@@ -1549,10 +1549,10 @@ CancelToken.prototype.throwIfRequested = function throwIfRequested() {
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，欢迎关注~<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，欢迎关注~<br>
 [语雀前端视野专栏](https://www.yuque.com/lxchuan12/blog)，新增语雀专栏，欢迎关注~<br>
-[github blog](https://github.com/lxchuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
+[github blog](https://github.com/ruochuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
 
 ## 欢迎加微信交流 微信公众号
 
 可能比较有趣的微信公众号，长按扫码关注（**回复pdf获取前端优质书籍pdf**）。欢迎加笔者微信`ruochuan12`（注明来源，基本来者不拒），拉您进【前端视野交流群】，长期交流学习~
 
-![若川视野](https://github.com/lxchuan12/blog/raw/master/docs/about/wechat-official-accounts-mini.jpg)
+![若川视野](https://github.com/ruochuan12/blog/raw/master/docs/about/wechat-official-accounts-mini.jpg)

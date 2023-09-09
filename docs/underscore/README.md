@@ -8,7 +8,7 @@
 
 >这是`学习源码整体架构系列`第二篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是打包整合后的代码，不是实际仓库中的拆分的代码。
 
->[本文仓库地址](https://github.com/lxchuan12/underscore-analysis.git)：`git clone https://github.com/lxchuan12/underscore-analysis.git`
+>[本文仓库地址](https://github.com/ruochuan12/underscore-analysis.git)：`git clone https://github.com/ruochuan12/underscore-analysis.git`
 
 >**要是有人说到怎么读源码，正在读文章的你能推荐我的源码系列文章，那真是太好了**。
 
@@ -23,7 +23,7 @@
 >8.[学习 redux 源码整体架构，深入理解 redux 及其中间件原理](https://juejin.im/post/5ee63b7d51882542fc6265ad)
 
 感兴趣的读者可以点击阅读。<br>
-其他源码计划中的有：[`express`](https://github.com/lxchuan12/express-analysis)、[`vue-rotuer`](https://github.com/lxchuan12/vue-router-analysis)、[`react-redux`](https://github.com/lxchuan12/react-redux-analysis) 等源码，不知何时能写完（哭泣），欢迎持续关注我（若川）。
+其他源码计划中的有：[`express`](https://github.com/ruochuan12/express-analysis)、[`vue-rotuer`](https://github.com/ruochuan12/vue-router-analysis)、[`react-redux`](https://github.com/ruochuan12/react-redux-analysis) 等源码，不知何时能写完（哭泣），欢迎持续关注我（若川）。
 
 源码类文章，一般阅读量不高。已经有能力看懂的，自己就看了。不想看，不敢看的就不会去看源码。<br>
 所以我的文章，尽量写得让想看源码又不知道怎么看的读者能看懂。
@@ -480,7 +480,7 @@ underscore.isArray([]) // true
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
 [语雀前端视野专栏](https://www.yuque.com/lxchuan12/blog)，新增语雀专栏，欢迎关注~<br>
-[github blog](https://github.com/lxchuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
+[github blog](https://github.com/ruochuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
 
 ## 微信公众号  若川视野
 

@@ -263,7 +263,7 @@ git config --global alias.st status
 [掘金专栏](https://juejin.im/user/1415826704971918/posts)，欢迎关注~<br>
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
-[github blog](https://github.com/lxchuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
+[github blog](https://github.com/ruochuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
 
 ## 微信公众号  若川视野
 

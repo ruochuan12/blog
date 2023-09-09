@@ -11,7 +11,7 @@ theme: smartblue
 
 想学源码，极力推荐关注我写的专栏（目前是掘金专栏关注人数第一，3.6K+人）[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093) 包含`jQuery`、`underscore`、`lodash`、`vuex`、`sentry`、`axios`、`redux`、`koa`、`vue-devtools`、`vuex4`、`koa-compose`、`vue 3.2 发布`、`vue-this`、`create-vue`、`玩具vite`等20余篇源码文章。
 
->本文项目，欢迎 `star` 和克隆调试学习。[git clone https://github.com/lxchuan12/vite-analysis.git](https://github.com/lxchuan12/vite-analysis.git)
+>本文项目，欢迎 `star` 和克隆调试学习。[git clone https://github.com/ruochuan12/vite-analysis.git](https://github.com/ruochuan12/vite-analysis.git)
 
 早在2021年10月，我写了[Vue 团队公开快如闪电的全新脚手架工具 create-vue，未来将替代 Vue-CLI，才300余行代码，学它！](https://juejin.cn/post/7018344866811740173)，备受好评。当时 [create-vue](https://github.com/vuejs/create-vue) 还没有配置 `eslint` 等，现在已经比较完善了。
 
@@ -47,7 +47,7 @@ npm dist-tag ls create-vite
 看开源项目，一般先看 [README.md](https://github.com/vitejs/vite/blob/main/README.md) 和相应的 [CONTRIBUTING.md](https://github.com/vitejs/vite/blob/main/CONTRIBUTING.md)。
 
 ```sh
-git clone https://github.com/lxchuan12/vite-analysis.git
+git clone https://github.com/ruochuan12/vite-analysis.git
 cd vite-analysis/vite2
 # npm i -g pnpm
 pnpm install
@@ -413,7 +413,7 @@ pnpm create vite
 
 **很多源码不是我们想象中的那么高深莫测。源码不应该成为我们的拦路虎，而应该是我们的良师益友**。这也可以说是我持续组织[源码共读活动](https://juejin.cn/post/7079706017579139102)的原因之一。
 
->本文项目，欢迎 `star` 和克隆调试学习。[git clone https://github.com/lxchuan12/vite-analysis.git](https://github.com/lxchuan12/vite-analysis.git)
+>本文项目，欢迎 `star` 和克隆调试学习。[git clone https://github.com/ruochuan12/vite-analysis.git](https://github.com/ruochuan12/vite-analysis.git)
 
 ---
 

@@ -49,11 +49,11 @@ theme: smartblue
 
 ### 3.1 克隆项目
 
-[本文仓库 vue-dev-server-analysis，求个star^_^](https://github.com/lxchuan12/vue-dev-server-analysis.git)
+[本文仓库 vue-dev-server-analysis，求个star^_^](https://github.com/ruochuan12/vue-dev-server-analysis.git)
 
 ```sh
 # 推荐克隆我的仓库
-git clone https://github.com/lxchuan12/vue-dev-server-analysis.git
+git clone https://github.com/ruochuan12/vue-dev-server-analysis.git
 cd vue-dev-server-analysis/vue-dev-server
 # npm i -g yarn
 # 安装依赖
@@ -271,7 +271,7 @@ if (req.path.endsWith('.js')) {
 
   if (!out) {
     // transform import statements
-    // 转换 import 语句 
+    // 转换 import 语句
     // import Vue from 'vue'
     // => import Vue from "/__modules/vue"
     const result = await readSource(req)
@@ -355,7 +355,7 @@ import Vue from "/__modules/vue"
 
 ```js
 if (req.path.startsWith('/__modules/')) {
-  // 
+  //
   const key = parseUrl(req).pathname
   const pkg = req.path.replace(/^\/__modules\//, '')
 

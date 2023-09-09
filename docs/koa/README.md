@@ -6,7 +6,7 @@
 
 >这是`学习源码整体架构系列`第七篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是实际仓库的代码。
 
->[本文仓库地址](https://github.com/lxchuan12/koa-analysis.git)：`git clone https://github.com/lxchuan12/koa-analysis.git`
+>[本文仓库地址](https://github.com/ruochuan12/koa-analysis.git)：`git clone https://github.com/ruochuan12/koa-analysis.git`
 
 >**要是有人说到怎么读源码，正在读文章的你能推荐我的源码系列文章，那真是太好了**。
 
@@ -21,7 +21,7 @@
 >8.[学习 redux 源码整体架构，深入理解 redux 及其中间件原理](https://juejin.im/post/5ee63b7d51882542fc6265ad)
 
 感兴趣的读者可以点击阅读。<br>
-其他源码计划中的有：[`express`](https://github.com/lxchuan12/express-analysis)、[`vue-rotuer`](https://github.com/lxchuan12/vue-router-analysis)、[`react-redux`](https://github.com/lxchuan12/react-redux-analysis) 等源码，不知何时能写完（哭泣），欢迎持续关注我（若川）。
+其他源码计划中的有：[`express`](https://github.com/ruochuan12/express-analysis)、[`vue-rotuer`](https://github.com/ruochuan12/vue-router-analysis)、[`react-redux`](https://github.com/ruochuan12/react-redux-analysis) 等源码，不知何时能写完（哭泣），欢迎持续关注我（若川）。
 
 源码类文章，一般阅读量不高。已经有能力看懂的，自己就看了。不想看，不敢看的就不会去看源码。<br>
 所以我的文章，尽量写得让想看源码又不知道怎么看的读者能看懂。
@@ -40,15 +40,15 @@
 本文学习的`koa`版本是`v2.11.0`。克隆的官方仓库的`master`分支。
 截至目前（2020年3月11日），最新一次`commit`是`2020-01-04 07:41 Olle Jonsson` `eda27608`，`build: Drop unused Travis sudo: false directive (#1416)`。
 
-本文仓库在这里[若川的 koa-analysis github 仓库 https://github.com/lxchuan12/koa-analysis](https://github.com/lxchuan12/koa-analysis)。求个`star`呀。
+本文仓库在这里[若川的 koa-analysis github 仓库 https://github.com/ruochuan12/koa-analysis](https://github.com/ruochuan12/koa-analysis)。求个`star`呀。
 
 ## 2. 本文阅读最佳方式
 
-先`star`一下我的仓库，再把它`git clone https://github.com/lxchuan12/koa-analysis.git`克隆下来。不用管你是否用过`nodejs`。会一点点`promise、generator、async、await`等知识即可看懂。如果一点点也不会，可以边看阮一峰老师的[《ES6标准入门》](https://es6.ruanyifeng.com/#docs/generator)相关章节。**跟着文章节奏调试和示例代码调试，动手调试（用`vscode`或者`chrome`）印象更加深刻**。文章长段代码不用细看，可以调试时再细看。看这类源码文章百遍，可能不如自己多调试几遍。也欢迎加我微信交流`ruochuan12`。
+先`star`一下我的仓库，再把它`git clone https://github.com/ruochuan12/koa-analysis.git`克隆下来。不用管你是否用过`nodejs`。会一点点`promise、generator、async、await`等知识即可看懂。如果一点点也不会，可以边看阮一峰老师的[《ES6标准入门》](https://es6.ruanyifeng.com/#docs/generator)相关章节。**跟着文章节奏调试和示例代码调试，动手调试（用`vscode`或者`chrome`）印象更加深刻**。文章长段代码不用细看，可以调试时再细看。看这类源码文章百遍，可能不如自己多调试几遍。也欢迎加我微信交流`ruochuan12`。
 
 ```bash
 # 克隆我的这个仓库
-git clone https://github.com/lxchuan12/koa-analysis.git
+git clone https://github.com/ruochuan12/koa-analysis.git
 # chrome 调试：
 # 全局安装 http-server
 npm i -g http-server
@@ -136,9 +136,9 @@ git clone https://github.com/koajs/examples.git
 读者们看完这个gif图，也可以思考下如何实现的。根据表现，可以猜测是`next`是一个函数，而且返回的可能是一个`promise`，被`await`调用。
 
 看到这个`gif`图，我把之前写的`examples/koa-compose`的调试方法**含泪删除**了。默默写上`gif`图上的这些代码，想着这个读者们更容易读懂。
-我把这段代码写在这里 [`koa/examples/middleware/app.js`](https://github.com/lxchuan12/koa-analysis/blob/master/koa/examples/middleware/app.js)便于调试。
+我把这段代码写在这里 [`koa/examples/middleware/app.js`](https://github.com/ruochuan12/koa-analysis/blob/master/koa/examples/middleware/app.js)便于调试。
 
-在项目路径下配置新建[.vscode/launch.json](https://github.com/lxchuan12/koa-analysis/blob/master/.vscode/launch.json)文件，`program`配置为自己写的`koa/examples/middleware/app.js`文件。
+在项目路径下配置新建[.vscode/launch.json](https://github.com/ruochuan12/koa-analysis/blob/master/.vscode/launch.json)文件，`program`配置为自己写的`koa/examples/middleware/app.js`文件。
 
 <details>
 <summary>.vscode/launch.json 代码，点击这里展开/收缩，可以复制</summary>
@@ -301,7 +301,7 @@ function compose (middleware) {
 }
 ```
 
-把简化的代码和`koa-compose`代码写在了一个文件中。[koa/examples/simpleKoa/koa-compose.js](https://github.com/lxchuan12/koa-analysis/blob/master/koa/examples/simpleKoa/koa-compose.js)
+把简化的代码和`koa-compose`代码写在了一个文件中。[koa/examples/simpleKoa/koa-compose.js](https://github.com/ruochuan12/koa-analysis/blob/master/koa/examples/simpleKoa/koa-compose.js)
 
 ```bash
 hs koa/examples/
@@ -357,7 +357,7 @@ fnMiddleware(ctx).then(handleResponse).catch(onerror);
 - `app.on('error', (err) => {})` 最外层实例事件监听形式
   也可以看看例子[koajs/examples/errors/app.js 文件](https://github.com/koajs/examples/blob/master/errors/app.js)
 - `app.onerror = (err) => {}` 重写`onerror`自定义形式
-  也可以看[测试用例 onerror](https://github.com/lxchuan12/koa-analysis/blob/master/koa/test/context/onerror.js)
+  也可以看[测试用例 onerror](https://github.com/ruochuan12/koa-analysis/blob/master/koa/test/context/onerror.js)
 
 ```js
 // application.js 文件
@@ -465,7 +465,7 @@ function convert(){
 
 [tj大神写的co 仓库](https://github.com/tj/co)
 
-本小节的示例代码都在这个文件夹[`koa/examples/co-generator`](https://github.com/lxchuan12/koa-analysis/tree/master/koa/examples/co-generator)中，`hs koa/example`，可以自行打开`https://localhost:8080/co-generator`调试查看。
+本小节的示例代码都在这个文件夹[`koa/examples/co-generator`](https://github.com/ruochuan12/koa-analysis/tree/master/koa/examples/co-generator)中，`hs koa/example`，可以自行打开`https://localhost:8080/co-generator`调试查看。
 
 看`co`源码前，先看几段简单代码。
 
@@ -715,10 +715,10 @@ function co(gen) {
 
 `koa`框架总结：主要就是四个核心概念，洋葱模型（把中间件串联起来），`http`请求上下文（`context`）、`http`请求对象、`http`响应对象。
 
-本文仓库在这里[若川的 koa-analysis github 仓库 https://github.com/lxchuan12/koa-analysis](https://github.com/lxchuan12/koa-analysis)。求个`star`呀。
+本文仓库在这里[若川的 koa-analysis github 仓库 https://github.com/ruochuan12/koa-analysis](https://github.com/ruochuan12/koa-analysis)。求个`star`呀。
 
 ```bash
-git clone https://github.com/lxchuan12/koa-analysis.git
+git clone https://github.com/ruochuan12/koa-analysis.git
 ```
 
 再强烈建议下按照**本文阅读最佳方式**，克隆代码下来，**动手调试代码学习更加深刻**。
@@ -828,10 +828,10 @@ ctx.onerror = function {
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，欢迎关注~<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，欢迎关注~<br>
 [语雀前端视野专栏](https://www.yuque.com/lxchuan12/blog)，新增语雀专栏，欢迎关注~<br>
-[github blog](https://github.com/lxchuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
+[github blog](https://github.com/ruochuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
 
 ## 欢迎加微信交流 微信公众号
 
 可能比较有趣的微信公众号，长按扫码关注（**回复pdf获取前端优质书籍pdf**）。欢迎加我微信`ruochuan12`（注明来源，基本来者不拒），拉您进【前端视野交流群】，长期交流学习~
 
-![若川视野](https://github.com/lxchuan12/blog/raw/master/docs/about/wechat-official-accounts-mini.jpg)
+![若川视野](https://github.com/ruochuan12/blog/raw/master/docs/about/wechat-official-accounts-mini.jpg)

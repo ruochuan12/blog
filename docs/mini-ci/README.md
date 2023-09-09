@@ -11,9 +11,9 @@ theme: smartblue
 
 ## 2. 前情回顾
 
-**注意：文章是基于 [`tag v0.7.0`](https://github.com/lxchuan12/mini-ci/tree/0.7.0) 撰写。目前工具是 `0.12.0` 版本，后续 `mini-ci` 会持续更新，文章应该暂时不会更新**。
+**注意：文章是基于 [`tag v0.7.0`](https://github.com/ruochuan12/mini-ci/tree/0.7.0) 撰写。目前工具是 `0.12.0` 版本，后续 `mini-ci` 会持续更新，文章应该暂时不会更新**。
 
-[本文提到的工具 mini-ci 已开源，求个 star^\_^](https://github.com/lxchuan12/mini-ci.git)
+[本文提到的工具 mini-ci 已开源，求个 star^\_^](https://github.com/ruochuan12/mini-ci.git)
 
 ```bash
 # 可全局安装
@@ -21,7 +21,7 @@ npm i @ruochuan/mini-ci -g
 mini-ci -h
 # 也可以不全局安装
 npx @ruochuan/mini-ci -h
-# 查看帮助信息，或者查看文档：https://github.com/lxchuan12/mini-ci.git，
+# 查看帮助信息，或者查看文档：https://github.com/ruochuan12/mini-ci.git，
 ```
 
 估计有很多开发小程序的同学，还在使用微信开发者工具上传小程序。如果你是，那么这篇文章非常适合你。如果不是，同样也很适合你。
@@ -258,7 +258,7 @@ npm init @usr -> npx @usr/create
 需要支持多选，那肯定得遍历数组。
 
 ```js
-// 代码只是关键代码，完整的可以查看 https://github.com/lxchuan12/mini-ci/blob/0.7.0/src/index.js
+// 代码只是关键代码，完整的可以查看 https://github.com/ruochuan12/mini-ci/blob/0.7.0/src/index.js
 (async () => {
  for (const mpConfigItem of mpConfigList) {
   try {
@@ -447,7 +447,7 @@ const parseEnv = () => {
 ### 8.5 支持选择多个小程序
 
 我们可以用 [enquirer](https://github.com/enquirer/enquirer) 来实现单选或者多选的功能。以下只是关键代码。
-完整代码可以查看 [mini-ci/src/utils/getConfig.js 文件](https://github.com/lxchuan12/mini-ci/blob/0.7.0/src/utils/getConfig.js)。
+完整代码可以查看 [mini-ci/src/utils/getConfig.js 文件](https://github.com/ruochuan12/mini-ci/blob/0.7.0/src/utils/getConfig.js)。
 
 ```js
 // 只是关键代码
@@ -503,9 +503,9 @@ try {
 npm i @ruochuan/mini-ci -g
 mini-ci -h
 npx @ruochuan/mini-ci -h
-# 文档：https://github.com/lxchuan12/mini-ci.git
+# 文档：https://github.com/ruochuan12/mini-ci.git
 # 克隆腾讯开源的电商小程序
-git clone https://github.com/lxchuan12/tdesign-miniprogram-starter-retail.git
+git clone https://github.com/ruochuan12/tdesign-miniprogram-starter-retail.git
 # 切到分支 feature/release-it
 git checkout feature/release-it
 ```
@@ -529,7 +529,7 @@ git checkout feature/release-it
 
 我相信大家也能够自己动手实现公司类似要求的脚手架工具，减少发版时间，降本提效。
 
-[本文提到的工具 mini-ci 已开源，求个 star^\_^](https://github.com/lxchuan12/mini-ci.git)
+[本文提到的工具 mini-ci 已开源，求个 star^\_^](https://github.com/ruochuan12/mini-ci.git)
 
 ```bash
 # 可全局安装
@@ -537,10 +537,10 @@ npm i @ruochuan/mini-ci -g
 mini-ci -h
 # 也可以不全局安装
 npx @ruochuan/mini-ci -h
-# 查看帮助信息，或者查看文档：https://github.com/lxchuan12/mini-ci.git，
+# 查看帮助信息，或者查看文档：https://github.com/ruochuan12/mini-ci.git，
 ```
 
-**注意：文章是基于 [`tag v0.7.0`](https://github.com/lxchuan12/mini-ci/tree/0.7.0) 撰写。目前工具是 `0.12.0` 版本，后续 `mini-ci` 会持续更新，文章应该暂时不会更新**。
+**注意：文章是基于 [`tag v0.7.0`](https://github.com/ruochuan12/mini-ci/tree/0.7.0) 撰写。目前工具是 `0.12.0` 版本，后续 `mini-ci` 会持续更新，文章应该暂时不会更新**。
 
 ---
 

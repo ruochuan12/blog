@@ -60,7 +60,7 @@ node -v
 # 全局安装 yarn
 
 # 推荐克隆我的项目
-git clone https://github.com/lxchuan12/vue-next-analysis.git
+git clone https://github.com/ruochuan12/vue-next-analysis.git
 cd vue-next-analysis/vue-next
 
 # 或者克隆官方项目
@@ -168,8 +168,8 @@ console.log(EMPTY_OBJ_2.props.name); // '若川'
 console.log(EMPTY_OBJ_2.props2); // undefined
 console.log(EMPTY_OBJ_2);
 /**
- * 
- * { 
+ *
+ * {
  *  props: {
      mp: "若川视野",
      name: "若川"
@@ -516,7 +516,7 @@ toRawType('');  'String'
 [mdn typeof 文档](https://developer.mozilla.org/zh-CN/docs/Web/JavaScript/Reference/Operators/typeof)，文档比较详细，也实现了一个很完善的`type`函数，本文就不赘述了。
 
 ```js
-// typeof 返回值目前有以下8种 
+// typeof 返回值目前有以下8种
 'undefined'
 'object'
 'boolean'
@@ -532,7 +532,7 @@ toRawType('');  'String'
 ```js
 const objectToString = Object.prototype.toString;
 const toTypeString = (value) => objectToString.call(value);
-// 
+//
 const isPlainObject = (val) => toTypeString(val) === '[object Object]';
 
 // 前文中 有 isObject 判断是不是对象了。
@@ -561,7 +561,7 @@ isIntegerKey('011'); // false
 isIntegerKey('11'); // true
 // 其中 parseInt 第二个参数是进制。
 // 字符串能用数组取值的形式取值。
-//  还有一个 charAt 函数，但不常用 
+//  还有一个 charAt 函数，但不常用
 'abc'.charAt(0) // 'a'
 // charAt 与数组形式不同的是 取不到值会返回空字符串''，数组形式取值取不到则是 undefined
 ```
@@ -689,7 +689,7 @@ hasChanged(1, 1); // false
 hasChanged(1, 2); // true
 hasChanged(+0, -0); // false
 // Obect.is 认为 +0 和 -0 不是同一个值
-Object.is(+0, -0); // false           
+Object.is(+0, -0); // false
 // Object.is 认为  NaN 和 本身 相比 是同一个值
 Object.is(NaN, NaN); // true
 // 场景
@@ -937,7 +937,7 @@ const getGlobalThis = () => {
 
 比如：可以自己注册一个`github`账号，分章节小节，抄写书中的代码，提交到`github`，练习了才会更有感觉。
 
-再比如 [freeCodeCamp 中文在线学习网站](https://chinese.freecodecamp.org) 网站。看书是系统学习非常好的方法。后来我就是看源码较多，写文章分享出来给大家。
+再比如 [freeCodeCamp 中文在线学习网站](https://www.freecodecamp.org/chinese/) 网站。看书是系统学习非常好的方法。后来我就是看源码较多，写文章分享出来给大家。
 
 ## 5. 总结
 

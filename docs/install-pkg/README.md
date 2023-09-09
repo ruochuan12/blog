@@ -11,7 +11,7 @@ theme: smartblue
 
 想学源码，极力推荐关注我写的专栏（目前1.9K人关注）[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093) 包含`jQuery`、`underscore`、`lodash`、`vuex`、`sentry`、`axios`、`redux`、`koa`、`vue-devtools`、`vuex4`、`koa-compose`、`vue 3.2 发布`、`vue-this`、`create-vue`、`玩具vite`等20余篇源码文章。
 
-[本文仓库 https://github.com/lxchuan12/install-pkg-analysis.git，求个star^_^](https://github.com/lxchuan12/install-pkg-analysis.git)
+[本文仓库 https://github.com/ruochuan12/install-pkg-analysis.git，求个star^_^](https://github.com/ruochuan12/install-pkg-analysis.git)
 
 [源码共读活动](https://juejin.cn/post/7079706017579139102) 每周一期，已进行到16期。Vue团队核心成员 `Anthony Fu` 开发的 [install-pkg](https://github.com/antfu/install-pkg) 小工具，主文件源码仅39行，非常值得我们学习。
 
@@ -52,7 +52,7 @@ await installPackage('vite', { silent: true })
 
 ```bash
 # 推荐克隆我的项目，保证与文章同步
-git clone https://github.com/lxchuan12/install-pkg-analysis.git
+git clone https://github.com/ruochuan12/install-pkg-analysis.git
 # npm i -g pnpm
 cd install-pkg-analysis/install-pkg && pnpm i
 # VSCode 直接打开当前项目
@@ -151,7 +151,7 @@ export async function installPackage(names: string | string[], options: InstallP
 
 支持安装多个，也支持指定包管理器，支持额外的参数。
 
-其中 [github execa](https://github.com/sindresorhus/execa) 是执行脚本 
+其中 [github execa](https://github.com/sindresorhus/execa) 是执行脚本
 >Process execution for humans
 
 也就是说：最终执行类似以下的脚本。
@@ -416,6 +416,6 @@ pnpm install -D --prefer-offine release-it react antd
 
 还有各种依赖工具。
 
-建议读者克隆 [我的仓库](https://github.com/lxchuan12/install-pkg-analysis.git) 动手实践调试源码学习。
+建议读者克隆 [我的仓库](https://github.com/ruochuan12/install-pkg-analysis.git) 动手实践调试源码学习。
 
 最后可以持续关注我[@若川](https://juejin.cn/column/6960551178908205093)。欢迎加我微信 [ruochuan12](https://juejin.cn/pin/7005372623400435725) 交流，参与 [源码共读](https://juejin.cn/post/7079706017579139102) 活动，每周大家一起学习200行左右的源码，共同进步。

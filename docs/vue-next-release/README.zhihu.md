@@ -46,7 +46,7 @@ git clone https://github.com/vuejs/vue-next.git
 cd vue-next
 
 # 或者克隆我的项目
-git clone https://github.com/lxchuan12/vue-next-analysis.git
+git clone https://github.com/ruochuan12/vue-next-analysis.git
 cd vue-next-analysis/vue-next
 
 # 安装 yarn
@@ -229,7 +229,7 @@ const isDryRun = args.dry
 // 对应 yarn run release --skipTests
 // true 跳过测试
 const skipTests = args.skipTests
-// 对应 yarn run release --skipBuild 
+// 对应 yarn run release --skipBuild
 // true
 const skipBuild = args.skipBuild
 
@@ -374,7 +374,7 @@ main().catch(err => {
 ![终端输入确认版本号](https://files.mdnice.com/user/625/117dd9dc-48d1-42b1-9b92-eb4808f90880.png)
 
 ```js
-// 根据上文 mini 这句代码意思是 yarn run release 3.2.4 
+// 根据上文 mini 这句代码意思是 yarn run release 3.2.4
 // 取到参数 3.2.4
 let targetVersion = args._[0]
 

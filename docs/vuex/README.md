@@ -6,7 +6,7 @@
 
 >这是`学习源码整体架构`第五篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是实际仓库的代码。
 
->[本文仓库地址](https://github.com/lxchuan12/vuex-analysis.git)：`git clone https://github.com/lxchuan12/vuex-analysis.git`
+>[本文仓库地址](https://github.com/ruochuan12/vuex-analysis.git)：`git clone https://github.com/ruochuan12/vuex-analysis.git`
 
 >**要是有人说到怎么读源码，正在读文章的你能推荐我的源码系列文章，那真是太好了**。
 
@@ -21,7 +21,7 @@
 >8.[学习 redux 源码整体架构，深入理解 redux 及其中间件原理](https://juejin.im/post/5ee63b7d51882542fc6265ad)
 
 感兴趣的读者可以点击阅读。<br>
-其他源码计划中的有：[`express`](https://github.com/lxchuan12/express-analysis)、[`vue-rotuer`](https://github.com/lxchuan12/vue-router-analysis)、[`react-redux`](https://github.com/lxchuan12/react-redux-analysis) 等源码，不知何时能写完（哭泣），欢迎持续关注我（若川）。
+其他源码计划中的有：[`express`](https://github.com/ruochuan12/express-analysis)、[`vue-rotuer`](https://github.com/ruochuan12/vue-router-analysis)、[`react-redux`](https://github.com/ruochuan12/react-redux-analysis) 等源码，不知何时能写完（哭泣），欢迎持续关注我（若川）。
 
 源码类文章，一般阅读量不高。已经有能力看懂的，自己就看了。不想看，不敢看的就不会去看源码。<br>
 所以我的文章，尽量写得让想看源码又不知道怎么看的读者能看懂。
@@ -34,8 +34,8 @@
 
 [Vue文档：在 VS Code 中调试 Vue 项目](https://cn.vuejs.org/v2/cookbook/debugging-in-vscode.html)<br>
 从上文中同理可得调试 `vuex` 方法，这里详细说下，便于帮助到可能不知道如何调试源码的读者。<br>
-可以把笔者的这个 [vuex-analysis](https://github.com/lxchuan12/vuex-analysis) 源码分析仓库`fork`一份或者直接克隆下来，
-`git clone https://github.com/lxchuan12/vuex-analysis.git`
+可以把笔者的这个 [vuex-analysis](https://github.com/ruochuan12/vuex-analysis) 源码分析仓库`fork`一份或者直接克隆下来，
+`git clone https://github.com/ruochuan12/vuex-analysis.git`
 >
 >其中文件夹`vuex`，是克隆官方的`vuex`仓库 `dev`分支。<br>
 >截至目前（2019年11月），版本是`v3.1.2`，最后一次`commit`是`ba2ff3a3`，`2019-11-11 11:51 Ben Hutton`。<br>
@@ -50,7 +50,7 @@ output: {}
 ```
 
 ```bash
-git clone https://github.com/lxchuan12/vuex-analysis.git
+git clone https://github.com/ruochuan12/vuex-analysis.git
 cd vuex
 npm i
 npm run dev
@@ -60,7 +60,7 @@ npm run dev
 >点击你想打开的例子，例如：Shopping Cart => http://localhost:8080/shopping-cart/<br>
 >打开控制面板 source 在左侧找到 webapck//  .  src 目录 store 文件 根据自己需求断点调试即可。<br>
 
-本文主要就是通过[`Shopping Cart`](https://github.com/lxchuan12/vuex-analysis/blob/master/vuex/examples/shopping-cart/app.js)，(路径`vuex/examples/shopping-cart`)例子调试代码的。
+本文主要就是通过[`Shopping Cart`](https://github.com/ruochuan12/vuex-analysis/blob/master/vuex/examples/shopping-cart/app.js)，(路径`vuex/examples/shopping-cart`)例子调试代码的。
 
 ### 2.1 顺便提一下调试 vue 源码（v2.6.10）的方法
 
@@ -156,7 +156,7 @@ function resetStoreVM (store, state, hot) {
 
 ![Vuex 对象关系图](./images/vuex-object.png)
 
->看到这里，恭喜你已经了解了`Vuex`原理。文章比较长，如果暂时不想关注源码细节，可以克隆一下本仓库代码`git clone https://github.com/lxchuan12/vuex-analysis.git`，后续调试代码，点赞收藏到时想看了再看。
+>看到这里，恭喜你已经了解了`Vuex`原理。文章比较长，如果暂时不想关注源码细节，可以克隆一下本仓库代码`git clone https://github.com/ruochuan12/vuex-analysis.git`，后续调试代码，点赞收藏到时想看了再看。
 
 [文档 Vue.use](https://cn.vuejs.org/v2/api/#Vue-use)
 `Vue.use(Vuex)`
@@ -1037,7 +1037,7 @@ hotUpdate (newOptions) {
 
 ## 6. 组件绑定的辅助函数
 
-文件路径：[`vuex/src/helpers.js`](https://github.com/lxchuan12/vuex-analysis/blob/master/vuex/src/helpers.js)
+文件路径：[`vuex/src/helpers.js`](https://github.com/ruochuan12/vuex-analysis/blob/master/vuex/src/helpers.js)
 
 ### 6.1 mapState
 
@@ -1272,7 +1272,7 @@ return typeof val === 'function'
         : commit.apply(this.$store, [val].concat(args))
 ```
 
-[vuex/src/helpers](https://github.com/lxchuan12/vuex-analysis/blob/master/vuex/src/helpers.js)
+[vuex/src/helpers](https://github.com/ruochuan12/vuex-analysis/blob/master/vuex/src/helpers.js)
 
 `mapMutations`、`mapActions` 举例：
 
@@ -1332,17 +1332,17 @@ export const createNamespacedHelpers = (namespace) => ({
 `vuex/src/plugins/devtool`<br>
 `vuex/src/plugins/logger`<br>
 
-文章比较长了，这部分就不再叙述。具体可以看笔者的仓库 [vuex-analysis `vuex/src/plugins/`](https://github.com/lxchuan12/vuex-analysis/blob/master/vuex/src/plugins/logger.js) 的源码注释。
+文章比较长了，这部分就不再叙述。具体可以看笔者的仓库 [vuex-analysis `vuex/src/plugins/`](https://github.com/ruochuan12/vuex-analysis/blob/master/vuex/src/plugins/logger.js) 的源码注释。
 
 ## 8. 总结
 
 文章比较详细的介绍了`vuex`、`vue`源码调试方法和 `Vuex` 原理。并且详细介绍了 `Vuex.use` 安装和 `new Vuex.Store` 初始化、`Vuex.Store` 的全部`API`（如`dispatch`、`commit`等）的实现和辅助函数 `mapState`、`mapGetters`、 `mapActions`、`mapMutations`
 `createNamespacedHelpers`。
 
-文章注释，在[vuex-analysis](https://github.com/lxchuan12/vuex-analysis)源码仓库里基本都有注释分析，求个`star`。再次强烈建议要克隆代码下来。
+文章注释，在[vuex-analysis](https://github.com/ruochuan12/vuex-analysis)源码仓库里基本都有注释分析，求个`star`。再次强烈建议要克隆代码下来。
 
 ```bash
-git clone https://github.com/lxchuan12/vuex-analysis.git
+git clone https://github.com/ruochuan12/vuex-analysis.git
 ```
 
 先把 `Store` 实例打印出来，看具体结构，再结合实例断点调试，事半功倍。
@@ -1379,10 +1379,10 @@ git clone https://github.com/lxchuan12/vuex-analysis.git
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，欢迎关注~<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，欢迎关注~<br>
 [语雀前端视野专栏](https://www.yuque.com/lxchuan12/blog)，新增语雀专栏，欢迎关注~<br>
-[github blog](https://github.com/lxchuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
+[github blog](https://github.com/ruochuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
 
 ## 欢迎加微信交流 微信公众号
 
 可能比较有趣的微信公众号，长按扫码关注（**回复pdf获取前端优质书籍pdf**）。也可以加微信 `ruochuan12`，注明来源，拉您进【前端视野交流群】。
 
-![若川视野](https://github.com/lxchuan12/blog/raw/master/docs/about/wechat-official-accounts-mini.jpg)
+![若川视野](https://github.com/ruochuan12/blog/raw/master/docs/about/wechat-official-accounts-mini.jpg)

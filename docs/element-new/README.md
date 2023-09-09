@@ -11,7 +11,7 @@ theme: smartblue
 
 想学源码，极力推荐之前我写的[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093) 包含`jQuery`、`underscore`、`lodash`、`vuex`、`sentry`、`axios`、`redux`、`koa`、`vue-devtools`、`vuex4`、`koa-compose`、`vue 3.2 发布`、`vue-this`、`create-vue`、`玩具vite`等10余篇源码文章。
 
-[本文仓库 element-analysis，求个star^_^](https://github.com/lxchuan12/element-analysis.git)
+[本文仓库 element-analysis，求个star^_^](https://github.com/ruochuan12/element-analysis.git)
 
 最近组织了[源码共读活动](https://juejin.cn/pin/7005372623400435725)，大家一起学习源码，每周学习200行左右的源码，已进行到13期。于是搜寻各种值得我们学习，且代码行数不多的源码。
 
@@ -33,7 +33,7 @@ theme: smartblue
 
 ```bash
 # 推荐克隆我的项目，保证与文章同步
-git clone https://github.com/lxchuan12/element-analysis.git
+git clone https://github.com/ruochuan12/element-analysis.git
 # npm i -g yarn
 cd element-analysis/element && npm run dev
 
@@ -281,7 +281,7 @@ Object.keys(navConfigFile).forEach(lang => {
 fileSave(path.join(__dirname, '../../examples/nav.config.json'))
   .write(JSON.stringify(navConfigFile, null, '  '), 'utf8')
   .end('\n');
-  
+
 console.log('DONE!');
 ```
 
@@ -299,7 +299,7 @@ console.log('DONE!');
 
 同时给我们启发：公司项目新建页面时，或者组件库新增组件时，是不是可以类似做到的，一条命令省去一些繁杂重复的操作。
 
-建议读者克隆[我的仓库](https://github.com/lxchuan12/element-analysis.git)动手实践调试源码学习。
+建议读者克隆[我的仓库](https://github.com/ruochuan12/element-analysis.git)动手实践调试源码学习。
 
 后续也可以查看 [file-save](https://npm.im/file-save) 源码实现等。
 

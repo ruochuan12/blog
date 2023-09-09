@@ -110,7 +110,7 @@ await page.emulate(iPhone);
 
 4、关闭浏览器
 
-具体代码：可以查看这里[爬虫生成《React.js小书》的`pdf`每一小节的代码](https://github.com/lxchuan12/learn-nodejs/blob/master/src/puppeteer/reactMiniBook.js)
+具体代码：可以查看这里[爬虫生成《React.js小书》的`pdf`每一小节的代码](https://github.com/ruochuan12/learn-nodejs/blob/master/src/puppeteer/reactMiniBook.js)
 
 ```js
 // node 执行这个文件
@@ -168,9 +168,9 @@ PDFMerge(files, {output: `${__dirname}/3.pdf`})
 2、判断下输出文件夹是否存在，不存在则创建<br/>
 3、合并这些小节的`pdf`保存到新文件 `React小书（完整版）-作者：胡子大哈-时间戳.pdf`<br/>
 
-具体代码：可以查看这里[爬虫生成《React.js小书》的`pdf`合并`pdf`的代码](https://github.com/lxchuan12/learn-nodejs/blob/master/src/puppeteer/mergePdf.js)
+具体代码：可以查看这里[爬虫生成《React.js小书》的`pdf`合并`pdf`的代码](https://github.com/ruochuan12/learn-nodejs/blob/master/src/puppeteer/mergePdf.js)
 
-最终合并的`pdf`文件在这里[React小书（完整版）-作者：胡子大哈](https://github.com/lxchuan12/learn-nodejs/blob/master/src/puppeteer/reactMiniBookMerged/React%E5%B0%8F%E4%B9%A6%EF%BC%88%E5%AE%8C%E6%95%B4%E7%89%88%EF%BC%89-%E4%BD%9C%E8%80%85%EF%BC%9A%E8%83%A1%E5%AD%90%E5%A4%A7%E5%93%88-1535335084919.pdf)，可供下载。
+最终合并的`pdf`文件在这里[React小书（完整版）-作者：胡子大哈](https://github.com/ruochuan12/learn-nodejs/blob/master/src/puppeteer/reactMiniBookMerged/React%E5%B0%8F%E4%B9%A6%EF%BC%88%E5%AE%8C%E6%95%B4%E7%89%88%EF%BC%89-%E4%BD%9C%E8%80%85%EF%BC%9A%E8%83%A1%E5%AD%90%E5%A4%A7%E5%93%88-1535335084919.pdf)，可供下载。
 
 本想着还可以加下书签和页码，没找到合适的生成方案，那暂时先不加了。如果读者有好的方案，欢迎与笔者交流。
 
@@ -195,7 +195,7 @@ PDFMerge(files, {output: `${__dirname}/3.pdf`})
 [掘金专栏](https://juejin.im/user/1415826704971918/posts)，欢迎关注~<br>
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
-[github blog](https://github.com/lxchuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
+[github blog](https://github.com/ruochuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
 
 ## 微信公众号  若川视野
 

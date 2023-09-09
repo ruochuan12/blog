@@ -12,7 +12,7 @@ highlight: dracula
 
 >**10篇源码系列文章小成就达成**，从19年7月开始写，19年写了6篇，20年写了2篇，今年写了2篇。算是一个完结吧。短时间内应该暂时不更新这个系列了。主要是投入的时间和精力比较多，看的人很少，得到的反馈也比较少。之后先写其他文章吧。欢迎持续关注我（[若川](https://lxchuan12.gitee.io)）。
 
->[本文仓库地址](https://github.com/lxchuan12/vuex4-analysis.git)：`git clone https://github.com/lxchuan12/vuex4-analysis.git`，本文最佳阅读方式，克隆仓库自己动手调试，容易吸收消化。
+>[本文仓库地址](https://github.com/ruochuan12/vuex4-analysis.git)：`git clone https://github.com/ruochuan12/vuex4-analysis.git`，本文最佳阅读方式，克隆仓库自己动手调试，容易吸收消化。
 
 >**要是有人说到怎么读源码，正在读文章的你能推荐我的源码系列文章，那真是无以为报啊**。
 
@@ -34,7 +34,7 @@ highlight: dracula
 
 ### 1.1 本文阅读最佳方式
 
-把我的`vuex4`源码仓库 `git clone https://github.com/lxchuan12/vuex4-analysis.git`克隆下来，顺便star一下我的[vuex4源码学习仓库](https://github.com/lxchuan12/vuex4-analysis.git)^_^。**跟着文章节奏调试和示例代码调试，用chrome动手调试印象更加深刻**。文章长段代码不用细看，可以调试时再细看。看这类源码文章百遍，可能不如自己多调试几遍，大胆猜测，小心求证。也欢迎加我微信交流`ruochuan12`。
+把我的`vuex4`源码仓库 `git clone https://github.com/ruochuan12/vuex4-analysis.git`克隆下来，顺便star一下我的[vuex4源码学习仓库](https://github.com/ruochuan12/vuex4-analysis.git)^_^。**跟着文章节奏调试和示例代码调试，用chrome动手调试印象更加深刻**。文章长段代码不用细看，可以调试时再细看。看这类源码文章百遍，可能不如自己多调试几遍，大胆猜测，小心求证。也欢迎加我微信交流`ruochuan12`。
 
 ## 2. Vuex 原理简述
 
@@ -168,14 +168,14 @@ git subtree add --prefix=vuex https://github.com/vuejs/vuex.git 4.0
 
 这种方式保留了`vuex4`仓库的`git`记录信息。更多`git subtree`使用方式可以查看这篇文章[用 Git Subtree 在多个 Git 项目间双向同步子项目，附简明使用手册](https://segmentfault.com/a/1190000003969060)。
 
-作为读者朋友的你，只需克隆[我的`Vuex 4`源码仓库](https://github.com/lxchuan12/vuex4-analysis.git) `https://github.com/lxchuan12/vuex4-analysis.git` 即可，也欢迎`star`一下。
+作为读者朋友的你，只需克隆[我的`Vuex 4`源码仓库](https://github.com/ruochuan12/vuex4-analysis.git) `https://github.com/ruochuan12/vuex4-analysis.git` 即可，也欢迎`star`一下。
 
 把`vuex/examples/webpack.config.js`，加个`devtool: 'source-map'`，这样就能开启`sourcemap`调试源码了。
 
 我们使用项目中的购物车的例子调试，贯穿全文。
 
 ```sh
-git clone https://github.com/lxchuan12/vuex4-analysis.git
+git clone https://github.com/ruochuan12/vuex4-analysis.git
 cd vuex
 npm i
 npm run dev
@@ -300,7 +300,7 @@ function createAppAPI(render, hydrate) {
             // 支持链式调用
             return app;
         },
-        provide(){ 
+        provide(){
           // 省略... 后文再讲
         }
       });

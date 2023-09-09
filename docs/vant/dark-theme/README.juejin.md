@@ -55,7 +55,7 @@ theme: smartblue
 
 ```bash
 # 推荐克隆我的项目
-git clone https://github.com/lxchuan12/vant-analysis
+git clone https://github.com/ruochuan12/vant-analysis
 cd vant-analysis/vant
 
 # 或者克隆官方仓库

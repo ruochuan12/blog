@@ -10,7 +10,7 @@ theme: smartblue
 
 想学源码，极力推荐关注我写的专栏（目前2K人关注）[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093) 包含`jQuery`、`underscore`、`lodash`、`vuex`、`sentry`、`axios`、`redux`、`koa`、`vue-devtools`、`vuex4`、`koa-compose`、`vue 3.2 发布`、`vue-this`、`create-vue`、`玩具vite`等20余篇源码文章。
 
-[本文仓库 https://github.com/lxchuan12/dotenv-analysis.git，求个star^_^](https://github.com/lxchuan12/dotenv-analysis.git)
+[本文仓库 https://github.com/ruochuan12/dotenv-analysis.git，求个star^_^](https://github.com/ruochuan12/dotenv-analysis.git)
 
 [源码共读活动](https://juejin.cn/post/7079706017579139102) 每周一期，已进行到18期。于是搜寻各种值得我们学习，且代码行数不多的源码。[dotenv 主文件仅118行](https://github.com/motdotla/dotenv/blob/master/lib/main.js)，非常值得我们学习。
 
@@ -25,7 +25,7 @@ theme: smartblue
 
 ```bash
 # 推荐克隆我的项目，保证与文章同步
-git clone https://github.com/lxchuan12/dotenv-analysis.git
+git clone https://github.com/ruochuan12/dotenv-analysis.git
 # npm i -g yarn
 cd dotenv-analysis/dotenv && yarn i
 # VSCode 直接打开当前项目

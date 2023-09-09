@@ -32,7 +32,7 @@
 
 ```shell
 # 推荐克隆我的仓库
-git clone https://github.com/lxchuan12/react-use-analysis.git
+git clone https://github.com/ruochuan12/react-use-analysis.git
 cd react-use-analysis/react-use
 # 也可以克隆官方项目
 git clone https://github.com/streamich/react-use.git

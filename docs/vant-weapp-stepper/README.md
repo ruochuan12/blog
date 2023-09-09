@@ -13,7 +13,7 @@ theme: smartblue
 
 ## 2. stepper 步进器
 
->感兴趣的小伙伴，可以克隆我的仓库调试学习 [git clone https://github.com/lxchuan12/vant-weapp-analysis.git](https://github.com/lxchuan12/vant-weapp-analysis.git)。
+>感兴趣的小伙伴，可以克隆我的仓库调试学习 [git clone https://github.com/ruochuan12/vant-weapp-analysis.git](https://github.com/ruochuan12/vant-weapp-analysis.git)。
 
 我们开发微信小程序时经常会使用到 `stepper` 步进器组件。本文就来分析 `vant-weapp` `stepper` 步进器源码实现。
 
@@ -42,7 +42,7 @@ stepper 图
 git clone https://github.com/vant-ui/vant-weapp.git
 
 # 也可以克隆我的仓库
-git clone https://github.com/lxchuan12/vant-weapp-analysis.git
+git clone https://github.com/ruochuan12/vant-weapp-analysis.git
 cd vant-weapp-analysis/vant-weapp
 
 yarn install
@@ -453,7 +453,7 @@ Component({
 ## 7. 输入框输入 onInput 函数
 
 ```html
-<input 
+<input
     bindinput="onInput"
 />
 ```
@@ -553,7 +553,7 @@ onTouchEnd() {
 
 不过大多时候，学习源码或许是重要但不紧急的事情。除了公司项目外，我们可以多尝试学习开源项目的源码，从而贡献自己的代码，拥抱开源，会让自己更上一层楼。
 
-感兴趣的小伙伴，可以克隆我的仓库调试学习 [git clone https://github.com/lxchuan12/vant-weapp-analysis.git](https://github.com/lxchuan12/vant-weapp-analysis.git)。
+感兴趣的小伙伴，可以克隆我的仓库调试学习 [git clone https://github.com/ruochuan12/vant-weapp-analysis.git](https://github.com/ruochuan12/vant-weapp-analysis.git)。
 
 ---
 

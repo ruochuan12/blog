@@ -10,7 +10,7 @@ theme: smartblue
 
 想学源码，极力推荐关注我写的专栏（目前1.9K人关注）[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093) 包含`jQuery`、`underscore`、`lodash`、`vuex`、`sentry`、`axios`、`redux`、`koa`、`vue-devtools`、`vuex4`、`koa-compose`、`vue 3.2 发布`、`vue-this`、`create-vue`、`玩具vite`等20余篇源码文章。
 
-[本文仓库 https://github.com/lxchuan12/delay-analysis.git，求个star^_^](https://github.com/lxchuan12/delay-analysis.git)
+[本文仓库 https://github.com/ruochuan12/delay-analysis.git，求个star^_^](https://github.com/ruochuan12/delay-analysis.git)
 
 [源码共读活动](https://juejin.cn/post/7079706017579139102) 每周一期，已进行到17期。于是搜寻各种值得我们学习，且代码行数不多的源码。[delay 主文件仅70多行](https://github.com/sindresorhus/delay/blob/main/index.js)，非常值得我们学习。
 
@@ -26,7 +26,7 @@ theme: smartblue
 
 ```bash
 # 推荐克隆我的项目，保证与文章同步
-git clone https://github.com/lxchuan12/delay-analysis.git
+git clone https://github.com/ruochuan12/delay-analysis.git
 # npm i -g yarn
 cd delay-analysis/delay && yarn i
 # VSCode 直接打开当前项目
@@ -326,7 +326,7 @@ const createDelay = ({willResolve}) => (ms, {value, signal} = {}) => {
         rejectFn = reject;
         timeoutId = setTimeout(settle, ms);
     });
-    
+
     if (signal) {
 		signal.addEventListener('abort', signalListener, {once: true});
 	}
@@ -411,7 +411,7 @@ const createDelay = ({clearTimeout: defaultClear, setTimeout: set, willResolve})
         rejectFn = reject;
         timeoutId = (set || setTimeout)(settle, ms);
     });
-    
+
     if (signal) {
 		signal.addEventListener('abort', signalListener, {once: true});
 	}
@@ -454,7 +454,7 @@ delay7.createWithTimers = createWithTimers;
 
 ```bash
 # 推荐克隆我的项目，保证与文章同步
-git clone https://github.com/lxchuan12/delay-analysis.git
+git clone https://github.com/ruochuan12/delay-analysis.git
 cd delay-analysis
 # 我写的例子都在 examples 这个文件夹中，可以启动服务本地查看调试
 npx http-server examples

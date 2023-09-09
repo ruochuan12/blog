@@ -10,7 +10,7 @@ theme: smartblue
 
 想学源码，极力推荐关注我写的专栏（目前1.8K人关注）[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093) 包含`jQuery`、`underscore`、`lodash`、`vuex`、`sentry`、`axios`、`redux`、`koa`、`vue-devtools`、`vuex4`、`koa-compose`、`vue 3.2 发布`、`vue-this`、`create-vue`、`玩具vite`等20余篇源码文章。
 
-[本文仓库 https://github.com/lxchuan12/read-pkg-analysis.git，求个star^_^](https://github.com/lxchuan12/read-pkg-analysis.git)
+[本文仓库 https://github.com/ruochuan12/read-pkg-analysis.git，求个star^_^](https://github.com/ruochuan12/read-pkg-analysis.git)
 
 [源码共读活动](https://juejin.cn/post/7079706017579139102) 每周一期，已进行到15期。源码群里有小伙伴提问，如何用 `import` 加载 `json` 文件。同时我之前看到了[vue-cli 源码](https://github.com/vuejs/vue-cli/blob/dev/packages/%40vue/cli-shared-utils/lib/pkg.js) 里有 [read-pkg](https://npm.im/read-pkg) 这个包。源码仅27行，非常值得我们学习。
 
@@ -72,7 +72,7 @@ console.log(configData.appName);
 
 ```bash
 # 推荐克隆我的项目，保证与文章同步
-git clone https://github.com/lxchuan12/read-pkg-analysis.git
+git clone https://github.com/ruochuan12/read-pkg-analysis.git
 # npm i -g yarn
 cd read-pkg && yarn
 # VSCode 直接打开当前项目
@@ -331,6 +331,6 @@ function normalize (data, warn, strict) {
 
 学 `Node.js` 可以多找找简单的 `npm` 包学习。比直接看官方文档有趣多了。不懂的就去查官方文档。查的多了，自然常用的就熟练了。
 
-建议读者克隆 [我的仓库](https://github.com/lxchuan12/read-pkg-analysis.git) 动手实践调试源码学习。
+建议读者克隆 [我的仓库](https://github.com/ruochuan12/read-pkg-analysis.git) 动手实践调试源码学习。
 
 最后可以持续关注我[@若川](https://juejin.cn/column/6960551178908205093)。欢迎加我微信 [ruochuan12](https://juejin.cn/pin/7005372623400435725) 交流，参与 [源码共读](https://juejin.cn/post/7079706017579139102) 活动，每周大家一起学习200行左右的源码，共同进步。

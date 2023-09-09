@@ -11,7 +11,7 @@ highlight: dracula
 
 想学源码，极力推荐之前我写的[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093) 包含`jQuery`、`underscore`、`lodash`、`vuex`、`sentry`、`axios`、`redux`、`koa`、`vue-devtools`、`vuex4`、`koa-compose`、`vue 3.2 发布`、`vue-this`、`create-vue`、`玩具vite`等10余篇源码文章。
 
-[本文仓库 vue-analysis，求个star^_^](https://github.com/lxchuan12/vue-analysis.git)
+[本文仓库 vue-analysis，求个star^_^](https://github.com/ruochuan12/vue-analysis.git)
 
 最近组织了[源码共读活动](https://juejin.cn/pin/7005372623400435725)，大家一起学习源码。于是搜寻各种值得我们学习，且代码行数不多的源码。
 

@@ -11,7 +11,7 @@ theme: smartblue
 
 想学源码，极力推荐之前我写的[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093) 包含`jQuery`、`underscore`、`lodash`、`vuex`、`sentry`、`axios`、`redux`、`koa`、`vue-devtools`、`vuex4`、`koa-compose`、`vue-next-release`、`vue-this`、`create-vue`、`玩具vite`等10余篇源码文章。
 
-[本文仓库 ni-analysis，求个star^_^](https://github.com/lxchuan12/ni-analysis.git)
+[本文仓库 ni-analysis，求个star^_^](https://github.com/ruochuan12/ni-analysis.git)
 
 最近组织了[源码共读活动](https://www.yuque.com/ruochuan12)，大家一起学习源码。于是搜寻各种值得我们学习，且代码行数不多的源码。
 
@@ -87,7 +87,7 @@ globalAgent=npm
 **因此，我们可以得知这个工具必然要做三件事**：
 
 ```bash
-1. 根据锁文件猜测用哪个包管理器 npm/yarn/pnpm 
+1. 根据锁文件猜测用哪个包管理器 npm/yarn/pnpm
 2. 抹平不同的包管理器的命令差异
 3. 最终运行相应的脚本
 ```
@@ -171,7 +171,7 @@ nx jest
 
 ```sh
 # 推荐克隆我的仓库（我的保证对应文章版本）
-git clone https://github.com/lxchuan12/ni-analysis.git
+git clone https://github.com/ruochuan12/ni-analysis.git
 cd ni-analysis/ni
 # npm i -g pnpm
 # 安装依赖

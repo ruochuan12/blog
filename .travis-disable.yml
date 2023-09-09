@@ -21,6 +21,6 @@ deploy:
   file: "FILE TO UPLOAD"
   skip_cleanup: true
   body: |
-   Please refer to [CHANGELOG.md](https://github.com/lxchuan12/blog/blob/master/CHANGELOG.md) for details.
+   Please refer to [CHANGELOG.md](https://github.com/ruochuan12/blog/blob/master/CHANGELOG.md) for details.
   on:
     tags: true

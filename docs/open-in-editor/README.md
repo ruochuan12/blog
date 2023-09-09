@@ -9,7 +9,7 @@ highlight: dracula
 
 >这是`学习源码整体架构系列` 之 launch-editor 源码（第九篇）。学习源码整体架构系列文章([有哪些必看的JS库](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650746362&idx=1&sn=afe3a26cdbde1d423aae4fa99355f369&chksm=88662e76bf11a760a7f0a8565b9e8d52f5e4f056dc2682f213eec6475127d71f6f1d203d6c3a&scene=21#wechat_redirect))：[jQuery](http://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650744496&idx=1&sn=0f149e9436cb77bf9fc1bfb47aedd334&chksm=8866253cbf11ac2a53b385153cd8e9a0c4018b6b566750cf0b5d61d17afa2e90b52d36db8054&scene=21#wechat_redirect)、[underscore](http://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650744505&idx=1&sn=26801ad6c2a5eb9cf64e7556b6478d39&chksm=88662535bf11ac23eea3f76335f6777e2acbf4ee660b5616148e14ffbefc0e8520806db21056&scene=21#wechat_redirect)、[lodash](http://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650744514&idx=1&sn=776336d888d06bfe72cb4d5b07a4b90c&chksm=8866254ebf11ac5822fc078082603f77a4b4d9b487c9f4d7069acb12c727c46c75946fa9b0cd&scene=21#wechat_redirect)、[sentry](http://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650744551&idx=1&sn=4d79c2fa97d7c737aab70055c7ec7fa3&chksm=8866256bbf11ac7d9e2269f3638a705d5e5f45056d53ad2faf17b814e4c46ec6b0ba52571bde&scene=21#wechat_redirect)、[vuex](http://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650744584&idx=1&sn=b14f8a762f132adcf0f7e3e075ee2ded&chksm=88662484bf11ad922ed27d45873af838298949eea381545e82a511cabf0c6fc6876a8370c6fb&scene=21#wechat_redirect)、[axios](http://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650744604&idx=1&sn=51d8d865c9848fd59f7763f5fb9ce789&chksm=88662490bf11ad86061ae76ff71a1177eeddab02c38d046eecd0e1ad25dc16f7591f91e9e3b2&scene=21#wechat_redirect)、[koa](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650744703&idx=1&sn=cfb9580241228993e4d376017234ff79&chksm=886624f3bf11ade5f5e37520f6b1291417bcea95f222906548b863f4b61d20e7508eb419eb85&token=192125900&lang=zh_CN&scene=21#wechat_redirect)、[redux](http://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650745007&idx=1&sn=1fd6f3caeff6ab61b8d5f644a1dbb7df&chksm=88662b23bf11a23573509a01f941d463b0c61e890b2069427c78c26296197077da359c522fe8&scene=21#wechat_redirect)。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是实际仓库的代码。下一篇应该是《**学习 Vuex 4 源码整体架构，深入理解其原理及provide/inject原理**》。
 
->[本文仓库地址](https://github.com/lxchuan12/open-in-editor.git)：`git clone https://github.com/lxchuan12/open-in-editor.git`，本文最佳阅读方式，克隆仓库自己动手调试，容易吸收消化。
+>[本文仓库地址](https://github.com/ruochuan12/open-in-editor.git)：`git clone https://github.com/ruochuan12/open-in-editor.git`，本文最佳阅读方式，克隆仓库自己动手调试，容易吸收消化。
 
 >**要是有人说到怎么读源码，正在读文章的你能推荐我的源码系列文章，那真是无以为报啊**。
 
@@ -131,7 +131,7 @@ openInEditor('code')
 
 ## 3. 环境准备工作
 
-熟悉我的读者，都知道我都是**推荐调试看源码**的，正所谓：**哪里不会点哪里**。而且调试一般都写得很详细，是希望能帮助到一部分人知道如何看源码。于是我特意新建一个仓库[open-in-editor](https://github.com/lxchuan12/open-in-editor) `git clone https://github.com/lxchuan12/open-in-editor.git`，便于大家克隆学习。
+熟悉我的读者，都知道我都是**推荐调试看源码**的，正所谓：**哪里不会点哪里**。而且调试一般都写得很详细，是希望能帮助到一部分人知道如何看源码。于是我特意新建一个仓库[open-in-editor](https://github.com/ruochuan12/open-in-editor) `git clone https://github.com/ruochuan12/open-in-editor.git`，便于大家克隆学习。
 
 安装`vue-cli`
 
@@ -144,7 +144,7 @@ yarn global add @vue/cli
 ```sh
 node -V
 # v14.16.0
-vue -V 
+vue -V
 # @vue/cli 4.5.12
 vue create vue3-project
 # 这里选择的是vue3、vue2也是一样的。
@@ -364,7 +364,7 @@ const childProcess = require('child_process')
 
 module.exports = function guessEditor (specifiedEditor) {
   // 如果指定了编辑器，则解析一下，这里没有传入。如果自己指定了路径。
-  // 比如 c/Users/lxchu/AppData/Local/Programs/Microsoft VS Code/bin/code 
+  // 比如 c/Users/lxchu/AppData/Local/Programs/Microsoft VS Code/bin/code
   //   会根据空格切割成 c/Users/lxchu/AppData/Local/Programs/Microsoft
   if (specifiedEditor) {
     return shellQuote.parse(specifiedEditor)

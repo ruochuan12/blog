@@ -8,7 +8,7 @@
 
 最近组织了[源码共读活动](https://juejin.cn/pin/7005372623400435725)，公众号：若川视野，回复"源码"参与，每周大家一起学习200行左右的源码，共同进步。常有小伙伴在微信群里提关于如何调试的问题，而我写的调试方法基本分散在其他文章中。所以特此写一篇关于调试的文章。此外，之后写文章也可以少写些调试相关的，只需持续更新这篇文章。
 
-[本文仓库地址，求个`star`](https://github.com/lxchuan12/nodejs-debugging.git)
+[本文仓库地址，求个`star`](https://github.com/ruochuan12/nodejs-debugging.git)
 
 阅读本文，你将学到：
 
@@ -42,7 +42,7 @@
 我特意新建了一个仓库。供读者动手实践。
 
 ```bash
-git clone https://github.com/lxchuan12/nodejs-debugging.git
+git clone https://github.com/ruochuan12/nodejs-debugging.git
 cd nodejs-debugging
 # npm i -g yarn
 yarn install
@@ -131,7 +131,7 @@ module.exports = {
 建议大家可以克隆我的项目，动手实践，多操作几次就熟悉了。
 
 ```bash
-git clone https://github.com/lxchuan12/nodejs-debugging.git
+git clone https://github.com/ruochuan12/nodejs-debugging.git
 cd nodejs-debugging
 # npm i -g yarn
 yarn install

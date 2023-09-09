@@ -42,7 +42,7 @@
 
 [segmentfault社区@若川](https://segmentfault.com/u/lxchuan12)，偶尔在`SF社区`答题，虽然目前只有少得可怜的`6.2K`声望(`2012-01-31`更新)。
 
-[github@若川](https://github.com/lxchuan12)，没有star过百，特别有价值的项目，不过有些可能有点价值，您可以瞧瞧。
+[github@若川](https://github.com/ruochuan12)，没有star过百，特别有价值的项目，不过有些可能有点价值，您可以瞧瞧。
 
 [简书@若川i](http://www.jianshu.com/u/83129d433d72)，偶尔在简书上写写文章。
 

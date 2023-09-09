@@ -32,11 +32,11 @@
 
 ### 2.1 克隆 koa-compose 项目
 
-[本文仓库地址 koa-compose-analysis](https://github.com/lxchuan12/koa-compose-analysis.git)，求个`star`~
+[本文仓库地址 koa-compose-analysis](https://github.com/ruochuan12/koa-compose-analysis.git)，求个`star`~
 
 ```bash
 # 可以直接克隆我的仓库，我的仓库保留的 compose 仓库的 git 记录
-git clone https://github.com/lxchuan12/koa-compose-analysis.git
+git clone https://github.com/ruochuan12/koa-compose-analysis.git
 cd koa-compose/compose
 npm i
 ```
@@ -45,7 +45,7 @@ npm i
 
 ```bash
 # 在 github 上新建一个仓库 `koa-compose-analysis` 克隆下来
-git clone https://github.com/lxchuan12/koa-compose-analysis.git
+git clone https://github.com/ruochuan12/koa-compose-analysis.git
 cd koa-compose-analysis
 git subtree add --prefix=compose https://github.com/koajs/compose.git main
 # 这样就把 compose 文件夹克隆到自己的 git 仓库了。且保留的 git 记录

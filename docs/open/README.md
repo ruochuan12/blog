@@ -11,7 +11,7 @@ theme: smartblue
 
 想学源码，极力推荐之前我写的[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093) 包含`jQuery`、`underscore`、`lodash`、`vuex`、`sentry`、`axios`、`redux`、`koa`、`vue-devtools`、`vuex4`、`koa-compose`、`vue 3.2 发布`、`vue-this`、`create-vue`、`玩具vite`等10余篇源码文章。
 
-[本文仓库 open-analysis，求个star^_^](https://github.com/lxchuan12/open-analysis.git)
+[本文仓库 open-analysis，求个star^_^](https://github.com/ruochuan12/open-analysis.git)
 
 最近组织了[源码共读活动](https://juejin.cn/pin/7005372623400435725)，大家一起学习源码。于是搜寻各种值得我们学习，且代码行数不多的源码。
 
@@ -144,7 +144,7 @@ xdg-open https://lxchuan12.gitee.io
 
 ```bash
 # 推荐克隆我的项目，保证与文章同步，同时测试文件齐全
-git clone https://github.com/lxchuan12/open-analysis.git
+git clone https://github.com/ruochuan12/open-analysis.git
 # npm i -g yarn
 cd open && yarn
 
@@ -246,7 +246,7 @@ const baseOpen = async options => {
     }
     // 省略部分代码
     const subprocess = childProcess.spawn(command, cliArguments, childProcessOptions);
-    
+
     // 省略部分代码
     subprocess.unref();
 

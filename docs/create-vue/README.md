@@ -113,7 +113,7 @@ npx vite -v
 npx node@14 -v
 # v14.18.0
 
-npx -p node@14 node -v 
+npx -p node@14 node -v
 # v14.18.0
 ```
 
@@ -142,11 +142,11 @@ vue create vue-project
 
 ### 3.1 克隆 create-vue 项目
 
-[本文仓库地址 create-vue-analysis](https://github.com/lxchuan12/create-vue-analysis.git)，求个`star`~
+[本文仓库地址 create-vue-analysis](https://github.com/ruochuan12/create-vue-analysis.git)，求个`star`~
 
 ```sh
 # 可以直接克隆我的仓库，我的仓库保留的 create-vue 仓库的 git 记录
-git clone https://github.com/lxchuan12/create-vue-analysis.git
+git clone https://github.com/ruochuan12/create-vue-analysis.git
 cd create-vue-analysis/create-vue
 npm i
 ```
@@ -158,7 +158,7 @@ npm i
 
 ```sh
 # 在 github 上新建一个仓库 `create-vue-analysis` 克隆下来
-git clone https://github.com/lxchuan12/create-vue-analysis.git
+git clone https://github.com/ruochuan12/create-vue-analysis.git
 cd create-vue-analysis
 git subtree add --prefix=create-vue https://github.com/vuejs/create-vue.git main
 # 这样就把 create-vue 文件夹克隆到自己的 git 仓库了。且保留的 git 记录

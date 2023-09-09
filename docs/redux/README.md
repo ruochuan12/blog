@@ -19,7 +19,7 @@
 >8.[学习 redux 源码整体架构，深入理解 redux 及其中间件原理](https://juejin.im/post/5ee63b7d51882542fc6265ad)
 
 感兴趣的读者可以点击阅读。<br>
-其他源码计划中的有：[`express`](https://github.com/lxchuan12/express-analysis)、[`vue-rotuer`](https://github.com/lxchuan12/vue-router-analysis)、[`react-redux`](https://github.com/lxchuan12/react-redux-analysis) 等源码，不知何时能写完（哭泣），欢迎持续关注我（若川）。
+其他源码计划中的有：[`express`](https://github.com/ruochuan12/express-analysis)、[`vue-rotuer`](https://github.com/ruochuan12/vue-router-analysis)、[`react-redux`](https://github.com/ruochuan12/react-redux-analysis) 等源码，不知何时能写完（哭泣），欢迎持续关注我（若川）。
 
 源码类文章，一般阅读量不高。已经有能力看懂的，自己就看了。不想看，不敢看的就不会去看源码。<br>
 所以我的文章，尽量写得让想看源码又不知道怎么看的读者能看懂。
@@ -35,7 +35,7 @@
 
 ### 1.1 本文阅读最佳方式
 
-把我的`redux`源码仓库 `git clone https://github.com/lxchuan12/redux-analysis.git`克隆下来，顺便`star`一下[我的redux源码学习仓库](https://github.com/lxchuan12/redux-analysis)^_^。**跟着文章节奏调试和示例代码调试，用`chrome`动手调试印象更加深刻**。文章长段代码不用细看，可以调试时再细看。看这类源码文章百遍，可能不如自己多调试几遍。也欢迎加我微信交流`ruochuan12`。
+把我的`redux`源码仓库 `git clone https://github.com/ruochuan12/redux-analysis.git`克隆下来，顺便`star`一下[我的redux源码学习仓库](https://github.com/ruochuan12/redux-analysis)^_^。**跟着文章节奏调试和示例代码调试，用`chrome`动手调试印象更加深刻**。文章长段代码不用细看，可以调试时再细看。看这类源码文章百遍，可能不如自己多调试几遍。也欢迎加我微信交流`ruochuan12`。
 
 ## 2. git subtree 管理子仓库
 
@@ -95,7 +95,7 @@ output: {
 安装依赖
 
 ```bash
-git clone http://github.com/lxchuan12/redux-analysis.git
+git clone http://github.com/ruochuan12/redux-analysis.git
 cd redux-analysi/redux
 npm i
 npm run build
@@ -118,7 +118,7 @@ cd examples
 hs -p 5000
 ```
 
-就可以开心的调试啦。可以直接克隆我的项目`git clone http://github.com/lxchuan12/redux-analysis.git`。本地调试，动手实践，容易消化吸收。
+就可以开心的调试啦。可以直接克隆我的项目`git clone http://github.com/ruochuan12/redux-analysis.git`。本地调试，动手实践，容易消化吸收。
 
 ## 4. 通过调试计数器例子的学习 redux 源码
 
@@ -858,7 +858,7 @@ enhancerStore.dispatch(action)
 [美团@莹莹 Redux从设计到源码](https://tech.meituan.com/2017/07/14/redux-design-code.html)，美团这篇是我基本写完文章后看到的，感觉写得很好，非常推荐<br>
 [redux 中文文档](https://www.redux.org.cn/)<br>
 [redux 英文文档](https://redux.js.org)<br>
-[若川的学习redux源码仓库](http://github.com/lxchuan12/redux-analysis.git)
+[若川的学习redux源码仓库](http://github.com/ruochuan12/redux-analysis.git)
 
 ## 另一个系列
 
@@ -876,10 +876,10 @@ enhancerStore.dispatch(action)
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，欢迎关注~<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，欢迎关注~<br>
 [语雀前端视野专栏](https://www.yuque.com/lxchuan12/blog)，新增语雀专栏，欢迎关注~<br>
-[github blog](https://github.com/lxchuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
+[github blog](https://github.com/ruochuan12/blog)，相关源码和资源都放在这里，求个`star`^_^~
 
 ## 欢迎加微信交流 微信公众号
 
 可能比较有趣的微信公众号，长按扫码关注（**回复pdf获取前端优质书籍pdf**）。欢迎加我微信`ruochuan12`（注明来源，基本来者不拒），拉你进【前端视野交流群】，长期交流学习~
 
-![若川视野](https://github.com/lxchuan12/blog/raw/master/docs/about/wechat-official-accounts-mini.jpg)
+![若川视野](https://github.com/ruochuan12/blog/raw/master/docs/about/wechat-official-accounts-mini.jpg)

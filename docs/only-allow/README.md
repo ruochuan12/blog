@@ -10,7 +10,7 @@ theme: smartblue
 
 想学源码，极力推荐之前我写的[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093) 包含`jQuery`、`underscore`、`lodash`、`vuex`、`sentry`、`axios`、`redux`、`koa`、`vue-devtools`、`vuex4`、`koa-compose`、`vue 3.2 发布`、`vue-this`、`create-vue`、`玩具vite`等10余篇源码文章。
 
-[本文仓库 only-allow-analysis，求个star^_^](https://github.com/lxchuan12/only-allow-analysis.git)
+[本文仓库 only-allow-analysis，求个star^_^](https://github.com/ruochuan12/only-allow-analysis.git)
 
 最近组织了[源码共读活动](https://juejin.cn/pin/7005372623400435725)，每周大家一起学习200行左右的源码。每周一期，已进行到14期。于是搜寻各种值得我们学习，且代码行数不多的源码。
 
@@ -101,7 +101,7 @@ if (!/pnpm/.test(process.env.npm_execpath || '')) {
 
 ```bash
 # 推荐克隆我的源码库
-git clone https://github.com/lxchuan12/only-allow-analysis.git
+git clone https://github.com/ruochuan12/only-allow-analysis.git
 cd only-allow-analysis/only-allow
 # npm i -g pnpm
 pnpm i
@@ -191,7 +191,7 @@ if (argv.length === 0) {
   process.exit(1)
 }
 // 第一个参数则是 用户传入的希望使用的包管理器
-// 比如 npx only-allow pnpm 
+// 比如 npx only-allow pnpm
 // 这里调试是 node bin.js pnpm
 const wantedPM = argv[0]
 // npm pnpm yarn 都不是，则报错
@@ -284,6 +284,6 @@ function pmFromUserAgent (userAgent) {
 
 同时给我们的启发也是要多看官方文档和规范。
 
-建议读者克隆[我的仓库](https://github.com/lxchuan12/only-allow-analysis.git)动手实践调试源码学习。
+建议读者克隆[我的仓库](https://github.com/ruochuan12/only-allow-analysis.git)动手实践调试源码学习。
 
 最后可以持续关注我@若川。欢迎加我微信 [ruochuan12](https://juejin.cn/pin/7005372623400435725) 交流，参与 [源码共读](https://juejin.cn/pin/7005372623400435725) 活动，每周大家一起学习200行左右的源码，共同进步。

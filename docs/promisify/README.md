@@ -11,7 +11,7 @@ theme: smartblue
 
 想学源码，极力推荐之前我写的[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093) 包含`jQuery`、`underscore`、`lodash`、`vuex`、`sentry`、`axios`、`redux`、`koa`、`vue-devtools`、`vuex4`、`koa-compose`、`vue 3.2 发布`、`vue-this`、`create-vue`、`玩具vite`等10余篇源码文章。
 
-[本文仓库 remote-git-tags-analysis，求个star^_^](https://github.com/lxchuan12/remote-git-tags-analysis.git)
+[本文仓库 remote-git-tags-analysis，求个star^_^](https://github.com/ruochuan12/remote-git-tags-analysis.git)
 
 最近组织了[源码共读活动](https://juejin.cn/pin/7005372623400435725)，大家一起学习源码。于是搜寻各种值得我们学习，且代码行数不多的源码。
 
@@ -48,7 +48,7 @@ theme: smartblue
 ```js
 import remoteGitTags from 'remote-git-tags';
 
-console.log(await remoteGitTags('https://github.com/lxchuan12/blog.git'));
+console.log(await remoteGitTags('https://github.com/ruochuan12/blog.git'));
 //=> Map {'3.0.5' => 'c39343e7e81d898150191d744efbdfe6df395119', …}
 ```
 
@@ -103,7 +103,7 @@ console.log(await remoteGitTags('https://github.com/lxchuan12/blog.git'));
 
 ```bash
 # 推荐克隆我的项目，保证与文章同步，同时测试文件齐全
-git clone https://github.com/lxchuan12/remote-git-tags-analysis.git
+git clone https://github.com/ruochuan12/remote-git-tags-analysis.git
 # npm i -g yarn
 cd remote-git-tags && yarn
 # VSCode 直接打开当前项目
@@ -388,7 +388,7 @@ promisify.custom = kCustomPromisifiedSymbol;
 
 通过 `remote-git-tags` 这个22行代码的仓库，学会了 Node 加载采用什么模块，知道了原来 `git ls-remote --tags`支持远程仓库，学到了面试高频考点 `promisify` 函数原理和源码实现，巩固了一些 `ES6+` 等基础知识。
 
-建议读者克隆[我的仓库](https://github.com/lxchuan12/remote-git-tags-analysis.git)动手实践调试源码学习。
+建议读者克隆[我的仓库](https://github.com/ruochuan12/remote-git-tags-analysis.git)动手实践调试源码学习。
 
 后续也可以看看 [es6-promisify](https://github.com/mikehall314/es6-promisify) 这个库的实现。
 
