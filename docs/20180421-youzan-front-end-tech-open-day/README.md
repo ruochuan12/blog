@@ -100,7 +100,7 @@ Q/A问答环节，可能有些问题讲师解答不是很清晰，或者说提�
 ## 关于
 
 作者：常以**若川**为名混迹于江湖。前端路上 | PPT爱好者 | 所知甚少，唯善学。<br>
-[个人博客](https://lxchuan12.github.io/)<br>
+[个人博客](https://ruochuan12.github.io/)<br>
 [掘金专栏](https://juejin.im/user/1415826704971918/posts)，欢迎关注~<br>
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>

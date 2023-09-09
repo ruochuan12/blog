@@ -413,14 +413,14 @@ child.sayAge(); // my age is 18
 - 1. 子类构造函数的`__proto__`指向父类构造器，继承父类的静态方法。
 - 2. 子类构造函数的`prototype`的`__proto__`指向父类构造器的`prototype`，继承父类的方法。
 - 3. 子类构造器里调用父类构造器，继承父类的属性。
-行文到此，文章就基本写完了。文章代码和图片等资源放在这里[github inhert](https://github.com/ruochuan12/html5/tree/gh-pages/JS%E7%9B%B8%E5%85%B3/oop/inherit)和[`demo`展示`es6-extends`](http://lxchuan12.github.io/html5/JS%E7%9B%B8%E5%85%B3/oop/inherit/7.es6-extends.html)，结合`console、source`面板查看更佳。
+行文到此，文章就基本写完了。文章代码和图片等资源放在这里[github inhert](https://github.com/ruochuan12/html5/tree/gh-pages/JS%E7%9B%B8%E5%85%B3/oop/inherit)和[`demo`展示`es6-extends`](http://ruochuan12.github.io/html5/JS%E7%9B%B8%E5%85%B3/oop/inherit/7.es6-extends.html)，结合`console、source`面板查看更佳。
 
 读者发现有不妥或可改善之处，欢迎评论指出。另外觉得写得不错，可以点赞、评论、转发，也是对笔者的一种支持。
 
 ## 关于
 
 作者：常以**若川**为名混迹于江湖。前端路上 | PPT爱好者 | 所知甚少，唯善学。<br>
-[个人博客](https://lxchuan12.github.io/)<br>
+[个人博客](https://ruochuan12.github.io/)<br>
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，开通了**前端视野**专栏，欢迎关注<br>
 [掘金专栏](https://juejin.im/user/1415826704971918/posts)，欢迎关注<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，开通了**前端视野**专栏，欢迎关注<br>

@@ -325,7 +325,7 @@ FunctionPrototype.bindFn = function bind(that) {
 事实上，平时其实很少需要使用自己实现的投入到生成环境中。但面试官通过这个面试题能考察很多知识。比如`this`指向，原型链，闭包，函数等知识，可以扩展很多。<br>
 读者发现有不妥或可改善之处，欢迎指出。另外觉得写得不错，可以点个赞，也是对笔者的一种支持。
 
-文章中的例子和测试代码放在`github`中[bind模拟实现 github](https://github.com/ruochuan12/html5/tree/gh-pages/JS%E7%9B%B8%E5%85%B3/%E5%87%BD%E6%95%B0/bind%E6%A8%A1%E6%8B%9F%E5%AE%9E%E7%8E%B0)。[bind模拟实现 预览地址](http://lxchuan12.github.io/html5/JS%E7%9B%B8%E5%85%B3/%E5%87%BD%E6%95%B0/bind%E6%A8%A1%E6%8B%9F%E5%AE%9E%E7%8E%B0/bind-0.html) `F12`看控制台输出，结合`source`面板查看效果更佳。
+文章中的例子和测试代码放在`github`中[bind模拟实现 github](https://github.com/ruochuan12/html5/tree/gh-pages/JS%E7%9B%B8%E5%85%B3/%E5%87%BD%E6%95%B0/bind%E6%A8%A1%E6%8B%9F%E5%AE%9E%E7%8E%B0)。[bind模拟实现 预览地址](http://ruochuan12.github.io/html5/JS%E7%9B%B8%E5%85%B3/%E5%87%BD%E6%95%B0/bind%E6%A8%A1%E6%8B%9F%E5%AE%9E%E7%8E%B0/bind-0.html) `F12`看控制台输出，结合`source`面板查看效果更佳。
 ```js
 // 最终版 删除注释 详细注释版请看上文
 Function.prototype.bind = Function.prototype.bind || function bind(thisArg){
@@ -369,7 +369,7 @@ Function.prototype.bind = Function.prototype.bind || function bind(thisArg){
 ## 关于
 
 作者：常以**若川**为名混迹于江湖。前端路上 | PPT爱好者 | 所知甚少，唯善学。<br>
-[个人博客](https://lxchuan12.github.io/)<br>
+[个人博客](https://ruochuan12.github.io/)<br>
 [掘金专栏](https://juejin.im/user/1415826704971918/posts)，欢迎关注~<br>
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，开通了**前端视野**专栏，欢迎关注~<br>
