@@ -2,7 +2,7 @@
  * https://github.com/reduxjs/redux-thunk/blob/master/src/index.js
  * @author 若川
  * @date 2020-06-06
- * @link https://lxchuan12.cn
+ * @link https://lxchuan12.gitee.io
  */
 function createThunkMiddleware(extraArgument) {
     return ({ dispatch, getState }) => (next) => (action) => {

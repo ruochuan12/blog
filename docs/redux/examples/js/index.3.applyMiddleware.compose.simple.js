@@ -2,13 +2,13 @@
      * middleware
      * @author 若川
      * @date 2020-06-06 22:15:36
-     * @link https://lxchuan12.cn
+     * @link https://lxchuan12.gitee.io
      */
 function compose(...funcs) {
     if (funcs.length === 0) {
       return arg => arg
     }
-  
+
     if (funcs.length === 1) {
       return funcs[0]
     }
@@ -23,7 +23,7 @@ function compose(...funcs) {
 }
 
 function applyMiddleware(...middlewares){
-    const store = {  
+    const store = {
         getState: function(){
             console.log('getState');
             return 0;
@@ -52,5 +52,5 @@ function applyMiddleware(...middlewares){
       dispatch
     }
 }
-    
+
 var store = applyMiddleware(logger1, logger2, logger3);

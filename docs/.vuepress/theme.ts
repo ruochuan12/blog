@@ -9,11 +9,11 @@ import {
 } from "./sidebar/index.js";
 
 export default hopeTheme({
-	hostname: "https://lxchuan12.cn",
+	hostname: "https://lxchuan12.gitee.io",
 
 	author: {
 		name: "若川",
-		url: "https://lxchuan12.cn",
+		url: "https://lxchuan12.gitee.io",
 	},
 
 	iconAssets: "iconfont",

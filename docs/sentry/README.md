@@ -82,7 +82,7 @@ window.addEventListener('error', function(e) {
 2.利用`Image`对象上报 (主流方式)
 
 `Image`上报错误方式：
-` (new Image()).src = 'https://lxchuan12.cn/error?name=若川'`
+` (new Image()).src = 'https://lxchuan12.gitee.io/error?name=若川'`
 
 ## 3. Sentry 前端异常监控基本原理
 
