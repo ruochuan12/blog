@@ -23,7 +23,7 @@ git checkout d08d4b7faa6773e4f14c31ecdb6b5ebdc8787c76
 
 后续文章尽量会与 `taro` 版本保持更新。
 
-看一个开源项目，第一步应该是先看 [README.md](https://github.com/NervJS/taro.git) 再看 [贡献文档](https://github.com/NervJS/taro/blob/main/CONTRIBUTING.md) 和 `package.json`。
+看一个开源项目，第一步应该是先看 [README.md](https://github.com/NervJS/taro.git) 再看 [贡献文档](https://github.com/NervJS/taro/blob/4.x/CONTRIBUTING.md) 和 `package.json`。
 
 环境准备
 > 需要安装 [Node.js 16](https://nodejs.org/en/)（建议安装 `16.20.0` 及以上版本）及 [pnpm 7](https://pnpm.io/zh/installation)
@@ -76,51 +76,24 @@ pnpm build 完成，如下图所示：
 
 ![pnpm build 完成](./images/pnpm-build.png)
 
-
 报错 binding
 taro.[os-platform].node
 
 ![binding-error](./images/binding-error.png)
 
-`crates/native_binding/taro.darwin-arm64.node`
+再来看下 [贡献文档-10-rust-部分](https://github.com/NervJS/taro/blob/4.x/CONTRIBUTING.md#10-rust-%E9%83%A8%E5%88%86)
 
-[贡献文档](https://github.com/NervJS/taro/blob/main/CONTRIBUTING.md)
+![binding-rust](./images/binding-rust.png)
 
->### Rust 部分
-
-Taro 仓库里有部分使用 Rust 开发的子包，在开发、调试、测试这些包时有不一样的流程。
-
-Rust 代码存放在 `crates` 文件夹下，使用 Cargo workspace 管理，目前包括 NAPI bindings 和若干 SWC 插件。
-
-开发前请使用 `rustup` 安装 Rust 工具链。
-
-[rustup](https://www.rust-lang.org/learn/get-started)
+通过 [rustup](https://rustup.rs) 找到安装命令：
 
 ```bash
 curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 ```
 
-或者
+`pnpm run build:binding:debug` 或 `pnpm run binding:release` 编译出文件：`crates/native_binding/taro.darwin-arm64.node`。
 
-[安装 cargo](https://doc.rust-lang.org/cargo/getting-started/installation.html)
-
-```sh
-curl https://sh.rustup.rs -sSf | sh
-```
-
-#### NAPI bindings
-
-在根目录执行 `pnpm build:binding:debug` 或 `pnpm build:binding:release` 命令，会在 `crates/native-binding` 文件夹中编译出 binding 文件 `taro.[os-platform].node`。
-
-然后可以执行单元测试：
-
-```bash
-$ pnpm --filter @tarojs/binding run test
-```
-
-或结合调用方执行集成测试。
-
-## 调试
+## 3. 调试
 
 package.json
 
@@ -138,7 +111,7 @@ package.json
 }
 ```
 
-### taro-cli/bin/taro
+### 3.1 taro-cli/bin/taro
 
 ```js
 #! /usr/bin/env node
@@ -158,7 +131,7 @@ new CLI().run()
 node ./packages/taro-cli/bin/taro init ../taro-init-debug
 ```
 
-### .vscode/launch.json
+### 3.2 .vscode/launch.json
 
 ```json
 {
@@ -189,7 +162,7 @@ node ./packages/taro-cli/bin/taro init ../taro-init-debug
 }
 ```
 
-## taro-cli/src/utils/index.ts
+## 4. taro-cli/src/utils/index.ts
 
 ```js
 // packages/taro-cli/src/util/index.ts
@@ -210,7 +183,7 @@ export function getPkgVersion (): string {
 👽 Taro v4.0.0-beta.75
 ```
 
-## taro-cli/src/cli.ts
+## 5. taro-cli/src/cli.ts
 
 ```js
 // taro/packages/taro-cli/src/cli.ts
@@ -252,7 +225,7 @@ export default class CLI {
 }
 ```
 
-### parseArgs
+### 5.1 parseArgs
 
 ```js
 export default class CLI {
@@ -262,7 +235,7 @@ export default class CLI {
 }
 ```
 
-### customCommand
+### 5.2 customCommand
 
 ```js
 // taro/packages/taro-cli/src/commands/customCommand.ts
