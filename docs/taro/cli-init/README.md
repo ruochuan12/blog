@@ -451,6 +451,58 @@ async run (args: string | { name: string, opts?: any }) {
   }
 ```
 
+### applyPlugins
+
+```ts
+async applyPlugins (args: string | { name: string, initialVal?: any, opts?: any }) {
+    let name
+    let initialVal
+    let opts
+    if (typeof args === 'string') {
+      name = args
+    } else {
+      name = args.name
+      initialVal = args.initialVal
+      opts = args.opts
+    }
+    this.debugger('applyPlugins')
+    this.debugger(`applyPlugins:name:${name}`)
+    this.debugger(`applyPlugins:initialVal:${initialVal}`)
+    this.debugger(`applyPlugins:opts:${opts}`)
+    if (typeof name !== 'string') {
+      throw new Error('调用失败，未传入正确的名称！')
+    }
+    const hooks = this.hooks.get(name) || []
+    if (!hooks.length) {
+      return await initialVal
+    }
+    const waterfall = new AsyncSeriesWaterfallHook(['arg'])
+    if (hooks.length) {
+      const resArr: any[] = []
+      for (const hook of hooks) {
+        waterfall.tapPromise({
+          name: hook.plugin!,
+          stage: hook.stage || 0,
+          // @ts-ignore
+          before: hook.before
+        }, async arg => {
+          const res = await hook.fn(opts, arg)
+          if (IS_MODIFY_HOOK.test(name) && IS_EVENT_HOOK.test(name)) {
+            return res
+          }
+          if (IS_ADD_HOOK.test(name)) {
+            resArr.push(res)
+            return resArr
+          }
+          return null
+        })
+      }
+    }
+    return await waterfall.promise(initialVal)
+  }
+```
+
+
 ### initPresetsAndPlugins
 
 ```ts
@@ -616,57 +668,6 @@ initPresetsAndPlugins () {
         return target[name]
       }
     })
-  }
-```
-
-### applyPlugins
-
-```ts
-async applyPlugins (args: string | { name: string, initialVal?: any, opts?: any }) {
-    let name
-    let initialVal
-    let opts
-    if (typeof args === 'string') {
-      name = args
-    } else {
-      name = args.name
-      initialVal = args.initialVal
-      opts = args.opts
-    }
-    this.debugger('applyPlugins')
-    this.debugger(`applyPlugins:name:${name}`)
-    this.debugger(`applyPlugins:initialVal:${initialVal}`)
-    this.debugger(`applyPlugins:opts:${opts}`)
-    if (typeof name !== 'string') {
-      throw new Error('调用失败，未传入正确的名称！')
-    }
-    const hooks = this.hooks.get(name) || []
-    if (!hooks.length) {
-      return await initialVal
-    }
-    const waterfall = new AsyncSeriesWaterfallHook(['arg'])
-    if (hooks.length) {
-      const resArr: any[] = []
-      for (const hook of hooks) {
-        waterfall.tapPromise({
-          name: hook.plugin!,
-          stage: hook.stage || 0,
-          // @ts-ignore
-          before: hook.before
-        }, async arg => {
-          const res = await hook.fn(opts, arg)
-          if (IS_MODIFY_HOOK.test(name) && IS_EVENT_HOOK.test(name)) {
-            return res
-          }
-          if (IS_ADD_HOOK.test(name)) {
-            resArr.push(res)
-            return resArr
-          }
-          return null
-        })
-      }
-    }
-    return await waterfall.promise(initialVal)
   }
 ```
 
