@@ -112,7 +112,7 @@ package.json
 }
 ```
 
-### 3.1 taro-cli/bin/taro
+### 3.1 入口文件 taro-cli/bin/taro
 
 ```js
 #! /usr/bin/env node
@@ -132,7 +132,7 @@ new CLI().run();
 node ./packages/taro-cli/bin/taro init ../taro-init-debug
 ```
 
-### 3.2 .vscode/launch.json
+### 3.2 调试方式 1 .vscode/launch.json
 
 ```json
 {
@@ -159,6 +159,8 @@ node ./packages/taro-cli/bin/taro init ../taro-init-debug
 	]
 }
 ```
+
+### 3.3 调试方法 2 JavaScript Debug Terminal
 
 ## 4. taro-cli/src/utils/index.ts
 
@@ -227,10 +229,105 @@ export default class CLI {
 
 同类工具还有：
 [commander](https://github.com/tj/commander.js)，命令行工具。功能齐全的框架，提供类似 git 的子命令系统，自动生成帮助信息等。`vue-cli` 用的是这个。
+
 [cac](https://github.com/cacjs/cac)，类似 Commander.js 但更轻巧、现代，支持插件。`vite` 使用的是这个。
+
 [yargs](https://github.com/yargs/yargs)，交互式命令行工具。功能强大的框架，但显得过于臃肿。
 
-### 5.1 parseArgs
+## 5.1 cli parseArgs
+
+### presets
+
+```js
+if (command) {
+	const appPath = this.appPath;
+	const presetsPath = path.resolve(__dirname, "presets");
+	const commandsPath = path.resolve(presetsPath, "commands");
+	const platformsPath = path.resolve(presetsPath, "platforms");
+	const commandPlugins = fs.readdirSync(commandsPath);
+	const targetPlugin = `${command}.js`;
+}
+```
+
+![presets](./images/presets.png);
+
+### Config
+
+```js
+const configEnv = {
+	mode,
+	command,
+};
+const config = new Config({
+	appPath: this.appPath,
+	disableGlobalConfig: disableGlobalConfig,
+});
+await config.init(configEnv);
+```
+
+```ts
+// packages/taro-service/src/Config.ts
+export default class Config {
+	appPath: string;
+	configPath: string;
+	initialConfig: IProjectConfig;
+	initialGlobalConfig: IProjectConfig;
+	isInitSuccess: boolean;
+	disableGlobalConfig: boolean;
+
+	constructor(opts: IConfigOptions) {
+		this.appPath = opts.appPath;
+		this.disableGlobalConfig = !!opts?.disableGlobalConfig;
+	}
+	async init(configEnv: { mode: string; command: string }) {
+		// 代码省略
+	}
+	initGlobalConfig() {
+		// 代码省略
+	}
+	getConfigWithNamed(platform, configName) {
+		// 代码省略
+	}
+}
+```
+
+### Kernel
+
+```ts
+// 省略若干代码
+const kernel = new Kernel({
+	appPath,
+	presets: [path.resolve(__dirname, ".", "presets", "index.js")],
+	config,
+	plugins: [],
+});
+kernel.optsPlugins ||= [];
+```
+
+```ts
+// packages/taro-service/src/Kernel.ts
+export default class Kernel extends EventEmitter {
+	constructor(options: IKernelOptions) {
+		super();
+		this.debugger =
+			process.env.DEBUG === "Taro:Kernel"
+				? helper.createDebug("Taro:Kernel")
+				: function () {};
+		this.appPath = options.appPath || process.cwd();
+		this.optsPresets = options.presets;
+		this.optsPlugins = options.plugins;
+		this.config = options.config;
+		this.hooks = new Map();
+		this.methods = new Map();
+		this.commands = new Map();
+		this.platforms = new Map();
+		this.initHelper();
+		this.initConfig();
+		this.initPaths();
+		this.initRunnerUtils();
+	}
+}
+```
 
 ```ts
 export default class CLI {
@@ -304,71 +401,34 @@ export default class CLI {
 }
 ```
 
-## Config
+### customCommand
 
 ```ts
-// packages/taro-service/src/Config.ts
-export default class Config {
-	appPath: string;
-	configPath: string;
-	initialConfig: IProjectConfig;
-	initialGlobalConfig: IProjectConfig;
-	isInitSuccess: boolean;
-	disableGlobalConfig: boolean;
-
-	constructor(opts: IConfigOptions) {
-		this.appPath = opts.appPath;
-		this.disableGlobalConfig = !!opts?.disableGlobalConfig;
+switch (command) {
+	case "inspect":
+	case "build": {
+		// 省略
 	}
-	async init(configEnv: { mode: string; command: string }) {
-		// 代码省略
+	case "init": {
+		customCommand(command, kernel, {
+			// 省略若干参数...
+		});
+		break;
 	}
-	initGlobalConfig() {
-		// 代码省略
-	}
-	getConfigWithNamed(platform, configName) {
-		// 代码省略
-	}
+	default:
+		customCommand(command, kernel, args);
+		break;
 }
 ```
 
-## Kernel
-
 ```ts
-// packages/taro-service/src/Kernel.ts
-export default class Kernel extends EventEmitter {
-	constructor(options: IKernelOptions) {
-		super();
-		this.debugger =
-			process.env.DEBUG === "Taro:Kernel"
-				? helper.createDebug("Taro:Kernel")
-				: function () {};
-		this.appPath = options.appPath || process.cwd();
-		this.optsPresets = options.presets;
-		this.optsPlugins = options.plugins;
-		this.config = options.config;
-		this.hooks = new Map();
-		this.methods = new Map();
-		this.commands = new Map();
-		this.platforms = new Map();
-		this.initHelper();
-		this.initConfig();
-		this.initPaths();
-		this.initRunnerUtils();
-	}
-}
-```
-
-## 5.2 customCommand
-
-```js
 // taro/packages/taro-cli/src/commands/customCommand.ts
 import { Kernel } from "@tarojs/service";
 
 export default function customCommand(
 	command: string,
 	kernel: Kernel,
-	args: { _: string[], [key: string]: any }
+	args: { _: string[]; [key: string]: any }
 ) {
 	if (typeof command === "string") {
 		const options: any = {};
@@ -401,6 +461,7 @@ export default function customCommand(
 ## kernal.run
 
 ```ts
+// packages/taro-service/src/Kernel.ts
 async run (args: string | { name: string, opts?: any }) {
     let name
     let opts
@@ -502,173 +563,105 @@ async applyPlugins (args: string | { name: string, initialVal?: any, opts?: any 
   }
 ```
 
-
-### initPresetsAndPlugins
+## init
 
 ```ts
-initPresetsAndPlugins () {
-    const initialConfig = this.initialConfig
-    const initialGlobalConfig = this.initialGlobalConfig
-    const cliAndProjectConfigPresets = mergePlugins(this.optsPresets || [], initialConfig.presets || [])()
-    const cliAndProjectPlugins = mergePlugins(this.optsPlugins || [], initialConfig.plugins || [])()
-    const globalPlugins = convertPluginsToObject(initialGlobalConfig.plugins || [])()
-    const globalPresets = convertPluginsToObject(initialGlobalConfig.presets || [])()
-    this.debugger('initPresetsAndPlugins', cliAndProjectConfigPresets, cliAndProjectPlugins)
-    this.debugger('globalPresetsAndPlugins', globalPlugins, globalPresets)
-    process.env.NODE_ENV !== 'test' &&
-    helper.createSwcRegister({
-      only: [
-        ...Object.keys(cliAndProjectConfigPresets),
-        ...Object.keys(cliAndProjectPlugins),
-        ...Object.keys(globalPresets),
-        ...Object.keys(globalPlugins)
-      ]
-    })
-    this.plugins = new Map()
-    this.extraPlugins = {}
-    this.globalExtraPlugins = {}
-    this.resolvePresets(cliAndProjectConfigPresets, globalPresets)
-    this.resolvePlugins(cliAndProjectPlugins, globalPlugins)
-  }
+import type { IPluginContext } from "@tarojs/service";
 
-  resolvePresets (cliAndProjectPresets: IPluginsObject, globalPresets: IPluginsObject) {
-    const resolvedCliAndProjectPresets = resolvePresetsOrPlugins(this.appPath, cliAndProjectPresets, PluginType.Preset)
-    while (resolvedCliAndProjectPresets.length) {
-      this.initPreset(resolvedCliAndProjectPresets.shift()!)
-    }
+export default (ctx: IPluginContext) => {
+	ctx.registerCommand({
+		name: "init",
+		optionsMap: {
+			"--name [name]": "项目名称",
+			"--description [description]": "项目介绍",
+			"--typescript": "使用TypeScript",
+			"--npm [npm]": "包管理工具",
+			"--template-source [templateSource]": "项目模板源",
+			"--clone [clone]": "拉取远程模板时使用git clone",
+			"--template [template]": "项目模板",
+			"--css [css]": "CSS预处理器(sass/less/stylus/none)",
+			"-h, --help": "output usage information",
+		},
+		async fn(opts) {
+			// init project
+			const { appPath } = ctx.paths;
+			const { options } = opts;
+			const {
+				projectName,
+				templateSource,
+				clone,
+				template,
+				description,
+				typescript,
+				css,
+				npm,
+				framework,
+				compiler,
+				hideDefaultTemplate,
+			} = options;
+			const Project = require("../../create/project").default;
+			console.log(Project, "Project");
+			const project = new Project({
+				projectName,
+				projectDir: appPath,
+				npm,
+				templateSource,
+				clone,
+				template,
+				description,
+				typescript,
+				framework,
+				compiler,
+				hideDefaultTemplate,
+				css,
+			});
 
-    const globalConfigRootPath = path.join(helper.getUserHomeDir(), helper.TARO_GLOBAL_CONFIG_DIR)
-    const resolvedGlobalPresets = resolvePresetsOrPlugins(globalConfigRootPath, globalPresets, PluginType.Plugin, true)
-    while (resolvedGlobalPresets.length) {
-      this.initPreset(resolvedGlobalPresets.shift()!, true)
-    }
-  }
+			project.create();
+		},
+	});
+};
+```
 
-  resolvePlugins (cliAndProjectPlugins: IPluginsObject, globalPlugins: IPluginsObject) {
-    cliAndProjectPlugins = merge(this.extraPlugins, cliAndProjectPlugins)
-    const resolvedCliAndProjectPlugins = resolvePresetsOrPlugins(this.appPath, cliAndProjectPlugins, PluginType.Plugin)
+### project.create
 
-    globalPlugins = merge(this.globalExtraPlugins, globalPlugins)
-    const globalConfigRootPath = path.join(helper.getUserHomeDir(), helper.TARO_GLOBAL_CONFIG_DIR)
-    const resolvedGlobalPlugins = resolvePresetsOrPlugins(globalConfigRootPath, globalPlugins, PluginType.Plugin, true)
+```ts
+export default class Project extends Creator {
+	public rootPath: string;
+	public conf: IProjectConfOptions;
 
-    const resolvedPlugins = resolvedCliAndProjectPlugins.concat(resolvedGlobalPlugins)
+	constructor(options: IProjectConfOptions) {
+		super(options.sourceRoot);
+		const unSupportedVer = semver.lt(process.version, "v7.6.0");
+		if (unSupportedVer) {
+			throw new Error("Node.js 版本过低，推荐升级 Node.js 至 v8.0.0+");
+		}
+		this.rootPath = this._rootPath;
 
-    while (resolvedPlugins.length) {
-      this.initPlugin(resolvedPlugins.shift()!)
-    }
-
-    this.extraPlugins = {}
-    this.globalExtraPlugins = {}
-  }
-	initPreset (preset: IPreset, isGlobalConfigPreset?: boolean) {
-    this.debugger('initPreset', preset)
-    const { id, path, opts, apply } = preset
-    const pluginCtx = this.initPluginCtx({ id, path, ctx: this })
-    const { presets, plugins } = apply()(pluginCtx, opts) || {}
-    this.registerPlugin(preset)
-    if (Array.isArray(presets)) {
-      const _presets = resolvePresetsOrPlugins(this.appPath, convertPluginsToObject(presets)(), PluginType.Preset, isGlobalConfigPreset)
-      while (_presets.length) {
-        this.initPreset(_presets.shift()!, isGlobalConfigPreset)
-      }
-    }
-    if (Array.isArray(plugins)) {
-      isGlobalConfigPreset
-        ? (this.globalExtraPlugins = merge(this.globalExtraPlugins, convertPluginsToObject(plugins)()))
-        : (this.extraPlugins = merge(this.extraPlugins, convertPluginsToObject(plugins)()))
-    }
-  }
-
-  initPlugin (plugin: IPlugin) {
-    const { id, path, opts, apply } = plugin
-    const pluginCtx = this.initPluginCtx({ id, path, ctx: this })
-    this.debugger('initPlugin', plugin)
-    this.registerPlugin(plugin)
-    apply()(pluginCtx, opts)
-    this.checkPluginOpts(pluginCtx, opts)
-  }
-
-  applyCliCommandPlugin (commandNames: string[] = []) {
-    const existsCliCommand: string[] = []
-    for (let i = 0; i < commandNames.length; i++) {
-      const commandName = commandNames[i]
-      const commandFilePath = path.resolve(this.cliCommandsPath, `${commandName}.js`)
-      if (this.cliCommands.includes(commandName)) existsCliCommand.push(commandFilePath)
-    }
-    const commandPlugins = convertPluginsToObject(existsCliCommand || [])()
-    helper.createSwcRegister({ only: [...Object.keys(commandPlugins)] })
-    const resolvedCommandPlugins = resolvePresetsOrPlugins(this.appPath, commandPlugins, PluginType.Plugin)
-    while (resolvedCommandPlugins.length) {
-      this.initPlugin(resolvedCommandPlugins.shift()!)
-    }
-  }
-
-  checkPluginOpts (pluginCtx, opts) {
-    if (typeof pluginCtx.optsSchema !== 'function') {
-      return
-    }
-    this.debugger('checkPluginOpts', pluginCtx)
-    const joi = require('joi')
-    const schema = pluginCtx.optsSchema(joi)
-    if (!joi.isSchema(schema)) {
-      throw new Error(`插件${pluginCtx.id}中设置参数检查 schema 有误，请检查！`)
-    }
-    const { error } = schema.validate(opts)
-    if (error) {
-      error.message = `插件${pluginCtx.id}获得的参数不符合要求，请检查！`
-      throw error
-    }
-  }
-
-  registerPlugin (plugin: IPlugin) {
-    this.debugger('registerPlugin', plugin)
-    if (this.plugins.has(plugin.id)) {
-      throw new Error(`插件 ${plugin.id} 已被注册`)
-    }
-    this.plugins.set(plugin.id, plugin)
-  }
-
-  initPluginCtx ({ id, path, ctx }: { id: string, path: string, ctx: Kernel }) {
-    const pluginCtx = new Plugin({ id, path, ctx })
-    const internalMethods = ['onReady', 'onStart']
-    const kernelApis = [
-      'appPath',
-      'plugins',
-      'platforms',
-      'paths',
-      'helper',
-      'runOpts',
-      'runnerUtils',
-      'initialConfig',
-      'applyPlugins',
-      'applyCliCommandPlugin'
-    ]
-    internalMethods.forEach(name => {
-      if (!this.methods.has(name)) {
-        pluginCtx.registerMethod(name)
-      }
-    })
-    return new Proxy(pluginCtx, {
-      get: (target, name: string) => {
-        if (this.methods.has(name)) {
-          const method = this.methods.get(name)
-          if (Array.isArray(method)) {
-            return (...arg) => {
-              method.forEach(item => {
-                item.apply(this, arg)
-              })
-            }
-          }
-          return method
-        }
-        if (kernelApis.includes(name)) {
-          return typeof this[name] === 'function' ? this[name].bind(this) : this[name]
-        }
-        return target[name]
-      }
-    })
-  }
+		this.conf = Object.assign(
+			{
+				projectName: "",
+				projectDir: "",
+				template: "",
+				description: "",
+				npm: "",
+			},
+			options
+		);
+	}
+	async create() {
+		try {
+			const answers = await this.ask();
+			const date = new Date();
+			this.conf = Object.assign(this.conf, answers);
+			this.conf.date = `${date.getFullYear()}-${
+				date.getMonth() + 1
+			}-${date.getDate()}`;
+			this.write();
+		} catch (error) {
+			console.log(chalk.red("创建项目失败: ", error));
+		}
+	}
+}
 ```
 
 ---
