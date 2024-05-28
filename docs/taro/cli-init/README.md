@@ -393,7 +393,7 @@ initGlobalConfig () {
 
 [全局插件或插件集配置](https://docs.taro.zone/docs/next/cli/#%E5%85%A8%E5%B1%80%E6%8F%92%E4%BB%B6%E6%88%96%E6%8F%92%E4%BB%B6%E9%9B%86%E9%85%8D%E7%BD%AE)
 
-![global-config](./images/cli-global-config.png)
+![global-config](./images/global-config.png)
 
 ### Kernel
 
