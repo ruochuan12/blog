@@ -4,7 +4,7 @@
 
 大家好，我是[若川](https://juejin.cn/user/1415826704971918)，欢迎 `follow` [我的 github](https://github.com/ruochuan12)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（5.8k+人）第一的专栏，写有 30 余篇源码文章。
 
-截止目前，`taro` 正式版是 `3.6.30`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。所以我们直接学习 `4.x`，截至目前 `4.x` 最新版本是 `4.0.0-beta.75`。
+截止目前（`2024-05-28`），`taro` 正式版是 `3.6.30`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。所以我们直接学习 `4.x`，截至目前 `4.x` 最新版本是 `4.0.0-beta.79`。
 
 taro 源码系列
 
@@ -18,7 +18,7 @@ git checkout 4.x
 # 当前 hash
 git checkout d08d4b7faa6773e4f14c31ecdb6b5ebdc8787c76
 # 当前版本
-# 4.0.0-beta.75
+# 4.0.0-beta.79
 ```
 
 后续文章尽量会与 `taro` 版本保持更新。
@@ -102,7 +102,7 @@ package.json
 // packages/taro-cli/package.json
 {
 	"name": "@tarojs/cli",
-	"version": "4.0.0-beta.75",
+	"version": "4.0.0-beta.79",
 	"description": "cli tool for taro",
 	"main": "index.js",
 	"types": "dist/index.d.ts",
@@ -124,43 +124,51 @@ const CLI = require("../dist/cli").default;
 new CLI().run();
 ```
 
-[taro 文档 - 单步调测配置](https://docs.taro.zone/docs/debug-config/)
+### 3.2 调试方法 1 JavaScript Debug Terminal
 
-调试截图
+可参考我的文章[新手向：前端程序员必学基本技能——调试JS代码](https://juejin.cn/post/7030584939020042254)，或者[据说90%的人不知道可以用测试用例(Vitest)调试开源项目(Vue3) 源码](https://juejin.cn/post/7212263304394981432)
+
+简而言之就是以下步骤：
 
 ```bash
-node ./packages/taro-cli/bin/taro init ../taro-init-debug
+1. 找到入口文件设置断点
+2. ctrl + `\`` (反引号) 打开终端，配置`JavaScript调试终端`
+3. 在终端输入 `node` 相关命令，这里用 `init` 举例
+4. 尽情调试源码
 ```
 
-### 3.2 调试方式 1 .vscode/launch.json
+```bash
+node ./packages/taro-cli/bin/taro init taro-init-debug
+```
+
+如下图所示：
+
+![vscode 调试源码](./images/vscode-debugger.png)
+
+### 3.3 调试方式 2 配置 .vscode/launch.json
+
+[taro 文档 - 单步调测配置](https://docs.taro.zone/docs/debug-config/)
+写的挺好的，通过配置 `launch.json` 来调试，在此就不再赘述了。
+
+不过补充一条：`launch.json` 文件可以添加一条以下这样的配置，就可以在调试终端输入内容。
 
 ```json
 {
-	// For more information, visit: https://go.microsoft.com/fwlink/?linkid=830387
-	"version": "0.2.0",
-	"configurations": [
-		{
-			"type": "node",
-			"request": "launch",
-			"name": "CLI debug",
-			"program": "${workspaceFolder}/packages/taro-cli/bin/taro",
-			// "cwd": "${project absolute path}",
-			"cwd": "${workspaceFolder}",
-			"args": ["init", "taro-debug-init"],
-			"console": "integratedTerminal",
-			// "args": [
-			//   "build",
-			//   "--type",
-			//   "weapp",
-			//   "--watch"
-			// ],
-			"skipFiles": ["<node_internals>/**"]
-		}
-	]
+ "version": "0.2.0",
+ "configurations": [
+  {
+   "type": "node",
+  "console": "integratedTerminal",
+}
+]
 }
 ```
 
-### 3.3 调试方法 2 JavaScript Debug Terminal
+[vscode nodejs 调试](https://code.visualstudio.com/docs/nodejs/nodejs-debugging#_node-console)
+
+`console- 启动程序的控制台（internalConsole，integratedTerminal，externalTerminal）。`
+
+![vscode console](./images/vscode-console.png)
 
 ## 4. taro-cli/src/utils/index.ts
 
@@ -180,10 +188,10 @@ export function getPkgVersion(): string {
 输出 的是 `taro/packages/taro-cli/package.json` 的版本号
 
 ```js
-👽 Taro v4.0.0-beta.75
+👽 Taro v4.0.0-beta.79
 ```
 
-## 5. taro-cli/src/cli.ts
+## 5. taro-cli/src/cli.ts 整体结构
 
 ```js
 // taro/packages/taro-cli/src/cli.ts
@@ -237,6 +245,8 @@ export default class CLI {
 ## 5.1 cli parseArgs
 
 ### presets
+
+![parseArgs-1](./images/parseArgs-1.png);
 
 ```js
 if (command) {
@@ -325,78 +335,6 @@ export default class Kernel extends EventEmitter {
 		this.initConfig();
 		this.initPaths();
 		this.initRunnerUtils();
-	}
-}
-```
-
-```ts
-export default class CLI {
-	async parseArgs() {
-		// ...省略若干代码
-		const command = _[0];
-		if (command) {
-			const appPath = this.appPath;
-			const presetsPath = path.resolve(__dirname, "presets");
-			const commandsPath = path.resolve(presetsPath, "commands");
-			const platformsPath = path.resolve(presetsPath, "platforms");
-			const commandPlugins = fs.readdirSync(commandsPath);
-			const targetPlugin = `${command}.js`;
-
-			// 省略若干代码
-			const configEnv = {
-				mode,
-				command,
-			};
-			const config = new Config({
-				appPath: this.appPath,
-				disableGlobalConfig: disableGlobalConfig,
-			});
-			await config.init(configEnv);
-
-			const kernel = new Kernel({
-				appPath,
-				presets: [path.resolve(__dirname, ".", "presets", "index.js")],
-				config,
-				plugins: [],
-			});
-			kernel.optsPlugins ||= [];
-
-			// 把内置命令插件传递给 kernel，可以暴露给其他插件使用
-			kernel.cliCommandsPath = commandsPath;
-			kernel.cliCommands = commandPlugins
-				.filter((commandFileName) =>
-					/^[\w-]+(\.[\w-]+)*\.js$/.test(commandFileName)
-				)
-				.map((fileName) => fileName.replace(/\.js$/, ""));
-
-			switch (command) {
-				case "inspect":
-				case "build": {
-					// 省略
-				}
-				case "init": {
-					customCommand(command, kernel, {
-						_,
-						appPath,
-						projectName: _[1] || args.name,
-						description: args.description,
-						typescript: args.typescript,
-						framework: args.framework,
-						compiler: args.compiler,
-						npm: args.npm,
-						templateSource: args["template-source"],
-						clone: !!args.clone,
-						template: args.template,
-						css: args.css,
-						h: args.h,
-					});
-					break;
-				}
-				default:
-					customCommand(command, kernel, args);
-					break;
-			}
-		}
 	}
 }
 ```
