@@ -132,7 +132,7 @@ node ./packages/taro-cli/bin/taro init taro-init-debug
 
 ![binding-error](./images/binding-error.png)
 
-再来看下 [贡献文档-10-rust-部分](https://github.com/NervJS/taro/blob/4.x/CONTRIBUTING.md#10-rust-%E9%83%A8%E5%88%86)
+运行等过程报错，不要慌。可能是我们遗漏了一些细节，贡献文档等应该会给出答案。所以再来看下 [贡献文档-10-rust-部分](https://github.com/NervJS/taro/blob/4.x/CONTRIBUTING.md#10-rust-%E9%83%A8%E5%88%86)
 
 ![binding-rust](./images/binding-rust.png)
 
@@ -187,7 +187,7 @@ export function getPkgVersion(): string {
 }
 ```
 
-输出 的是 `taro/packages/taro-cli/package.json` 的版本号
+`require("../dist/util").printPkgVersion();` 这句输出的是 `taro/packages/taro-cli/package.json` 的版本号
 
 ```js
 👽 Taro v4.0.0-beta.79
@@ -256,7 +256,7 @@ export default class CLI {
 
 ### Config
 
-![parseArgs-2](./images/parseArgs-2.png);
+![parseArgs-2](./images/parseArgs-2.png)
 
 `64-78` 行代码，代码量相对较少，就不截图了，直接贴代码了。
 
@@ -367,6 +367,13 @@ export const getModuleDefaultExport = (exports) =>
 
 读取配置 `~/.taro-global-config/index.json`。
 
+```json
+{
+  "plugins": [],
+  "presets": []
+}
+```
+
 ```ts
 initGlobalConfig () {
     const homedir = getUserHomeDir()
@@ -467,7 +474,7 @@ initPaths () {
 }
 ```
 
-![taro 文档 - 编写插件 api](https://docs.taro.zone/docs/next/plugin-custom#api)
+[taro 文档 - 编写插件 api](https://docs.taro.zone/docs/next/plugin-custom#api)
 
 ![initConfig](./images/initConfig.png)
 
