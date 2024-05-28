@@ -4,9 +4,9 @@
 
 大家好，我是[若川](https://juejin.cn/user/1415826704971918)，欢迎 `follow` [我的 github](https://github.com/ruochuan12)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（5.8k+人）第一的专栏，写有 30 余篇源码文章。
 
-截止目前（`2024-05-28`），`taro` 正式版是 `3.6.30`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。所以我们直接学习 `4.x`，截至目前 `4.x` 最新版本是 `4.0.0-beta.79`。
+截止目前（`2024-05-28`），`taro` 正式版是 `3.6.30`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。所以我们直接学习 `4.x`，`4.x` 最新版本是 `4.0.0-beta.79`。
 
-taro 源码系列
+计划写一个 taro 源码系列。
 
 ## 2. 准备工作
 
@@ -77,23 +77,6 @@ pnpm build 完成，如下图所示：
 
 ![pnpm build 完成](./images/pnpm-build.png)
 
-报错 binding
-taro.[os-platform].node
-
-![binding-error](./images/binding-error.png)
-
-再来看下 [贡献文档-10-rust-部分](https://github.com/NervJS/taro/blob/4.x/CONTRIBUTING.md#10-rust-%E9%83%A8%E5%88%86)
-
-![binding-rust](./images/binding-rust.png)
-
-通过 [rustup](https://rustup.rs) 找到安装命令：
-
-```bash
-curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
-```
-
-`pnpm run build:binding:debug` 或 `pnpm run binding:release` 编译出文件：`crates/native_binding/taro.darwin-arm64.node`。
-
 ## 3. 调试
 
 package.json
@@ -126,7 +109,7 @@ new CLI().run();
 
 ### 3.2 调试方法 1 JavaScript Debug Terminal
 
-可参考我的文章[新手向：前端程序员必学基本技能——调试JS代码](https://juejin.cn/post/7030584939020042254)，或者[据说90%的人不知道可以用测试用例(Vitest)调试开源项目(Vue3) 源码](https://juejin.cn/post/7212263304394981432)
+可参考我的文章[新手向：前端程序员必学基本技能——调试 JS 代码](https://juejin.cn/post/7030584939020042254)，或者[据说 90%的人不知道可以用测试用例(Vitest)调试开源项目(Vue3) 源码](https://juejin.cn/post/7212263304394981432)
 
 简而言之就是以下步骤：
 
@@ -145,6 +128,24 @@ node ./packages/taro-cli/bin/taro init taro-init-debug
 
 ![vscode 调试源码](./images/vscode-debugger.png)
 
+调试时应该会报错 `binding` `taro.[os-platform].node`。如下图所示：
+
+![binding-error](./images/binding-error.png)
+
+再来看下 [贡献文档-10-rust-部分](https://github.com/NervJS/taro/blob/4.x/CONTRIBUTING.md#10-rust-%E9%83%A8%E5%88%86)
+
+![binding-rust](./images/binding-rust.png)
+
+通过 [rustup](https://rustup.rs) 找到安装命令：
+
+```bash
+curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
+```
+
+安装完成后，执行 `pnpm run build:binding:debug` 或 `pnpm run binding:release` 编译出文件：`crates/native_binding/taro.darwin-arm64.node`。
+
+就完美解决了，调试时不会报错了。
+
 ### 3.3 调试方式 2 配置 .vscode/launch.json
 
 [taro 文档 - 单步调测配置](https://docs.taro.zone/docs/debug-config/)
@@ -154,13 +155,14 @@ node ./packages/taro-cli/bin/taro init taro-init-debug
 
 ```json
 {
- "version": "0.2.0",
- "configurations": [
-  {
-   "type": "node",
-  "console": "integratedTerminal",
-}
-]
+	"version": "0.2.0",
+	"configurations": [
+		{
+			"type": "node",
+			// 省略其他配置...
+			"console": "integratedTerminal"
+		}
+	]
 }
 ```
 
@@ -219,7 +221,7 @@ export default class CLI {
 		// init、build 等
 		const command = _[0];
 		if (command) {
-			// 省略代码
+			// 省略若干代码
 		} else {
 			if (args.h) {
 				// 输出帮助信息
@@ -246,24 +248,28 @@ export default class CLI {
 
 ### presets
 
-![parseArgs-1](./images/parseArgs-1.png);
+![parseArgs-1](./images/parseArgs-1.png)
 
-```js
-if (command) {
-	const appPath = this.appPath;
-	const presetsPath = path.resolve(__dirname, "presets");
-	const commandsPath = path.resolve(presetsPath, "commands");
-	const platformsPath = path.resolve(presetsPath, "platforms");
-	const commandPlugins = fs.readdirSync(commandsPath);
-	const targetPlugin = `${command}.js`;
-}
-```
+`presets` 对应的目录结构如图所示：
 
 ![presets](./images/presets.png);
 
 ### Config
 
+![parseArgs-2](./images/parseArgs-2.png);
+
+`64-78` 行代码，代码量相对较少，就不截图了，直接贴代码了。
+
 ```js
+// packages/taro-cli/src/cli.ts
+// 这里解析 dotenv 以便于 config 解析时能获取 dotenv 配置信息
+const expandEnv = dotenvParse(appPath, args.envPrefix, mode);
+
+const disableGlobalConfig = !!(
+	args["disable-global-config"] ||
+	DISABLE_GLOBAL_CONFIG_COMMANDS.includes(command)
+);
+
 const configEnv = {
 	mode,
 	command,
@@ -274,6 +280,12 @@ const config = new Config({
 });
 await config.init(configEnv);
 ```
+
+`dotenvParse` 函数简单来说就是通过 [dotenv](https://github.com/motdotla/dotenv) 和 [dotenv-expand](https://github.com/motdotla/dotenv-expand) 解析 `.env`、`.env.development`、`.env.production` 等文件和变量的。
+
+> `dotenv` 是一个零依赖模块，可将 `.env` 文件中的环境变量加载到 `process.env` 中。
+
+我之前写过一篇 [面试官：项目中常用的 .env 文件原理是什么？如何实现？](https://juejin.cn/post/7045057475845816357)
 
 ```ts
 // packages/taro-service/src/Config.ts
@@ -300,6 +312,81 @@ export default class Config {
 	}
 }
 ```
+
+#### config.init
+
+读取的是 `config/index` `.ts` 或者 `.js` 后缀。
+
+```ts
+async init (configEnv: {
+    mode: string
+    command: string
+  }) {
+    this.initialConfig = {}
+    this.initialGlobalConfig = {}
+    this.isInitSuccess = false
+    this.configPath = resolveScriptPath(path.join(this.appPath, CONFIG_DIR_NAME, DEFAULT_CONFIG_FILE))
+    if (!fs.existsSync(this.configPath)) {
+      if (this.disableGlobalConfig) return
+      this.initGlobalConfig()
+    } else {
+      createSwcRegister({
+        only: [
+          filePath => filePath.indexOf(path.join(this.appPath, CONFIG_DIR_NAME)) >= 0
+        ]
+      })
+      try {
+        const userExport = getModuleDefaultExport(require(this.configPath))
+        this.initialConfig = typeof userExport === 'function' ? await userExport(merge, configEnv) : userExport
+        this.isInitSuccess = true
+      } catch (err) {
+        console.log(err)
+      }
+    }
+  }
+```
+
+值得一提的是：
+
+![createSwcRegister](./images/createSwcRegister.png)
+
+`createSwcRegister` 使用了 [`@swc/register`](https://www.npmjs.com/package/@swc/register) 来编译 `ts` 等转换成 `commonjs`。可以直接用 `require`。
+
+> 使用 swc 的方法之一是通过 `require` 钩子。`require` 钩子会将自身绑定到 `node` 的 `require` 并自动动态编译文件。不过现在更推荐 [@swc-node/register](https://www.npmjs.com/package/@swc-node/register)。
+
+```ts
+export const getModuleDefaultExport = (exports) =>
+	exports.__esModule ? exports.default : exports;
+```
+
+`this.initialConfig = typeof userExport === 'function' ? await userExport(merge, configEnv) : userExport`。这句就是 `config/index.ts` 支持函数也支持对象的实现。
+
+``
+
+#### config.initGlobalConfig
+
+读取配置 `~/.taro-global-config/index.json`。
+
+```ts
+initGlobalConfig () {
+    const homedir = getUserHomeDir()
+    if (!homedir) return console.error('获取不到用户 home 路径')
+    const globalPluginConfigPath = path.join(getUserHomeDir(), TARO_GLOBAL_CONFIG_DIR, TARO_GLOBAL_CONFIG_FILE)
+    if (!fs.existsSync(globalPluginConfigPath)) return
+    const spinner = ora(`开始获取 taro 全局配置文件： ${globalPluginConfigPath}`).start()
+    try {
+      this.initialGlobalConfig = fs.readJSONSync(globalPluginConfigPath) || {}
+      spinner.succeed('获取 taro 全局配置成功')
+    } catch (e) {
+      spinner.stop()
+      console.warn(`获取全局配置失败，如果需要启用全局插件请查看配置文件: ${globalPluginConfigPath} `)
+    }
+  }
+```
+
+[全局插件或插件集配置](https://docs.taro.zone/docs/next/cli/#%E5%85%A8%E5%B1%80%E6%8F%92%E4%BB%B6%E6%88%96%E6%8F%92%E4%BB%B6%E9%9B%86%E9%85%8D%E7%BD%AE)
+
+![global-config](./images/cli-global-config.png)
 
 ### Kernel
 
@@ -339,13 +426,65 @@ export default class Kernel extends EventEmitter {
 }
 ```
 
-### customCommand
+```ts
+export const createDebug = (id: string) => require("debug")(id);
+```
+
+调用的 [debug](https://www.npmjs.com/package/debug)。
+>一个仿照 `Node.js` 核心调试技术的微型 `JavaScript` 调试实用程序。适用于 `Node.js` 和 `Web` 浏览器。
 
 ```ts
+initConfig () {
+	this.initialConfig = this.config.initialConfig
+	this.initialGlobalConfig = this.config.initialGlobalConfig
+	this.debugger('initConfig', this.initialConfig)
+}
+initHelper () {
+	this.helper = helper
+	this.debugger('initHelper')
+}
+
+initRunnerUtils () {
+	this.runnerUtils = runnerUtils
+	this.debugger('initRunnerUtils')
+}
+```
+
+```ts
+initPaths () {
+	this.paths = {
+		appPath: this.appPath,
+		nodeModulesPath: helper.recursiveFindNodeModules(path.join(this.appPath, helper.NODE_MODULES))
+	} as IPaths
+	if (this.config.isInitSuccess) {
+		Object.assign(this.paths, {
+		configPath: this.config.configPath,
+		sourcePath: path.join(this.appPath, this.initialConfig.sourceRoot as string),
+		outputPath: path.resolve(this.appPath, this.initialConfig.outputRoot as string)
+		})
+	}
+	this.debugger(`initPaths:${JSON.stringify(this.paths, null, 2)}`)
+}
+```
+
+![taro 文档 - 编写插件 api](https://docs.taro.zone/docs/next/plugin-custom#api)
+
+![initConfig](./images/initConfig.png)
+
+### kernel.optsPlugins 等
+
+![parseArgs-3](./images/parseArgs-3.png)
+
+### customCommand 函数
+
+![parseArgs-4](./images/parseArgs-4.png)
+
+```ts
+// packages/taro-cli/src/cli.ts
 switch (command) {
 	case "inspect":
 	case "build": {
-		// 省略
+		// 省略...
 	}
 	case "init": {
 		customCommand(command, kernel, {
@@ -358,6 +497,8 @@ switch (command) {
 		break;
 }
 ```
+
+我们可以看到最终调用的是 `customCommand` 函数
 
 ```ts
 // taro/packages/taro-cli/src/commands/customCommand.ts
@@ -395,6 +536,8 @@ export default function customCommand(
 	}
 }
 ```
+
+`customCommand` 函数 移除一些 run 函数 不需要的参数，最终调用的是 `kernal.run` 函数。
 
 ## kernal.run
 
@@ -440,8 +583,6 @@ async run (args: string | { name: string, opts?: any }) {
         }
       })
     }
-
-    console.log(this, 'this')
 
     await this.applyPlugins({
       name,
