@@ -95,9 +95,11 @@ package.json
 }
 ```
 
-### 3.1 入口文件 taro-cli/bin/taro
+### 3.1 入口文件 packages/taro-cli/bin/taro
 
 ```js
+// packages/taro-cli/bin/taro
+
 #! /usr/bin/env node
 
 require("../dist/util").printPkgVersion();
@@ -172,28 +174,51 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 ![vscode console](./images/vscode-console.png)
 
+```js
+// packages/taro-cli/bin/taro
+
+#! /usr/bin/env node
+
+require("../dist/util").printPkgVersion();
+
+const CLI = require("../dist/cli").default;
+
+new CLI().run();
+```
+
+我们跟着断点进入，入口文件中的第一句`require("../dist/util").printPkgVersion();` `printPkgVersion` 函数。
+
 ## 4. taro-cli/src/utils/index.ts
 
 ```js
 // packages/taro-cli/src/util/index.ts
-import * as path from "path";
+import * as path from 'path'
 
-export function getRootPath(): string {
-	return path.resolve(__dirname, "../../");
+export function getRootPath (): string {
+  return path.resolve(__dirname, '../../')
 }
 
-export function getPkgVersion(): string {
-	return require(path.join(getRootPath(), "package.json")).version;
+export function getPkgVersion (): string {
+  return require(path.join(getRootPath(), 'package.json')).version
+}
+
+export function printPkgVersion () {
+  console.log(`👽 Taro v${getPkgVersion()}`)
+  console.log()
 }
 ```
 
-`require("../dist/util").printPkgVersion();` 这句输出的是 `taro/packages/taro-cli/package.json` 的版本号
+可以看出这句输出的是 `taro/packages/taro-cli/package.json` 的版本号。
 
 ```js
 👽 Taro v4.0.0-beta.79
 ```
 
-## 5. taro-cli/src/cli.ts 整体结构
+我们继续跟着断点，进入第二第三句，可以进入到 `packages/taro-cli/src/cli.ts` 这个文件。
+
+## 5. packages/taro-cli/src/cli.ts 整体结构
+
+我们先来看下这个文件的整体结构。`class CLI` 一个 appPath 属性（一般指 `taro` 工作目录），两个函数 `run` 和 `parseArgs`。
 
 ```js
 // taro/packages/taro-cli/src/cli.ts
@@ -235,7 +260,7 @@ export default class CLI {
 }
 ```
 
-[minimist](https://github.com/minimistjs/minimist)，参数解析工具。
+使用了[minimist](https://github.com/minimistjs/minimist)，参数解析工具。
 
 同类工具还有：
 [commander](https://github.com/tj/commander.js)，命令行工具。功能齐全的框架，提供类似 git 的子命令系统，自动生成帮助信息等。`vue-cli` 用的是这个。
@@ -652,6 +677,7 @@ async applyPlugins (args: string | { name: string, initialVal?: any, opts?: any 
 ## init
 
 ```ts
+// packages/taro-cli/src/presets/commands/init.ts
 import type { IPluginContext } from "@tarojs/service";
 
 export default (ctx: IPluginContext) => {
@@ -673,33 +699,14 @@ export default (ctx: IPluginContext) => {
 			const { appPath } = ctx.paths;
 			const { options } = opts;
 			const {
-				projectName,
-				templateSource,
-				clone,
-				template,
-				description,
-				typescript,
-				css,
-				npm,
-				framework,
-				compiler,
-				hideDefaultTemplate,
+				// 省略若干参数
 			} = options;
 			const Project = require("../../create/project").default;
 			console.log(Project, "Project");
 			const project = new Project({
 				projectName,
 				projectDir: appPath,
-				npm,
-				templateSource,
-				clone,
-				template,
-				description,
-				typescript,
-				framework,
-				compiler,
-				hideDefaultTemplate,
-				css,
+				// 省略若干参数
 			});
 
 			project.create();
@@ -708,9 +715,14 @@ export default (ctx: IPluginContext) => {
 };
 ```
 
+通过 `ctx.registerCommand` 注册了一个 `name` 为 `init` 的命令，会存入到内核 `Kernal` 实例对象的 `hooks` 属性中，其中 ctx 就是 `Kernal` 的实例对象。具体实现是 `fn` 函数。
+
+我们重点来看 `packages/taro-cli/src/create/project.ts` 的 `Project` 类的实现，和 `create` 方法。
+
 ### project.create
 
 ```ts
+// packages/taro-cli/src/create/project.ts
 export default class Project extends Creator {
 	public rootPath: string;
 	public conf: IProjectConfOptions;
