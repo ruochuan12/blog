@@ -15,7 +15,7 @@
 git clone https://github.com/NervJS/taro.git
 # 当前分支
 git checkout 4.x
-# 当前 hash
+# 写文章时，项目当前 hash
 git checkout d08d4b7faa6773e4f14c31ecdb6b5ebdc8787c76
 # 当前版本
 # 4.0.0-beta.79
@@ -263,9 +263,9 @@ export default class CLI {
 使用了[minimist](https://github.com/minimistjs/minimist)，参数解析工具。
 
 同类工具还有：
-[commander](https://github.com/tj/commander.js)，命令行工具。功能齐全的框架，提供类似 git 的子命令系统，自动生成帮助信息等。`vue-cli` 用的是这个。
+[commander](https://github.com/tj/commander.js)，命令行工具。功能齐全的框架，提供类似 git 的子命令系统，自动生成帮助信息等。有很多知名的 `cli` 都是用的这个[commander](https://www.npmjs.com/browse/depended/commander)。比如：[`vue-cli`](https://github.com/vuejs/vue-cli/blob/dev/packages/%40vue/cli/bin/vue.js#L37)、[`webpack-cli`](https://github.com/webpack/webpack-cli/blob/master/packages/webpack-cli/src/webpack-cli.ts#L64) 和 [`create-react-app`](https://github.com/facebook/create-react-app/blob/main/packages/create-react-app/createReactApp.js#L59) 用的是这个。
 
-[cac](https://github.com/cacjs/cac)，类似 Commander.js 但更轻巧、现代，支持插件。`vite` 使用的是这个。
+[cac](https://github.com/cacjs/cac)，类似 `Commander.js` 但更轻巧、现代，支持插件。也有很多使用这个[cac npm](https://www.npmjs.com/package/cac?activeTab=dependents)，比如[`vite`](https://www.npmjs.com/package/vite?activeTab=dependencies) 使用的是这个。
 
 [yargs](https://github.com/yargs/yargs)，交互式命令行工具。功能强大的框架，但显得过于臃肿。
 
