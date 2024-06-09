@@ -2,6 +2,7 @@
 
 TODOs
 
-- [ ] 准备工作
-- [ ] cli init
+- [ ] cli init 初始化项目
+- [ ] kernal 插件机制
+- [ ] init 初始化项目
 - [ ] cli build

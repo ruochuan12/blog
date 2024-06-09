@@ -6,7 +6,13 @@
 
 截止目前（`2024-05-28`），`taro` 正式版是 `3.6.30`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。所以我们直接学习 `4.x`，`4.x` 最新版本是 `4.0.0-beta.79`。
 
-计划写一个 taro 源码系列。
+计划写一个 `taro` 源码系列。初步计划有如下文章，欢迎持续关注。
+
+- [ ] cli init 初始化项目
+- [ ] kernal 插件机制
+- [ ] init 初始化项目
+- [ ] cli build
+- [ ] 等等
 
 ## 2. 准备工作
 
@@ -192,19 +198,19 @@ new CLI().run();
 
 ```js
 // packages/taro-cli/src/util/index.ts
-import * as path from 'path'
+import * as path from "path";
 
-export function getRootPath (): string {
-  return path.resolve(__dirname, '../../')
+export function getRootPath(): string {
+	return path.resolve(__dirname, "../../");
 }
 
-export function getPkgVersion (): string {
-  return require(path.join(getRootPath(), 'package.json')).version
+export function getPkgVersion(): string {
+	return require(path.join(getRootPath(), "package.json")).version;
 }
 
-export function printPkgVersion () {
-  console.log(`👽 Taro v${getPkgVersion()}`)
-  console.log()
+export function printPkgVersion() {
+	console.log(`👽 Taro v${getPkgVersion()}`);
+	console.log();
 }
 ```
 
@@ -338,9 +344,14 @@ export default class Config {
 }
 ```
 
+`Config` 构造函数有两个属性。
+`appPath` 是 `taro` 项目路径。
+`disableGlobalConfig` 是禁用全局配置。
+
 #### config.init
 
 读取的是 `config/index` `.ts` 或者 `.js` 后缀。
+判断是否禁用 `disableGlobalConfig` 全局配置。不禁用则读取全局配置 `~/.taro-global-config/index.json`。
 
 ```ts
 async init (configEnv: {
@@ -394,8 +405,8 @@ export const getModuleDefaultExport = (exports) =>
 
 ```json
 {
-  "plugins": [],
-  "presets": []
+	"plugins": [],
+	"presets": []
 }
 ```
 
@@ -415,6 +426,23 @@ initGlobalConfig () {
     }
   }
 ```
+
+[ora](https://www.npmjs.com/package/ora) 是控制台的 loading 小动画。
+>优雅的终端旋转器
+
+这里的是 `fs` 是 `@tarojs/helper` 。
+>Taro 编译时工具库，主要供 CLI、编译器插件使用。
+
+导出的 [fs-extra](https://www.npmjs.com/package/fs-extra)。
+
+>fs-extra添加本机模块中未包含的文件系统方法fs，并为这些方法添加承诺支持fs。它还用于graceful-fs防止EMFILE错误。它应该是 的替代品fs。
+
+使用 [fs.readJSONSync](https://github.com/jprichardson/node-fs-extra/blob/master/docs/readJson-sync.md) 同步读取 `json` 的方法。
+
+`getUserHomeDir` 函数主要是获取用户的主页路径。比如 `mac` 中是 `/Users/用户名/`
+如果支持 `os.homedir()` 直接获取返回，如果不支持则根据各种操作系统和环境变量判断获取。
+
+文档中也有对这个全局参数的描述。
 
 [全局插件或插件集配置](https://docs.taro.zone/docs/next/cli/#%E5%85%A8%E5%B1%80%E6%8F%92%E4%BB%B6%E6%88%96%E6%8F%92%E4%BB%B6%E9%9B%86%E9%85%8D%E7%BD%AE)
 
@@ -463,7 +491,9 @@ export const createDebug = (id: string) => require("debug")(id);
 ```
 
 调用的 [debug](https://www.npmjs.com/package/debug)。
->一个仿照 `Node.js` 核心调试技术的微型 `JavaScript` 调试实用程序。适用于 `Node.js` 和 `Web` 浏览器。
+
+> 一个仿照 `Node.js` 核心调试技术的微型 `JavaScript` 调试实用程序。适用于 `Node.js` 和 `Web` 浏览器。
+
 
 ```ts
 initConfig () {
@@ -569,7 +599,7 @@ export default function customCommand(
 }
 ```
 
-`customCommand` 函数 移除一些 run 函数 不需要的参数，最终调用的是 `kernal.run` 函数。
+`customCommand` 函数 移除一些 `run` 函数 不需要的参数，最终调用的是 `kernal.run` 函数。
 
 ## kernal.run
 
@@ -620,10 +650,56 @@ async run (args: string | { name: string, opts?: any }) {
       name,
       opts
     })
+}
+```
+
+`run` 函数中，开头主要是兼容两种参数传递。
+
+`this.initPresetsAndPlugins()` 函数，顾名知意。初始化预设插件集合和插件。因为此处涉及到的代码相对较多，容易影响主线流程。所以本文在此先不展开深入学习了。将放在下一篇文章中详细讲述。
+
+### setRunOpts
+
+把参数先存起来。便于给插件使用。
+
+```ts
+setRunOpts (opts) {
+	this.runOpts = opts
+}
+```
+
+[Taro 文档 - 编写插件 - ctx.runOpts](https://taro-docs.jd.com/docs/plugin-custom#ctxrunopts)
+
+![ctx.runOpts](./images/runOpts.png)
+
+### help
+
+```ts
+if (opts?.isHelp) {
+    return this.runHelp(name)
+}
+```
+
+```ts
+runHelp (name: string) {
+    const command = this.commands.get(name)
+    const defaultOptionsMap = new Map()
+    defaultOptionsMap.set('-h, --help', 'output usage information')
+    let customOptionsMap = new Map()
+    if (command?.optionsMap) {
+      customOptionsMap = new Map(Object.entries(command?.optionsMap))
+    }
+    const optionsMap = new Map([...customOptionsMap, ...defaultOptionsMap])
+    printHelpLog(name, optionsMap, command?.synopsisList ? new Set(command?.synopsisList) : new Set())
   }
 ```
 
-### applyPlugins
+以 `taro init --help` 为例。
+
+![命令行 help](./images/command-help.png)
+
+关键代码则是 `this.applyPlugins()`。
+
+### applyPlugins 触发插件
 
 ```ts
 async applyPlugins (args: string | { name: string, initialVal?: any, opts?: any }) {
@@ -671,8 +747,24 @@ async applyPlugins (args: string | { name: string, initialVal?: any, opts?: any 
       }
     }
     return await waterfall.promise(initialVal)
-  }
+}
 ```
+
+`Taro` 的插件架构基于 [Tapable](https://github.com/webpack/tapable)。
+
+这里使用了这个函数：`AsyncSeriesWaterfallHook`。
+
+>The hook type is reflected in its class name. E.g., AsyncSeriesWaterfallHook allows asynchronous functions and runs them in series, passing each function’s return value into the next function.
+
+简言之就是异步或者同步方法串联起来，上一个函数的结果作为下一个函数的参数依次执行。依次执行。
+
+这时让我想起一句小虎队的爱的歌词。喔，把你的心我的心串一串，串一株幸运草串一个同心圆...
+
+举个例子用户写的插件中有多个钩子函数。比如 `onReday`。TODO:
+
+![插件方法](./images/plugin-methods.png)
+
+![插件 hooks](./images/plugin-hooks.png)
 
 ## init
 
