@@ -1,12 +1,16 @@
-# taro 源码 cli
+# Taro 源码揭秘 - 整个架构的入口 CLI 揭秘
 
 ## 1. 前言
 
-大家好，我是[若川](https://juejin.cn/user/1415826704971918)，欢迎 `follow` [我的 github](https://github.com/ruochuan12)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（5.8k+人）第一的专栏，写有 30 余篇源码文章。
+大家好，我是[若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（5.8k+人）第一的专栏，写有 30 余篇源码文章。
 
-截止目前（`2024-05-28`），`taro` 正式版是 `3.6.30`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。所以我们直接学习 `4.x`，`4.x` 最新版本是 `4.0.0-beta.79`。
+截止目前（`2024-06-11`），`taro` 正式版是 `3.6.31`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。所以我们直接学习 `4.x`，`4.x` 最新版本是 `4.0.0-beta.83`。
 
-计划写一个 `taro` 源码系列。初步计划有如下文章，欢迎持续关注。
+[多编译内核生态下的极速研发体验](https://taro-docs.jd.com/blog/2023/03/29/D2_17) 官方博客有如下图。
+
+![多编译内核架构](./images/taro/kernal.png)
+
+计划写一个 `taro` 源码揭秘系列，欢迎持续关注。初步计划有如下文章：
 
 -   [ ] cli init 初始化项目
 -   [ ] kernal 插件机制
@@ -34,7 +38,7 @@ git checkout 4.x
 # 写文章时，项目当前 hash
 git checkout cf9dd497d284679810c175e659388842515c53c0
 # 写文章时，当前版本
-# 4.0.0-beta.79
+# 4.0.0-beta.83
 ```
 
 后续文章尽量会与 `taro` `4.x` 版本保持更新。
@@ -101,7 +105,7 @@ package.json
 // packages/taro-cli/package.json
 {
 	"name": "@tarojs/cli",
-	"version": "4.0.0-beta.79",
+	"version": "4.0.0-beta.83",
 	"description": "cli tool for taro",
 	"main": "index.js",
 	"types": "dist/index.d.ts",
@@ -142,6 +146,8 @@ new CLI().run();
 node ./packages/taro-cli/bin/taro init taro-init-debug
 ```
 
+本文将都是使用 `init` 命令作为示例。
+
 如下图所示：
 
 ![vscode 调试源码](./images/vscode-debugger.png)
@@ -169,7 +175,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 [taro 文档 - 单步调测配置](https://docs.taro.zone/docs/debug-config/)
 写的挺好的，通过配置 `launch.json` 来调试，在此就不再赘述了。
 
-不过补充一条：`launch.json` 文件可以添加一条以下这样的配置`"console": "integratedTerminal"`（集成终端），就可以在调试终端输入内容。
+不过补充一条：`launch.json` 文件可以添加一条 `"console": "integratedTerminal"`（集成终端）配置，就可以在调试终端输入内容。
 
 ```json
 {
@@ -206,6 +212,8 @@ new CLI().run();
 
 ## 4. taro-cli/src/utils/index.ts
 
+工具函数
+
 ```js
 // packages/taro-cli/src/util/index.ts
 import * as path from "path";
@@ -227,12 +235,15 @@ export function printPkgVersion() {
 可以看出这句输出的是 `taro/packages/taro-cli/package.json` 的版本号。
 
 ```js
-👽 Taro v4.0.0-beta.79
+👽 Taro v4.0.0-beta.83
 ```
 
 我们继续跟着断点，进入第二第三句，可以进入到 `packages/taro-cli/src/cli.ts` 这个文件。
 
-## 5. packages/taro-cli/src/cli.ts 整体结构
+## 5. CLI 整体结构
+
+`taro-cli` 对应的文件路径是：
+>packages/taro-cli/src/cli.ts
 
 我们先来看下这个文件的整体结构。`class CLI` 一个 appPath 属性（一般指 `taro` 工作目录），两个函数 `run` 和 `parseArgs`。
 
@@ -285,9 +296,11 @@ export default class CLI {
 
 [yargs](https://github.com/yargs/yargs)，交互式命令行工具。功能强大的框架，但显得过于臃肿。
 
-## 5.1 cli parseArgs
+`cli.run` 函数最终调用的是 `cli.parseArgs` 函数。我们接着来看 `parseArgs` 函数。
 
-### presets
+## 6. cli parseArgs
+
+### 6.1 presets 预设插件集合
 
 ![parseArgs-1](./images/parseArgs-1.png)
 
@@ -295,7 +308,7 @@ export default class CLI {
 
 ![presets](./images/presets.png)
 
-### Config
+### 6.2 Config
 
 ![parseArgs-2](./images/parseArgs-2.png)
 
@@ -362,7 +375,7 @@ export default class Config {
 
 接着我们来看 `Config` 类的实例上的 `init` 方法。
 
-#### config.init 初始化配置
+#### 6.2.1 config.init 初始化配置
 
 读取的是 `config/index` `.ts` 或者 `.js` 后缀。
 判断是否禁用 `disableGlobalConfig` 全局配置。不禁用则读取全局配置 `~/.taro-global-config/index.json`。
@@ -413,7 +426,7 @@ export const getModuleDefaultExport = (exports) =>
 
 接着我们来看 `Config` 类的实例上的 `initGlobalConfig` 方法。
 
-#### config.initGlobalConfig 初始化全局配置
+#### 6.2.2 config.initGlobalConfig 初始化全局配置
 
 读取配置 `~/.taro-global-config/index.json`。
 
@@ -466,7 +479,7 @@ initGlobalConfig () {
 
 `Config` 部分我们基本分析完成，接下来我们学习`Kernel` （内核）部分。
 
-## Kernel （内核）
+## 7. Kernel （内核）
 
 ```ts
 // packages/taro-cli/src/cli.ts
@@ -502,10 +515,11 @@ export default class Kernel extends EventEmitter {
 		this.config = options.config;
 		// 钩子，Map 存储
 		this.hooks = new Map();
-		// 存储
+		// 存储方法
 		this.methods = new Map();
+		// 存储命令
 		this.commands = new Map();
-		// 平台
+		// 存储平台
 		this.platforms = new Map();
 		this.initHelper();
 		this.initConfig();
@@ -520,9 +534,11 @@ export default class Kernel extends EventEmitter {
 export const createDebug = (id: string) => require("debug")(id);
 ```
 
-当没有配置 `DEBUG` 环境变量时，则 `debugger` 是空函数。配置了 `process.env.DEBUG === "Taro:Kernel"` 为则调用的 `npm` 包 [debug](https://www.npmjs.com/package/debug)。
+`this.debugger` 当没有配置 `DEBUG` 环境变量时，则 `debugger` 是空函数。配置了 `process.env.DEBUG === "Taro:Kernel"` 为则调用的 `npm` 包 [debug](https://www.npmjs.com/package/debug)。
 
 > 一个仿照 `Node.js` 核心调试技术的微型 `JavaScript` 调试实用程序。适用于 `Node.js` 和 `Web` 浏览器。
+
+我们接着看构造器函数里调用的几个初始化函数，基本都是顾名知义。
 
 ```ts
 // packages/taro-service/src/Kernel.ts
@@ -561,19 +577,17 @@ initPaths () {
 }
 ```
 
-初始化后的参数，如 `taro` 官方文档中所示。
-
-[taro 文档 - 编写插件 api](https://docs.taro.zone/docs/next/plugin-custom#api)
+初始化后的参数，如 [`taro` 官方文档 - 编写插件 api](https://docs.taro.zone/docs/next/plugin-custom#api)中所示。
 
 ![initConfig](./images/initConfig.png)
 
-### kernel.optsPlugins 等
+### 7.1 cli kernel.optsPlugins 等
 
 ![parseArgs-3](./images/parseArgs-3.png)
 
 我们接下来看，`customCommand` 函数。
 
-### customCommand 函数
+### 7.2 cli customCommand 函数
 
 ![parseArgs-4](./images/parseArgs-4.png)
 
@@ -620,7 +634,7 @@ export default function customCommand(
 
 接下来，我们来看 `kernal.run` 函数的具体实现。
 
-## kernal.run
+## 8. kernal.run 执行函数
 
 ```ts
 // packages/taro-service/src/Kernel.ts
@@ -645,7 +659,7 @@ async run (args: string | { name: string, opts?: any }) {
 
 `run` 函数中，开头主要是兼容两种参数传递。
 
-## kernal.setRunOpts
+## 9. kernal.setRunOpts
 
 把参数先存起来。便于给插件使用。
 
@@ -659,6 +673,8 @@ setRunOpts (opts) {
 [Taro 文档 - 编写插件 - ctx.runOpts](https://taro-docs.jd.com/docs/plugin-custom#ctxrunopts)
 
 ![ctx.runOpts](./images/runOpts.png)
+
+我们接着来看，`run` 函数的下半部分。
 
 ```ts
 // packages/taro-service/src/Kernel.ts
@@ -709,11 +725,11 @@ async run (args: string | { name: string, opts?: any }) {
 
 >`this.initPresetsAndPlugins()`函数，因为此处涉及到的代码相对较多，容易影响主线流程。所以本文在此先不展开深入学习了。将放在下一篇文章中详细讲述。
 
-执行 `this.initPresetsAndPlugins()` 函数之后。我们完全可以在调试时把`kernal` 实例对象打印出来。如下图所示：
+执行 `this.initPresetsAndPlugins()` 函数之后。我们完全可以在调试时把 `kernal` 实例对象打印出来。
 
 我们来看插件的注册。
 
-## kernal ctx.registerCommand init
+## 10. kernal ctx.registerCommand 注册 init 命令
 
 ```ts
 // packages/taro-cli/src/presets/commands/init.ts
@@ -756,7 +772,7 @@ export default (ctx: IPluginContext) => {
 
 通过 `ctx.registerCommand` 注册了一个 `name` 为 `init` 的命令，会存入到内核 `Kernal` 实例对象的 `hooks` 属性中，其中 `ctx` 就是 `Kernal` 的实例对象。具体实现是 `fn` 函数。
 
-## kernal.applyPlugins 触发插件
+## 11. kernal.applyPlugins 触发插件
 
 ```ts
 // packages/taro-service/src/Kernel.ts
@@ -837,13 +853,11 @@ async applyPlugins (args: string | { name: string, initialVal?: any, opts?: any 
 
 ![插件 hooks](./images/plugin-hooks.png)
 
-执行注册的插件。`init` 插件。
-
-`applyPlugins` 执行的是注册插件中的 `fn` 方法。
+`applyPlugins` 根据执行的命令 `init` 从 `hooks` 取出，串起来，然后依次执行插件的 `fn` 方法。
 
 我们顺便来看一下，`kernal.runHelp` 的实现。
 
-## kernal.runHelp
+## 12. kernal.runHelp 命令帮助信息
 
 在 `kernal.run` 函数中，有一个 `opts.isHelp` 的判断，执行 `kernal.runHelp` 方法。
 
@@ -876,15 +890,33 @@ runHelp (name: string) {
 }
 ```
 
-## 总结
+根据 `name` 从 `this.commands` `Map` 中获取到命令，输出对应的 `optionsMap` 和 `synopsisList`。
 
-我们学了调试
+## 13. 总结
+
+我们主要学了
 
 1. 学会通过两种方式调试 taro 源码
 2. 学会入口 taro-cli 具体实现方式
 3. 学会 cli init 命令实现原理，读取用户项目配置文件和用户全局配置文件
 4. 学会 taro-service kernal （内核）解耦实现
 5. 初步学会 taro 插件架构，学会了如何编写一个 taro 插件
+
+taro-cli 使用了[minimist](https://github.com/minimistjs/minimist)，命令行参数解析工具。
+
+使用了 [`@swc/register`](https://www.npmjs.com/package/@swc/register) 读取 config/index .js 或者 .ts 配置文件和用 fs-extra [fs.readJSONSync](https://github.com/jprichardson/node-fs-extra/blob/master/docs/readJson-sync.md) 全局配置文件。
+
+CLI 部分有各种预设插件集合 `presets`。
+
+taro 单独抽离了一个 `tarojs/service` (`packages/taro-service`) 模块，包含 `Kernal` 内核、`Config`、`Plugin` 等。
+
+taro 的基于 [Tapable](https://github.com/webpack/tapable) 的 `AsyncSeriesWaterfallHook` (把函数组合在一起串行) 实现的插件机制。各个插件可以分开在各个地方，达到解耦效果。非常值得我们学习。
+
+简单做了一个本文的总结图。
+
+![简单总结](./images/ppt.png)
+
+----
 
 **如果看完有收获，欢迎点赞、评论、分享支持。你的支持和肯定，是我写作的动力**。
 
