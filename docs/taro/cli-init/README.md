@@ -8,11 +8,11 @@
 
 计划写一个 `taro` 源码系列。初步计划有如下文章，欢迎持续关注。
 
-- [ ] cli init 初始化项目
-- [ ] kernal 插件机制
-- [ ] init 初始化项目
-- [ ] cli build
-- [ ] 等等
+-   [ ] cli init 初始化项目
+-   [ ] kernal 插件机制
+-   [ ] init 初始化项目
+-   [ ] cli build
+-   [ ] 等等
 
 学完本文，你将学到：
 
@@ -29,15 +29,15 @@
 ```bash
 # 克隆项目
 git clone https://github.com/NervJS/taro.git
-# 当前分支
+# 切换到分支 4.x
 git checkout 4.x
 # 写文章时，项目当前 hash
-git checkout d08d4b7faa6773e4f14c31ecdb6b5ebdc8787c76
-# 当前版本
+git checkout cf9dd497d284679810c175e659388842515c53c0
+# 写文章时，当前版本
 # 4.0.0-beta.79
 ```
 
-后续文章尽量会与 `taro` 版本保持更新。
+后续文章尽量会与 `taro` `4.x` 版本保持更新。
 
 看一个开源项目，第一步应该是先看 [README.md](https://github.com/NervJS/taro.git) 再看 [贡献文档](https://github.com/NervJS/taro/blob/4.x/CONTRIBUTING.md) 和 `package.json`。
 
@@ -45,7 +45,7 @@ git checkout d08d4b7faa6773e4f14c31ecdb6b5ebdc8787c76
 
 > 需要安装 [Node.js 16](https://nodejs.org/en/)（建议安装 `16.20.0` 及以上版本）及 [pnpm 7](https://pnpm.io/zh/installation)
 
-我使用的环境：`mac pro m1 pro`，当然 `Windows` 一样可以。
+我使用的环境：`mac`，当然 `Windows` 一样可以。
 
 一般用 [nvm](https://github.com/nvm-sh/nvm) 管理 `node` 版本。
 
@@ -169,7 +169,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 [taro 文档 - 单步调测配置](https://docs.taro.zone/docs/debug-config/)
 写的挺好的，通过配置 `launch.json` 来调试，在此就不再赘述了。
 
-不过补充一条：`launch.json` 文件可以添加一条以下这样的配置，就可以在调试终端输入内容。
+不过补充一条：`launch.json` 文件可以添加一条以下这样的配置`"console": "integratedTerminal"`（集成终端），就可以在调试终端输入内容。
 
 ```json
 {
@@ -237,7 +237,7 @@ export function printPkgVersion() {
 我们先来看下这个文件的整体结构。`class CLI` 一个 appPath 属性（一般指 `taro` 工作目录），两个函数 `run` 和 `parseArgs`。
 
 ```js
-// taro/packages/taro-cli/src/cli.ts
+// packages/taro-cli/src/cli.ts
 export default class CLI {
 	appPath: string;
 	constructor(appPath) {
@@ -299,7 +299,7 @@ export default class CLI {
 
 ![parseArgs-2](./images/parseArgs-2.png)
 
-`64-78` 行代码，代码量相对较少，就不截图了，直接贴代码了。
+`64-78` 行代码，代码量相对较少，就截图同时顺便直接放代码了。
 
 ```js
 // packages/taro-cli/src/cli.ts
@@ -327,6 +327,8 @@ await config.init(configEnv);
 > `dotenv` 是一个零依赖模块，可将 `.env` 文件中的环境变量加载到 `process.env` 中。
 
 我之前写过一篇 [面试官：项目中常用的 .env 文件原理是什么？如何实现？](https://juejin.cn/post/7045057475845816357)
+
+接着我们来看 `Config` 类。
 
 ```ts
 // packages/taro-service/src/Config.ts
@@ -358,7 +360,9 @@ export default class Config {
 `appPath` 是 `taro` 项目路径。
 `disableGlobalConfig` 是禁用全局配置。
 
-#### config.init
+接着我们来看 `Config` 类的实例上的 `init` 方法。
+
+#### config.init 初始化配置
 
 读取的是 `config/index` `.ts` 或者 `.js` 后缀。
 判断是否禁用 `disableGlobalConfig` 全局配置。不禁用则读取全局配置 `~/.taro-global-config/index.json`。
@@ -407,9 +411,9 @@ export const getModuleDefaultExport = (exports) =>
 
 `this.initialConfig = typeof userExport === 'function' ? await userExport(merge, configEnv) : userExport`。这句就是 `config/index.ts` 支持函数也支持对象的实现。
 
-``
+接着我们来看 `Config` 类的实例上的 `initGlobalConfig` 方法。
 
-#### config.initGlobalConfig
+#### config.initGlobalConfig 初始化全局配置
 
 读取配置 `~/.taro-global-config/index.json`。
 
@@ -437,20 +441,22 @@ initGlobalConfig () {
   }
 ```
 
+`getUserHomeDir` 函数主要是获取用户的主页路径。比如 `mac` 中是 `/Users/用户名/`。
+如果支持 `os.homedir()` 直接获取返回，如果不支持则根据各种操作系统和环境变量判断获取。
+
 [ora](https://www.npmjs.com/package/ora) 是控制台的 loading 小动画。
->优雅的终端旋转器
+
+> 优雅的终端旋转器
 
 这里的是 `fs` 是 `@tarojs/helper` 。
->Taro 编译时工具库，主要供 CLI、编译器插件使用。
+
+> Taro 编译时工具库，主要供 CLI、编译器插件使用。
 
 导出的 [fs-extra](https://www.npmjs.com/package/fs-extra)。
 
->fs-extra添加本机模块中未包含的文件系统方法fs，并为这些方法添加承诺支持fs。它还用于graceful-fs防止EMFILE错误。它应该是 的替代品fs。
+> fs-extra 添加本机模块中未包含的文件系统方法 fs，并为这些方法添加承诺支持 fs。它还用于 graceful-fs 防止 EMFILE 错误。它应该是 的替代品 fs。
 
 使用 [fs.readJSONSync](https://github.com/jprichardson/node-fs-extra/blob/master/docs/readJson-sync.md) 同步读取 `json` 的方法。
-
-`getUserHomeDir` 函数主要是获取用户的主页路径。比如 `mac` 中是 `/Users/用户名/`
-如果支持 `os.homedir()` 直接获取返回，如果不支持则根据各种操作系统和环境变量判断获取。
 
 文档中也有对这个全局参数的描述。
 
@@ -458,9 +464,13 @@ initGlobalConfig () {
 
 ![global-config](./images/global-config.png)
 
-### Kernel
+`Config` 部分我们基本分析完成，接下来我们学习`Kernel` （内核）部分。
+
+## Kernel （内核）
 
 ```ts
+// packages/taro-cli/src/cli.ts
+
 // 省略若干代码
 const kernel = new Kernel({
 	appPath,
@@ -471,6 +481,8 @@ const kernel = new Kernel({
 kernel.optsPlugins ||= [];
 ```
 
+接着我们来看 `Kernel` 类， `Kernel` 类继承自 `Nodejs` 的事件模块`EventEmitter`。
+
 ```ts
 // packages/taro-service/src/Kernel.ts
 export default class Kernel extends EventEmitter {
@@ -480,13 +492,20 @@ export default class Kernel extends EventEmitter {
 			process.env.DEBUG === "Taro:Kernel"
 				? helper.createDebug("Taro:Kernel")
 				: function () {};
+		// taro 项目路径
 		this.appPath = options.appPath || process.cwd();
+		// 预设插件集合
 		this.optsPresets = options.presets;
+		// 插件
 		this.optsPlugins = options.plugins;
+		// 配置
 		this.config = options.config;
+		// 钩子，Map 存储
 		this.hooks = new Map();
+		// 存储
 		this.methods = new Map();
 		this.commands = new Map();
+		// 平台
 		this.platforms = new Map();
 		this.initHelper();
 		this.initConfig();
@@ -497,20 +516,22 @@ export default class Kernel extends EventEmitter {
 ```
 
 ```ts
+// packages/taro-helper/src/index.ts
 export const createDebug = (id: string) => require("debug")(id);
 ```
 
-调用的 [debug](https://www.npmjs.com/package/debug)。
+当没有配置 `DEBUG` 环境变量时，则 `debugger` 是空函数。配置了 `process.env.DEBUG === "Taro:Kernel"` 为则调用的 `npm` 包 [debug](https://www.npmjs.com/package/debug)。
 
 > 一个仿照 `Node.js` 核心调试技术的微型 `JavaScript` 调试实用程序。适用于 `Node.js` 和 `Web` 浏览器。
 
-
 ```ts
+// packages/taro-service/src/Kernel.ts
 initConfig () {
 	this.initialConfig = this.config.initialConfig
 	this.initialGlobalConfig = this.config.initialGlobalConfig
 	this.debugger('initConfig', this.initialConfig)
 }
+
 initHelper () {
 	this.helper = helper
 	this.debugger('initHelper')
@@ -523,6 +544,7 @@ initRunnerUtils () {
 ```
 
 ```ts
+// packages/taro-service/src/Kernel.ts
 initPaths () {
 	this.paths = {
 		appPath: this.appPath,
@@ -539,6 +561,8 @@ initPaths () {
 }
 ```
 
+初始化后的参数，如 `taro` 官方文档中所示。
+
 [taro 文档 - 编写插件 api](https://docs.taro.zone/docs/next/plugin-custom#api)
 
 ![initConfig](./images/initConfig.png)
@@ -547,33 +571,16 @@ initPaths () {
 
 ![parseArgs-3](./images/parseArgs-3.png)
 
+我们接下来看，`customCommand` 函数。
+
 ### customCommand 函数
 
 ![parseArgs-4](./images/parseArgs-4.png)
 
-```ts
-// packages/taro-cli/src/cli.ts
-switch (command) {
-	case "inspect":
-	case "build": {
-		// 省略...
-	}
-	case "init": {
-		customCommand(command, kernel, {
-			// 省略若干参数...
-		});
-		break;
-	}
-	default:
-		customCommand(command, kernel, args);
-		break;
-}
-```
-
 我们可以看到最终调用的是 `customCommand` 函数
 
 ```ts
-// taro/packages/taro-cli/src/commands/customCommand.ts
+// packages/taro-cli/src/commands/customCommand.ts
 import { Kernel } from "@tarojs/service";
 
 export default function customCommand(
@@ -609,13 +616,16 @@ export default function customCommand(
 }
 ```
 
-`customCommand` 函数 移除一些 `run` 函数 不需要的参数，最终调用的是 `kernal.run` 函数。
+`customCommand` 函数移除一些 `run` 函数不需要的参数，最终调用的是 `kernal.run` 函数。
+
+接下来，我们来看 `kernal.run` 函数的具体实现。
 
 ## kernal.run
 
 ```ts
 // packages/taro-service/src/Kernel.ts
 async run (args: string | { name: string, opts?: any }) {
+	// 上半部分
     let name
     let opts
     if (typeof args === 'string') {
@@ -629,7 +639,31 @@ async run (args: string | { name: string, opts?: any }) {
     this.debugger('command:runOpts')
     this.debugger(`command:runOpts:${JSON.stringify(opts, null, 2)}`)
     this.setRunOpts(opts)
+	// 拆解下半部分
+}
+```
 
+`run` 函数中，开头主要是兼容两种参数传递。
+
+## kernal.setRunOpts
+
+把参数先存起来。便于给插件使用。
+
+```ts
+// packages/taro-service/src/Kernel.ts
+setRunOpts (opts) {
+	this.runOpts = opts
+}
+```
+
+[Taro 文档 - 编写插件 - ctx.runOpts](https://taro-docs.jd.com/docs/plugin-custom#ctxrunopts)
+
+![ctx.runOpts](./images/runOpts.png)
+
+```ts
+// packages/taro-service/src/Kernel.ts
+async run (args: string | { name: string, opts?: any }) {
+    // 下半部分
     this.debugger('initPresetsAndPlugins')
     this.initPresetsAndPlugins()
 
@@ -663,120 +697,23 @@ async run (args: string | { name: string, opts?: any }) {
 }
 ```
 
-`run` 函数中，开头主要是兼容两种参数传递。
+`run` 函数下半部分主要有三个函数：
 
-`this.initPresetsAndPlugins()` 函数，顾名知意。初始化预设插件集合和插件。因为此处涉及到的代码相对较多，容易影响主线流程。所以本文在此先不展开深入学习了。将放在下一篇文章中详细讲述。
-
-### setRunOpts
-
-把参数先存起来。便于给插件使用。
-
-```ts
-setRunOpts (opts) {
-	this.runOpts = opts
-}
+```bash
+1. this.initPresetsAndPlugins() 函数，顾名知义。初始化预设插件集合和插件。
+2. this.applyPlugins() 执行插件
+3. this.runHelp() 执行 命令行的帮助信息，例：taro init --help
 ```
 
-[Taro 文档 - 编写插件 - ctx.runOpts](https://taro-docs.jd.com/docs/plugin-custom#ctxrunopts)
+我们分开叙述
 
-![ctx.runOpts](./images/runOpts.png)
+>`this.initPresetsAndPlugins()`函数，因为此处涉及到的代码相对较多，容易影响主线流程。所以本文在此先不展开深入学习了。将放在下一篇文章中详细讲述。
 
-### help
+执行 `this.initPresetsAndPlugins()` 函数之后。我们完全可以在调试时把`kernal` 实例对象打印出来。如下图所示：
 
-```ts
-if (opts?.isHelp) {
-    return this.runHelp(name)
-}
-```
+我们来看插件的注册。
 
-```ts
-runHelp (name: string) {
-    const command = this.commands.get(name)
-    const defaultOptionsMap = new Map()
-    defaultOptionsMap.set('-h, --help', 'output usage information')
-    let customOptionsMap = new Map()
-    if (command?.optionsMap) {
-      customOptionsMap = new Map(Object.entries(command?.optionsMap))
-    }
-    const optionsMap = new Map([...customOptionsMap, ...defaultOptionsMap])
-    printHelpLog(name, optionsMap, command?.synopsisList ? new Set(command?.synopsisList) : new Set())
-  }
-```
-
-以 `taro init --help` 为例。
-
-![命令行 help](./images/command-help.png)
-
-关键代码则是 `this.applyPlugins()`。
-
-### applyPlugins 触发插件
-
-```ts
-async applyPlugins (args: string | { name: string, initialVal?: any, opts?: any }) {
-    let name
-    let initialVal
-    let opts
-    if (typeof args === 'string') {
-      name = args
-    } else {
-      name = args.name
-      initialVal = args.initialVal
-      opts = args.opts
-    }
-    this.debugger('applyPlugins')
-    this.debugger(`applyPlugins:name:${name}`)
-    this.debugger(`applyPlugins:initialVal:${initialVal}`)
-    this.debugger(`applyPlugins:opts:${opts}`)
-    if (typeof name !== 'string') {
-      throw new Error('调用失败，未传入正确的名称！')
-    }
-    const hooks = this.hooks.get(name) || []
-    if (!hooks.length) {
-      return await initialVal
-    }
-    const waterfall = new AsyncSeriesWaterfallHook(['arg'])
-    if (hooks.length) {
-      const resArr: any[] = []
-      for (const hook of hooks) {
-        waterfall.tapPromise({
-          name: hook.plugin!,
-          stage: hook.stage || 0,
-          // @ts-ignore
-          before: hook.before
-        }, async arg => {
-          const res = await hook.fn(opts, arg)
-          if (IS_MODIFY_HOOK.test(name) && IS_EVENT_HOOK.test(name)) {
-            return res
-          }
-          if (IS_ADD_HOOK.test(name)) {
-            resArr.push(res)
-            return resArr
-          }
-          return null
-        })
-      }
-    }
-    return await waterfall.promise(initialVal)
-}
-```
-
-`Taro` 的插件架构基于 [Tapable](https://github.com/webpack/tapable)。
-
-这里使用了这个函数：`AsyncSeriesWaterfallHook`。
-
->The hook type is reflected in its class name. E.g., AsyncSeriesWaterfallHook allows asynchronous functions and runs them in series, passing each function’s return value into the next function.
-
-简言之就是异步或者同步方法串联起来，上一个函数的结果作为下一个函数的参数依次执行。依次执行。
-
-这时让我想起一句小虎队的爱的歌词。喔，把你的心我的心串一串，串一株幸运草串一个同心圆...
-
-举个例子用户写的插件中有多个钩子函数。比如 `onReday`。TODO:
-
-![插件方法](./images/plugin-methods.png)
-
-![插件 hooks](./images/plugin-hooks.png)
-
-## init
+## kernal ctx.registerCommand init
 
 ```ts
 // packages/taro-cli/src/presets/commands/init.ts
@@ -817,54 +754,127 @@ export default (ctx: IPluginContext) => {
 };
 ```
 
-通过 `ctx.registerCommand` 注册了一个 `name` 为 `init` 的命令，会存入到内核 `Kernal` 实例对象的 `hooks` 属性中，其中 ctx 就是 `Kernal` 的实例对象。具体实现是 `fn` 函数。
+通过 `ctx.registerCommand` 注册了一个 `name` 为 `init` 的命令，会存入到内核 `Kernal` 实例对象的 `hooks` 属性中，其中 `ctx` 就是 `Kernal` 的实例对象。具体实现是 `fn` 函数。
 
-我们重点来看 `packages/taro-cli/src/create/project.ts` 的 `Project` 类的实现，和 `create` 方法。
-
-### project.create
+## kernal.applyPlugins 触发插件
 
 ```ts
-// packages/taro-cli/src/create/project.ts
-export default class Project extends Creator {
-	public rootPath: string;
-	public conf: IProjectConfOptions;
-
-	constructor(options: IProjectConfOptions) {
-		super(options.sourceRoot);
-		const unSupportedVer = semver.lt(process.version, "v7.6.0");
-		if (unSupportedVer) {
-			throw new Error("Node.js 版本过低，推荐升级 Node.js 至 v8.0.0+");
-		}
-		this.rootPath = this._rootPath;
-
-		this.conf = Object.assign(
-			{
-				projectName: "",
-				projectDir: "",
-				template: "",
-				description: "",
-				npm: "",
-			},
-			options
-		);
-	}
-	async create() {
-		try {
-			const answers = await this.ask();
-			const date = new Date();
-			this.conf = Object.assign(this.conf, answers);
-			this.conf.date = `${date.getFullYear()}-${
-				date.getMonth() + 1
-			}-${date.getDate()}`;
-			this.write();
-		} catch (error) {
-			console.log(chalk.red("创建项目失败: ", error));
-		}
-	}
+// packages/taro-service/src/Kernel.ts
+async applyPlugins (args: string | { name: string, initialVal?: any, opts?: any }) {
+	// 上半部分
+    let name
+    let initialVal
+    let opts
+    if (typeof args === 'string') {
+      name = args
+    } else {
+      name = args.name
+      initialVal = args.initialVal
+      opts = args.opts
+    }
+    this.debugger('applyPlugins')
+    this.debugger(`applyPlugins:name:${name}`)
+    this.debugger(`applyPlugins:initialVal:${initialVal}`)
+    this.debugger(`applyPlugins:opts:${opts}`)
+    if (typeof name !== 'string') {
+      throw new Error('调用失败，未传入正确的名称！')
+    }
+	// 拆解到下半部分
 }
 ```
 
----
+上半部分，主要是适配两种传参的方式。
+
+```ts
+// packages/taro-service/src/Kernel.ts
+async applyPlugins (args: string | { name: string, initialVal?: any, opts?: any }) {
+	// 下半部分
+	const hooks = this.hooks.get(name) || []
+    if (!hooks.length) {
+      return await initialVal
+    }
+    const waterfall = new AsyncSeriesWaterfallHook(['arg'])
+    if (hooks.length) {
+      const resArr: any[] = []
+      for (const hook of hooks) {
+        waterfall.tapPromise({
+          name: hook.plugin!,
+          stage: hook.stage || 0,
+          // @ts-ignore
+          before: hook.before
+        }, async arg => {
+          const res = await hook.fn(opts, arg)
+          if (IS_MODIFY_HOOK.test(name) && IS_EVENT_HOOK.test(name)) {
+            return res
+          }
+          if (IS_ADD_HOOK.test(name)) {
+            resArr.push(res)
+            return resArr
+          }
+          return null
+        })
+      }
+    }
+    return await waterfall.promise(initialVal)
+}
+```
+
+`Taro` 的插件架构基于 [Tapable](https://github.com/webpack/tapable)。
+
+这里使用了这个函数：`AsyncSeriesWaterfallHook`。
+
+> The hook type is reflected in its class name. E.g., AsyncSeriesWaterfallHook allows asynchronous functions and runs them in series, passing each function’s return value into the next function.
+
+简言之就是异步或者同步方法串联起来，上一个函数的结果作为下一个函数的参数依次执行。依次执行。
+
+这时让我想起一句小虎队的爱的歌词。
+
+> 喔，把你的心我的心串一串，串一株幸运草串一个同心圆...
+
+举个例子用户写的插件中有多个钩子函数。比如 `onReday` 等可以有多个。
+
+![插件方法](./images/plugin-methods.png)
+
+![插件 hooks](./images/plugin-hooks.png)
+
+执行注册的插件。`init` 插件。
+
+`applyPlugins` 执行的是注册插件中的 `fn` 方法。
+
+我们顺便来看一下，`kernal.runHelp` 的实现。
+
+## kernal.runHelp
+
+在 `kernal.run` 函数中，有一个 `opts.isHelp` 的判断，执行 `kernal.runHelp` 方法。
+
+```ts
+// packages/taro-service/src/Kernel.ts
+// run 函数
+if (opts?.isHelp) {
+	return this.runHelp(name);
+}
+```
+
+以 `taro init --help` 为例。输出结果如下图所示：
+
+![命令行 help](./images/command-help.png)
+
+具体实现代码如下：
+
+```ts
+// packages/taro-service/src/Kernel.ts
+runHelp (name: string) {
+    const command = this.commands.get(name)
+    const defaultOptionsMap = new Map()
+    defaultOptionsMap.set('-h, --help', 'output usage information')
+    let customOptionsMap = new Map()
+    if (command?.optionsMap) {
+      customOptionsMap = new Map(Object.entries(command?.optionsMap))
+    }
+    const optionsMap = new Map([...customOptionsMap, ...defaultOptionsMap])
+    printHelpLog(name, optionsMap, command?.synopsisList ? new Set(command?.synopsisList) : new Set())
+}
+```
 
 ## 总结
 
@@ -881,7 +891,3 @@ export default class Project extends Creator {
 最后可以持续关注我[@若川](https://juejin.cn/user/1415826704971918)，欢迎 `follow` [我的 github](https://github.com/ruochuan12)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（5.8k+人）第一的专栏，写有 30 余篇源码文章。
 
 我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。
-
-TODO:
-
-[Taro 文档 - 编写插件](https://docs.taro.zone/docs/next/plugin-custom/)
