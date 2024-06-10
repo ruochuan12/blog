@@ -14,6 +14,16 @@
 - [ ] cli build
 - [ ] 等等
 
+学完本文，你将学到：
+
+```bash
+1. 学会通过两种方式调试 taro 源码
+2. 学会入口 taro-cli 具体实现方式
+3. 学会 cli init 命令实现原理，读取用户项目配置文件和用户全局配置文件
+4. 学会 taro-service kernal （内核）解耦实现
+5. 初步学会 taro 插件架构，学会如何编写一个 taro 插件
+```
+
 ## 2. 准备工作
 
 ```bash
@@ -283,7 +293,7 @@ export default class CLI {
 
 `presets` 对应的目录结构如图所示：
 
-![presets](./images/presets.png);
+![presets](./images/presets.png)
 
 ### Config
 
@@ -855,6 +865,16 @@ export default class Project extends Creator {
 ```
 
 ---
+
+## 总结
+
+我们学了调试
+
+1. 学会通过两种方式调试 taro 源码
+2. 学会入口 taro-cli 具体实现方式
+3. 学会 cli init 命令实现原理，读取用户项目配置文件和用户全局配置文件
+4. 学会 taro-service kernal （内核）解耦实现
+5. 初步学会 taro 插件架构，学会了如何编写一个 taro 插件
 
 **如果看完有收获，欢迎点赞、评论、分享支持。你的支持和肯定，是我写作的动力**。
 
