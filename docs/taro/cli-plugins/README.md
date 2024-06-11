@@ -17,11 +17,11 @@ theme: smartblue
 
 计划写一个 `taro` 源码揭秘系列，欢迎持续关注。初步计划有如下文章：
 
-- [x] cli init 初始化项目
-- [x] 插件机制
-- [ ] init 初始化项目
-- [ ] cli build
-- [ ] 等等
+-   [x] cli init 初始化项目
+-   [x] 插件机制
+-   [ ] init 初始化项目
+-   [ ] cli build
+-   [ ] 等等
 
 学完本文，你将学到：
 
@@ -38,41 +38,40 @@ theme: smartblue
 
 ```ts
 interface IKernelOptions {
- appPath: string;
- config: Config;
- presets?: PluginItem[];
- plugins?: PluginItem[];
+	appPath: string;
+	config: Config;
+	presets?: PluginItem[];
+	plugins?: PluginItem[];
 }
 
 export default class Kernel extends EventEmitter {
- constructor(options: IKernelOptions) {
-  super();
-  // 省略若干代码...
- }
+	constructor(options: IKernelOptions) {
+		super();
+		// 省略若干代码...
+	}
 
- applyCliCommandPlugin(commandNames: string[] = []) {
-  const existsCliCommand: string[] = [];
-  for (let i = 0; i < commandNames.length; i++) {
-   const commandName = commandNames[i];
-   const commandFilePath = path.resolve(
-    this.cliCommandsPath,
-    `${commandName}.js`
-   );
-   if (this.cliCommands.includes(commandName))
-    existsCliCommand.push(commandFilePath);
-  }
-  const commandPlugins = convertPluginsToObject(existsCliCommand || [])();
-  helper.createSwcRegister({ only: [...Object.keys(commandPlugins)] });
-  const resolvedCommandPlugins = resolvePresetsOrPlugins(
-   this.appPath,
-   commandPlugins,
-   PluginType.Plugin
-  );
-  while (resolvedCommandPlugins.length) {
-   this.initPlugin(resolvedCommandPlugins.shift()!);
-  }
- }
-
+	applyCliCommandPlugin(commandNames: string[] = []) {
+		const existsCliCommand: string[] = [];
+		for (let i = 0; i < commandNames.length; i++) {
+			const commandName = commandNames[i];
+			const commandFilePath = path.resolve(
+				this.cliCommandsPath,
+				`${commandName}.js`
+			);
+			if (this.cliCommands.includes(commandName))
+				existsCliCommand.push(commandFilePath);
+		}
+		const commandPlugins = convertPluginsToObject(existsCliCommand || [])();
+		helper.createSwcRegister({ only: [...Object.keys(commandPlugins)] });
+		const resolvedCommandPlugins = resolvePresetsOrPlugins(
+			this.appPath,
+			commandPlugins,
+			PluginType.Plugin
+		);
+		while (resolvedCommandPlugins.length) {
+			this.initPlugin(resolvedCommandPlugins.shift()!);
+		}
+	}
 }
 ```
 
@@ -131,40 +130,42 @@ initPresetsAndPlugins() {
 ### mergePlugins convertPluginsToObject
 
 ```ts
+export const isNpmPkg: (name: string) => boolean = (name) =>
+	!/^(\.|\/)/.test(name);
 
-export const isNpmPkg: (name: string) => boolean = name => !(/^(\.|\/)/.test(name))
-
-export function getPluginPath (pluginPath: string) {
-  if (isNpmPkg(pluginPath) || path.isAbsolute(pluginPath)) return pluginPath
-  throw new Error('plugin 和 preset 配置必须为绝对路径或者包名')
+export function getPluginPath(pluginPath: string) {
+	if (isNpmPkg(pluginPath) || path.isAbsolute(pluginPath)) return pluginPath;
+	throw new Error("plugin 和 preset 配置必须为绝对路径或者包名");
 }
 
-export function convertPluginsToObject (items: PluginItem[]): () => IPluginsObject {
-  return () => {
-    const obj: IPluginsObject = {}
-    if (Array.isArray(items)) {
-      items.forEach(item => {
-        if (typeof item === 'string') {
-          const name = getPluginPath(item)
-          obj[name] = null
-        } else if (Array.isArray(item)) {
-          const name = getPluginPath(item[0])
-          obj[name] = item[1]
-        }
-      })
-    }
-    return obj
-  }
+export function convertPluginsToObject(
+	items: PluginItem[]
+): () => IPluginsObject {
+	return () => {
+		const obj: IPluginsObject = {};
+		if (Array.isArray(items)) {
+			items.forEach((item) => {
+				if (typeof item === "string") {
+					const name = getPluginPath(item);
+					obj[name] = null;
+				} else if (Array.isArray(item)) {
+					const name = getPluginPath(item[0]);
+					obj[name] = item[1];
+				}
+			});
+		}
+		return obj;
+	};
 }
 ```
 
 ```ts
-export function mergePlugins (dist: PluginItem[], src: PluginItem[]) {
-  return () => {
-    const srcObj = convertPluginsToObject(src)()
-    const distObj = convertPluginsToObject(dist)()
-    return merge(distObj, srcObj)
-  }
+export function mergePlugins(dist: PluginItem[], src: PluginItem[]) {
+	return () => {
+		const srcObj = convertPluginsToObject(src)();
+		const distObj = convertPluginsToObject(dist)();
+		return merge(distObj, srcObj);
+	};
 }
 ```
 
@@ -213,54 +214,71 @@ export function mergePlugins (dist: PluginItem[], src: PluginItem[]) {
 
 ```ts
 // getModuleDefaultExport
-export function resolvePresetsOrPlugins (root: string, args: IPluginsObject, type: PluginType, skipError?: boolean): IPlugin[] {
-  // 全局的插件引入报错，不抛出 Error 影响主流程，而是通过 log 提醒然后把插件 filter 掉，保证主流程不变
-  const resolvedPresetsOrPlugins: IPlugin[] = []
-  const presetsOrPluginsNames = Object.keys(args) || []
-  for (let i = 0; i < presetsOrPluginsNames.length; i++) {
-    const item = presetsOrPluginsNames[i]
-    let fPath
-    try {
-      fPath = resolve.sync(item, {
-        basedir: root,
-        extensions: ['.js', '.ts']
-      })
-    } catch (err) {
-      if (args[item]?.backup) {
-        // 如果项目中没有，可以使用 CLI 中的插件
-        fPath = args[item]?.backup
-      } else if (skipError) {
-        // 如果跳过报错，那么 log 提醒，并且不使用该插件
-        console.log(chalk.yellow(`找不到插件依赖 "${item}"，请先在项目中安装，项目路径：${root}`))
-        continue
-      } else {
-        console.log(chalk.red(`找不到插件依赖 "${item}"，请先在项目中安装，项目路径：${root}`))
-        process.exit(1)
-      }
-    }
-    const resolvedItem = {
-      id: fPath,
-      path: fPath,
-      type,
-      opts: args[item] || {},
-      apply () {
-        try {
-          return getModuleDefaultExport(require(fPath))
-        } catch (error) {
-          console.error(error)
-          // 全局的插件运行报错，不抛出 Error 影响主流程，而是通过 log 提醒然后把插件 filter 掉，保证主流程不变
-          if (skipError) {
-            console.error(`插件依赖 "${item}" 加载失败，请检查插件配置`)
-          } else {
-            throw new Error(`插件依赖 "${item}" 加载失败，请检查插件配置`)
-          }
-        }
-      }
-    }
-    resolvedPresetsOrPlugins.push(resolvedItem)
-  }
+export function resolvePresetsOrPlugins(
+	root: string,
+	args: IPluginsObject,
+	type: PluginType,
+	skipError?: boolean
+): IPlugin[] {
+	// 全局的插件引入报错，不抛出 Error 影响主流程，而是通过 log 提醒然后把插件 filter 掉，保证主流程不变
+	const resolvedPresetsOrPlugins: IPlugin[] = [];
+	const presetsOrPluginsNames = Object.keys(args) || [];
+	for (let i = 0; i < presetsOrPluginsNames.length; i++) {
+		const item = presetsOrPluginsNames[i];
+		let fPath;
+		try {
+			fPath = resolve.sync(item, {
+				basedir: root,
+				extensions: [".js", ".ts"],
+			});
+		} catch (err) {
+			if (args[item]?.backup) {
+				// 如果项目中没有，可以使用 CLI 中的插件
+				fPath = args[item]?.backup;
+			} else if (skipError) {
+				// 如果跳过报错，那么 log 提醒，并且不使用该插件
+				console.log(
+					chalk.yellow(
+						`找不到插件依赖 "${item}"，请先在项目中安装，项目路径：${root}`
+					)
+				);
+				continue;
+			} else {
+				console.log(
+					chalk.red(
+						`找不到插件依赖 "${item}"，请先在项目中安装，项目路径：${root}`
+					)
+				);
+				process.exit(1);
+			}
+		}
+		const resolvedItem = {
+			id: fPath,
+			path: fPath,
+			type,
+			opts: args[item] || {},
+			apply() {
+				try {
+					return getModuleDefaultExport(require(fPath));
+				} catch (error) {
+					console.error(error);
+					// 全局的插件运行报错，不抛出 Error 影响主流程，而是通过 log 提醒然后把插件 filter 掉，保证主流程不变
+					if (skipError) {
+						console.error(
+							`插件依赖 "${item}" 加载失败，请检查插件配置`
+						);
+					} else {
+						throw new Error(
+							`插件依赖 "${item}" 加载失败，请检查插件配置`
+						);
+					}
+				}
+			},
+		};
+		resolvedPresetsOrPlugins.push(resolvedItem);
+	}
 
-  return resolvedPresetsOrPlugins
+	return resolvedPresetsOrPlugins;
 }
 ```
 
@@ -368,52 +386,56 @@ initPreset(preset: IPreset, isGlobalConfigPreset?: boolean) {
 ### new Plugin({ id, path, ctx });
 
 ```ts
-import { addPlatforms } from '@tarojs/helper'
+import { addPlatforms } from "@tarojs/helper";
 
-import type { Func } from '@tarojs/taro/types/compile'
-import type Kernel from './Kernel'
-import type { ICommand, IHook, IPlatform } from './utils/types'
+import type { Func } from "@tarojs/taro/types/compile";
+import type Kernel from "./Kernel";
+import type { ICommand, IHook, IPlatform } from "./utils/types";
 
 export default class Plugin {
-  id: string
-  path: string
-  ctx: Kernel
-  optsSchema: Func
+	id: string;
+	path: string;
+	ctx: Kernel;
+	optsSchema: Func;
 
-  constructor (opts) {
-    this.id = opts.id
-    this.path = opts.path
-    this.ctx = opts.ctx
-  }
-  //  拆分到下部分
-
+	constructor(opts) {
+		this.id = opts.id;
+		this.path = opts.path;
+		this.ctx = opts.ctx;
+	}
+	//  拆分到下部分
 }
 ```
 
-```ts
-  register (hook: IHook) {
-    if (typeof hook.name !== 'string') {
-      throw new Error(`插件 ${this.id} 中注册 hook 失败， hook.name 必须是 string 类型`)
-    }
-    if (typeof hook.fn !== 'function') {
-      throw new Error(`插件 ${this.id} 中注册 hook 失败， hook.fn 必须是 function 类型`)
-    }
-    const hooks = this.ctx.hooks.get(hook.name) || []
-    hook.plugin = this.id
-    this.ctx.hooks.set(hook.name, hooks.concat(hook))
-  }
-```
+#### register
 
 ```ts
-  registerCommand (command: ICommand) {
-    if (this.ctx.commands.has(command.name)) {
-      throw new Error(`命令 ${command.name} 已存在`)
-    }
-    this.ctx.commands.set(command.name, command)
-    this.register(command)
-  }
-
+register (hook: IHook) {
+	if (typeof hook.name !== 'string') {
+		throw new Error(`插件 ${this.id} 中注册 hook 失败， hook.name 必须是 string 类型`)
+	}
+	if (typeof hook.fn !== 'function') {
+		throw new Error(`插件 ${this.id} 中注册 hook 失败， hook.fn 必须是 function 类型`)
+	}
+	const hooks = this.ctx.hooks.get(hook.name) || []
+	hook.plugin = this.id
+	this.ctx.hooks.set(hook.name, hooks.concat(hook))
+}
 ```
+
+#### registerCommand
+
+```ts
+registerCommand (command: ICommand) {
+	if (this.ctx.commands.has(command.name)) {
+		throw new Error(`命令 ${command.name} 已存在`)
+	}
+	this.ctx.commands.set(command.name, command)
+	this.register(command)
+}
+```
+
+#### registerPlatform
 
 ```ts
   registerPlatform (platform: IPlatform) {
@@ -426,43 +448,51 @@ export default class Plugin {
   }
 ```
 
-```ts
-  registerMethod (...args) {
-    const { name, fn } = processArgs(args)
-    const methods = this.ctx.methods.get(name) || []
-    methods.push(fn || function (fn: Func) {
-      this.register({
-        name,
-        fn
-      })
-    }.bind(this))
-    this.ctx.methods.set(name, methods)
-  }
-```ts
-  addPluginOptsSchema (schema) {
-    this.optsSchema = schema
-  }
-  ```
+#### registerMethod 注册方法
 
-function processArgs (args) {
-  let name, fn
-  if (!args.length) {
-    throw new Error('参数为空')
-  } else if (args.length === 1) {
-    if (typeof args[0] === 'string') {
-      name = args[0]
-    } else {
-      name = args[0].name
-      fn = args[0].fn
-    }
-  } else {
-    name = args[0]
-    fn = args[1]
-  }
-  return { name, fn }
+```ts
+registerMethod (...args) {
+	const { name, fn } = processArgs(args)
+	const methods = this.ctx.methods.get(name) || []
+	methods.push(fn || function (fn: Func) {
+		this.register({
+		name,
+		fn
+		})
+	}.bind(this))
+	this.ctx.methods.set(name, methods)
 }
-
 ```
+
+#### addPluginOptsSchema 添加插件的参数
+
+```ts
+addPluginOptsSchema (schema) {
+	this.optsSchema = schema
+}
+```
+
+```ts
+function processArgs(args) {
+	let name, fn;
+	if (!args.length) {
+		throw new Error("参数为空");
+	} else if (args.length === 1) {
+		if (typeof args[0] === "string") {
+			name = args[0];
+		} else {
+			name = args[0].name;
+			fn = args[0].fn;
+		}
+	} else {
+		name = args[0];
+		fn = args[1];
+	}
+	return { name, fn };
+}
+```
+
+我们接着来看，注册插件函数。
 
 ## registerPlugin 注册插件
 
@@ -482,7 +512,7 @@ function processArgs (args) {
 1.
 ```
 
-## resolvePlugins
+## resolvePlugins 解析插件
 
 ```ts
 resolvePlugins(
@@ -527,7 +557,7 @@ resolvePlugins(
 1.
 ```
 
-## initPlugin
+## initPlugin 初始化插件
 
 ```ts
 initPlugin(plugin: IPlugin) {
@@ -546,7 +576,7 @@ initPlugin(plugin: IPlugin) {
 1.
 ```
 
-## checkPluginOpts
+## checkPluginOpts 校验插件的参数
 
 ```ts
  checkPluginOpts(pluginCtx, opts) {
