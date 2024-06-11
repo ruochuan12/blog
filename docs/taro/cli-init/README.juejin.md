@@ -3,7 +3,6 @@ highlight: darcula
 theme: smartblue
 ---
 
-# Taro 源码揭秘 - 揭开整个架构的入口 CLI => taro init 初始化项目的秘密
 
 ## 1. 前言
 
@@ -13,15 +12,15 @@ theme: smartblue
 
 [多编译内核生态下的极速研发体验](https://taro-docs.jd.com/blog/2023/03/29/D2_17) 官方博客有如下图。
 
-![多编译内核架构](./images/taro/kernal.png)
+![多编译内核架构](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/85718d9f74004f45910a2c7459f999ab~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=960&h=540&s=363552&e=png&b=030617)
 
 计划写一个 `taro` 源码揭秘系列，欢迎持续关注。初步计划有如下文章：
 
--   [x] cli init 初始化项目
--   [ ] 插件机制
--   [ ] init 初始化项目
--   [ ] cli build
--   [ ] 等等
+*   [x] cli init 初始化项目
+*   [ ] 插件机制
+*   [ ] init 初始化项目
+*   [ ] cli build
+*   [ ] 等等
 
 学完本文，你将学到：
 
@@ -85,7 +84,7 @@ $ pnpm run clear-all
 
 安装依赖可能会报错。
 
-![pnpm i error](./images/pnpm-i-error.png)
+![pnpm-i-error.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/edef5301eec7477f9094f4e0cf035d24~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2906&h=474&s=170652&e=png&b=020202)
 
 ```bash
 Failed to set up Chromium r1108766! Set "PUPPETEER_SKIP_DOWNLOAD" env variable to skip download.
@@ -100,7 +99,7 @@ Windows: `SET PUPPETEER_SKIP_DOWNLOAD='true'`
 
 pnpm build 完成，如下图所示：
 
-![pnpm build 完成](./images/pnpm-build.png)
+![pnpm-build.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3b54216574f44c5088b50b48ccafa5a9~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3314&h=968&s=296242&e=png&b=010101)
 
 ## 3. 调试
 
@@ -155,15 +154,15 @@ node ./packages/taro-cli/bin/taro init taro-init-debug
 
 如下图所示：
 
-![vscode 调试源码](./images/vscode-debugger.png)
+![vscode 调试源码](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9a0d04d62ce64702b5a558c6c3f1fa5d~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3840&h=1982&s=636817&e=png&b=272727)
 
 调试时应该会报错 `binding` `taro.[os-platform].node`。如下图所示：
 
-![binding-error](./images/binding-error.png)
+![binding-error.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/7f1d20328bf24cc0993589f5da4adc95~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3666&h=1164&s=355043&e=png&b=262626)
 
 运行等过程报错，不要慌。可能是我们遗漏了一些细节，贡献文档等应该会给出答案。所以再来看下 [贡献文档-10-rust-部分](https://github.com/NervJS/taro/blob/4.x/CONTRIBUTING.md#10-rust-%E9%83%A8%E5%88%86)
 
-![binding-rust](./images/binding-rust.png)
+![binding-rust.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/5761d804a3c943d587fa8f6ceb5b3a74~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2014&h=1084&s=244735&e=png&b=0e1218)
 
 通过 [rustup](https://rustup.rs) 找到安装命令：
 
@@ -199,7 +198,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 
 `console- 启动程序的控制台（internalConsole，integratedTerminal，externalTerminal）。`
 
-![vscode console](./images/vscode-console.png)
+![vscode-console.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/e00d93ab56114dd388b480854b023481~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1558&h=468&s=138407&e=png&b=fefefe)
 
 ```js
 // packages/taro-cli/bin/taro
@@ -248,7 +247,8 @@ export function printPkgVersion() {
 ## 5. CLI 整体结构
 
 `taro-cli` 对应的文件路径是：
->packages/taro-cli/src/cli.ts
+
+> packages/taro-cli/src/cli.ts
 
 我们先来看下这个文件的整体结构。`class CLI` 一个 appPath 属性（一般指 `taro` 工作目录），两个函数 `run` 和 `parseArgs`。
 
@@ -307,15 +307,15 @@ export default class CLI {
 
 ### 6.1 presets 预设插件集合
 
-![parseArgs-1](./images/parseArgs-1.png)
+![parseArgs-1.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/3421a9f42d9746aeaf31459396383e86~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3066&h=1988&s=618972&e=png&b=262626)
 
 `presets` 对应的目录结构如图所示：
 
-![presets](./images/presets.png)
+![presets.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6ac775f2413a4b45b271302b4fc6e740~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=998&h=1692&s=172949&e=png&b=252525)
 
 ### 6.2 Config
 
-![parseArgs-2](./images/parseArgs-2.png)
+![parseArgs-2.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fb6920f397db4fc78e73abc29afddab2~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3414&h=1688&s=474740&e=png&b=252525)
 
 `64-78` 行代码，代码量相对较少，就截图同时顺便直接放代码了。
 
@@ -416,7 +416,7 @@ async init (configEnv: {
 
 值得一提的是：
 
-![createSwcRegister](./images/createSwcRegister.png)
+![createSwcRegister.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/34924b795e2b4c8981ca0076eecfa8c4~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2774&h=1958&s=381062&e=png&b=252525)
 
 `createSwcRegister` 使用了 [`@swc/register`](https://www.npmjs.com/package/@swc/register) 来编译 `ts` 等转换成 `commonjs`。可以直接用 `require`。
 
@@ -480,7 +480,7 @@ initGlobalConfig () {
 
 [全局插件或插件集配置](https://docs.taro.zone/docs/next/cli/#%E5%85%A8%E5%B1%80%E6%8F%92%E4%BB%B6%E6%88%96%E6%8F%92%E4%BB%B6%E9%9B%86%E9%85%8D%E7%BD%AE)
 
-![global-config](./images/global-config.png)
+![global-config.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/808b984f1f754942b7035515b0234906~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2304&h=1000&s=288783&e=png&b=f5f7f9)
 
 `Config` 部分我们基本分析完成，接下来我们学习 `Kernel` （内核）部分。
 
@@ -584,17 +584,17 @@ initPaths () {
 
 初始化后的参数，如 [`taro` 官方文档 - 编写插件 api](https://docs.taro.zone/docs/next/plugin-custom#api)中所示。
 
-![initConfig](./images/initConfig.png)
+![initConfig.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/820cb9df210647b7bd495a7c2d3e6a0c~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2148&h=1640&s=301305&e=png&b=fefefe)
 
 ### 7.1 cli kernel.optsPlugins 等
 
-![parseArgs-3](./images/parseArgs-3.png)
+![parseArgs-3.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/f5f628dcd6704742b6fedc23efe06e1f~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2598&h=1898&s=502975&e=png&b=262626)
 
 我们接下来看，`customCommand` 函数。
 
 ### 7.2 cli customCommand 函数
 
-![parseArgs-4](./images/parseArgs-4.png)
+![parseArgs-4.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/38cecda1701c467b926bb95235aeb8b6~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2008&h=1770&s=288624&e=png&b=252525)
 
 我们可以看到最终调用的是 `customCommand` 函数
 
@@ -677,7 +677,7 @@ setRunOpts (opts) {
 
 [Taro 文档 - 编写插件 - ctx.runOpts](https://taro-docs.jd.com/docs/plugin-custom#ctxrunopts)
 
-![ctx.runOpts](./images/runOpts.png)
+![ctx.runOpts.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/10422bfaec0540039a1d86d4748f1d6b~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2056&h=786&s=116172&e=png&b=ffffff)
 
 我们接着来看，`run` 函数的下半部分。
 
@@ -728,7 +728,7 @@ async run (args: string | { name: string, opts?: any }) {
 
 我们分开叙述
 
->`this.initPresetsAndPlugins()`函数，因为此处涉及到的代码相对较多，容易影响主线流程。所以本文在此先不展开深入学习了。将放在下一篇文章中详细讲述。
+> `this.initPresetsAndPlugins()`函数，因为此处涉及到的代码相对较多，容易影响主线流程。所以本文在此先不展开深入学习了。将放在下一篇文章中详细讲述。
 
 执行 `this.initPresetsAndPlugins()` 函数之后。我们完全可以在调试时把 `kernal` 实例对象打印出来。
 
@@ -854,9 +854,9 @@ async applyPlugins (args: string | { name: string, initialVal?: any, opts?: any 
 
 举个例子用户写的插件中有多个钩子函数。比如 `onReday` 等可以有多个。
 
-![插件方法](./images/plugin-methods.png)
+![插件方法.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9568a4f0b4384b00bd3c3b3728c24487~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1458&h=1246&s=201717&e=png&b=ffffff)
 
-![插件 hooks](./images/plugin-hooks.png)
+![插件 hooks](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/02635270495948dabba4bd7863bd6019~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2090&h=922&s=352202&e=png&b=ffffff)
 
 `applyPlugins` 根据执行的命令 `init` 从 `hooks` 取出，串起来，然后依次执行插件的 `fn` 方法。
 
@@ -876,7 +876,7 @@ if (opts?.isHelp) {
 
 以 `taro init --help` 为例。输出结果如下图所示：
 
-![命令行 help](./images/command-help.png)
+![命令行 help.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/4c29f1a7d502421691461aeeae9e026e~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1704&h=758&s=253342&e=png&b=000000)
 
 具体实现代码如下：
 
@@ -901,11 +901,11 @@ runHelp (name: string) {
 
 我们主要学了
 
-1. 学会通过两种方式调试 taro 源码
-2. 学会入口 taro-cli 具体实现方式
-3. 学会 cli init 命令实现原理，读取用户项目配置文件和用户全局配置文件
-4. 学会 taro-service kernal （内核）解耦实现
-5. 初步学会 taro 插件架构，学会了如何编写一个 taro 插件
+1.  学会通过两种方式调试 taro 源码
+2.  学会入口 taro-cli 具体实现方式
+3.  学会 cli init 命令实现原理，读取用户项目配置文件和用户全局配置文件
+4.  学会 taro-service kernal （内核）解耦实现
+5.  初步学会 taro 插件架构，学会了如何编写一个 taro 插件
 
 taro-cli 使用了[minimist](https://github.com/minimistjs/minimist)，命令行参数解析工具。
 
@@ -919,9 +919,9 @@ taro 的基于 [Tapable](https://github.com/webpack/tapable) 的 `AsyncSeriesWat
 
 简单做了一个本文的总结图。
 
-![简单总结](./images/ppt.png)
+![简单总结](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/541bfebea50f45fdb8e4e3acabfadc21~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3840&h=2160&s=904686&e=png&b=ffffff)
 
-----
+***
 
 **如果看完有收获，欢迎点赞、评论、分享支持。你的支持和肯定，是我写作的动力**。
 
