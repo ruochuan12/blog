@@ -17,7 +17,7 @@ theme: smartblue
 
 计划写一个 `taro` 源码揭秘系列，欢迎持续关注。初步计划有如下文章：
 
--   [x] cli init 初始化项目
+-   [x] [Taro 源码揭秘 - 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
 -   [x] 插件机制
 -   [ ] init 初始化项目
 -   [ ] cli build
@@ -27,13 +27,13 @@ theme: smartblue
 
 ```bash
 1. 学会通过两种方式调试 taro 源码
-2. 学会入口 taro-cli 具体实现方式
-3. 学会 cli init 命令实现原理，读取用户项目配置文件和用户全局配置文件
-4. 学会 taro-service kernal （内核）解耦实现
-5. 初步学会 taro 插件架构，学会如何编写一个 taro 插件
 ```
 
-书接上文，我们继续来看 `Taro` 的插件机制是如何实现的。
+[Taro 源码揭秘 - 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
+
+上一篇文章中提到的 `Kernel` (内核) 中的 `run` 函数执行，其中 `this.initPresetsAndPlugins` 初始化预设插件集合和插件没讲述。
+我们继续这个函数的具体实现，也就是说来看 `Taro` 的插件机制是如何实现的。
+
 ![alt text](./images/kernal.png)
 
 ```ts
@@ -49,33 +49,36 @@ export default class Kernel extends EventEmitter {
 		super();
 		// 省略若干代码...
 	}
+	async run (args: string | { name: string, opts?: any }) {
+    	// 省略若干代码
+		this.debugger('initPresetsAndPlugins')
+		this.initPresetsAndPlugins()
 
-	applyCliCommandPlugin(commandNames: string[] = []) {
-		const existsCliCommand: string[] = [];
-		for (let i = 0; i < commandNames.length; i++) {
-			const commandName = commandNames[i];
-			const commandFilePath = path.resolve(
-				this.cliCommandsPath,
-				`${commandName}.js`
-			);
-			if (this.cliCommands.includes(commandName))
-				existsCliCommand.push(commandFilePath);
-		}
-		const commandPlugins = convertPluginsToObject(existsCliCommand || [])();
-		helper.createSwcRegister({ only: [...Object.keys(commandPlugins)] });
-		const resolvedCommandPlugins = resolvePresetsOrPlugins(
-			this.appPath,
-			commandPlugins,
-			PluginType.Plugin
-		);
-		while (resolvedCommandPlugins.length) {
-			this.initPlugin(resolvedCommandPlugins.shift()!);
-		}
+		await this.applyPlugins('onReady')
+		// 省略若干代码
+	}
+	// initPresetsAndPlugins
+	initPresetsAndPlugins(){
+		// 初始化插件集和插件
 	}
 }
 ```
 
-## initPresetsAndPlugins
+cli 调用的地方
+
+```ts
+const kernel = new Kernel({
+	appPath,
+	presets: [
+		path.resolve(__dirname, '.', 'presets', 'index.js')
+	],
+	config,
+	plugins: []
+})
+kernel.optsPlugins ||= []
+```
+
+## initPresetsAndPlugins 初始化预设插件集合和插件
 
 ```ts
 initPresetsAndPlugins() {
@@ -509,7 +512,7 @@ function processArgs(args) {
 这个方法主要做了如下几件事：
 
 ```bash
-1.
+1. 注册插件到 plugins Map 中。
 ```
 
 ## resolvePlugins 解析插件
@@ -603,4 +606,31 @@ initPlugin(plugin: IPlugin) {
 
 ```bash
 1.
+```
+
+## applyCliCommandPlugin
+
+```ts
+applyCliCommandPlugin(commandNames: string[] = []) {
+	const existsCliCommand: string[] = [];
+	for (let i = 0; i < commandNames.length; i++) {
+		const commandName = commandNames[i];
+		const commandFilePath = path.resolve(
+			this.cliCommandsPath,
+			`${commandName}.js`
+		);
+		if (this.cliCommands.includes(commandName))
+			existsCliCommand.push(commandFilePath);
+	}
+	const commandPlugins = convertPluginsToObject(existsCliCommand || [])();
+	helper.createSwcRegister({ only: [...Object.keys(commandPlugins)] });
+	const resolvedCommandPlugins = resolvePresetsOrPlugins(
+		this.appPath,
+		commandPlugins,
+		PluginType.Plugin
+	);
+	while (resolvedCommandPlugins.length) {
+		this.initPlugin(resolvedCommandPlugins.shift()!);
+	}
+}
 ```
