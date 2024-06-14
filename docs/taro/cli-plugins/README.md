@@ -3,22 +3,18 @@ highlight: darcula
 theme: smartblue
 ---
 
-# Taro 源码揭秘 - 揭开整个架构的插件系统的秘密
+# Taro 源码揭秘 - 2. 揭开整个架构的插件系统的秘密
 
 ## 1. 前言
 
-大家好，我是[若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（5.8k+人）第一的专栏，写有 30 余篇源码文章。
+大家好，我是[若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（5.8k+人）第一的专栏，写有几十篇源码文章。
 
 截止目前（`2024-06-14`），`taro` 正式版是 `3.6.31`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。所以我们直接学习 `4.x`，`4.x` 最新版本是 `4.0.0-beta.83`。
 
-[多编译内核生态下的极速研发体验](https://taro-docs.jd.com/blog/2023/03/29/D2_17) 官方博客有如下图。
-
-![多编译内核架构](./images/taro/kernal.png)
-
 计划写一个 `taro` 源码揭秘系列，欢迎持续关注。初步计划有如下文章：
 
--   [x] [Taro 源码揭秘 - 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
--   [x] Taro 源码揭秘 - 揭开整个架构的插件系统的秘密
+-   [x] [Taro 源码揭秘 - 1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
+-   [x] Taro 源码揭秘 - 2. 揭开整个架构的插件系统的秘密
 -   [ ] init 初始化项目
 -   [ ] cli build
 -   [ ] 等等
@@ -26,47 +22,21 @@ theme: smartblue
 学完本文，你将学到：
 
 ```bash
-1. 插件
+1. 如何合并预设插件集合和插件（CLI、用户项目（config/index.ts）、全局插件`/Users/用户名/.taro-global-config`）
+2. 插件是如何注册的
+3. 插件如何调用的
+等等
 ```
 
-[Taro 源码揭秘 - 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
+关于如何调试代码等，参考第一篇文章。后续文章基本不再赘述。
 
-上一篇文章中提到的 `Kernel` (内核) 中的 `run` 函数执行，其中 `this.initPresetsAndPlugins` 初始化预设插件集合和插件没讲述。
-我们继续这个函数的具体实现，也就是说来看 `Taro` 的插件机制是如何实现的。
+[Taro 源码揭秘 - 1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
 
-![alt text](./images/kernal.png)
+上一篇文章中提到 `CLI` 最终执行的是 `Kernel` (内核) 中的 `run` 函数，其中 `this.initPresetsAndPlugins` 初始化预设插件集合和插件没讲述。
 
-cli 调用的地方
+我们先来回顾一下上文中的 `Kernal` 构造函数。**文章中基本是先放源码，源码中不做过多解释。源码后面再做简单讲述。**
 
-```ts
-// packages/taro-cli/src/cli.ts
-const kernel = new Kernel({
-	appPath,
-	presets: [path.resolve(__dirname, ".", "presets", "index.js")],
-	config,
-	plugins: [],
-});
-kernel.optsPlugins ||= [];
-```
-
-presets 预设插件集合
-
-![presets](./images/presets.png)
-
-![build 钩子](./images/hooks.jpeg)
-
-```ts
-{
-  name: "init",
-  optionsMap: {
-	// 省略若干代码...
-  },
-  fn: function fn(opts) {
-	// 省略若干代码...
-  },
-  plugin: "/Users/ruochuan/git-source/github/taro/packages/taro-cli/dist/presets/commands/init.js",
-}
-```
+## 2. new Kernal 构造函数
 
 ```ts
 interface IKernelOptions {
@@ -100,6 +70,7 @@ export default class Kernel extends EventEmitter {
 		// 省略若干代码
 		this.debugger("initPresetsAndPlugins");
 		this.initPresetsAndPlugins();
+		console.log('initPresetsAndPlugins', this);
 
 		await this.applyPlugins("onReady");
 		// 省略若干代码
@@ -111,7 +82,53 @@ export default class Kernel extends EventEmitter {
 }
 ```
 
-## initPresetsAndPlugins 初始化预设插件集合和插件
+执行完  `initPresetsAndPlugins` 之后，这里以 `init` 为例。
+使用 `JavaScript 调试终端`，输入 `node ./packages/taro-cli/bin/taro init taro-init-debug` 调试。
+我们可以在 `packages/taro-service/dist/Kernel.js` 打印 `this` 出来。
+
+如下图所示：
+
+![Kernal 实例对象](./images/kernal-this.png)
+
+本文我们主要是学习 `initPresetsAndPlugins` 具体实现。
+
+我们继续来分析这个函数的具体实现，也就是说来看 `Taro` 的插件机制是如何实现的。可以打开[Taro文档 - 使用插件和编写插件](https://docs.taro.zone/docs/plugin) 配合看可能效果更佳。
+
+本文讲述的函数源码位置是 `packages/taro-service/src/Kernel.ts`。
+基本包含在下图中。
+
+![函数](./images/kernal.png)
+
+我们来看 CLI 调用 `new Kernal` 的地方，源码所在位置 `packages/taro-cli/src/cli.ts`
+
+```ts
+// packages/taro-cli/src/cli.ts
+const kernel = new Kernel({
+	appPath,
+	presets: [path.resolve(__dirname, ".", "presets", "index.js")],
+	config,
+	plugins: [],
+});
+kernel.optsPlugins ||= [];
+```
+
+传入的参数 `presets` 预设插件集合如下图所示：
+
+![presets](./images/presets.png)
+
+其中 `hooks/build.js` 如下图所示：
+
+![build 钩子](./images/hooks.jpeg)
+
+使用 [ctx.registerMethod](https://docs.taro.zone/docs/plugin-custom#ctxregistermethodarg-string---name-string-fn-function--fn-function) 注册方法。其中 `ctx` 就是 `Kernal` 实例对象。
+
+![ctx.registerMethod](./images/ctx.registerMethod.png)
+
+源码实现如下，存入到 `methods Map` 中。后面我们会再次遇到它。
+
+![registerMethod](./images/ctx.registerMethod-2.png)
+
+## 3. initPresetsAndPlugins 初始化预设插件集合和插件
 
 ```ts
 initPresetsAndPlugins() {
@@ -156,12 +173,12 @@ initPresetsAndPlugins() {
 
 这个方法主要做了如下几件事：
 
-> 1.  mergePlugins 合并预设插件集合和插件
-> 2.  convertPluginsToObject 转换全局配置里的插件集和插件为对象
-> 3.  非测试环境，`createSwcRegister` 使用了 [`@swc/register`](https://www.npmjs.com/package/@swc/register) 来编译 `ts` 等转换成 `commonjs`。可以直接用 `require`。
-> 4.  resolvePresets 解析预设插件集合和 resolvePlugins 解析插件
+> 1. mergePlugins 合并预设插件集合和插件
+> 2. convertPluginsToObject 转换全局配置里的插件集和插件为对象
+> 3. 非测试环境，`createSwcRegister` 使用了 [@swc/register](https://www.npmjs.com/package/@swc/register) 来编译 `ts` 等转换成 `commonjs`。可以直接用 `require` 读取文件。
+> 4. resolvePresets 解析预设插件集合和 resolvePlugins 解析插件
 
-### mergePlugins convertPluginsToObject
+### 3.1 工具函数 mergePlugins、convertPluginsToObject
 
 ```ts
 export const isNpmPkg: (name: string) => boolean = (name) =>
@@ -205,7 +222,7 @@ export function mergePlugins(dist: PluginItem[], src: PluginItem[]) {
 
 我们来看解析插件集合 `resolvePresets`。
 
-## resolvePresets 解析预设插件集合
+## 4. resolvePresets 解析预设插件集合
 
 ```ts
  resolvePresets(
@@ -239,14 +256,30 @@ export function mergePlugins(dist: PluginItem[], src: PluginItem[]) {
 
 这个方法主要做了如下几件事：
 
-> 1.  resolvedCliAndProjectPresets 解析 cli 和项目配置的预设插件集合
-> 2.  resolvedGlobalPresets 解析全局的预设插件集合
+> 1. resolvedCliAndProjectPresets 解析 cli 和项目配置的预设插件集合
+> 2. resolvedGlobalPresets 解析全局的预设插件集合
 
 其中主要有两个函数，我们分开讲述 `resolvePresetsOrPlugins` `initPreset`。
 
+执行后 `resolvePresetsOrPlugins` 函数得到的 `resolvedCliAndProjectPresets` 如图所示：
+
+![得到的 resolvedCliAndProjectPresets](./images/resolvedCliAndProjectPresets.png)
+
 `globalConfigRootPath` 路径是： `/Users/用户名/.taro-global-config`
 
-### resolvePresetsOrPlugins 解析插件集或者插件
+全局 `.taro-global-config/index.json` 我们默认是没有配置预设插件集合的。
+
+```json
+// .taro-global-config/index.json
+{
+	presets: [],
+	plugins: []
+}
+```
+
+我们接着具体断点调试来看 `resolvePresetsOrPlugins`。
+
+### 4.1 resolvePresetsOrPlugins 解析插件集或者插件
 
 ```ts
 // getModuleDefaultExport
@@ -318,7 +351,32 @@ export function resolvePresetsOrPlugins(
 }
 ```
 
-## initPreset 初始化预设插件集合
+代码看起来很长，但主要就是使用 [resolve.sync](https://www.npmjs.com/package/resolve#resolvesyncid-opts) 获取路径。
+
+```ts
+const resolvedPresetsOrPlugins = [];
+const resolvedItem = {
+	id: fPath,
+	path: fPath,
+	type,
+	opts: args[item] || {},
+	apply() {
+		// 插件内容 require()
+		try{
+			return getModuleDefaultExport(require(fPath));
+		} catch(e){
+			// 省略
+		}
+	}
+}
+resolvedPresetsOrPlugins.push(resolvedItem);
+```
+
+组成这样的数组对象返回。
+
+我们接着来看 `this.initPreset` 的具体实现。
+
+## 5. initPreset 初始化预设插件集合
 
 ```ts
 initPreset(preset: IPreset, isGlobalConfigPreset?: boolean) {
@@ -354,11 +412,15 @@ initPreset(preset: IPreset, isGlobalConfigPreset?: boolean) {
 
 这个方法主要做了如下几件事：
 
-> 1.
+> 1. initPluginCtx 初始化插件 ctx
+> 2. 执行插件，获得预设插件集合和插件。
+> 3. 注册插件
+> 4. 如果预设插件集合是数组继续递归调用。
+> 5. 如果插件是数组，是全局插件就合并到全局额外的插件 `globalExtraPlugins` 中，否则就合并到额外的插件 `extraPlugins` 中。后面统一处理插件。
 
-主要三件事 `initPluginCtx`、`registerPlugin`、
+我们分别来看 `initPluginCtx`、`registerPlugin` 的实现。
 
-## initPluginCtx 初始化插件 ctx
+## 6. initPluginCtx 初始化插件 ctx
 
 ```ts
  initPluginCtx({
@@ -415,11 +477,18 @@ initPreset(preset: IPreset, isGlobalConfigPreset?: boolean) {
 
 这个方法主要做了如下几件事：
 
-> 1. Plugin
+> 1. new Plugin 生成插件的 pluginCtx
+> 2. internalMethods 内部方法 注册到 `ctx.onReady` `ctx.onStart`
+> 3. this.methods 数组绑定  this 指向到 Kernal 实例对象上
+> 4. kernelApis 的方法，代理绑定下 this 指向到 Kernal 实例对象上。
 
-我们接着来看，class Plugin
+![methods](./images/methods.png)。
 
-### new Plugin({ id, path, ctx })
+因为 `new Proxy` 代理后，可以直接使用 `ctx.methodName` 直接调用相应方法。
+
+我们接着来看，class Plugin 的具体实现。
+
+### 6.1 new Plugin({ id, path, ctx })
 
 ```ts
 import { addPlatforms } from "@tarojs/helper";
@@ -443,7 +512,7 @@ export default class Plugin {
 }
 ```
 
-#### register 注册 hook
+#### 6.1.1 register 注册 hook
 
 ```ts
 register (hook: IHook) {
@@ -459,7 +528,11 @@ register (hook: IHook) {
 }
 ```
 
-#### registerCommand 注册方法
+判断下 `name` 和 `fn`，最后存入 `hooks` 的值。可以通过 `this.applyPlugins()触发插件`。
+
+[第一篇文章 kernal.applyPlugins 触发插件](https://juejin.cn/post/7378363694939783178#heading-19)，有提到，此处就不在赘述。
+
+#### 6.1.2 registerCommand 注册方法
 
 ```ts
 registerCommand (command: ICommand) {
@@ -471,7 +544,13 @@ registerCommand (command: ICommand) {
 }
 ```
 
-#### registerPlatform 注册平台
+存入到 `commands Map` 中。而且再通过 `this.register(command)` 存入到 hooks 中。便于在 `this.applyPlugins()` 使用。
+
+`command` 和 `hooks` 如下图所示：
+
+![command-hooks](./images/command-hooks.jpeg)
+
+#### 6.1.3 registerPlatform 注册平台
 
 ```ts
   registerPlatform (platform: IPlatform) {
@@ -484,7 +563,9 @@ registerCommand (command: ICommand) {
   }
 ```
 
-#### registerMethod 注册方法
+同样存入到 `platforms` 中。同时存入到 `hooks` 中。
+
+#### 6.1.4 registerMethod 注册方法
 
 ```ts
 registerMethod (...args) {
@@ -499,6 +580,8 @@ registerMethod (...args) {
 	this.ctx.methods.set(name, methods)
 }
 ```
+
+前文提到。没有函数，则会存入到 hooks 中。
 
 ```ts
 function processArgs(args) {
@@ -520,7 +603,9 @@ function processArgs(args) {
 }
 ```
 
-#### addPluginOptsSchema 添加插件的参数 Schema
+`processArgs` 函数主要就是统一下不同传参形式，最终都是返回 `name` 和 `fn`。
+
+#### 6.1.5 addPluginOptsSchema 添加插件的参数 Schema
 
 ```ts
 addPluginOptsSchema (schema) {
@@ -530,7 +615,7 @@ addPluginOptsSchema (schema) {
 
 我们接着来看，注册插件函数。
 
-## registerPlugin 注册插件
+## 7. registerPlugin 注册插件
 
 ```ts
  registerPlugin(plugin: IPlugin) {
@@ -546,7 +631,11 @@ addPluginOptsSchema (schema) {
 
 > 1. 注册插件到 plugins Map 中。
 
-## resolvePlugins 解析插件
+最终的插件 plugins 如图所示：
+
+![plugins](./images/plugins.png)
+
+## 8. resolvePlugins 解析插件
 
 解析插件和解析预设插件集合类似。
 
@@ -589,12 +678,12 @@ resolvePlugins(
 
 这个方法主要做了如下几件事：
 
-> 1.  合并预设插件集合中的插件、CLI 和项目中配置的插件
-> 2.  resolvedCliAndProjectPlugins CLI 和项目中配置的插件
-> 3.  合并全局预设插件集合中的插件、全局配置的插件
-> 4.  最后遍历所有解析后的插件一次调用 this.initPlugin 初始化插件
+> 1. 合并预设插件集合中的插件、CLI 和项目中配置的插件
+> 2. resolvedCliAndProjectPlugins CLI 和项目中配置的插件
+> 3. 合并全局预设插件集合中的插件、全局配置的插件
+> 4. 最后遍历所有解析后的插件一次调用 this.initPlugin 初始化插件
 
-## initPlugin 初始化插件
+## 9. initPlugin 初始化插件
 
 ```ts
 initPlugin(plugin: IPlugin) {
@@ -609,11 +698,11 @@ initPlugin(plugin: IPlugin) {
 
 这个方法主要做了如下几件事：
 
-> 1.  initPluginCtx 初始化插件的 ctx
-> 2.  注册插件
-> 3.  校验插件的参数
+> 1. initPluginCtx 初始化插件的 ctx
+> 2. 注册插件
+> 3. 校验插件的参数
 
-## checkPluginOpts 校验插件的参数
+## 10. checkPluginOpts 校验插件的参数
 
 ```ts
  checkPluginOpts(pluginCtx, opts) {
@@ -638,9 +727,11 @@ initPlugin(plugin: IPlugin) {
 
 这个方法主要做了如下几件事：
 
-> 1.  使用 [joi](https://www.npmjs.com/package/joi) 最强大的 JavaScript 模式描述语言和数据验证器。校验插件参数 `schema`。
+> 1. 使用 [joi](https://www.npmjs.com/package/joi) 最强大的 JavaScript 模式描述语言和数据验证器。校验插件参数 `schema`。
 
-## applyCliCommandPlugin 暴露 taro cli 内部命令插件
+Kernal 实例对象中还有一个方法，顺变提一下。
+
+## 11. applyCliCommandPlugin 暴露 taro cli 内部命令插件
 
 ```ts
 applyCliCommandPlugin(commandNames: string[] = []) {
@@ -669,10 +760,23 @@ applyCliCommandPlugin(commandNames: string[] = []) {
 
 ![applyCliCommandPlugin](./images/applyCliCommandPlugin.png)
 
-## 总结
+## 12. 总结
+
+我们学了
+
+```bash
+1. 如何合并预设插件集合和插件（CLI、用户项目（config/index.ts）、全局插件`/Users/用户名/.taro-global-config`）
+2. 插件是如何注册的
+3. 插件如何调用的
+等等
+```
+
+强烈建议读者朋友们，空闲时自己看着文章，多尝试调试源码。单看文章，可能觉得看懂了，但自己调试可能会发现更多细节，收获更多。
+
+---
 
 **如果看完有收获，欢迎点赞、评论、分享支持。你的支持和肯定，是我写作的动力**。
 
-最后可以持续关注我[@若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（5.8k+人）第一的专栏，写有 30 余篇源码文章。
+最后可以持续关注我[@若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（5.8k+人）第一的专栏，写有几十篇源码文章。
 
 我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。
