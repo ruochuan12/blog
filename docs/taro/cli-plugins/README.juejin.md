@@ -3,7 +3,6 @@ highlight: darcula
 theme: smartblue
 ---
 
-# Taro 源码揭秘 - 2. 揭开整个架构的插件系统的秘密
 
 ## 1. 前言
 
@@ -13,11 +12,11 @@ theme: smartblue
 
 计划写一个 `taro` 源码揭秘系列，欢迎持续关注。初步计划有如下文章：
 
--   [x] [Taro 源码揭秘 - 1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
--   [x] Taro 源码揭秘 - 2. 揭开整个架构的插件系统的秘密
--   [ ] init 初始化项目
--   [ ] cli build
--   [ ] 等等
+*   [x] [Taro 源码揭秘 - 1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
+*   [x] Taro 源码揭秘 - 2. 揭开整个架构的插件系统的秘密
+*   [ ] init 初始化项目
+*   [ ] cli build
+*   [ ] 等等
 
 学完本文，你将学到：
 
@@ -88,7 +87,7 @@ export default class Kernel extends EventEmitter {
 
 如下图所示：
 
-![Kernal 实例对象](./images/kernal-this.png)
+![Kernal 实例对象](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d24e56d10868432d84321ebf914efddb~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3840&h=2160&s=1210663&e=png&b=272727)
 
 本文我们主要是学习 `initPresetsAndPlugins` 具体实现。
 
@@ -97,7 +96,7 @@ export default class Kernel extends EventEmitter {
 本文讲述的函数源码位置是 `packages/taro-service/src/Kernel.ts`。
 基本包含在下图中。
 
-![函数](./images/kernal.png)
+![函数](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bbdd0824fd514f2a897eb56538fdc62f~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3476&h=1998&s=698113&e=png&b=262626)
 
 我们来看 CLI 调用 `new Kernal` 的地方，源码所在位置 `packages/taro-cli/src/cli.ts`
 
@@ -114,19 +113,19 @@ kernel.optsPlugins ||= [];
 
 传入的参数 `presets` 预设插件集合如下图所示：
 
-![presets](./images/presets.png)
+![presets.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bd26560928c9405bad0e76976e3b27a5~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3086&h=1872&s=505474&e=png&b=252525)
 
 其中 `hooks/build.js` 如下图所示：
 
-![build 钩子](./images/hooks.jpeg)
+![build hooks 钩子](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b9ed1da3219b438f963e0978d1c3f2f1~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1920&h=1080&s=733033&e=jpg&b=262626)
 
 使用 [ctx.registerMethod](https://docs.taro.zone/docs/plugin-custom#ctxregistermethodarg-string---name-string-fn-function--fn-function) 注册方法。其中 `ctx` 就是 `Kernal` 实例对象。
 
-![ctx.registerMethod](./images/ctx.registerMethod.png)
+![ctx.registerMethod.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fc7a938140f64d0d83890a3163252b8e~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3176&h=1548&s=427999&e=png&b=fffdfd)
 
 源码实现如下，存入到 `methods Map` 中。后面我们会再次遇到它。
 
-![registerMethod](./images/ctx.registerMethod-2.png)
+![ctx.registerMethod-2.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fe3afb90ab514707a80c4ae10e3bd4c1~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2502&h=1342&s=422966&e=png&b=262626)
 
 ## 3. initPresetsAndPlugins 初始化预设插件集合和插件
 
@@ -173,10 +172,10 @@ initPresetsAndPlugins() {
 
 这个方法主要做了如下几件事：
 
-> 1. mergePlugins 合并预设插件集合和插件
-> 2. convertPluginsToObject 转换全局配置里的插件集和插件为对象
-> 3. 非测试环境，`createSwcRegister` 使用了 [@swc/register](https://www.npmjs.com/package/@swc/register) 来编译 `ts` 等转换成 `commonjs`。可以直接用 `require` 读取文件。
-> 4. resolvePresets 解析预设插件集合和 resolvePlugins 解析插件
+> 1.  mergePlugins 合并预设插件集合和插件
+> 2.  convertPluginsToObject 转换全局配置里的插件集和插件为对象
+> 3.  非测试环境，`createSwcRegister` 使用了 [@swc/register](https://www.npmjs.com/package/@swc/register) 来编译 `ts` 等转换成 `commonjs`。可以直接用 `require` 读取文件。
+> 4.  resolvePresets 解析预设插件集合和 resolvePlugins 解析插件
 
 ### 3.1 工具函数 mergePlugins、convertPluginsToObject
 
@@ -256,14 +255,14 @@ export function mergePlugins(dist: PluginItem[], src: PluginItem[]) {
 
 这个方法主要做了如下几件事：
 
-> 1. resolvedCliAndProjectPresets 解析 cli 和项目配置的预设插件集合
-> 2. resolvedGlobalPresets 解析全局的预设插件集合
+> 1.  resolvedCliAndProjectPresets 解析 cli 和项目配置的预设插件集合
+> 2.  resolvedGlobalPresets 解析全局的预设插件集合
 
 其中主要有两个函数，我们分开讲述 `resolvePresetsOrPlugins` `initPreset`。
 
 执行后 `resolvePresetsOrPlugins` 函数得到的 `resolvedCliAndProjectPresets` 如图所示：
 
-![得到的 resolvedCliAndProjectPresets](./images/resolvedCliAndProjectPresets.png)
+![得到的 resolvedCliAndProjectPresets](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6d11dd55b87d43fc9917949cfd08a540~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3720&h=1356&s=697190&e=png&b=282828)
 
 `globalConfigRootPath` 路径是： `/Users/用户名/.taro-global-config`
 
@@ -412,11 +411,11 @@ initPreset(preset: IPreset, isGlobalConfigPreset?: boolean) {
 
 这个方法主要做了如下几件事：
 
-> 1. initPluginCtx 初始化插件 ctx
-> 2. 执行插件，获得预设插件集合和插件。
-> 3. 注册插件
-> 4. 如果预设插件集合是数组继续递归调用。
-> 5. 如果插件是数组，是全局插件就合并到全局额外的插件 `globalExtraPlugins` 中，否则就合并到额外的插件 `extraPlugins` 中。后面统一处理插件。
+> 1.  initPluginCtx 初始化插件 ctx
+> 2.  执行插件，获得预设插件集合和插件。
+> 3.  注册插件
+> 4.  如果预设插件集合是数组继续递归调用。
+> 5.  如果插件是数组，是全局插件就合并到全局额外的插件 `globalExtraPlugins` 中，否则就合并到额外的插件 `extraPlugins` 中。后面统一处理插件。
 
 我们分别来看 `initPluginCtx`、`registerPlugin` 的实现。
 
@@ -477,12 +476,12 @@ initPreset(preset: IPreset, isGlobalConfigPreset?: boolean) {
 
 这个方法主要做了如下几件事：
 
-> 1. new Plugin 生成插件的 pluginCtx
-> 2. internalMethods 内部方法 注册到 `ctx.onReady` `ctx.onStart`
-> 3. this.methods 数组绑定  this 指向到 Kernal 实例对象上
-> 4. kernelApis 的方法，代理绑定下 this 指向到 Kernal 实例对象上。
+> 1.  new Plugin 生成插件的 pluginCtx
+> 2.  internalMethods 内部方法 注册到 `ctx.onReady` `ctx.onStart`
+> 3.  this.methods 数组绑定  this 指向到 Kernal 实例对象上
+> 4.  kernelApis 的方法，代理绑定下 this 指向到 Kernal 实例对象上。
 
-![methods](./images/methods.png)。
+![methods.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9b43d0875af54efd9f6d59b54455f9c8~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1844&h=1608&s=290976&e=png&b=252525)
 
 因为 `new Proxy` 代理后，可以直接使用 `ctx.methodName` 直接调用相应方法。
 
@@ -548,7 +547,7 @@ registerCommand (command: ICommand) {
 
 `command` 和 `hooks` 如下图所示：
 
-![command-hooks](./images/command-hooks.png)
+![command-hooks.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fda61f5f21a841f684676317820253dc~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2102&h=1874&s=333498&e=png&b=272727)
 
 #### 6.1.3 registerPlatform 注册平台
 
@@ -629,11 +628,11 @@ addPluginOptsSchema (schema) {
 
 这个方法主要做了如下几件事：
 
-> 1. 注册插件到 plugins Map 中。
+> 1.  注册插件到 plugins Map 中。
 
 最终的插件 plugins 如图所示：
 
-![plugins](./images/plugins.png)
+![plugins.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2562b0e928ff4ff4ac9224cf80ddf3ea~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2084&h=1870&s=510691&e=png&b=272727)
 
 ## 8. resolvePlugins 解析插件
 
@@ -678,10 +677,10 @@ resolvePlugins(
 
 这个方法主要做了如下几件事：
 
-> 1. 合并预设插件集合中的插件、CLI 和项目中配置的插件
-> 2. resolvedCliAndProjectPlugins CLI 和项目中配置的插件
-> 3. 合并全局预设插件集合中的插件、全局配置的插件
-> 4. 最后遍历所有解析后的插件一次调用 this.initPlugin 初始化插件
+> 1.  合并预设插件集合中的插件、CLI 和项目中配置的插件
+> 2.  resolvedCliAndProjectPlugins CLI 和项目中配置的插件
+> 3.  合并全局预设插件集合中的插件、全局配置的插件
+> 4.  最后遍历所有解析后的插件一次调用 this.initPlugin 初始化插件
 
 ## 9. initPlugin 初始化插件
 
@@ -698,9 +697,9 @@ initPlugin(plugin: IPlugin) {
 
 这个方法主要做了如下几件事：
 
-> 1. initPluginCtx 初始化插件的 ctx
-> 2. 注册插件
-> 3. 校验插件的参数
+> 1.  initPluginCtx 初始化插件的 ctx
+> 2.  注册插件
+> 3.  校验插件的参数
 
 ## 10. checkPluginOpts 校验插件的参数
 
@@ -727,7 +726,7 @@ initPlugin(plugin: IPlugin) {
 
 这个方法主要做了如下几件事：
 
-> 1. 使用 [joi](https://www.npmjs.com/package/joi) 最强大的 JavaScript 模式描述语言和数据验证器。校验插件参数 `schema`。
+> 1.  使用 [joi](https://www.npmjs.com/package/joi) 最强大的 JavaScript 模式描述语言和数据验证器。校验插件参数 `schema`。
 
 Kernal 实例对象中还有一个方法，顺变提一下。
 
@@ -758,7 +757,7 @@ applyCliCommandPlugin(commandNames: string[] = []) {
 }
 ```
 
-![applyCliCommandPlugin](./images/applyCliCommandPlugin.png)
+![applyCliCommandPlugin.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/519d967c41c84d15b9e6dca50dc9dfce~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3228&h=1696&s=453934&e=png&b=f6f8fa)
 
 ## 12. 总结
 
@@ -773,7 +772,7 @@ applyCliCommandPlugin(commandNames: string[] = []) {
 
 强烈建议读者朋友们，空闲时自己看着文章，多尝试调试源码。单看文章，可能觉得看懂了，但自己调试可能会发现更多细节，收获更多。
 
----
+***
 
 **如果看完有收获，欢迎点赞、评论、分享支持。你的支持和肯定，是我写作的动力**。
 
