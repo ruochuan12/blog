@@ -16,8 +16,8 @@ theme: smartblue
 
 计划写一个 `taro` 源码揭秘系列，欢迎持续关注。初步计划有如下文章：
 
-*   [x] cli init 初始化项目
-*   [ ] 插件机制
+*   [x] [Taro 源码揭秘 - 1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
+*   [x] [Taro 源码揭秘 - 2. 揭开整个架构的插件系统的秘密](https://juejin.cn/spost/7380195796208205824)
 *   [ ] init 初始化项目
 *   [ ] cli build
 *   [ ] 等等

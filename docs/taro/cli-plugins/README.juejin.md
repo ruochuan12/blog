@@ -13,7 +13,7 @@ theme: smartblue
 计划写一个 `taro` 源码揭秘系列，欢迎持续关注。初步计划有如下文章：
 
 *   [x] [Taro 源码揭秘 - 1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
-*   [x] Taro 源码揭秘 - 2. 揭开整个架构的插件系统的秘密
+*   [x] [Taro 源码揭秘 - 2. 揭开整个架构的插件系统的秘密](https://juejin.cn/spost/7380195796208205824)
 *   [ ] init 初始化项目
 *   [ ] cli build
 *   [ ] 等等
@@ -100,6 +100,7 @@ export default class Kernel extends EventEmitter {
 
 我们来看 CLI 调用 `new Kernal` 的地方，源码所在位置 `packages/taro-cli/src/cli.ts`
 
+
 ```ts
 // packages/taro-cli/src/cli.ts
 const kernel = new Kernel({
@@ -109,6 +110,32 @@ const kernel = new Kernel({
 	plugins: [],
 });
 kernel.optsPlugins ||= [];
+const commandsPath = path.resolve(presetsPath, 'commands')
+const commandPlugins = fs.readdirSync(commandsPath)
+const targetPlugin = `${command}.js`
+if (commandPlugins.includes(targetPlugin)) {
+	// 针对不同的内置命令注册对应的命令插件
+	kernel.optsPlugins.push(path.resolve(commandsPath, targetPlugin))
+}
+```
+
+本文以 `init` 命令为例，那么 `kernel.optsPlugins` 这里则注入的是 `command/init.js` 插件。
+
+```ts
+// packages/taro-cli/src/presets/commands/init.ts
+import type { IPluginContext } from '@tarojs/service'
+
+export default (ctx: IPluginContext) => {
+  ctx.registerCommand({
+    name: 'init',
+    optionsMap: {
+    //   省略若干代码
+    },
+    async fn (opts) {
+    //   省略若干代码
+    }
+  })
+}
 ```
 
 传入的参数 `presets` 预设插件集合如下图所示：
@@ -628,9 +655,9 @@ addPluginOptsSchema (schema) {
 
 这个方法主要做了如下几件事：
 
-> 1.  注册插件到 plugins Map 中。
+> 1. 注册插件到 `plugins Map` 中。
 
-最终的插件 plugins 如图所示：
+最终的插件 `plugins` 如图所示：
 
 ![plugins.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2562b0e928ff4ff4ac9224cf80ddf3ea~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2084&h=1870&s=510691&e=png&b=272727)
 
@@ -677,10 +704,10 @@ resolvePlugins(
 
 这个方法主要做了如下几件事：
 
-> 1.  合并预设插件集合中的插件、CLI 和项目中配置的插件
-> 2.  resolvedCliAndProjectPlugins CLI 和项目中配置的插件
-> 3.  合并全局预设插件集合中的插件、全局配置的插件
-> 4.  最后遍历所有解析后的插件一次调用 this.initPlugin 初始化插件
+> 1. 合并预设插件集合中的插件、CLI 和项目中配置的插件
+> 2. `resolvedCliAndProjectPlugins` CLI 和项目中配置的插件
+> 3. 合并全局预设插件集合中的插件、全局配置的插件
+> 4. 最后遍历所有解析后的插件一次调用 `this.initPlugin` 初始化插件
 
 ## 9. initPlugin 初始化插件
 
@@ -692,14 +719,15 @@ initPlugin(plugin: IPlugin) {
   this.registerPlugin(plugin);
   apply()(pluginCtx, opts);
   this.checkPluginOpts(pluginCtx, opts);
- }
+}
 ```
 
 这个方法主要做了如下几件事：
 
-> 1.  initPluginCtx 初始化插件的 ctx
-> 2.  注册插件
-> 3.  校验插件的参数
+> 1. initPluginCtx 初始化插件的 ctx
+> 2. 注册插件
+> 3. `apply` 执行插件，插件本身也是一个函数，传入插件 `pluginCtx` 对象（包含 `register`、`registerCommand`、`registerMethods` 等方法的对象），作为 `ctx`，传入参数 `opts`
+> 4. 校验插件的参数是否符合要求
 
 ## 10. checkPluginOpts 校验插件的参数
 
@@ -728,7 +756,36 @@ initPlugin(plugin: IPlugin) {
 
 > 1.  使用 [joi](https://www.npmjs.com/package/joi) 最强大的 JavaScript 模式描述语言和数据验证器。校验插件参数 `schema`。
 
-Kernal 实例对象中还有一个方法，顺变提一下。
+搜索整个项目中，好像只有 `plugin-mini-ci` 插件中加了这个参数校验。
+
+```ts
+// 参数验证，支持传入配置对象、返回配置对象的异步函数
+ctx.addPluginOptsSchema((joi) => {
+	return joi.alternatives().try(
+		joi.function().required(),
+		joi
+		.object()
+		.keys({
+			/** 微信小程序上传配置 */
+			weapp: joi.object({
+				appid: joi.string().required(),
+				privateKeyPath: joi.string().required(),
+				type: joi.string().valid('miniProgram', 'miniProgramPlugin', 'miniGame', 'miniGamePlugin'),
+				ignores: joi.array().items(joi.string().required()),
+				robot: joi.number(),
+				setting: joi.object()
+			}),
+			// 省略了一些其他平台的代码...
+			version: joi.string(),
+			desc: joi.string(),
+			projectPath: joi.string()
+		})
+		.required()
+	)
+})
+```
+
+Kernal 实例对象中还有一个方法，顺便提一下。
 
 ## 11. applyCliCommandPlugin 暴露 taro cli 内部命令插件
 
@@ -770,9 +827,86 @@ applyCliCommandPlugin(commandNames: string[] = []) {
 等等
 ```
 
+以 `command/init.ts` 插件为例。
+
+```ts
+// packages/taro-cli/src/presets/commands/init.ts
+import type { IPluginContext } from '@tarojs/service'
+
+export default (ctx: IPluginContext) => {
+  ctx.registerCommand({
+    name: 'init',
+    optionsMap: {
+    //   省略若干代码
+    },
+    async fn (opts) {
+    //   省略若干代码
+    }
+  })
+}
+```
+
+非测试环境，先通过 `createSwcRegister` 使用了 [@swc/register](https://www.npmjs.com/package/@swc/register) 来编译 `ts` 等转换成 `commonjs`。可以直接用 `require` 读取文件。
+
+```ts
+const resolvedPresetsOrPlugins = [];
+const resolvedItem = {
+	id: fPath,
+	path: fPath,
+	type,
+	opts: args[item] || {},
+	apply() {
+		// 插件内容 require()
+		try{
+			return getModuleDefaultExport(require(fPath));
+		} catch(e){
+			// 省略
+		}
+	}
+}
+resolvedPresetsOrPlugins.push(resolvedItem);
+```
+
+最终的插件 `plugins` 如图所示：
+
+![plugins.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2562b0e928ff4ff4ac9224cf80ddf3ea~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2084&h=1870&s=510691&e=png&b=272727)
+
+```ts
+initPlugin(plugin: IPlugin) {
+  const { id, path, opts, apply } = plugin;
+  const pluginCtx = this.initPluginCtx({ id, path, ctx: this });
+  this.debugger("initPlugin", plugin);
+  this.registerPlugin(plugin);
+  apply()(pluginCtx, opts);
+  this.checkPluginOpts(pluginCtx, opts);
+}
+```
+
+再 `apply` 执行插件，插件本身也是一个函数，传入插件 `pluginCtx` 对象（包含 `register`、`registerCommand`、`registerMethods` 等方法的对象），作为 `ctx`，传入参数 `opts`。
+
+而这三个方法最终都是会调用 Plugin 实例对象的 register 方法，把方法存入到 Kernal 实例对象中的 `hooks` 属性中。
+
+```ts
+register(){
+	// 省略若干判断代码
+	const hooks = this.ctx.hooks.get(hook.name) || []
+	hook.plugin = this.id
+	this.ctx.hooks.set(hook.name, hooks.concat(hook))
+}
+```
+
+然后再通过 `Kernal` 实例对象中的 `run` 函数里的 [applyPlugins 链接里有函数具体实现](https://juejin.cn/post/7378363694939783178#heading-19) 方法。
+
+从 `Kernal` 的实例对象中，取出相应的 `hooks`，使用 [tapable](https://github.com/webpack/tapable) 的 `AsyncSeriesWaterfallHook` 钩子串联起来，依次执行 `hook.fn` 方法。
+
+调试如图所示：
+![applyPlugins](./images/applyPlugins.png)
+
+从而达到调用的是 `command/init.ts` 中的 `fn` 函数。**不得不惊叹一声：Taro 插件机制设计的秒啊**。
+
 强烈建议读者朋友们，空闲时自己看着文章，多尝试调试源码。单看文章，可能觉得看懂了，但自己调试可能会发现更多细节，收获更多。
 
-***
+---
 
 **如果看完有收获，欢迎点赞、评论、分享支持。你的支持和肯定，是我写作的动力**。
 
