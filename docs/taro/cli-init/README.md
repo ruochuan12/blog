@@ -180,7 +180,7 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 [taro 文档 - 单步调测配置](https://docs.taro.zone/docs/debug-config/)
 写的挺好的，通过配置 `launch.json` 来调试，在此就不再赘述了。
 
-不过补充一条：`launch.json` 文件可以添加一条 `"console": "integratedTerminal"`（集成终端）配置，就可以在调试终端输入内容。
+不过补充一条：`launch.json` 文件可以添加一条 `"console": "integratedTerminal"`（集成终端）配置，就可以在调试终端输入内容。`args` 参数添加 `init` 和指定要初始化项目的文件夹。当然调试其他的时候也可以修改为其他参数。比如`args: ["build", "--type", "weapp", "--watch"]`。
 
 ```json
 {
@@ -188,7 +188,15 @@ curl --proto '=https' --tlsv1.2 -sSf https://sh.rustup.rs | sh
 	"configurations": [
 		{
 			"type": "node",
-			// 省略其他配置...
+			"request": "launch",
+			"name": "CLI debug",
+			"program": "${workspaceFolder}/packages/taro-cli/bin/taro",
+			// "cwd": "${project absolute path}",
+			"args": [
+				"init",
+				"taro-init-debug",
+			],
+			"skipFiles": ["<node_internals>/**"],
 			"console": "integratedTerminal"
 		}
 	]
