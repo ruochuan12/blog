@@ -516,6 +516,310 @@ async fetchTemplates (answers: IProjectConf): Promise<ITemplates[]> {
   }
 ```
 
+### fetchTemplate
+
+```ts
+// packages/taro-cli/src/create/fetchTemplate.ts
+import * as path from 'node:path'
+
+import { chalk, fs } from '@tarojs/helper'
+import * as AdmZip from 'adm-zip'
+import axios from 'axios'
+import * as download from 'download-git-repo'
+import * as ora from 'ora'
+
+import { getTemplateSourceType, readDirWithFileTypes } from '../util'
+import { TEMPLATE_CREATOR } from './constants'
+
+export interface ITemplates {
+  name: string
+  value: string
+  platforms?: string | string[]
+  desc?: string
+  compiler?: string[]
+}
+
+const TEMP_DOWNLOAD_FOLDER = 'taro-temp'
+
+export default function fetchTemplate (templateSource: string, templateRootPath: string, clone?: boolean): Promise<ITemplates[]> {
+  const type = getTemplateSourceType(templateSource)
+  const tempPath = path.join(templateRootPath, TEMP_DOWNLOAD_FOLDER)
+  let name: string
+  // eslint-disable-next-line no-async-promise-executor
+  return new Promise<void>(async (resolve) => {
+    // 下载文件的缓存目录
+    if (fs.existsSync(tempPath)) await fs.remove(tempPath)
+    await fs.mkdir(tempPath)
+
+    const spinner = ora(`正在从 ${templateSource} 拉取远程模板...`).start()
+
+    if (type === 'git') {
+      name = path.basename(templateSource)
+      download(templateSource, path.join(tempPath, name), { clone }, async error => {
+        if (error) {
+          console.log(error)
+          spinner.color = 'red'
+          spinner.fail(chalk.red('拉取远程模板仓库失败！'))
+          await fs.remove(tempPath)
+          return resolve()
+        }
+        spinner.color = 'green'
+        spinner.succeed(`${chalk.grey('拉取远程模板仓库成功！')}`)
+        resolve()
+      })
+    } else if (type === 'url') {
+      // url 模板源，因为不知道来源名称，临时取名方便后续开发者从列表中选择
+      name = 'from-remote-url'
+      const zipPath = path.join(tempPath, name + '.zip')
+      const unZipPath = path.join(tempPath, name)
+      axios.get<fs.ReadStream>(templateSource, { responseType: 'stream' })
+        .then(response => {
+          const ws = fs.createWriteStream(zipPath)
+          response.data.pipe(ws)
+          ws.on('finish', () => {
+            // unzip
+            const zip = new AdmZip(zipPath)
+            zip.extractAllTo(unZipPath, true)
+            const files = readDirWithFileTypes(unZipPath).filter(
+              file => !file.name.startsWith('.') && file.isDirectory && file.name !== '__MACOSX'
+            )
+
+            if (files.length !== 1) {
+              spinner.color = 'red'
+              spinner.fail(chalk.red(`拉取远程模板仓库失败！\n${new Error('远程模板源组织格式错误')}`))
+              return resolve()
+            }
+            name = path.join(name, files[0].name)
+
+            spinner.color = 'green'
+            spinner.succeed(`${chalk.grey('拉取远程模板仓库成功！')}`)
+            resolve()
+          })
+          ws.on('error', error => { throw error })
+        })
+        .catch(async error => {
+          spinner.color = 'red'
+          spinner.fail(chalk.red(`拉取远程模板仓库失败！\n${error}`))
+          await fs.remove(tempPath)
+          return resolve()
+        })
+    }
+  }).then(async () => {
+    const templateFolder = name ? path.join(tempPath, name) : ''
+
+    // 下载失败，只显示默认模板
+    if (!fs.existsSync(templateFolder)) return Promise.resolve([])
+
+    const isTemplateGroup = !(
+      fs.existsSync(path.join(templateFolder, 'package.json')) ||
+      fs.existsSync(path.join(templateFolder, 'package.json.tmpl'))
+    )
+
+    if (isTemplateGroup) {
+      // 模板组
+      const files = readDirWithFileTypes(templateFolder)
+        .filter(file => !file.name.startsWith('.') && file.isDirectory && file.name !== '__MACOSX')
+        .map(file => file.name)
+      await Promise.all(
+        files.map(file => {
+          const src = path.join(templateFolder, file)
+          const dest = path.join(templateRootPath, file)
+          return fs.move(src, dest, { overwrite: true })
+        })
+      )
+      await fs.remove(tempPath)
+
+      const res: ITemplates[] = files.map(name => {
+        const creatorFile = path.join(templateRootPath, name, TEMPLATE_CREATOR)
+
+        if (!fs.existsSync(creatorFile)) return { name, value: name }
+        const { name: displayName, platforms = '', desc = '', compiler } = require(creatorFile)
+
+        return {
+          name: displayName || name,
+          value: name,
+          platforms,
+          compiler,
+          desc
+        }
+      })
+      return Promise.resolve(res)
+    } else {
+      // 单模板
+      await fs.move(templateFolder, path.join(templateRootPath, name), { overwrite: true })
+      await fs.remove(tempPath)
+
+      let res: ITemplates = { name, value: name, desc: type === 'url' ? templateSource : '' }
+
+      const creatorFile = path.join(templateRootPath, name, TEMPLATE_CREATOR)
+
+      if (fs.existsSync(creatorFile)) {
+        const { name: displayName, platforms = '', desc = '', compiler } = require(creatorFile)
+
+        res = {
+          name: displayName || name,
+          value: name,
+          platforms,
+          compiler,
+          desc: desc || templateSource
+        }
+      }
+
+      return Promise.resolve([res])
+    }
+  })
+}
+
+```
+
+## write
+
+```ts
+write (cb?: () => void) {
+    this.conf.src = SOURCE_DIR
+    const { projectName, projectDir, template, autoInstall = true, framework, npm } = this.conf as IProjectConf
+    // 引入模板编写者的自定义逻辑
+    const templatePath = this.templatePath(template)
+    const handlerPath = path.join(templatePath, TEMPLATE_CREATOR)
+    const handler = fs.existsSync(handlerPath) ? require(handlerPath).handler : {}
+    createProject({
+      projectRoot: projectDir,
+      projectName,
+      template,
+      npm,
+      framework,
+      css: this.conf.css || CSSType.None,
+      autoInstall: autoInstall,
+      templateRoot: getRootPath(),
+      version: getPkgVersion(),
+      typescript: this.conf.typescript,
+      date: this.conf.date,
+      description: this.conf.description,
+      compiler: this.conf.compiler,
+      period: PeriodType.CreateAPP,
+    }, handler).then(() => {
+      cb && cb()
+    })
+  }
+```
+
+## template
+
+```ts
+const path = require('path')
+
+function createWhenTs (err, params) {
+  return !!params.typescript
+}
+
+function normalizePath (path) {
+  return path.replace(/\\/g, '/').replace(/\/{2,}/g, '/')
+}
+
+const SOURCE_ENTRY = '/src'
+const PAGES_ENTRY = '/src/pages'
+
+const handler = {
+  '/tsconfig.json': createWhenTs,
+  '/types/global.d.ts': createWhenTs,
+  '/types/vue.d.ts' (err, { framework, typescript }) {
+    return ['Vue3'].includes(framework) && !!typescript
+  },
+  '/src/pages/index/index.jsx' (err, { pageDir = '', pageName = '', subPkg = '' }) {
+    return {
+      setPageName: normalizePath(path.join(PAGES_ENTRY, pageDir, pageName, 'index.jsx')),
+      setSubPkgName: normalizePath(path.join(SOURCE_ENTRY, subPkg, pageDir, pageName, 'index.jsx'))
+    }
+  },
+  '/src/pages/index/index.css' (err, { pageDir = '', pageName = '', subPkg = '' }) {
+    return {
+      setPageName: normalizePath(path.join(PAGES_ENTRY, pageDir, pageName, 'index.css')),
+      setSubPkgName: normalizePath(path.join(SOURCE_ENTRY, subPkg, pageDir, pageName, 'index.css'))
+    }
+  },
+  '/src/pages/index/index.vue' (err, { pageDir = '', pageName = '', subPkg = '' }) {
+    return {
+      setPageName: normalizePath(path.join(PAGES_ENTRY, pageDir, pageName, 'index.vue')),
+      setSubPkgName: normalizePath(path.join(SOURCE_ENTRY, subPkg, pageDir, pageName, 'index.vue'))
+    }
+  },
+  '/src/pages/index/index.config.js' (err, { pageDir = '', pageName = '', subPkg = '' }) {
+    return {
+      setPageName: normalizePath(path.join(PAGES_ENTRY, pageDir, pageName, 'index.config.js')),
+      setSubPkgName: normalizePath(path.join(SOURCE_ENTRY, subPkg, pageDir, pageName, 'index.config.js'))
+    }
+  },
+  '/_editorconfig' () {
+    return { setPageName: `/.editorconfig` }
+  },
+  '/_env.development' () {
+    return { setPageName: `/.env.development` }
+  },
+  '/_env.production' () {
+    return { setPageName: `/.env.production` }
+  },
+  '/_env.test' () {
+    return { setPageName: `/.env.test` }
+  },
+  '/_eslintrc' () {
+    return { setPageName: `/.eslintrc` }
+  },
+  '/_gitignore' () {
+    return { setPageName: `/.gitignore` }
+  }
+}
+
+const basePageFiles = [
+  '/src/pages/index/index.jsx',
+  '/src/pages/index/index.vue',
+  '/src/pages/index/index.css',
+  '/src/pages/index/index.config.js'
+]
+
+module.exports = {
+  handler,
+  basePageFiles
+}
+
+```
+
+## rust createProject
+
+```rs
+#[napi]
+pub async fn create_project(
+  conf: Project,
+  handlers: HashMap<String, ThreadsafeFunction<CreateOptions>>,
+) -> Result<()> {
+  let project: Project = Project::new(
+    conf.project_root,
+    conf.project_name,
+    conf.npm,
+    conf.description,
+    conf.typescript,
+    conf.template,
+    conf.css,
+    conf.framework,
+    conf.auto_install,
+    conf.template_root,
+    conf.version,
+    conf.date,
+    conf.compiler,
+    conf.period,
+  );
+  let mut thread_safe_functions = HashMap::new();
+  for (key, callback) in handlers {
+    thread_safe_functions.insert(key, callback);
+  }
+  if let Err(e) = project.create(thread_safe_functions).await {
+    println!("创建项目错误，原因如下：");
+    println!("{:?}", e);
+    return Err(napi::Error::from_reason(format!("{:?}", e)));
+  }
+  Ok(())
+}
+```
+
 ## 总结
 
 ----
