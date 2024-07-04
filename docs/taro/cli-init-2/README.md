@@ -28,7 +28,7 @@ theme: smartblue
 等等
 ```
 
-关于如何调试代码等，参考第一篇文章。后续文章基本不再赘述。
+关于项目、环境准备，如何调试代码等，参考第一篇文章。后续文章基本不再赘述。
 
 ```ts
 import type { IPluginContext } from '@tarojs/service'
@@ -54,18 +54,7 @@ export default (ctx: IPluginContext) => {
       const { projectName, templateSource, clone, template, description, typescript, css, npm, framework, compiler, hideDefaultTemplate } = options
       const Project = require('../../create/project').default
       const project = new Project({
-        projectName,
-        projectDir: appPath,
-        npm,
-        templateSource,
-        clone,
-        template,
-        description,
-        typescript,
-        framework,
-        compiler,
-        hideDefaultTemplate,
-        css
+		// 省略若干代码...
       })
 
       project.create()
@@ -84,40 +73,41 @@ export default (ctx: IPluginContext) => {
 ```ts
 // packages/taro-cli/src/create/project.ts
 export default class Project extends Creator {
-	public rootPath: string;
-	public conf: IProjectConfOptions;
+  public rootPath: string
+  public conf: IProjectConfOptions
 
-	constructor(options: IProjectConfOptions) {
-		super(options.sourceRoot);
-		const unSupportedVer = semver.lt(process.version, "v7.6.0");
-		if (unSupportedVer) {
-			throw new Error("Node.js 版本过低，推荐升级 Node.js 至 v8.0.0+");
-		}
-		this.rootPath = this._rootPath;
+  constructor (options: IProjectConfOptions) {
+    super(options.sourceRoot)
+    const unSupportedVer = semver.lt(process.version, 'v18.0.0')
+    if (unSupportedVer) {
+      throw new Error('Node.js 版本过低，推荐升级 Node.js 至 v18.0.0+')
+    }
+    this.rootPath = this._rootPath
 
-		this.conf = Object.assign(
-			{
-				projectName: "",
-				projectDir: "",
-				template: "",
-				description: "",
-				npm: "",
-			},
-			options
-		);
-	}
-	async create() {
-		try {
-			const answers = await this.ask();
-			const date = new Date();
-			this.conf = Object.assign(this.conf, answers);
-			this.conf.date = `${date.getFullYear()}-${
-				date.getMonth() + 1
-			}-${date.getDate()}`;
-			this.write();
-		} catch (error) {
-			console.log(chalk.red("创建项目失败: ", error));
-		}
+    this.conf = Object.assign(
+      {
+        projectName: '',
+        projectDir: '',
+        template: '',
+        description: '',
+        npm: ''
+      },
+      options
+    )
+  }
+}
+```
+
+```ts
+async create () {
+	try {
+		const answers = await this.ask()
+		const date = new Date()
+		this.conf = Object.assign(this.conf, answers)
+		this.conf.date = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+		this.write()
+	} catch (error) {
+		console.log(chalk.red('创建项目失败: ', error))
 	}
 }
 ```
@@ -127,6 +117,8 @@ export default class Project extends Creator {
 把用户反馈的结果和之前的配置合并起来。
 写入文件，初始化模板项目。
 具体代码细节，所以本文在此先不展开深入学习了。我打算再单独写一篇文章来讲述。
+
+我们来看 `ask` 方法。
 
 ## ask
 
@@ -157,6 +149,10 @@ async ask () {
     }
   }
 ```
+
+inquirer.prompt
+
+我们继续来看 `askProjectName` 方法。
 
 ## askProjectName
 
@@ -820,7 +816,243 @@ pub async fn create_project(
 }
 ```
 
+## create
+
+```rs
+// crates/taro_init/src/project.rs
+pub async fn create(
+    &self,
+    js_handlers: HashMap<String, ThreadsafeFunction<CreateOptions>>,
+  ) -> anyhow::Result<()> {
+    let project_path = PathBuf::from(&self.project_root).join(&self.project_name);
+    let project_path_str = project_path.to_string_lossy().to_string();
+    let creator = Creator::new(self.template_root.clone(), project_path_str.clone());
+    let template_path = creator.get_template_path(&[&self.template]);
+    let filter = &FILE_FILTER;
+    let all_files = get_all_files_in_folder(template_path.clone(), filter, None)?;
+    let mut create_options = CreateOptions {
+      css: Some(self.css.clone()),
+      css_ext: None,
+      framework: Some(self.framework.clone()),
+      description: self.description.clone(),
+      project_name: self.project_name.clone(),
+      version: Some(self.version.clone()),
+      date: self.date.clone(),
+      typescript: self.typescript.clone(),
+      template: self.template.clone(),
+      page_name: Some("index".to_string()),
+      compiler: self.compiler.clone(),
+      set_page_name: None,
+      set_sub_pkg_page_name: None,
+      sub_pkg: None,
+      page_dir: None,
+      change_ext: None,
+      is_custom_template: None,
+      plugin_type: None,
+    };
+    let all_files = all_files.iter().filter_map(|f| f.to_str()).collect::<Vec<_>>();
+    println!();
+    println!(
+      "{} {}",
+      style("✔").green(),
+      format!(
+        "{}{}",
+        style("创建项目: ").color256(238),
+        style(self.project_name.as_str()).color256(238).bold()
+      )
+    );
+    creator
+      .create_files(
+        all_files.as_slice(),
+        template_path.as_str(),
+        &mut create_options,
+        &js_handlers,
+      )
+      .await?;
+    // 当选择 rn 模板时，替换默认项目名
+    if self.template.eq("react-native") {
+      change_default_name_in_template(
+        &self.project_name,
+        template_path.as_str(),
+        project_path_str.as_str(),
+      )
+      .await?;
+    }
+    println!();
+    init_git(&self.project_name, project_path_str.as_str())?;
+    let auto_install = self.auto_install.unwrap_or(true);
+    if auto_install {
+      install_deps(&self.npm, || self.call_success()).await?;
+    } else {
+      self.call_success();
+    }
+    Ok(())
+  }
+```
+
+### creator.create_files
+
+```rs
+// crates/taro_init/src/creator.rs
+pub async fn create_files(
+    &self,
+    files: &[&str],
+    template_path: &str,
+    options: &mut CreateOptions,
+    js_handlers: &HashMap<String, ThreadsafeFunction<CreateOptions>>,
+  ) -> anyhow::Result<()> {
+    let current_style_ext = STYLE_EXT_MAP
+      .get(&options.css.unwrap_or(CSSType::None))
+      .unwrap_or(&"css");
+    options.css_ext = Some(current_style_ext.to_string());
+    for file in files {
+      let file_relative_path = normalize_path_str(file.replace(template_path, "").as_str());
+      let framework = options.framework;
+      let is_vue_framework = framework.is_some_and(|framework| framework == FrameworkType::Vue3);
+      if is_vue_framework && file_relative_path.ends_with(".jsx") {
+        continue;
+      }
+      if !is_vue_framework && file_relative_path.ends_with(".vue") {
+        continue;
+      }
+      let mut need_create_file = true;
+      let mut page_name = file_relative_path.clone();
+      let mut change_ext = true;
+      let is_typescript = options.typescript.unwrap_or(false);
+      // let is_custom_template = options.is_custom_template.unwrap_or(false);
+      if js_handlers.contains_key(&file_relative_path) {
+        let js_handler = js_handlers.get(&file_relative_path).unwrap().clone();
+        let result = js_handler
+          .call_async::<JSReturn>(Ok(options.clone()))
+          .await
+          .with_context(|| format!("模板自定义函数调用失败: {}", file_relative_path))?;
+        match result {
+          JSReturn::Boolean(boolean) => {
+            need_create_file = boolean;
+          }
+          JSReturn::Object(obj) => {
+            let set_page_name = obj.set_page_name;
+            let change_ext_re = obj.change_ext;
+            let set_sub_pkg_page_name = obj.set_sub_pkg_page_name;
+            let sub_pkg = &options.sub_pkg;
+            if sub_pkg.is_some() {
+              // 创建分包页面模式
+              if let Some(set_sub_pkg_page_name) = set_sub_pkg_page_name {
+                page_name = set_sub_pkg_page_name;
+              }
+            } else {
+              if let Some(set_page_name) = set_page_name {
+                page_name = set_page_name;
+              }
+            }
+            if let Some(change_ext_re) = change_ext_re {
+              change_ext = change_ext_re;
+            }
+          }
+        };
+      }
+      if need_create_file {
+        let mut dest_re_path = page_name;
+        if dest_re_path.starts_with("/") {
+          dest_re_path = dest_re_path[1..].to_string();
+        }
+        if is_typescript
+          && change_ext
+          && (dest_re_path.ends_with(".js") || dest_re_path.ends_with(".jsx"))
+          && !(dest_re_path.ends_with("babel.config.js") || dest_re_path.ends_with(".eslintrc.js"))
+        {
+          dest_re_path = dest_re_path.replace(".js", ".ts");
+        }
+        if change_ext && dest_re_path.ends_with(".css") {
+          dest_re_path = dest_re_path.replace(".css", format!(".{}", current_style_ext).as_str());
+        }
+        let file_relative_path = format!("{}{}", template_path, file_relative_path);
+        // if is_custom_template {
+        //   file_relative_path = format!("{}/{}", template_path, file_relative_path);
+        // }
+        let dest_path = self.get_destination_path(&[&dest_re_path]);
+        let from_path: String = PathBuf::from(file_relative_path)
+          .to_string_lossy()
+          .to_string();
+        self
+          .tempate(from_path.as_str(), dest_path.as_str(), &options.clone())
+          .await?;
+        println!(
+          "{} {}",
+          style("✔").green(),
+          style("创建文件: ".to_owned() + dest_path.as_str()).color256(238)
+        );
+      }
+    }
+    Ok(())
+  }
+```
+
+### creator.tempate
+
+```rs
+// crates/taro_init/src/creator.rs
+
+pub async fn tempate(
+    &self,
+    from_path: &str,
+    dest_path: &str,
+    options: &CreateOptions,
+  ) -> anyhow::Result<()> {
+    if MEDIA_REGEX.is_match(from_path) {
+      let dir_name = PathBuf::from(dest_path)
+        .parent()
+        .unwrap()
+        .to_string_lossy()
+        .to_string();
+      async_fs::create_dir_all(&dir_name)
+        .await
+        .with_context(|| format!("文件夹创建失败: {}", dir_name))?;
+      async_fs::copy(from_path, dest_path)
+        .await
+        .with_context(|| format!("文件复制失败: {}", from_path))?;
+      return Ok(());
+    }
+    generate_with_template(from_path, dest_path, options).await?;
+    Ok(())
+  }
+```
+
+### utils generate_with_template
+
+```rs
+// crates/taro_init/src/utils.rs
+pub async fn generate_with_template(from_path: &str, dest_path: &str, data: &impl serde::Serialize) -> anyhow::Result<()> {
+  let form_template = async_fs::read(from_path).await.with_context(|| format!("文件读取失败: {}", from_path))?;
+  let from_template = String::from_utf8_lossy(&form_template);
+  let template = if from_template == "" {
+    "".to_string()
+  } else {
+    HANDLEBARS.render_template(&from_template, data).with_context(|| format!("模板渲染失败: {}", from_path))?
+  };
+  let dir_name = Path::new(dest_path).parent().unwrap().to_string_lossy().to_string();
+  async_fs::create_dir_all(&dir_name).await.with_context(|| format!("文件夹创建失败: {}", dir_name))?;
+  let metadata = async_fs::metadata(from_path).await.with_context(|| format!("文件读取失败: {}", from_path))?;
+  async_fs::write(dest_path, template).await.with_context(|| format!("文件写入失败: {}", dest_path))?;
+  #[cfg(unix)]
+  async_fs::set_permissions(dest_path, metadata.permissions()).await.with_context(|| format!("文件权限设置失败: {}", dest_path))?;
+  Ok(())
+}
+```
+
 ## 总结
+
+
+[Handlebars](https://handlebarsjs.com/zh/guide/#%E4%BB%A3%E7%A0%81%E7%89%87%E6%AE%B5)
+
+[handlebars 用法](https://handlebarsjs.com/zh/installation/#%E7%94%A8%E6%B3%95)
+
+[handlebars-rust实现](https://github.com/sunng87/handlebars-rust)
+
+[crates/handlebars](https://crates.io/crates/handlebars)
+
+[rust-lang.org](https://www.rust-lang.org/zh-CN/)
+
 
 ----
 
