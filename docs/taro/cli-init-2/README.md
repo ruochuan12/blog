@@ -30,6 +30,12 @@ theme: smartblue
 
 关于项目、环境准备，如何调试代码等，参考第一篇文章。后续文章基本不再赘述。
 
+```bash
+npx @tarojs/cli@beta init taro4-beta
+```
+
+![初始化1](./images/taro-init-gif-high-2.gif)
+
 ```ts
 import type { IPluginContext } from '@tarojs/service'
 
@@ -97,6 +103,35 @@ export default class Project extends Creator {
   }
 }
 ```
+
+`init` 函数。
+
+```ts
+export default class Creator {
+  protected _rootPath: string
+  public rootPath: string
+
+  constructor (sourceRoot?: string) {
+    this.rootPath = this.sourceRoot(sourceRoot || path.join(getRootPath()))
+    this.init()
+  }
+}
+```
+
+```ts
+init () {
+    clearConsole()
+    console.log(chalk.green('Taro 即将创建一个新项目!'))
+    console.log(`Need help? Go and open issue: ${chalk.blueBright('https://tls.jd.com/taro-issue-helper')}`)
+    console.log()
+}
+```
+
+输出就是这个图
+![初始化](./images/taro-init-1.png)
+
+![初始化2](./images/taro-init-2.png)
+
 
 ```ts
 async create () {
@@ -1041,6 +1076,10 @@ pub async fn generate_with_template(from_path: &str, dest_path: &str, data: &imp
 ```
 
 ## 总结
+
+命令行交互式选择使用的是 [inquirer](https://www.npmjs.com/package/inquirer) `inquirer.prompt` 实现。
+创建文件部分是使用 rust 实现的。
+模板部分使用的是 [handlebars](https://github.com/sunng87/handlebars-rust) 实现。
 
 
 [Handlebars](https://handlebarsjs.com/zh/guide/#%E4%BB%A3%E7%A0%81%E7%89%87%E6%AE%B5)
