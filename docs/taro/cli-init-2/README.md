@@ -9,7 +9,7 @@ theme: smartblue
 
 大家好，我是[若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（5.8k+人）第一的专栏，写有几十篇源码文章。
 
-截止目前（`2024-06-14`），`taro` 正式版是 `3.6.31`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。所以我们直接学习 `4.x`，`4.x` 最新版本是 `4.0.0-beta.83`。
+截止目前（`2024-07-07`），`taro` 正式版是 `3.6.32`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。所以我们直接学习 `4.x`，`4.x` 最新版本是 `4.0.0-beta.115`。
 
 计划写一个 `taro` 源码揭秘系列，欢迎持续关注。初步计划有如下文章：
 
@@ -22,25 +22,22 @@ theme: smartblue
 学完本文，你将学到：
 
 ```bash
-1. 如何合并预设插件集合和插件（CLI、用户项目（config/index.ts）、全局插件`/Users/用户名/.taro-global-config`）
-2. 插件是如何注册的
-3. 插件如何调用的
+1.
 等等
 ```
 
-关于项目、环境准备，如何调试代码等，参考[第一篇文章-准备工作](https://juejin.cn/post/7378363694939783178#heading-1)。后续文章基本不再赘述。
+关于项目、环境准备，如何调试代码等，参考[第一篇文章-准备工作、调试](https://juejin.cn/post/7378363694939783178#heading-1)。后续文章基本不再赘述。
 
 众所周知，我们最开始初始化项目时都是使用 `taro init` 命令，本文我们继续来学习这个命令是如何实现的。
 
 我们可以通过[npm-dist-tag 文档](https://docs.npmjs.com/cli/v6/commands/npm-dist-tag) 命令来查看 `@tarojs/cli` 包的所有 `tag` 版本。
 
 ```bash
-npm dist-tag ls @tarojs/cli
+npm dist-tag @tarojs/cli
 ```
 
-如图所示
-
-![npm dist-tag ls @tarojs/cli](./images/taro-cli-npm-dist-tag.png)
+如图所示：
+![npm dist-tag @tarojs/cli](./images/taro-cli-npm-dist-tag.png)
 
 全局安装相对麻烦，我们不全局安装，使用 `npx` 来运行 `beta tag` 版本。
 
@@ -96,7 +93,7 @@ export default (ctx: IPluginContext) => {
 
 我们重点来看 `packages/taro-cli/src/create/project.ts` 的 `Project` 类的实现，和 `create` 方法。
 
-## project.create 创建项目
+## Project.create 创建项目
 
 ```ts
 // packages/taro-cli/src/create/project.ts
@@ -136,6 +133,7 @@ semver 是一个版本号比较库，可以用来判断 node 版本是否符合�
 我们继续来看 `Creator` 类，构造函数中调用了 `init` 方法。
 
 ```ts
+// packages/taro-cli/src/create/creator.ts
 export default class Creator {
   protected _rootPath: string
   public rootPath: string
@@ -150,6 +148,7 @@ export default class Creator {
 所以继续来看 `init` 方法。
 
 ```ts
+// packages/taro-cli/src/create/project.ts
 init () {
     clearConsole()
     console.log(chalk.green('Taro 即将创建一个新项目!'))
@@ -158,14 +157,17 @@ init () {
 }
 ```
 
-输出就是这个图
+输出就是这个图：
 ![初始化](./images/taro-init-1.png)
 
 其中`获取 taro 全局配置成功`是指获取 `~/.taro-global-config/index.json` 文件的插件集 `presets` 和插件 `plugins`。[第一篇文章 6.2.2 config.initGlobalConfig 初始化全局配置](https://juejin.cn/post/7378363694939783178#heading-12)中有详细讲述，`spinner.succeed('获取 taro 全局配置成功')` 这里就不再赘述了。
 
 我们来看 `create` 方法。
 
+### project.create 创建项目
+
 ```ts
+// packages/taro-cli/src/create/project.ts
 async create () {
 	try {
 		const answers = await this.ask()
@@ -189,6 +191,7 @@ async create () {
 ## ask
 
 ```ts
+// packages/taro-cli/src/create/project.ts
 async ask () {
     let prompts: Record<string, unknown>[] = []
     const conf = this.conf
@@ -264,16 +267,16 @@ askProjectName: AskMethods = function (conf, prompts) {
 
 其中 `const answers = await inquirer.prompt<IProjectConf>(prompts)` 这行，
 
-`inquirer` 是一个命令行交互库，可以用来创建命令行程序。它的 npm 包地址是 [https://www.npmjs.com/package/inquirer](https://www.npmjs.com/package/inquirer)。
+[`inquirer`](https://www.npmjs.com/package/inquirer) 是一个命令行交互库，可以用来创建命令行程序。
 
 简单来说 `ask` 方法就是一系列的 `inquirer` 交互。
 
 询问用户输入项目名称、描述、框架（PReact、）、是否启用TS、CSS预处理器（）、编译工具（webpack、vite）、包管理工具（npm、yarn、pnpm）等。
 
-
 ## askTemplateSource
 
 ```ts
+// packages/taro-cli/src/create/project.ts
 askTemplateSource: AskMethods = async function (conf, prompts) {
     if (conf.template === 'default' || conf.templateSource) return
 
@@ -357,6 +360,7 @@ askTemplateSource: AskMethods = async function (conf, prompts) {
 ### getOpenSourceTemplates
 
 ```ts
+// packages/taro-cli/src/create/project.ts
 function getOpenSourceTemplates (platform: string) {
   return new Promise((resolve, reject) => {
     const spinner = ora({ text: '正在拉取开源模板列表...', discardStdin: false }).start()
@@ -382,6 +386,7 @@ function getOpenSourceTemplates (platform: string) {
 ## fetchTemplates
 
 ```ts
+// packages/taro-cli/src/create/project.ts
 async fetchTemplates (answers: IProjectConf): Promise<ITemplates[]> {
     const { templateSource, framework, compiler } = answers
     this.conf.templateSource = this.conf.templateSource || templateSource
@@ -613,6 +618,8 @@ write (cb?: () => void) {
   }
 ```
 
+createProject 绑定实现 rust
+
 ## template
 
 ```ts
@@ -692,6 +699,8 @@ module.exports = {
 }
 
 ```
+
+[解锁前端新潜能：如何使用 Rust 锈化前端工具链](https://juejin.cn/post/7321410906426998810)
 
 ## rust createProject
 
@@ -805,7 +814,6 @@ pub async fn create(
 ```
 
 ![初始化2，创建项目](./images/taro-init-2.png)
-
 
 ### creator.create_files
 
@@ -982,6 +990,3 @@ pub async fn generate_with_template(from_path: &str, dest_path: &str, data: &imp
 作者：常以**若川**为名混迹于江湖。所知甚少，唯善学。[若川的博客](https://ruochuan12.github.io)
 
 最后可以持续关注我[@若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（5.8k+人）第一的专栏，写有几十篇源码文章。
-
-
-[解锁前端新潜能：如何使用 Rust 锈化前端工具链](https://juejin.cn/post/7321410906426998810)
