@@ -7,9 +7,9 @@ theme: smartblue
 
 ## 1. 前言
 
-大家好，我是[若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（5.8k+人）第一的专栏，写有几十篇源码文章。
+大家好，我是[若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
 
-截止目前（`2024-07-07`），`taro` 正式版是 `3.6.32`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。所以我们直接学习 `4.x`，`4.x` 最新版本是 `4.0.0-beta.115`。
+截至目前（`2024-07-07`），`taro` 正式版是 `3.6.32`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。所以我们直接学习 `4.x`，`4.x` 分支最新 `beta` 版本是 `4.0.0-beta.116`。
 
 计划写一个 `taro` 源码揭秘系列，欢迎持续关注。初步计划有如下文章：
 
@@ -27,10 +27,11 @@ theme: smartblue
 ```
 
 关于克隆项目、环境准备、如何调试代码等，参考[第一篇文章-准备工作、调试](https://juejin.cn/post/7378363694939783178#heading-1)。后续文章基本不再过多赘述。
+>**文章中基本是先放源码，源码中不做过多解释。源码后面再做简单讲述。**
 
 众所周知，我们最开始初始化项目时都是使用 `taro init` 命令，本文我们继续来学习这个命令是如何实现的。
 
-我们可以通过[npm-dist-tag 文档](https://docs.npmjs.com/cli/v6/commands/npm-dist-tag) 命令来查看 `@tarojs/cli` 包的所有 `tag` 版本。
+我们可以通过 [npm-dist-tag 文档](https://docs.npmjs.com/cli/v6/commands/npm-dist-tag) 命令来查看 `@tarojs/cli` 包的所有 `tag` 版本。
 
 ```bash
 npm dist-tag @tarojs/cli
@@ -51,7 +52,7 @@ npx @tarojs/cli@beta init taro4-beta
 
 我们接下来就是一步步来分析这个 `gif` 中的每一个步骤的实现原理。
 
-## 2. init
+## 2. init 命令行
 
 插件机制
 最终调用的是这个命令。
@@ -93,7 +94,7 @@ export default (ctx: IPluginContext) => {
 
 我们重点来看 `packages/taro-cli/src/create/project.ts` 的 `Project` 类的实现，和 `create` 方法。
 
-## Project.create 创建项目
+## new Project 构造函数
 
 ```ts
 // packages/taro-cli/src/create/project.ts
@@ -126,7 +127,7 @@ export default class Project extends Creator {
 `Project` 继承了 `Creator` 类。
 
 构造函数中，使用 semver.lt 判断当前 node 版本是否低于 `v18.0.0`，如果低于则报错。
-semver 是一个版本号比较库，可以用来判断 node 版本是否符合要求。它的 npm 包地址是 [https://www.npmjs.com/package/semver](https://www.npmjs.com/package/semver)。
+[semver](https://www.npmjs.com/package/semver) 是一个版本号比较库，可以用来判断 `node` 版本是否符合要求。
 
 其次就是初始化 `this.rootPath` 和 `this.conf`。
 
@@ -158,11 +159,13 @@ init () {
 ```
 
 输出就是这个图：
-![初始化](./images/taro-init-1.png)
+![初始化](./images/taro-init-0.png)
 
-其中`获取 taro 全局配置成功`是指获取 `~/.taro-global-config/index.json` 文件的插件集 `presets` 和插件 `plugins`。[第一篇文章 6.2.2 config.initGlobalConfig 初始化全局配置](https://juejin.cn/post/7378363694939783178#heading-12)中有详细讲述，`spinner.succeed('获取 taro 全局配置成功')` 这里就不再赘述了。
+其中输出`👽 Taro v4.0.0-beta.116`是版本。
 
-我们来看 `create` 方法。
+输出`获取 taro 全局配置成功`是指获取 `~/.taro-global-config/index.json` 文件的插件集 `presets` 和插件 `plugins`。[第一篇文章 6.2.2 config.initGlobalConfig 初始化全局配置](https://juejin.cn/post/7378363694939783178#heading-12)中有详细讲述，`spinner.succeed('获取 taro 全局配置成功')` 这里就不再赘述了。
+
+看完了 `Project` 构造函数，我们来看 `Project` 类的 `create` 方法。
 
 ### project.create 创建项目
 
@@ -222,6 +225,9 @@ async ask () {
 这个方法主要做了四件事：
 1. 询问
 2.
+
+如图所示：
+![初始化](./images/taro-init-1.png)
 
 inquirer.prompt
 
@@ -618,11 +624,16 @@ write (cb?: () => void) {
   }
 ```
 
-createProject 绑定实现 rust
+write 函数主要做了以下几件事情：
 
-## template
+- 获取用户输入的参数，包括项目名称、项目目录、模板名称等。
+- 引入模板编写者的自定义逻辑。
+- 调用 createProject 函数，传入用户输入的参数和模板编写者的自定义逻辑。
+
+### template
 
 ```ts
+// packages/taro-cli/templates/default/template_creator.js
 const path = require('path')
 
 function createWhenTs (err, params) {
@@ -700,11 +711,17 @@ module.exports = {
 
 ```
 
-[解锁前端新潜能：如何使用 Rust 锈化前端工具链](https://juejin.cn/post/7321410906426998810)
-
 ## rust createProject
 
+改造这部分代码的作者`@luckyadam`，写了一篇文章。[解锁前端新潜能：如何使用 Rust 锈化前端工具链](https://juejin.cn/post/7321410906426998810)
+
+简单来说就是：[napi-rs](https://napi.rs/)
+
+>安装 `VSCode` 插件 [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer) 和调试代码的插件 [CodeLLDB](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.lldb-dap)
+
 ```rs
+// crates/native_binding/src/lib.rs
+
 #[napi]
 pub async fn create_project(
   conf: Project,
@@ -739,7 +756,7 @@ pub async fn create_project(
 }
 ```
 
-## create
+### create
 
 ```rs
 // crates/taro_init/src/project.rs
@@ -965,12 +982,21 @@ pub async fn generate_with_template(from_path: &str, dest_path: &str, data: &imp
 }
 ```
 
+`HANDLEBARS.render_template` [handlebars-rust实现](https://github.com/sunng87/handlebars-rust)
+
+[Handlebars](https://handlebarsjs.com/zh/guide/#%E4%BB%A3%E7%A0%81%E7%89%87%E6%AE%B5)
+
+[handlebars 用法](https://handlebarsjs.com/zh/installation/#%E7%94%A8%E6%B3%95)
+
+[crates/handlebars](https://crates.io/crates/handlebars)
+
+[rust-lang.org](https://www.rust-lang.org/zh-CN/)
+
 ## 总结
 
 命令行交互式选择使用的是 [inquirer](https://www.npmjs.com/package/inquirer) `inquirer.prompt` 实现。
 创建文件部分是使用 rust 实现的。
 模板部分使用的是 [handlebars](https://github.com/sunng87/handlebars-rust) 实现。
-
 
 [Handlebars](https://handlebarsjs.com/zh/guide/#%E4%BB%A3%E7%A0%81%E7%89%87%E6%AE%B5)
 
@@ -989,4 +1015,4 @@ pub async fn generate_with_template(from_path: &str, dest_path: &str, data: &imp
 
 作者：常以**若川**为名混迹于江湖。所知甚少，唯善学。[若川的博客](https://ruochuan12.github.io)
 
-最后可以持续关注我[@若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（5.8k+人）第一的专栏，写有几十篇源码文章。
+最后可以持续关注我[@若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
