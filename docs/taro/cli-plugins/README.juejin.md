@@ -27,9 +27,7 @@ theme: smartblue
 等等
 ```
 
-关于如何调试代码等，参考第一篇文章。后续文章基本不再赘述。
-
-[Taro 源码揭秘 - 1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
+关于克隆项目、环境准备、如何调试代码等，参考[第一篇文章-准备工作、调试](https://juejin.cn/post/7378363694939783178#heading-1)。后续文章基本不再过多赘述。
 
 上一篇文章中提到 `CLI` 最终执行的是 `Kernel` (内核) 中的 `run` 函数，其中 `this.initPresetsAndPlugins` 初始化预设插件集合和插件没讲述。
 
