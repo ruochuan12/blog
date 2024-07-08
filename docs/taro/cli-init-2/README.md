@@ -9,7 +9,7 @@ theme: smartblue
 
 大家好，我是[若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
 
-截至目前（`2024-07-07`），`taro` 正式版是 `3.6.32`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。所以我们直接学习 `4.x`，`4.x` 分支最新 `beta` 版本是 `4.0.0-beta.116`。
+截至目前（`2024-07-09`），`taro` 正式版是 `3.6.33`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。所以我们直接学习 `4.x`，`4.x` 分支最新 `beta` 版本是 `4.0.0-beta.116`。
 
 计划写一个 `taro` 源码揭秘系列，欢迎持续关注。初步计划有如下文章：
 
@@ -22,12 +22,13 @@ theme: smartblue
 学完本文，你将学到：
 
 ```bash
+TODO:
 1.
 等等
 ```
 
 关于克隆项目、环境准备、如何调试代码等，参考[第一篇文章-准备工作、调试](https://juejin.cn/post/7378363694939783178#heading-1)。后续文章基本不再过多赘述。
->**文章中基本是先放源码，源码中不做过多解释。源码后面再做简单讲述。**
+>文章中基本是先放源码，源码中不做过多解释。源码后面再做简单讲述。
 
 众所周知，我们最开始初始化项目时都是使用 `taro init` 命令，本文我们继续来学习这个命令是如何实现的。
 
@@ -52,10 +53,11 @@ npx @tarojs/cli@beta init taro4-beta
 
 我们接下来就是一步步来分析这个 `gif` 中的每一个步骤的实现原理。
 
-## 2. init 命令行
+## 2. init 命令行 fn 函数
 
-插件机制
-最终调用的是这个命令。
+根据前面两篇[1. taro cli init](https://juejin.cn/post/7378363694939783178)、[2. taro 插件机制](https://juejin.cn/spost/7380195796208205824) 文章，我们可以得知：`taro init` 初始化命令，最终调用的是 `packages/taro-cli/src/presets/commands/init.ts` 文件中的 `ctx.registerCommand` 注册的 `init` 命令行的 `fn` 函数。
+
+TODO: 调试：
 
 ```ts
 // packages/taro-cli/src/presets/commands/init.ts
@@ -92,6 +94,11 @@ export default (ctx: IPluginContext) => {
 
 ```
 
+`fn` 函数，其中 `options` 参数是 `init` 命令行中的所有参数。
+主要做了如下几件事：
+
+- 读取组合各种参数，初始化 `project` 对象，并调用 `create` 方法。
+
 我们重点来看 `packages/taro-cli/src/create/project.ts` 的 `Project` 类的实现，和 `create` 方法。
 
 ## new Project 构造函数
@@ -126,7 +133,7 @@ export default class Project extends Creator {
 
 `Project` 继承了 `Creator` 类。
 
-构造函数中，使用 semver.lt 判断当前 node 版本是否低于 `v18.0.0`，如果低于则报错。
+构造函数中，使用 semver.lt 判断当前 `node` 版本是否低于 `v18.0.0`，如果低于则报错。
 [semver](https://www.npmjs.com/package/semver) 是一个版本号比较库，可以用来判断 `node` 版本是否符合要求。
 
 其次就是初始化 `this.rootPath` 和 `this.conf`。
@@ -161,7 +168,7 @@ init () {
 输出就是这个图：
 ![初始化](./images/taro-init-0.png)
 
-其中输出`👽 Taro v4.0.0-beta.116`是版本。
+其中`👽 Taro v4.0.0-beta.116` 输出的是 `tarojs-cli/package.json` 的版本，[第一篇文章 4. taro-cli/src/utils/index.ts](https://juejin.cn/post/7378363694939783178#heading-6)中有详细讲述，这里就不再赘述了。
 
 输出`获取 taro 全局配置成功`是指获取 `~/.taro-global-config/index.json` 文件的插件集 `presets` 和插件 `plugins`。[第一篇文章 6.2.2 config.initGlobalConfig 初始化全局配置](https://juejin.cn/post/7378363694939783178#heading-12)中有详细讲述，`spinner.succeed('获取 taro 全局配置成功')` 这里就不再赘述了。
 
@@ -184,14 +191,15 @@ async create () {
 }
 ```
 
-`create` 函数主要做了三件事：
-询问用户输入项目名称、描述、模板、CSS预处理器、包管理工具等。
-把用户反馈的结果和之前的配置合并起来。
-写入文件，初始化模板项目。
+`create` 函数主要做了以下几件事：
+
+- 调用 ask 询问用户输入项目名称、描述、CSS预处理器、包管理工具等。
+- 把用户反馈的结果和之前的配置合并起来，得到 `this.conf`。
+- 调用 write 方法，写入文件，初始化模板项目。
 
 我们来看 `ask` 方法。
 
-## ask
+## ask 询问用户输入项目名称、描述等
 
 ```ts
 // packages/taro-cli/src/create/project.ts
@@ -222,18 +230,17 @@ async ask () {
   }
 ```
 
-这个方法主要做了四件事：
-1. 询问
-2.
+简单来说 `ask` 方法就是一系列的 `inquirer` 交互。
+>[`inquirer`](https://www.npmjs.com/package/inquirer) 是一个命令行交互库，可以用来创建命令行程序。
+
+如果参数中没指定相应参数，那么就询问用户输入项目名称、描述、选择框架（React、PReact、Vue3、Solid）、是否启用TS、CSS预处理器（Sass、less、Stylus、无等）、编译工具（webpack、vite）、包管理工具（npm、yarn、pnpm）等。
 
 如图所示：
 ![初始化](./images/taro-init-1.png)
 
-inquirer.prompt
+我们来看第一个 `askProjectName` 方法。
 
-我们继续来看 `askProjectName` 方法。后面的方法就不再赘述了，都是类似的。
-
-## askProjectName
+### askProjectName 询问项目名称
 
 ```ts
 askProjectName: AskMethods = function (conf, prompts) {
@@ -271,15 +278,9 @@ askProjectName: AskMethods = function (conf, prompts) {
   }
 ```
 
-其中 `const answers = await inquirer.prompt<IProjectConf>(prompts)` 这行，
+后面的 `askDescription`、`askFramework`、`askFramework`、`askTypescript`、`askCSS`、`askCompiler`、`askNpm`，都是类似方法，就不再赘述了。
 
-[`inquirer`](https://www.npmjs.com/package/inquirer) 是一个命令行交互库，可以用来创建命令行程序。
-
-简单来说 `ask` 方法就是一系列的 `inquirer` 交互。
-
-询问用户输入项目名称、描述、框架（PReact、）、是否启用TS、CSS预处理器（）、编译工具（webpack、vite）、包管理工具（npm、yarn、pnpm）等。
-
-## askTemplateSource
+### askTemplateSource 询问模板源
 
 ```ts
 // packages/taro-cli/src/create/project.ts
@@ -363,7 +364,7 @@ askTemplateSource: AskMethods = async function (conf, prompts) {
   }
 ```
 
-### getOpenSourceTemplates
+### getOpenSourceTemplates 请选择社区模板源
 
 ```ts
 // packages/taro-cli/src/create/project.ts
@@ -389,7 +390,7 @@ function getOpenSourceTemplates (platform: string) {
 }
 ```
 
-## fetchTemplates
+### fetchTemplates 获取模板列表
 
 ```ts
 // packages/taro-cli/src/create/project.ts
@@ -593,9 +594,10 @@ export default function fetchTemplate (templateSource: string, templateRootPath:
 
 ```
 
-## write
+## write 写入项目
 
 ```ts
+
 write (cb?: () => void) {
     this.conf.src = SOURCE_DIR
     const { projectName, projectDir, template, autoInstall = true, framework, npm } = this.conf as IProjectConf
@@ -713,9 +715,13 @@ module.exports = {
 
 ## rust createProject
 
-改造这部分代码的作者`@luckyadam`，写了一篇文章。[解锁前端新潜能：如何使用 Rust 锈化前端工具链](https://juejin.cn/post/7321410906426998810)
+```ts
+import { CompilerType, createProject, CSSType, FrameworkType, NpmType, PeriodType } from '@tarojs/binding'
+```
 
-简单来说就是：[napi-rs](https://napi.rs/)
+简单来说就是：通过 [napi-rs](https://napi.rs/) 把`create_project`函数暴露给`nodejs`，然后通过 `nodejs` 调用 `rust` 的 `create_project` 函数。
+
+用 `rust` 改造 `taro init` 这部分代码的作者 `@luckyadam`，写了一篇文章。可以参考学习[解锁前端新潜能：如何使用 Rust 锈化前端工具链](https://juejin.cn/post/7321410906426998810)
 
 >安装 `VSCode` 插件 [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer) 和调试代码的插件 [CodeLLDB](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.lldb-dap)
 
@@ -1007,7 +1013,6 @@ pub async fn generate_with_template(from_path: &str, dest_path: &str, data: &imp
 [crates/handlebars](https://crates.io/crates/handlebars)
 
 [rust-lang.org](https://www.rust-lang.org/zh-CN/)
-
 
 ----
 
