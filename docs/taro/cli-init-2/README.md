@@ -57,7 +57,29 @@ npx @tarojs/cli@beta init taro4-beta
 
 根据前面两篇[1. taro cli init](https://juejin.cn/post/7378363694939783178)、[2. taro 插件机制](https://juejin.cn/spost/7380195796208205824) 文章，我们可以得知：`taro init` 初始化命令，最终调用的是 `packages/taro-cli/src/presets/commands/init.ts` 文件中的 `ctx.registerCommand` 注册的 `init` 命令行的 `fn` 函数。
 
-TODO: 调试：
+我们在 .vscode/launch.json 中的原有的 CLI debug 命令行调试配置，添加 `init` 配置如下：
+
+```json diff
+// .vscode/launch.json
+{
+  "version": "0.2.0",
+  "configurations": [{
+      "type": "node",
+      "request": "launch",
+      "name": "CLI debug",
+      "program": "${workspaceFolder}/packages/taro-cli/bin/taro",
++     "console": "integratedTerminal",
++     "args": [
++       "init",
++       "taro-init-test",
++     ],
+      // 省略若干代码...
+      "skipFiles": ["<node_internals>/**"]
+    }]
+}
+```
+
+其中 `"console": "integratedTerminal",` 配置是为了在调试时，可以在终端输入和交互。
 
 ```ts
 // packages/taro-cli/src/presets/commands/init.ts
