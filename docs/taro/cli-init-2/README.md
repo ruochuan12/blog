@@ -683,6 +683,13 @@ write 函数主要做了以下几件事情：
 - 引入模板编写者的自定义逻辑。
 - 调用 createProject 函数，传入用户输入的参数和模板编写者的自定义逻辑。
 
+- templatePath -> taro/packages/taro-cli/templates/default
+- handlerPath -> taro/packages/taro-cli/templates/default/template_creator.js
+- handler
+
+调试截图
+![write](./images/taro-init-debugger-write.png)
+
 ### template
 
 ```ts
@@ -764,7 +771,7 @@ module.exports = {
 
 ```
 
-## rust createProject
+## 调试 rust 代码
 
 ```ts
 import { CompilerType, createProject, CSSType, FrameworkType, NpmType, PeriodType } from '@tarojs/binding'
@@ -775,6 +782,37 @@ import { CompilerType, createProject, CSSType, FrameworkType, NpmType, PeriodTyp
 用 `rust` 改造 `taro init` 这部分代码的作者 `@luckyadam`，写了一篇文章。可以参考学习[解锁前端新潜能：如何使用 Rust 锈化前端工具链](https://juejin.cn/post/7321410906426998810)
 
 >安装 `VSCode` 插件 [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer) 和调试代码的插件 [CodeLLDB](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.lldb-dap)
+
+我们在 `.vscode/launch.json` 中的原有的 `debug-init` 命令行调试配置，修改 `"type": "lldb",` 配置如下：
+
+```json diff
+// .vscode/launch.json
+{
+  "version": "0.2.0",
+  "configurations": [
+    {
+-     "type": "node",
++     "type": "lldb",
+      "request": "launch",
+      "name": "debug-init",
+      "sourceLanguages": ["rust"],
+      "program": "node",
+      "args": ["${workspaceFolder}/packages/taro-cli/bin/taro", "init", "test_pro"],
+      "cwd": "${workspaceFolder}",
+      "preLaunchTask": "build binding debug",
+      "postDebugTask": "remove test_pro"
+    }]
+}
+```
+
+这样我们就可以在 `crates/native_binding/src/lib.rs` 文件中打断点调试了。
+
+调试截图如下：
+![调试 rust createProject](./images/taro-init-debugger-rust.png)
+
+我们继续来看 `crates/native_binding/src/lib.rs` 文件中的 create_project （nodejs 中调用则是createProject）函数：
+
+## rust create_project 创建项目
 
 ```rs
 // crates/native_binding/src/lib.rs
@@ -812,6 +850,8 @@ pub async fn create_project(
   Ok(())
 }
 ```
+
+我们重点来看一下 `project.create` 函数：
 
 ### create
 
@@ -888,6 +928,14 @@ pub async fn create(
 ```
 
 ![初始化2，创建项目](./images/taro-init-2.png)
+
+create 主要做了以下几件事情：
+1. 创建项目目录
+2. 创建项目文件 creator.create_files
+3. 初始化 git init_git
+4. 安装依赖 install_deps
+
+我们重点来看一下 `creator.create_files` 函数：
 
 ### creator.create_files
 
