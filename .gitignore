@@ -7,3 +7,4 @@ docs/.vuepress/dist
 **/.vuepress/.temp/**
 # Vuepress Output
 dist/
+.DS_Store
