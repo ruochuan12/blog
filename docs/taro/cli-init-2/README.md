@@ -53,11 +53,9 @@ npx @tarojs/cli@beta init taro4-beta
 
 我们接下来就是一步步来分析这个 `gif` 中的每一个步骤的实现原理。
 
-## 2. init 命令行 fn 函数
+## 调试
 
-根据前面两篇[1. taro cli init](https://juejin.cn/post/7378363694939783178)、[2. taro 插件机制](https://juejin.cn/spost/7380195796208205824) 文章，我们可以得知：`taro init` 初始化命令，最终调用的是 `packages/taro-cli/src/presets/commands/init.ts` 文件中的 `ctx.registerCommand` 注册的 `init` 命令行的 `fn` 函数。
-
-我们在 .vscode/launch.json 中的原有的 CLI debug 命令行调试配置，添加 `init` 配置如下：
+我们在 `.vscode/launch.json` 中的原有的 `CLI debug` 命令行调试配置，添加 `init` 配置如下：
 
 ```json diff
 // .vscode/launch.json
@@ -80,6 +78,10 @@ npx @tarojs/cli@beta init taro4-beta
 ```
 
 其中 `"console": "integratedTerminal",` 配置是为了在调试时，可以在终端输入和交互。
+
+## 2. init 命令行 fn 函数
+
+根据前面两篇[1. taro cli init](https://juejin.cn/post/7378363694939783178)、[2. taro 插件机制](https://juejin.cn/spost/7380195796208205824) 文章，我们可以得知：`taro init` 初始化命令，最终调用的是 `packages/taro-cli/src/presets/commands/init.ts` 文件中的 `ctx.registerCommand` 注册的 `init` 命令行的 `fn` 函数。
 
 ```ts
 // packages/taro-cli/src/presets/commands/init.ts
@@ -187,6 +189,9 @@ init () {
 }
 ```
 
+调试截图如下：
+![调试截图](./images/taro-init-debugger.png)
+
 输出就是这个图：
 ![初始化](./images/taro-init-0.png)
 
@@ -218,6 +223,30 @@ async create () {
 - 调用 ask 询问用户输入项目名称、描述、CSS预处理器、包管理工具等。
 - 把用户反馈的结果和之前的配置合并起来，得到 `this.conf`。
 - 调用 write 方法，写入文件，初始化模板项目。
+
+调试截图如下：
+
+![create](./images/taro-init-debugger-create.png)
+
+`this.conf` 参数结果如下：
+
+```ts
+const conf = {
+  projectName: "taro-init-test",
+  projectDir: "/Users/ruochuan/git-source/github/taro",
+  template: "default",
+  description: "taro",
+  npm: "Yarn",
+  templateSource: "direct:https://gitee.com/o2team/taro-project-templates.git#v4.0",
+  clone: false,
+  typescript: true,
+  framework: "React",
+  compiler: "Webpack5",
+  hideDefaultTemplate: undefined,
+  css: "Sass",
+  date: "2024-7-9",
+}
+```
 
 我们来看 `ask` 方法。
 
