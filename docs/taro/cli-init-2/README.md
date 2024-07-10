@@ -289,6 +289,12 @@ async ask () {
 如图所示：
 ![初始化](./images/taro-init-1.png)
 
+我们重点讲述以下几个方法
+- askProjectName 询问项目名称
+- askTemplateSource 询问模板源
+- fetchTemplates 获取模板列表
+- askTemplate 询问模板
+
 我们来看第一个 `askProjectName` 方法。
 
 ### askProjectName 询问项目名称
@@ -415,32 +421,6 @@ askTemplateSource: AskMethods = async function (conf, prompts) {
   }
 ```
 
-### getOpenSourceTemplates 请选择社区模板源
-
-```ts
-// packages/taro-cli/src/create/project.ts
-function getOpenSourceTemplates (platform: string) {
-  return new Promise((resolve, reject) => {
-    const spinner = ora({ text: '正在拉取开源模板列表...', discardStdin: false }).start()
-    axios.get('https://gitee.com/NervJS/awesome-taro/raw/next/index.json')
-      .then(response => {
-        spinner.succeed(`${chalk.grey('拉取开源模板列表成功！')}`)
-        const collection = response.data
-        switch (platform.toLowerCase()) {
-          case 'react':
-            return resolve(collection.react)
-          default:
-            return resolve([NONE_AVAILABLE_TEMPLATE])
-        }
-      })
-      .catch(_error => {
-        spinner.fail(chalk.red('拉取开源模板列表失败！'))
-        return reject(new Error())
-      })
-  })
-}
-```
-
 ### fetchTemplates 获取模板列表
 
 ```ts
@@ -489,7 +469,7 @@ async fetchTemplates (answers: IProjectConf): Promise<ITemplates[]> {
   }
 ```
 
-### fetchTemplate
+### fetchTemplate 获取模板
 
 ```ts
 // packages/taro-cli/src/create/fetchTemplate.ts
@@ -541,11 +521,7 @@ export default function fetchTemplate (templateSource: string, templateRootPath:
         resolve()
       })
     } else if (type === 'url') {
-      // url 模板源，因为不知道来源名称，临时取名方便后续开发者从列表中选择
-      name = 'from-remote-url'
-      const zipPath = path.join(tempPath, name + '.zip')
-      const unZipPath = path.join(tempPath, name)
-      axios.get<fs.ReadStream>(templateSource, { responseType: 'stream' })
+      // 省略这部分代码...
         .then(response => {
           const ws = fs.createWriteStream(zipPath)
           response.data.pipe(ws)
@@ -578,7 +554,16 @@ export default function fetchTemplate (templateSource: string, templateRootPath:
         })
     }
   }).then(async () => {
-    const templateFolder = name ? path.join(tempPath, name) : ''
+    // 拆解到下方讲述
+  })
+}
+
+```
+
+```ts
+// packages/taro-cli/src/create/fetchTemplate.ts
+// then 部分
+const templateFolder = name ? path.join(tempPath, name) : ''
 
     // 下载失败，只显示默认模板
     if (!fs.existsSync(templateFolder)) return Promise.resolve([])
@@ -619,41 +604,25 @@ export default function fetchTemplate (templateSource: string, templateRootPath:
       return Promise.resolve(res)
     } else {
       // 单模板
-      await fs.move(templateFolder, path.join(templateRootPath, name), { overwrite: true })
-      await fs.remove(tempPath)
-
-      let res: ITemplates = { name, value: name, desc: type === 'url' ? templateSource : '' }
-
-      const creatorFile = path.join(templateRootPath, name, TEMPLATE_CREATOR)
-
-      if (fs.existsSync(creatorFile)) {
-        const { name: displayName, platforms = '', desc = '', compiler } = require(creatorFile)
-
-        res = {
-          name: displayName || name,
-          value: name,
-          platforms,
-          compiler,
-          desc: desc || templateSource
-        }
-      }
-
-      return Promise.resolve([res])
+      // 省略这部分代码，单模版和模板组逻辑基本一致，只是一个是多个一个是单个
     }
-  })
-}
-
 ```
+
+这段代码主要做了以下几件事情：
+- 移动到 taro 根目录下的 template 文件夹。
+- 判断是否是模板组，如果是模板组，则遍历 `taro-temp` 文件夹下的所有文件夹，并移动到 taro 根目录下的 `template` 文件夹。
 
 ## write 写入项目
 
 ```ts
-
+// packages/taro-cli/src/create/project.ts
 write (cb?: () => void) {
     this.conf.src = SOURCE_DIR
     const { projectName, projectDir, template, autoInstall = true, framework, npm } = this.conf as IProjectConf
     // 引入模板编写者的自定义逻辑
+	// taro/packages/taro-cli/templates/default
     const templatePath = this.templatePath(template)
+	// taro/packages/taro-cli/templates/default/template_creator.js
     const handlerPath = path.join(templatePath, TEMPLATE_CREATOR)
     const handler = fs.existsSync(handlerPath) ? require(handlerPath).handler : {}
     createProject({
@@ -674,23 +643,19 @@ write (cb?: () => void) {
     }, handler).then(() => {
       cb && cb()
     })
-  }
+}
 ```
 
 write 函数主要做了以下几件事情：
 
 - 获取用户输入的参数，包括项目名称、项目目录、模板名称等。
 - 引入模板编写者的自定义逻辑。
-- 调用 createProject 函数，传入用户输入的参数和模板编写者的自定义逻辑。
-
-- templatePath -> taro/packages/taro-cli/templates/default
-- handlerPath -> taro/packages/taro-cli/templates/default/template_creator.js
-- handler
+- 调用 `createProject` 函数，传入用户输入的参数和模板编写者的自定义逻辑。
 
 调试截图
 ![write](./images/taro-init-debugger-write.png)
 
-### template
+### template_creator.js 创建模板的自定义逻辑
 
 ```ts
 // packages/taro-cli/templates/default/template_creator.js
@@ -816,7 +781,6 @@ import { CompilerType, createProject, CSSType, FrameworkType, NpmType, PeriodTyp
 
 ```rs
 // crates/native_binding/src/lib.rs
-
 #[napi]
 pub async fn create_project(
   conf: Project,
@@ -1035,7 +999,7 @@ pub async fn create_files(
   }
 ```
 
-### creator.tempate
+### creator.tempate 模板
 
 ```rs
 // crates/taro_init/src/creator.rs
