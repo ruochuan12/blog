@@ -81,7 +81,7 @@ npx @tarojs/cli@beta init taro4-beta
 
 ## 2. init 命令行 fn 函数
 
-根据前面两篇[1. taro cli init](https://juejin.cn/post/7378363694939783178)、[2. taro 插件机制](https://juejin.cn/spost/7380195796208205824) 文章，我们可以得知：`taro init` 初始化命令，最终调用的是 `packages/taro-cli/src/presets/commands/init.ts` 文件中的 `ctx.registerCommand` 注册的 `init` 命令行的 `fn` 函数。
+根据前面两篇 [1. taro cli init](https://juejin.cn/post/7378363694939783178)、[2. taro 插件机制](https://juejin.cn/spost/7380195796208205824) 文章，我们可以得知：`taro init` 初始化命令，最终调用的是 `packages/taro-cli/src/presets/commands/init.ts` 文件中的 `ctx.registerCommand` 注册的 `init` 命令行的 `fn` 函数。
 
 ```ts
 // packages/taro-cli/src/presets/commands/init.ts
@@ -195,7 +195,7 @@ init () {
 输出就是这个图：
 ![初始化](./images/taro-init-0.png)
 
-其中`👽 Taro v4.0.0-beta.116` 输出的是 `tarojs-cli/package.json` 的版本，[第一篇文章 4. taro-cli/src/utils/index.ts](https://juejin.cn/post/7378363694939783178#heading-6)中有详细讲述，这里就不再赘述了。
+其中`👽 Taro v4.0.0-beta.116` 输出的是 `tarojs-cli/package.json` 的版本，[第一篇文章 4. taro-cli/src/utils/index.ts](https://juejin.cn/post/7378363694939783178#heading-6) 中有详细讲述，这里就不再赘述了。
 
 输出`获取 taro 全局配置成功`是指获取 `~/.taro-global-config/index.json` 文件的插件集 `presets` 和插件 `plugins`。[第一篇文章 6.2.2 config.initGlobalConfig 初始化全局配置](https://juejin.cn/post/7378363694939783178#heading-12)中有详细讲述，`spinner.succeed('获取 taro 全局配置成功')` 这里就不再赘述了。
 
@@ -220,9 +220,9 @@ async create () {
 
 `create` 函数主要做了以下几件事：
 
-- 调用 ask 询问用户输入项目名称、描述、CSS预处理器、包管理工具等。
+- 调用 `ask` 询问用户输入项目名称、描述、CSS预处理器、包管理工具等。
 - 把用户反馈的结果和之前的配置合并起来，得到 `this.conf`。
-- 调用 write 方法，写入文件，初始化模板项目。
+- 调用 `write` 方法，写入文件，初始化模板项目。
 
 调试截图如下：
 
@@ -290,10 +290,10 @@ async ask () {
 ![初始化](./images/taro-init-1.png)
 
 我们重点讲述以下几个方法
-- askProjectName 询问项目名称
-- askTemplateSource 询问模板源
-- fetchTemplates 获取模板列表
-- askTemplate 询问模板
+- `askProjectName` 询问项目名称
+- `askTemplateSource` 询问模板源
+- `fetchTemplates` 获取模板列表
+- `askTemplate` 询问模板
 
 我们来看第一个 `askProjectName` 方法。
 
@@ -340,6 +340,31 @@ askProjectName: AskMethods = function (conf, prompts) {
 ### askTemplateSource 询问模板源
 
 ```ts
+import {
+  chalk,
+  DEFAULT_TEMPLATE_SRC,
+  DEFAULT_TEMPLATE_SRC_GITEE,
+  fs,
+  getUserHomeDir,
+  SOURCE_DIR,
+  TARO_BASE_CONFIG,
+  TARO_CONFIG_FOLDER
+} from '@tarojs/helper'
+```
+
+导出的就是这些常量。
+
+```ts
+// packages/taro-helper/src/constants.ts
+export const DEFAULT_TEMPLATE_SRC = 'github:NervJS/taro-project-templates#v4.0'
+export const DEFAULT_TEMPLATE_SRC_GITEE = 'direct:https://gitee.com/o2team/taro-project-templates.git#v4.0'
+export const TARO_CONFIG_FOLDER = '.taro3.7'
+export const TARO_BASE_CONFIG = 'index.json'
+export const TARO_GLOBAL_CONFIG_DIR = '.taro-global-config'
+export const TARO_GLOBAL_CONFIG_FILE = 'index.json'
+```
+
+```ts
 // packages/taro-cli/src/create/project.ts
 askTemplateSource: AskMethods = async function (conf, prompts) {
     if (conf.template === 'default' || conf.templateSource) return
@@ -361,8 +386,36 @@ askTemplateSource: AskMethods = async function (conf, prompts) {
       await fs.writeJSON(taroConfig, { templateSource: DEFAULT_TEMPLATE_SRC })
       localTemplateSource = DEFAULT_TEMPLATE_SRC
     }
+	const choices = [
+		// 省略，拆分放到下方
+	];
+if (localTemplateSource && localTemplateSource !== DEFAULT_TEMPLATE_SRC && localTemplateSource !== DEFAULT_TEMPLATE_SRC_GITEE) {
+      choices.unshift({
+        name: `本地模板源：${localTemplateSource}`,
+        value: localTemplateSource
+      })
+    }
+	// 省略部分代码，拆分放到下方
+  }
+```
 
-    const choices = [
+简单来说：
+- 就是判断本地是否存在配置 `~/.taro3.7/index.json`，如果存在则读取模板源，如果不存在则创建配置。创建配置时，默认模板源为 [github:NervJS/taro-project-templates#v4.0](https://github.com/NervJS/taro-project-templates/tree/v4.0)。
+- 另外，如果本地模板源不是默认模板源，那么就把本地模板源作为选项，放在最前面，供用户选择。
+
+其中，`~/.taro3.7/index.json` 内容格式如下：
+
+```json
+// ~/.taro3.7/index.json
+{
+    "remoteSchemaUrl": "https://raw.githubusercontent.com/NervJS/taro-doctor/main/assets/config_schema.json",
+    "useRemoteSchema": true
+}
+```
+
+```ts
+// packages/taro-cli/src/create/project.ts
+const choices = [
       {
         name: 'Gitee（最快）',
         value: DEFAULT_TEMPLATE_SRC_GITEE
@@ -385,13 +438,7 @@ askTemplateSource: AskMethods = async function (conf, prompts) {
       }
     ]
 
-    if (localTemplateSource && localTemplateSource !== DEFAULT_TEMPLATE_SRC && localTemplateSource !== DEFAULT_TEMPLATE_SRC_GITEE) {
-      choices.unshift({
-        name: `本地模板源：${localTemplateSource}`,
-        value: localTemplateSource
-      })
-    }
-
+	// 省略部分代码本地模板源的判断，在上方已经展示。
     prompts.push({
       type: 'list',
       name: 'templateSource',
@@ -418,7 +465,24 @@ askTemplateSource: AskMethods = async function (conf, prompts) {
         return answers.templateSource === 'open-source'
       }
     })
-  }
+```
+
+```ts
+// packages/taro-cli/src/create/project.ts
+async ask () {
+	// 省略上半部分代码
+	const answers = await inquirer.prompt<IProjectConf>(prompts)
+
+    prompts = []
+    const templates = await this.fetchTemplates(answers)
+    await this.askTemplate(conf, prompts, templates)
+    const templateChoiceAnswer = await inquirer.prompt<IProjectConf>(prompts)
+
+    return {
+      ...answers,
+      ...templateChoiceAnswer
+    }
+}
 ```
 
 ### fetchTemplates 获取模板列表
@@ -468,6 +532,8 @@ async fetchTemplates (answers: IProjectConf): Promise<ITemplates[]> {
     return newTemplateChoices
   }
 ```
+
+我们继续来看 `fetchTemplate` 函数，它主要做了以下几件事情：
 
 ### fetchTemplate 获取模板
 
@@ -560,6 +626,9 @@ export default function fetchTemplate (templateSource: string, templateRootPath:
 
 ```
 
+这个方法主要做了以下几件事情：
+- 判断模板来源地址是 `git` 类型，那么使用 [download-git-repo](https://www.npmjs.com/package/download-git-repo) 下载远程仓库到本地。
+
 ```ts
 // packages/taro-cli/src/create/fetchTemplate.ts
 // then 部分
@@ -609,8 +678,40 @@ const templateFolder = name ? path.join(tempPath, name) : ''
 ```
 
 这段代码主要做了以下几件事情：
-- 移动到 taro 根目录下的 template 文件夹。
-- 判断是否是模板组，如果是模板组，则遍历 `taro-temp` 文件夹下的所有文件夹，并移动到 taro 根目录下的 `template` 文件夹。
+
+- 判断是否是模板组，如果是模板组，则遍历 `packages/taro-cli/templates/taro-temp` 文件夹下的所有文件夹，并移动到 `packages/taro-cli` 目录下的 `templates` 文件夹。
+- 不是模板组，则直接移动到 `packages/taro-cli/templates/taro-temp` 目录下单个模板到 `templates` 文件夹。
+
+用一张图来展示：
+
+![合并](./images/templates.png)
+
+### askTemplate 询问用户选择模板
+
+```ts
+askTemplate: AskMethods = function (conf, prompts, list = []) {
+    const choices = list.map(item => ({
+      name: item.desc ? `${item.name}（${item.desc}）` : item.name,
+      value: item.value || item.name
+    }))
+
+    if (!conf.hideDefaultTemplate) {
+      choices.unshift({
+        name: '默认模板',
+        value: 'default'
+      })
+    }
+
+    if ((typeof conf.template as 'string' | undefined) !== 'string') {
+      prompts.push({
+        type: 'list',
+        name: 'template',
+        message: '请选择模板',
+        choices
+      })
+    }
+  }
+```
 
 ## write 写入项目
 
@@ -653,7 +754,10 @@ write 函数主要做了以下几件事情：
 - 调用 `createProject` 函数，传入用户输入的参数和模板编写者的自定义逻辑。
 
 调试截图
+
 ![write](./images/taro-init-debugger-write.png)
+
+![CLI 内置的默认模板目录](./images/cli-default-template.png)
 
 ### template_creator.js 创建模板的自定义逻辑
 
@@ -742,7 +846,7 @@ module.exports = {
 import { CompilerType, createProject, CSSType, FrameworkType, NpmType, PeriodType } from '@tarojs/binding'
 ```
 
-简单来说就是：通过 [napi-rs](https://napi.rs/) 把`create_project`函数暴露给`nodejs`，然后通过 `nodejs` 调用 `rust` 的 `create_project` 函数。
+简单来说就是：通过 [napi-rs](https://napi.rs/docs/introduction/getting-started) 把`create_project`函数暴露给`nodejs`，然后通过 `nodejs` 调用 `rust` 的 `create_project` 函数。
 
 用 `rust` 改造 `taro init` 这部分代码的作者 `@luckyadam`，写了一篇文章。可以参考学习[解锁前端新潜能：如何使用 Rust 锈化前端工具链](https://juejin.cn/post/7321410906426998810)
 
@@ -1029,7 +1133,7 @@ pub async fn tempate(
   }
 ```
 
-### utils generate_with_template
+### utils => generate_with_template
 
 ```rs
 // crates/taro_init/src/utils.rs
