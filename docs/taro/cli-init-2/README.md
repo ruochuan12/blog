@@ -22,7 +22,11 @@ theme: smartblue
 学完本文，你将学到：
 
 ```bash
-1.
+1. taro init 初始化项目，背后原理是什么？
+2. 如何调试 taro cli init 源码
+3. nodejs 如何调用 rust 代码？
+4. 如何调试 rust 代码
+5. 如何使用 handlebars 模板引擎
 等等
 ```
 
@@ -40,7 +44,7 @@ npm dist-tag @tarojs/cli
 如图所示：
 ![npm dist-tag @tarojs/cli](./images/taro-cli-npm-dist-tag.png)
 
-全局安装相对麻烦，我们不全局安装，使用 `npx` 来运行 `beta tag` 版本。
+我们先用 `@tarojs/cli@beta` 初始化一个项目看看。全局安装相对麻烦，我们不全局安装，使用 `npx` 来运行 `beta tag` 版本。
 
 ```bash
 npx @tarojs/cli@beta init taro4-beta
@@ -52,7 +56,7 @@ npx @tarojs/cli@beta init taro4-beta
 
 我们接下来就是一步步来分析这个 `gif` 中的每一个步骤的实现原理。
 
-## 调试
+## 2. 调试 taro init
 
 我们在 `.vscode/launch.json` 中的原有的 `CLI debug` 命令行调试配置，添加 `init` 配置如下：
 
@@ -78,7 +82,7 @@ npx @tarojs/cli@beta init taro4-beta
 
 其中 `"console": "integratedTerminal",` 配置是为了在调试时，可以在终端输入和交互。
 
-## 2. init 命令行 fn 函数
+## 3. init 命令行 fn 函数
 
 根据前面两篇 [1. taro cli init](https://juejin.cn/post/7378363694939783178)、[2. taro 插件机制](https://juejin.cn/spost/7380195796208205824) 文章，我们可以得知：`taro init` 初始化命令，最终调用的是 `packages/taro-cli/src/presets/commands/init.ts` 文件中的 `ctx.registerCommand` 注册的 `init` 命令行的 `fn` 函数。
 
@@ -124,7 +128,7 @@ export default (ctx: IPluginContext) => {
 
 我们重点来看 `packages/taro-cli/src/create/project.ts` 的 `Project` 类的实现，和 `create` 方法。
 
-## new Project 构造函数
+## 4. new Project 构造函数
 
 ```ts
 // packages/taro-cli/src/create/project.ts
@@ -200,7 +204,7 @@ init () {
 
 看完了 `Project` 构造函数，我们来看 `Project` 类的 `create` 方法。
 
-### project.create 创建项目
+### 4.1 project.create 创建项目
 
 ```ts
 // packages/taro-cli/src/create/project.ts
@@ -249,7 +253,7 @@ const conf = {
 
 我们来看 `ask` 方法。
 
-## ask 询问用户输入项目名称、描述等
+## 5. ask 询问用户输入项目名称、描述等
 
 ```ts
 // packages/taro-cli/src/create/project.ts
@@ -296,7 +300,7 @@ async ask () {
 
 我们来看第一个 `askProjectName` 方法。
 
-### askProjectName 询问项目名称
+### 5.1 askProjectName 询问项目名称
 
 ```ts
 askProjectName: AskMethods = function (conf, prompts) {
@@ -336,7 +340,7 @@ askProjectName: AskMethods = function (conf, prompts) {
 
 后面的 `askDescription`、`askFramework`、`askFramework`、`askTypescript`、`askCSS`、`askCompiler`、`askNpm`，都是类似方法，就不再赘述了。
 
-### askTemplateSource 询问模板源
+### 5.2 askTemplateSource 询问模板源
 
 ```ts
 // packages/taro-cli/src/create/project.ts
@@ -416,55 +420,56 @@ askTemplateSource: AskMethods = async function (conf, prompts) {
 ```ts
 // packages/taro-cli/src/create/project.ts
 const choices = [
-      {
-        name: 'Gitee（最快）',
-        value: DEFAULT_TEMPLATE_SRC_GITEE
-      },
-      {
-        name: 'Github（最新）',
-        value: DEFAULT_TEMPLATE_SRC
-      },
-      {
-        name: 'CLI 内置默认模板',
-        value: 'default-template'
-      },
-      {
-        name: '自定义',
-        value: 'self-input'
-      },
-      {
-        name: '社区优质模板源',
-        value: 'open-source'
-      }
-    ]
+  {
+    name: 'Gitee（最快）',
+    value: DEFAULT_TEMPLATE_SRC_GITEE
+  },
+  {
+    name: 'Github（最新）',
+    value: DEFAULT_TEMPLATE_SRC
+  },
+  {
+    name: 'CLI 内置默认模板',
+    value: 'default-template'
+  },
+  {
+    name: '自定义',
+    value: 'self-input'
+  },
+  {
+    name: '社区优质模板源',
+    value: 'open-source'
+  }
+]
 
-	// 省略部分代码本地模板源的判断，在上方已经展示。
-    prompts.push({
-      type: 'list',
-      name: 'templateSource',
-      message: '请选择模板源',
-      choices
-    }, {
-      type: 'input',
-      name: 'templateSource',
-      message: '请输入模板源！',
-      askAnswered: true,
-      when (answers) {
-        return answers.templateSource === 'self-input'
-      }
-    }, {
-      type: 'list',
-      name: 'templateSource',
-      message: '请选择社区模板源',
-      async choices (answers) {
-        const choices = await getOpenSourceTemplates(answers.framework)
-        return choices
-      },
-      askAnswered: true,
-      when (answers) {
-        return answers.templateSource === 'open-source'
-      }
-    })
+// 省略部分代码本地模板源的判断，在上方已经展示。
+
+prompts.push({
+  type: 'list',
+  name: 'templateSource',
+  message: '请选择模板源',
+  choices
+}, {
+  type: 'input',
+  name: 'templateSource',
+  message: '请输入模板源！',
+  askAnswered: true,
+  when (answers) {
+    return answers.templateSource === 'self-input'
+  }
+}, {
+  type: 'list',
+  name: 'templateSource',
+  message: '请选择社区模板源',
+  async choices (answers) {
+    const choices = await getOpenSourceTemplates(answers.framework)
+    return choices
+  },
+  askAnswered: true,
+  when (answers) {
+    return answers.templateSource === 'open-source'
+  }
+})
 ```
 
 ```ts
@@ -487,57 +492,59 @@ async ask () {
 
 我们继续来看 `fetchTemplates` 函数：
 
-### fetchTemplates 获取模板列表
+### 5.3 fetchTemplates 获取模板列表
 
 ```ts
 // packages/taro-cli/src/create/project.ts
 async fetchTemplates (answers: IProjectConf): Promise<ITemplates[]> {
-    const { templateSource, framework, compiler } = answers
-    this.conf.templateSource = this.conf.templateSource || templateSource
+  const { templateSource, framework, compiler } = answers
+  this.conf.framework = this.conf.framework || framework || ''
+  this.conf.templateSource = this.conf.templateSource || templateSource
 
-    // 使用默认模版
-    if (answers.templateSource === 'default-template') {
-      this.conf.template = 'default'
-      answers.templateSource = DEFAULT_TEMPLATE_SRC_GITEE
-    }
-    if (this.conf.template === 'default' || answers.templateSource === NONE_AVAILABLE_TEMPLATE) return Promise.resolve([])
+  // 使用默认模版
+  if (answers.templateSource === 'default-template') {
+    this.conf.template = 'default'
+    answers.templateSource = DEFAULT_TEMPLATE_SRC_GITEE
+  }
+  if (this.conf.template === 'default' || answers.templateSource === NONE_AVAILABLE_TEMPLATE) return Promise.resolve([])
 
-    // 从模板源下载模板
-    const isClone = /gitee/.test(this.conf.templateSource) || this.conf.clone
-    const templateChoices = await fetchTemplate(this.conf.templateSource, this.templatePath(''), isClone)
+  // 从模板源下载模板
+  const isClone = /gitee/.test(this.conf.templateSource) || this.conf.clone
+  const templateChoices = await fetchTemplate(this.conf.templateSource, this.templatePath(''), isClone)
 
-    const filterFramework = (_framework) => {
-      const current = framework.toLowerCase()
-      if (typeof _framework === 'string' && _framework) {
-        return current === _framework.toLowerCase()
-      } else if (isArray(_framework)) {
-        return _framework?.map(name => name.toLowerCase()).includes(current)
-      } else {
-        return true
-      }
-    }
+  const filterFramework = (_framework) => {
+    const current = this.conf.framework?.toLowerCase()
 
-    const filterCompiler = (_compiler) => {
-      if (_compiler && isArray(_compiler)) {
-        return _compiler?.includes(compiler)
-      }
+    if (typeof _framework === 'string' && _framework) {
+      return current === _framework.toLowerCase()
+    } else if (isArray(_framework)) {
+      return _framework?.map(name => name.toLowerCase()).includes(current)
+    } else {
       return true
     }
-
-    // 根据用户选择的框架筛选模板
-    const newTemplateChoices: ITemplates[] = templateChoices
-      .filter(templateChoice => {
-        const { platforms, compiler } = templateChoice
-        return filterFramework(platforms) && filterCompiler(compiler)
-      })
-
-    return newTemplateChoices
   }
+
+  const filterCompiler = (_compiler) => {
+    if (_compiler && isArray(_compiler)) {
+      return _compiler?.includes(compiler)
+    }
+    return true
+  }
+
+  // 根据用户选择的框架筛选模板
+  const newTemplateChoices: ITemplates[] = templateChoices
+    .filter(templateChoice => {
+      const { platforms, compiler } = templateChoice
+      return filterFramework(platforms) && filterCompiler(compiler)
+    })
+
+  return newTemplateChoices
+}
 ```
 
 我们继续来看 `fetchTemplate` 函数，它主要做了以下几件事情：
 
-### fetchTemplate 获取模板
+#### 5.3.1 fetchTemplate 获取模板
 
 ```ts
 // packages/taro-cli/src/create/fetchTemplate.ts
@@ -590,36 +597,7 @@ export default function fetchTemplate (templateSource: string, templateRootPath:
       })
     } else if (type === 'url') {
       // 省略这部分代码...
-        .then(response => {
-          const ws = fs.createWriteStream(zipPath)
-          response.data.pipe(ws)
-          ws.on('finish', () => {
-            // unzip
-            const zip = new AdmZip(zipPath)
-            zip.extractAllTo(unZipPath, true)
-            const files = readDirWithFileTypes(unZipPath).filter(
-              file => !file.name.startsWith('.') && file.isDirectory && file.name !== '__MACOSX'
-            )
-
-            if (files.length !== 1) {
-              spinner.color = 'red'
-              spinner.fail(chalk.red(`拉取远程模板仓库失败！\n${new Error('远程模板源组织格式错误')}`))
-              return resolve()
-            }
-            name = path.join(name, files[0].name)
-
-            spinner.color = 'green'
-            spinner.succeed(`${chalk.grey('拉取远程模板仓库成功！')}`)
-            resolve()
-          })
-          ws.on('error', error => { throw error })
-        })
-        .catch(async error => {
-          spinner.color = 'red'
-          spinner.fail(chalk.red(`拉取远程模板仓库失败！\n${error}`))
-          await fs.remove(tempPath)
-          return resolve()
-        })
+	  // 如果是 `url` 则用 `axios` 下载
     }
   }).then(async () => {
     // 拆解到下方讲述
@@ -630,53 +608,56 @@ export default function fetchTemplate (templateSource: string, templateRootPath:
 
 这个方法主要做了以下几件事情：
 - 判断模板来源地址是 `git` 类型，那么使用 [download-git-repo](https://www.npmjs.com/package/download-git-repo) 下载远程仓库到本地。
+- 判断模板来源地址是 `git` 类型，那么则用 `axios` 下载。
+
+**then 部分**
 
 ```ts
 // packages/taro-cli/src/create/fetchTemplate.ts
 // then 部分
 const templateFolder = name ? path.join(tempPath, name) : ''
 
-    // 下载失败，只显示默认模板
-    if (!fs.existsSync(templateFolder)) return Promise.resolve([])
+// 下载失败，只显示默认模板
+if (!fs.existsSync(templateFolder)) return Promise.resolve([])
 
-    const isTemplateGroup = !(
-      fs.existsSync(path.join(templateFolder, 'package.json')) ||
-      fs.existsSync(path.join(templateFolder, 'package.json.tmpl'))
-    )
+const isTemplateGroup = !(
+  fs.existsSync(path.join(templateFolder, 'package.json')) ||
+  fs.existsSync(path.join(templateFolder, 'package.json.tmpl'))
+)
 
-    if (isTemplateGroup) {
-      // 模板组
-      const files = readDirWithFileTypes(templateFolder)
-        .filter(file => !file.name.startsWith('.') && file.isDirectory && file.name !== '__MACOSX')
-        .map(file => file.name)
-      await Promise.all(
-        files.map(file => {
-          const src = path.join(templateFolder, file)
-          const dest = path.join(templateRootPath, file)
-          return fs.move(src, dest, { overwrite: true })
-        })
-      )
-      await fs.remove(tempPath)
+if (isTemplateGroup) {
+  // 模板组
+  const files = readDirWithFileTypes(templateFolder)
+    .filter(file => !file.name.startsWith('.') && file.isDirectory && file.name !== '__MACOSX')
+    .map(file => file.name)
+  await Promise.all(
+    files.map(file => {
+      const src = path.join(templateFolder, file)
+      const dest = path.join(templateRootPath, file)
+      return fs.move(src, dest, { overwrite: true })
+    })
+  )
+  await fs.remove(tempPath)
 
-      const res: ITemplates[] = files.map(name => {
-        const creatorFile = path.join(templateRootPath, name, TEMPLATE_CREATOR)
+  const res: ITemplates[] = files.map(name => {
+    const creatorFile = path.join(templateRootPath, name, TEMPLATE_CREATOR)
 
-        if (!fs.existsSync(creatorFile)) return { name, value: name }
-        const { name: displayName, platforms = '', desc = '', compiler } = require(creatorFile)
+    if (!fs.existsSync(creatorFile)) return { name, value: name }
+    const { name: displayName, platforms = '', desc = '', compiler } = require(creatorFile)
 
-        return {
-          name: displayName || name,
-          value: name,
-          platforms,
-          compiler,
-          desc
-        }
-      })
-      return Promise.resolve(res)
-    } else {
-      // 单模板
-      // 省略这部分代码，单模版和模板组逻辑基本一致，只是一个是多个一个是单个
+    return {
+      name: displayName || name,
+      value: name,
+      platforms,
+      compiler,
+      desc
     }
+  })
+  return Promise.resolve(res)
+} else {
+  // 单模板
+  // 省略这部分代码，单模版和模板组逻辑基本一致，只是一个是多个一个是单个
+}
 ```
 
 这段代码主要做了以下几件事情：
@@ -688,7 +669,7 @@ const templateFolder = name ? path.join(tempPath, name) : ''
 
 ![合并](./images/templates.png)
 
-### askTemplate 询问用户选择模板
+### 5.4 askTemplate 询问用户选择模板
 
 ```ts
 askTemplate: AskMethods = function (conf, prompts, list = []) {
@@ -715,7 +696,7 @@ askTemplate: AskMethods = function (conf, prompts, list = []) {
   }
 ```
 
-## write 写入项目
+## 6. write 写入项目
 
 ```ts
 // packages/taro-cli/src/create/project.ts
@@ -749,7 +730,7 @@ write (cb?: () => void) {
 }
 ```
 
-write 函数主要做了以下几件事情：
+`write` 函数主要做了以下几件事情：
 
 - 获取用户输入的参数，包括项目名称、项目目录、模板名称等。
 - 引入模板编写者的自定义逻辑。
@@ -761,7 +742,7 @@ write 函数主要做了以下几件事情：
 
 ![CLI 内置的默认模板目录](./images/cli-default-template.png)
 
-### template_creator.js 默认模板中创建模板的自定义逻辑
+### 6.1 template_creator.js 默认模板中创建模板的自定义逻辑
 
 ```ts
 // packages/taro-cli/templates/default/template_creator.js
@@ -822,10 +803,16 @@ module.exports = {
   handler,
   basePageFiles
 }
-
 ```
 
-## 调试 rust 代码
+`template_creator.js` 文件中的 `handler` 对象，定义了模板中创建的文件和自定义逻辑。
+比如当 `!!params.typescript` 的时候，创建 `/tsconfig.json`、`types/global.d.ts` 文件。
+当 ['Vue3'].includes(framework) && !!typescript 的时候，创建 `types/vue.d.ts` 文件。
+根据 '/_env.development' 文件创建 `.env.development`
+等等
+>因为在一些场景下，`.` 开头文件会出现问题，所以改用 `_` 开头命名文件，创建时做一次替换。
+
+## 7. 调试 rust 代码
 
 ```ts
 import { CompilerType, createProject, CSSType, FrameworkType, NpmType, PeriodType } from '@tarojs/binding'
@@ -868,7 +855,7 @@ import { CompilerType, createProject, CSSType, FrameworkType, NpmType, PeriodTyp
 
 我们继续来看 `crates/native_binding/src/lib.rs` 文件中的 create_project （nodejs 中调用则是createProject）函数：
 
-## rust create_project 创建项目
+## 8. rust create_project 创建项目
 
 ```rs
 // crates/native_binding/src/lib.rs
@@ -908,7 +895,7 @@ pub async fn create_project(
 
 我们重点来看一下 `project.create` 函数：
 
-### create 创建文件
+### 8.1 create 创建文件
 
 ```rs
 // crates/taro_init/src/project.rs
@@ -961,17 +948,19 @@ pub async fn create(
   }
 ```
 
-![初始化2，创建项目](./images/taro-init-2.png)
-
-create 主要做了以下几件事情：
+`create` 主要做了以下几件事情：
 1. 创建项目目录
 2. 创建项目文件 creator.create_files
 3. 初始化 git init_git
 4. 安装依赖 install_deps
 
-我们重点来看一下 `creator.create_files` 函数：
+如下图所示：
 
-### creator.create_files
+![初始化2，创建项目](./images/taro-init-2.png)
+
+接着我们重点来看一下 `creator.create_files` 函数：
+
+### 8.2 creator.create_files
 
 ```rs
 // crates/taro_init/src/creator.rs
@@ -1010,7 +999,7 @@ pub async fn create_files(
 
 我们重点来看一下 `creator.tempate` 函数：
 
-### creator.tempate 模板
+### 8.3 creator.tempate 模板
 
 ```rs
 // crates/taro_init/src/creator.rs
@@ -1042,7 +1031,7 @@ pub async fn tempate(
 
 我们重点来看一下 `generate_with_template` 函数：
 
-### utils => generate_with_template
+### 8.4 generate_with_template 根据数据渲染模板，生成文件
 
 ```rs
 // crates/taro_init/src/utils.rs
@@ -1076,9 +1065,15 @@ taro init 的 rust代码中，安装依赖引入了[crates/handlebars rust包](h
 
 更多 `handlebars` 用法，参考[handlebars官网](https://handlebarsjs.com/zh/installation/#%E7%94%A8%E6%B3%95)。
 
-## 总结
+## 9. 总结
 
-我们来回顾下，根据前面两篇 [1. taro cli init](https://juejin.cn/post/7378363694939783178)、[2. taro 插件机制](https://juejin.cn/spost/7380195796208205824) 文章，我们可以得知：`taro init` 初始化命令，最终调用的是 `packages/taro-cli/src/presets/commands/init.ts` 文件中的 `ctx.registerCommand` 注册的 `init` 命令行的 `fn` 函数。
+我们再来看下开头初始化项目的 `gif` 回顾下整个 `taro init` 过程：
+
+![gif](./images/taro-init-gif-high-2.gif)
+
+根据前面两篇 [1. taro cli init](https://juejin.cn/post/7378363694939783178)、[2. taro 插件机制](https://juejin.cn/spost/7380195796208205824) 文章，我们可以得知：`taro init` 初始化命令，最终调用的是 `packages/taro-cli/src/presets/commands/init.ts` 文件中的 `ctx.registerCommand` 注册的 `init` 命令行的 `fn` 函数。
+
+可以根据配置 `.vscode/launch.json` 文件调试 `taro init` `node` 部分代码和 `rust` 配置 `type:lldb` 代码。
 
 ```ts
 export default (ctx: IPluginContext) => {
@@ -1092,7 +1087,6 @@ export default (ctx: IPluginContext) => {
       const project = new Project({
 		// 省略若干参数...
       })
-
       project.create()
     }
   })
@@ -1115,14 +1109,33 @@ async create () {
 ```
 
 `ask` 命令行交互式选择使用的是 [inquirer](https://www.npmjs.com/package/inquirer) `inquirer.prompt` 实现。
+，使用 [download-git-repo](https://www.npmjs.com/package/download-git-repo) 包（如果是 `url` 则用 `axios` 下载）把远程仓库下载到本地移动到`packages/taro-cli/templates`。
+
+```ts
+import { createProject } from '@tarojs/binding'
+```
+
+```ts
+// packages/taro-cli/src/create/project.ts
+write (cb?: () => void) {
+    createProject({
+    }, handler).then(() => {
+      cb && cb()
+    })
+}
+```
 
 `write` 函数中的 `createProject` 创建文件部分是使用 [rust](https://www.rust-lang.org/zh-CN/) 实现的。使用 [napi-rs](https://napi.rs/docs/introduction/getting-started) 包绑定 `rust` 代码，给 `nodejs` 调用。
 
 模板部分使用的是 [handlebars](https://handlebarsjs.com/zh/installation/#%E7%94%A8%E6%B3%95)，`rust` 使用的 [handlebars rust 包 crates/handlebars](https://crates.io/crates/handlebars) [rust](https://www.rust-lang.org/zh-CN/) 实现。
 
+根据数据渲染 `handlebars` 模板，创建项目，生成文件。
+
+再根据包管理器安装依赖。
+
 ----
 
-**如果看完有收获，欢迎点赞、评论、分享、收藏支持。你的支持和肯定，是我写作的动力**。
+**如果看完有收获，欢迎点赞、评论、分享、收藏支持。你的支持和肯定，是我写作的动力。也欢迎提建议和交流讨论**。
 
 作者：常以**若川**为名混迹于江湖。所知甚少，唯善学。[若川的博客](https://ruochuan12.github.io)
 
