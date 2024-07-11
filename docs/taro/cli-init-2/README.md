@@ -3,26 +3,25 @@ highlight: darcula
 theme: smartblue
 ---
 
-# Taro 源码揭秘 - 3. 揭开 taro init 初始化项目的背后秘密
+# Taro 源码揭秘 - 3. 揭开 taro init 初始化 taro 项目的背后秘密
 
 ## 1. 前言
 
 大家好，我是[若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
 
-截至目前（`2024-07-09`），`taro` 正式版是 `3.6.33`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。所以我们直接学习 `4.x`，`4.x` 分支最新 `beta` 版本是 `4.0.0-beta.116`。
+截至目前（`2024-07-12`），`taro` 正式版是 `3.6.33`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。所以我们直接学习 `4.x`，`4.x` 分支最新 `beta` 版本是 `4.0.0-beta.118`。
 
 计划写一个 `taro` 源码揭秘系列，欢迎持续关注。初步计划有如下文章：
 
 -   [x] [Taro 源码揭秘 - 1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
 -   [x] [Taro 源码揭秘 - 2. 揭开整个架构的插件系统的秘密](https://juejin.cn/spost/7380195796208205824)
--   [ ] init 初始化项目
+-   [x] [Taro 源码揭秘 - 3. 揭开 taro init 初始化项目的背后秘密](./)
 -   [ ] cli build
 -   [ ] 等等
 
 学完本文，你将学到：
 
 ```bash
-TODO:
 1.
 等等
 ```
@@ -340,6 +339,7 @@ askProjectName: AskMethods = function (conf, prompts) {
 ### askTemplateSource 询问模板源
 
 ```ts
+// packages/taro-cli/src/create/project.ts
 import {
   chalk,
   DEFAULT_TEMPLATE_SRC,
@@ -389,7 +389,7 @@ askTemplateSource: AskMethods = async function (conf, prompts) {
 	const choices = [
 		// 省略，拆分放到下方
 	];
-if (localTemplateSource && localTemplateSource !== DEFAULT_TEMPLATE_SRC && localTemplateSource !== DEFAULT_TEMPLATE_SRC_GITEE) {
+	if (localTemplateSource && localTemplateSource !== DEFAULT_TEMPLATE_SRC && localTemplateSource !== DEFAULT_TEMPLATE_SRC_GITEE) {
       choices.unshift({
         name: `本地模板源：${localTemplateSource}`,
         value: localTemplateSource
@@ -484,6 +484,8 @@ async ask () {
     }
 }
 ```
+
+我们继续来看 `fetchTemplates` 函数：
 
 ### fetchTemplates 获取模板列表
 
@@ -759,7 +761,7 @@ write 函数主要做了以下几件事情：
 
 ![CLI 内置的默认模板目录](./images/cli-default-template.png)
 
-### template_creator.js 创建模板的自定义逻辑
+### template_creator.js 默认模板中创建模板的自定义逻辑
 
 ```ts
 // packages/taro-cli/templates/default/template_creator.js
@@ -788,24 +790,7 @@ const handler = {
       setSubPkgName: normalizePath(path.join(SOURCE_ENTRY, subPkg, pageDir, pageName, 'index.jsx'))
     }
   },
-  '/src/pages/index/index.css' (err, { pageDir = '', pageName = '', subPkg = '' }) {
-    return {
-      setPageName: normalizePath(path.join(PAGES_ENTRY, pageDir, pageName, 'index.css')),
-      setSubPkgName: normalizePath(path.join(SOURCE_ENTRY, subPkg, pageDir, pageName, 'index.css'))
-    }
-  },
-  '/src/pages/index/index.vue' (err, { pageDir = '', pageName = '', subPkg = '' }) {
-    return {
-      setPageName: normalizePath(path.join(PAGES_ENTRY, pageDir, pageName, 'index.vue')),
-      setSubPkgName: normalizePath(path.join(SOURCE_ENTRY, subPkg, pageDir, pageName, 'index.vue'))
-    }
-  },
-  '/src/pages/index/index.config.js' (err, { pageDir = '', pageName = '', subPkg = '' }) {
-    return {
-      setPageName: normalizePath(path.join(PAGES_ENTRY, pageDir, pageName, 'index.config.js')),
-      setSubPkgName: normalizePath(path.join(SOURCE_ENTRY, subPkg, pageDir, pageName, 'index.config.js'))
-    }
-  },
+  // 省略部分代码
   '/_editorconfig' () {
     return { setPageName: `/.editorconfig` }
   },
@@ -850,7 +835,9 @@ import { CompilerType, createProject, CSSType, FrameworkType, NpmType, PeriodTyp
 
 用 `rust` 改造 `taro init` 这部分代码的作者 `@luckyadam`，写了一篇文章。可以参考学习[解锁前端新潜能：如何使用 Rust 锈化前端工具链](https://juejin.cn/post/7321410906426998810)
 
->安装 `VSCode` 插件 [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer) 和调试代码的插件 [CodeLLDB](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.lldb-dap)
+>安装 `VSCode` 插件 [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer) (方便跳转代码定义等) 和调试代码的插件 [CodeLLDB](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.lldb-dap)
+
+[rust-lang.org rust 官网](https://www.rust-lang.org/zh-CN/)
 
 我们在 `.vscode/launch.json` 中的原有的 `debug-init` 命令行调试配置，修改 `"type": "lldb",` 配置如下：
 
@@ -921,7 +908,7 @@ pub async fn create_project(
 
 我们重点来看一下 `project.create` 函数：
 
-### create
+### create 创建文件
 
 ```rs
 // crates/taro_init/src/project.rs
@@ -929,31 +916,10 @@ pub async fn create(
     &self,
     js_handlers: HashMap<String, ThreadsafeFunction<CreateOptions>>,
   ) -> anyhow::Result<()> {
-    let project_path = PathBuf::from(&self.project_root).join(&self.project_name);
-    let project_path_str = project_path.to_string_lossy().to_string();
-    let creator = Creator::new(self.template_root.clone(), project_path_str.clone());
-    let template_path = creator.get_template_path(&[&self.template]);
-    let filter = &FILE_FILTER;
+    // 省略若干代码
     let all_files = get_all_files_in_folder(template_path.clone(), filter, None)?;
     let mut create_options = CreateOptions {
-      css: Some(self.css.clone()),
-      css_ext: None,
-      framework: Some(self.framework.clone()),
-      description: self.description.clone(),
-      project_name: self.project_name.clone(),
-      version: Some(self.version.clone()),
-      date: self.date.clone(),
-      typescript: self.typescript.clone(),
-      template: self.template.clone(),
-      page_name: Some("index".to_string()),
-      compiler: self.compiler.clone(),
-      set_page_name: None,
-      set_sub_pkg_page_name: None,
-      sub_pkg: None,
-      page_dir: None,
-      change_ext: None,
-      is_custom_template: None,
-      plugin_type: None,
+      // 省略若干代码
     };
     let all_files = all_files.iter().filter_map(|f| f.to_str()).collect::<Vec<_>>();
     println!();
@@ -1021,70 +987,9 @@ pub async fn create_files(
       .unwrap_or(&"css");
     options.css_ext = Some(current_style_ext.to_string());
     for file in files {
-      let file_relative_path = normalize_path_str(file.replace(template_path, "").as_str());
-      let framework = options.framework;
-      let is_vue_framework = framework.is_some_and(|framework| framework == FrameworkType::Vue3);
-      if is_vue_framework && file_relative_path.ends_with(".jsx") {
-        continue;
-      }
-      if !is_vue_framework && file_relative_path.ends_with(".vue") {
-        continue;
-      }
-      let mut need_create_file = true;
-      let mut page_name = file_relative_path.clone();
-      let mut change_ext = true;
-      let is_typescript = options.typescript.unwrap_or(false);
-      // let is_custom_template = options.is_custom_template.unwrap_or(false);
-      if js_handlers.contains_key(&file_relative_path) {
-        let js_handler = js_handlers.get(&file_relative_path).unwrap().clone();
-        let result = js_handler
-          .call_async::<JSReturn>(Ok(options.clone()))
-          .await
-          .with_context(|| format!("模板自定义函数调用失败: {}", file_relative_path))?;
-        match result {
-          JSReturn::Boolean(boolean) => {
-            need_create_file = boolean;
-          }
-          JSReturn::Object(obj) => {
-            let set_page_name = obj.set_page_name;
-            let change_ext_re = obj.change_ext;
-            let set_sub_pkg_page_name = obj.set_sub_pkg_page_name;
-            let sub_pkg = &options.sub_pkg;
-            if sub_pkg.is_some() {
-              // 创建分包页面模式
-              if let Some(set_sub_pkg_page_name) = set_sub_pkg_page_name {
-                page_name = set_sub_pkg_page_name;
-              }
-            } else {
-              if let Some(set_page_name) = set_page_name {
-                page_name = set_page_name;
-              }
-            }
-            if let Some(change_ext_re) = change_ext_re {
-              change_ext = change_ext_re;
-            }
-          }
-        };
-      }
+      // 省略若干代码...
       if need_create_file {
-        let mut dest_re_path = page_name;
-        if dest_re_path.starts_with("/") {
-          dest_re_path = dest_re_path[1..].to_string();
-        }
-        if is_typescript
-          && change_ext
-          && (dest_re_path.ends_with(".js") || dest_re_path.ends_with(".jsx"))
-          && !(dest_re_path.ends_with("babel.config.js") || dest_re_path.ends_with(".eslintrc.js"))
-        {
-          dest_re_path = dest_re_path.replace(".js", ".ts");
-        }
-        if change_ext && dest_re_path.ends_with(".css") {
-          dest_re_path = dest_re_path.replace(".css", format!(".{}", current_style_ext).as_str());
-        }
-        let file_relative_path = format!("{}{}", template_path, file_relative_path);
-        // if is_custom_template {
-        //   file_relative_path = format!("{}/{}", template_path, file_relative_path);
-        // }
+        // 省略若干代码...
         let dest_path = self.get_destination_path(&[&dest_re_path]);
         let from_path: String = PathBuf::from(file_relative_path)
           .to_string_lossy()
@@ -1102,6 +1007,8 @@ pub async fn create_files(
     Ok(())
   }
 ```
+
+我们重点来看一下 `creator.tempate` 函数：
 
 ### creator.tempate 模板
 
@@ -1133,6 +1040,8 @@ pub async fn tempate(
   }
 ```
 
+我们重点来看一下 `generate_with_template` 函数：
+
 ### utils => generate_with_template
 
 ```rs
@@ -1155,31 +1064,61 @@ pub async fn generate_with_template(from_path: &str, dest_path: &str, data: &imp
 }
 ```
 
-`HANDLEBARS.render_template` [handlebars-rust实现](https://github.com/sunng87/handlebars-rust)
+taro init 的 rust代码中，安装依赖引入了[crates/handlebars rust包](https://crates.io/crates/handlebars)，类似 [npm 包管理官网](npmjs.com)。
 
-[Handlebars](https://handlebarsjs.com/zh/guide/#%E4%BB%A3%E7%A0%81%E7%89%87%E6%AE%B5)
+经过 `HANDLEBARS.render_template(&from_template, data)` [handlebars-rust](https://github.com/sunng87/handlebars-rust) 根据数据渲染模板，生成文件。
 
-[handlebars 用法](https://handlebarsjs.com/zh/installation/#%E7%94%A8%E6%B3%95)
+比如：`handlebars` 模板中的 `app.config.js => app.config.ts`
 
-[crates/handlebars](https://crates.io/crates/handlebars)
+如下图所示：
 
-[rust-lang.org](https://www.rust-lang.org/zh-CN/)
+![handlebars-render](./images/handlebars-render.png)
+
+更多 `handlebars` 用法，参考[handlebars官网](https://handlebarsjs.com/zh/installation/#%E7%94%A8%E6%B3%95)。
 
 ## 总结
 
-命令行交互式选择使用的是 [inquirer](https://www.npmjs.com/package/inquirer) `inquirer.prompt` 实现。
-创建文件部分是使用 rust 实现的。
-模板部分使用的是 [handlebars](https://github.com/sunng87/handlebars-rust) 实现。
+我们来回顾下，根据前面两篇 [1. taro cli init](https://juejin.cn/post/7378363694939783178)、[2. taro 插件机制](https://juejin.cn/spost/7380195796208205824) 文章，我们可以得知：`taro init` 初始化命令，最终调用的是 `packages/taro-cli/src/presets/commands/init.ts` 文件中的 `ctx.registerCommand` 注册的 `init` 命令行的 `fn` 函数。
 
-[Handlebars](https://handlebarsjs.com/zh/guide/#%E4%BB%A3%E7%A0%81%E7%89%87%E6%AE%B5)
+```ts
+export default (ctx: IPluginContext) => {
+  ctx.registerCommand({
+    name: 'init',
+    optionsMap: {
+		// 省略若干代码...
+    },
+    async fn (opts) {
+      const Project = require('../../create/project').default
+      const project = new Project({
+		// 省略若干参数...
+      })
 
-[handlebars 用法](https://handlebarsjs.com/zh/installation/#%E7%94%A8%E6%B3%95)
+      project.create()
+    }
+  })
+}
+```
 
-[handlebars-rust实现](https://github.com/sunng87/handlebars-rust)
+```ts
+// packages/taro-cli/src/create/project.ts
+async create () {
+	try {
+		const answers = await this.ask()
+		const date = new Date()
+		this.conf = Object.assign(this.conf, answers)
+		this.conf.date = `${date.getFullYear()}-${date.getMonth() + 1}-${date.getDate()}`
+		this.write()
+	} catch (error) {
+		console.log(chalk.red('创建项目失败: ', error))
+	}
+}
+```
 
-[crates/handlebars](https://crates.io/crates/handlebars)
+`ask` 命令行交互式选择使用的是 [inquirer](https://www.npmjs.com/package/inquirer) `inquirer.prompt` 实现。
 
-[rust-lang.org](https://www.rust-lang.org/zh-CN/)
+`write` 函数中的 `createProject` 创建文件部分是使用 [rust](https://www.rust-lang.org/zh-CN/) 实现的。使用 [napi-rs](https://napi.rs/docs/introduction/getting-started) 包绑定 `rust` 代码，给 `nodejs` 调用。
+
+模板部分使用的是 [handlebars](https://handlebarsjs.com/zh/installation/#%E7%94%A8%E6%B3%95)，`rust` 使用的 [handlebars rust 包 crates/handlebars](https://crates.io/crates/handlebars) [rust](https://www.rust-lang.org/zh-CN/) 实现。
 
 ----
 
