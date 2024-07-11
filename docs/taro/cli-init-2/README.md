@@ -52,7 +52,7 @@ npx @tarojs/cli@beta init taro4-beta
 
 这个初始化完整的过程，我用 [GIPHY CAPTURE](https://giphy.com/apps/giphycapture) 工具录制了一个`gif`，如下图所示：
 
-![gif](./images/taro-init-gif-high-2.gif)
+![gif](./images/taro-init-gif-high.gif)
 
 我们接下来就是一步步来分析这个 `gif` 中的每一个步骤的实现原理。
 
@@ -1069,7 +1069,7 @@ taro init 的 rust代码中，安装依赖引入了[crates/handlebars rust包](h
 
 我们再来看下开头初始化项目的 `gif` 回顾下整个 `taro init` 过程：
 
-![gif](./images/taro-init-gif-high-2.gif)
+![gif](./images/taro-init-gif-high.gif)
 
 根据前面两篇 [1. taro cli init](https://juejin.cn/post/7378363694939783178)、[2. taro 插件机制](https://juejin.cn/spost/7380195796208205824) 文章，我们可以得知：`taro init` 初始化命令，最终调用的是 `packages/taro-cli/src/presets/commands/init.ts` 文件中的 `ctx.registerCommand` 注册的 `init` 命令行的 `fn` 函数。
 
