@@ -13,11 +13,11 @@ theme: smartblue
 
 计划写一个 `taro` 源码揭秘系列，欢迎持续关注。初步计划有如下文章：
 
--   [x] [Taro 源码揭秘 - 1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
--   [x] [Taro 源码揭秘 - 2. 揭开整个架构的插件系统的秘密](https://juejin.cn/spost/7380195796208205824)
--   [x] [Taro 源码揭秘 - 3. 揭开 taro init 初始化项目的背后秘密](https://juejin.cn/post/7390335741586931738)
--   [ ] cli build
--   [ ] 等等
+*   [x] [Taro 源码揭秘 - 1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
+*   [x] [Taro 源码揭秘 - 2. 揭开整个架构的插件系统的秘密](https://juejin.cn/spost/7380195796208205824)
+*   [x] [Taro 源码揭秘 - 3. 揭开 taro init 初始化项目的背后秘密](https://juejin.cn/post/7390335741586931738)
+*   [ ] cli build
+*   [ ] 等等
 
 学完本文，你将学到：
 
@@ -31,7 +31,8 @@ theme: smartblue
 ```
 
 关于克隆项目、环境准备、如何调试代码等，参考[第一篇文章-准备工作、调试](https://juejin.cn/post/7378363694939783178#heading-1)。后续文章基本不再过多赘述。
->文章中基本是先放源码，源码中不做过多解释。源码后面再做简单讲述。
+
+> 文章中基本是先放源码，源码中不做过多解释。源码后面再做简单讲述。
 
 众所周知，我们最开始初始化项目时都是使用 `taro init` 命令，本文我们继续来学习这个命令是如何实现的。
 
@@ -42,7 +43,8 @@ npm dist-tag @tarojs/cli
 ```
 
 如图所示：
-![npm dist-tag @tarojs/cli](./images/taro-cli-npm-dist-tag.png)
+
+![taro-cli-npm-dist-tag.png](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/ab74e8a43d8a4b09be9ba92b9731167d~tplv-73owjymdk6-watermark.image?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1720801901&x-orig-sign=JRa%2FrAOxLHJ7pssoRO8oMLW3RI4%3D)
 
 我们先用 `@tarojs/cli@beta` 初始化一个项目看看。全局安装相对麻烦，我们不全局安装，使用 `npx` 来运行 `beta tag` 版本。
 
@@ -52,7 +54,8 @@ npx @tarojs/cli@beta init taro4-beta
 
 这个初始化完整的过程，我用 [GIPHY CAPTURE](https://giphy.com/apps/giphycapture) 工具录制了一个`gif`，如下图所示：
 
-![gif](./images/taro-init-gif-high.gif)
+
+![taro-init-gif-high.gif](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/d00b03d50cd34c1995c1f047ca5b3fef~tplv-73owjymdk6-watermark.image?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1720801922&x-orig-sign=rfbni%2BTeAF871T8a%2BQ1gwlf4cM8%3D)
 
 我们接下来就是一步步来分析这个 `gif` 中的每一个步骤的实现原理。
 
@@ -124,7 +127,7 @@ export default (ctx: IPluginContext) => {
 `fn` 函数，其中 `options` 参数是 `init` 命令行中的所有参数。
 主要做了如下几件事：
 
-- 读取组合各种参数，初始化 `project` 对象，并调用 `create` 方法。
+*   读取组合各种参数，初始化 `project` 对象，并调用 `create` 方法。
 
 我们重点来看 `packages/taro-cli/src/create/project.ts` 的 `Project` 类的实现，和 `create` 方法。
 
@@ -193,10 +196,12 @@ init () {
 ```
 
 调试截图如下：
-![调试截图](./images/taro-init-debugger.png)
+
+![调试截图](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/4b2dd24e6783421eaeab0abc78ce436b~tplv-73owjymdk6-watermark.image?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1720801977&x-orig-sign=2Rv%2FntcS7n%2BeMZMgWacBsA0K42w%3D)
 
 输出就是这个图：
-![初始化](./images/taro-init-0.png)
+
+![taro-init-0.png](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/297a785334f74d488103195caecc106b~tplv-73owjymdk6-watermark.image?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1720802000&x-orig-sign=AEPO4lZdqB4SWPs0iTrOqr8OdGE%3D)
 
 其中`👽 Taro v4.0.0-beta.116` 输出的是 `tarojs-cli/package.json` 的版本，[第一篇文章 4. taro-cli/src/utils/index.ts](https://juejin.cn/post/7378363694939783178#heading-6) 中有详细讲述，这里就不再赘述了。
 
@@ -223,13 +228,13 @@ async create () {
 
 `create` 函数主要做了以下几件事：
 
-- 调用 `ask` 询问用户输入项目名称、描述、CSS预处理器、包管理工具等。
-- 把用户反馈的结果和之前的配置合并起来，得到 `this.conf`。
-- 调用 `write` 方法，写入文件，初始化模板项目。
+*   调用 `ask` 询问用户输入项目名称、描述、CSS预处理器、包管理工具等。
+*   把用户反馈的结果和之前的配置合并起来，得到 `this.conf`。
+*   调用 `write` 方法，写入文件，初始化模板项目。
 
 调试截图如下：
 
-![create](./images/taro-init-debugger-create.png)
+![taro-init-debugger-create.png](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/924ea8ace2864f9a91df672e6e86b160~tplv-73owjymdk6-watermark.image?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1720802038&x-orig-sign=qgEHUoU%2FBIFwOFQe7wLfA8hRoPM%3D)
 
 `this.conf` 参数结果如下：
 
@@ -285,18 +290,21 @@ async ask () {
 ```
 
 简单来说 `ask` 方法就是一系列的 `inquirer` 交互。
->[`inquirer`](https://www.npmjs.com/package/inquirer) 是一个命令行交互库，可以用来创建命令行程序。
+
+> [`inquirer`](https://www.npmjs.com/package/inquirer) 是一个命令行交互库，可以用来创建命令行程序。
 
 如果参数中没指定相应参数，那么就询问用户输入项目名称、描述、选择框架（React、PReact、Vue3、Solid）、是否启用TS、CSS预处理器（Sass、less、Stylus、无等）、编译工具（webpack、vite）、包管理工具（npm、yarn、pnpm）等。
 
 如图所示：
-![初始化](./images/taro-init-1.png)
+
+![初始化](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/39c0a3a5d0464de9a119517dbd3a0567~tplv-73owjymdk6-watermark.image?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1720802062&x-orig-sign=kdUsyTvS%2FEmMFc%2BruCbjv6ZMPkU%3D)
 
 我们重点讲述以下几个方法
-- `askProjectName` 询问项目名称
-- `askTemplateSource` 询问模板源
-- `fetchTemplates` 获取模板列表
-- `askTemplate` 询问模板
+
+*   `askProjectName` 询问项目名称
+*   `askTemplateSource` 询问模板源
+*   `fetchTemplates` 获取模板列表
+*   `askTemplate` 询问模板
 
 我们来看第一个 `askProjectName` 方法。
 
@@ -404,8 +412,9 @@ askTemplateSource: AskMethods = async function (conf, prompts) {
 ```
 
 简单来说：
-- 就是判断本地是否存在配置 `~/.taro3.7/index.json`，如果存在则读取模板源，如果不存在则创建配置。创建配置时，默认模板源为 [github:NervJS/taro-project-templates#v4.0](https://github.com/NervJS/taro-project-templates/tree/v4.0)。
-- 另外，如果本地模板源不是默认模板源，那么就把本地模板源作为选项，放在最前面，供用户选择。
+
+*   就是判断本地是否存在配置 `~/.taro3.7/index.json`，如果存在则读取模板源，如果不存在则创建配置。创建配置时，默认模板源为 [github:NervJS/taro-project-templates#v4.0](https://github.com/NervJS/taro-project-templates/tree/v4.0)。
+*   另外，如果本地模板源不是默认模板源，那么就把本地模板源作为选项，放在最前面，供用户选择。
 
 其中，`~/.taro3.7/index.json` 内容格式如下：
 
@@ -607,8 +616,9 @@ export default function fetchTemplate (templateSource: string, templateRootPath:
 ```
 
 这个方法主要做了以下几件事情：
-- 判断模板来源地址是 `git` 类型，那么使用 [download-git-repo](https://www.npmjs.com/package/download-git-repo) 下载远程仓库到本地。
-- 判断模板来源地址是 `git` 类型，那么则用 `axios` 下载。
+
+*   判断模板来源地址是 `git` 类型，那么使用 [download-git-repo](https://www.npmjs.com/package/download-git-repo) 下载远程仓库到本地。
+*   判断模板来源地址是 `git` 类型，那么则用 `axios` 下载。
 
 **then 部分**
 
@@ -662,12 +672,12 @@ if (isTemplateGroup) {
 
 这段代码主要做了以下几件事情：
 
-- 判断是否是模板组，如果是模板组，则遍历 `packages/taro-cli/templates/taro-temp` 文件夹下的所有文件夹，并移动到 `packages/taro-cli` 目录下的 `templates` 文件夹。
-- 不是模板组，则直接移动到 `packages/taro-cli/templates/taro-temp` 目录下单个模板到 `templates` 文件夹。
+*   判断是否是模板组，如果是模板组，则遍历 `packages/taro-cli/templates/taro-temp` 文件夹下的所有文件夹，并移动到 `packages/taro-cli` 目录下的 `templates` 文件夹。
+*   不是模板组，则直接移动到 `packages/taro-cli/templates/taro-temp` 目录下单个模板到 `templates` 文件夹。
 
 用一张图来展示：
 
-![合并](./images/templates.png)
+![合并](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/ece7568f049e4f778474f442d4d8d006~tplv-73owjymdk6-watermark.image?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1720802112&x-orig-sign=ol%2F7Cm2jqZ%2B%2BKirBBfs2pzOOtKM%3D)
 
 ### 5.4 askTemplate 询问用户选择模板
 
@@ -732,15 +742,15 @@ write (cb?: () => void) {
 
 `write` 函数主要做了以下几件事情：
 
-- 获取用户输入的参数，包括项目名称、项目目录、模板名称等。
-- 引入模板编写者的自定义逻辑。
-- 调用 `createProject` 函数，传入用户输入的参数和模板编写者的自定义逻辑。
+*   获取用户输入的参数，包括项目名称、项目目录、模板名称等。
+*   引入模板编写者的自定义逻辑。
+*   调用 `createProject` 函数，传入用户输入的参数和模板编写者的自定义逻辑。
 
 调试截图
 
-![write](./images/taro-init-debugger-write.png)
+![taro-init-debugger-write.png](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/6c05f427b98f43339be267ec6beac9f6~tplv-73owjymdk6-watermark.image?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1720802182&x-orig-sign=iYwZbOrOqlf0FKb2OAhKLsVcHfw%3D)
 
-### 6.1 template_creator.js 默认模板中创建模板的自定义逻辑
+### 6.1 template\_creator.js 默认模板中创建模板的自定义逻辑
 
 ```ts
 // packages/taro-cli/templates/default/template_creator.js
@@ -805,10 +815,11 @@ module.exports = {
 
 `template_creator.js` 文件中的 `handler` 对象，定义了模板中创建的文件和自定义逻辑。
 比如当 `!!params.typescript` 的时候，创建 `/tsconfig.json`、`types/global.d.ts` 文件。
-当 ['Vue3'].includes(framework) && !!typescript 的时候，创建 `types/vue.d.ts` 文件。
-根据 '/_env.development' 文件创建 `.env.development`
+当 \['Vue3'].includes(framework) && !!typescript 的时候，创建 `types/vue.d.ts` 文件。
+根据 '/\_env.development' 文件创建 `.env.development`
 等等
->因为在一些场景下，`.` 开头文件会出现问题，所以改用 `_` 开头命名文件，创建时做一次替换。
+
+> 因为在一些场景下，`.` 开头文件会出现问题，所以改用 `_` 开头命名文件，创建时做一次替换。
 
 ## 7. 调试 rust 代码
 
@@ -820,7 +831,7 @@ import { CompilerType, createProject, CSSType, FrameworkType, NpmType, PeriodTyp
 
 用 `rust` 改造 `taro init` 这部分代码的作者 `@luckyadam`，写了一篇文章。可以参考学习[解锁前端新潜能：如何使用 Rust 锈化前端工具链](https://juejin.cn/post/7321410906426998810)
 
->安装 `VSCode` 插件 [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer) (方便跳转代码定义等) 和调试代码的插件 [CodeLLDB](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.lldb-dap)
+> 安装 `VSCode` 插件 [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer) (方便跳转代码定义等) 和调试代码的插件 [CodeLLDB](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.lldb-dap)
 
 [rust-lang.org rust 官网](https://www.rust-lang.org/zh-CN/)
 
@@ -849,11 +860,12 @@ import { CompilerType, createProject, CSSType, FrameworkType, NpmType, PeriodTyp
 这样我们就可以在 `crates/native_binding/src/lib.rs` 文件中打断点调试了。
 
 调试截图如下：
-![调试 rust createProject](./images/taro-init-debugger-rust.png)
 
-我们继续来看 `crates/native_binding/src/lib.rs` 文件中的 create_project （nodejs 中调用则是createProject）函数：
+![taro-init-debugger-rust.png](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/be3872872be04cf3b1b947f120f40168~tplv-73owjymdk6-watermark.image?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1720802238&x-orig-sign=d6kCNyG7mlkm86CIJ4%2BTlMTDIQI%3D)
 
-## 8. rust create_project 创建项目
+我们继续来看 `crates/native_binding/src/lib.rs` 文件中的 create\_project （nodejs 中调用则是createProject）函数：
+
+## 8. rust create\_project 创建项目
 
 ```rs
 // crates/native_binding/src/lib.rs
@@ -947,18 +959,19 @@ pub async fn create(
 ```
 
 `create` 主要做了以下几件事情：
-1. 创建项目目录
-2. 创建项目文件 creator.create_files
-3. 初始化 git init_git
-4. 安装依赖 install_deps
+
+1.  创建项目目录
+2.  创建项目文件 creator.create\_files
+3.  初始化 git init\_git
+4.  安装依赖 install\_deps
 
 如下图所示：
 
-![初始化2，创建项目](./images/taro-init-2.png)
+![初始化2，创建项目](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/c8156afa9d55465e972c46b6a5b58776~tplv-73owjymdk6-watermark.image?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1720802271&x-orig-sign=iLgq%2BRMqK52qMTHnjhVGO%2BzKRYM%3D)
 
 接着我们重点来看一下 `creator.create_files` 函数：
 
-### 8.2 creator.create_files
+### 8.2 creator.create\_files
 
 ```rs
 // crates/taro_init/src/creator.rs
@@ -1029,7 +1042,7 @@ pub async fn tempate(
 
 我们重点来看一下 `generate_with_template` 函数：
 
-### 8.4 generate_with_template 根据数据渲染模板，生成文件
+### 8.4 generate\_with\_template 根据数据渲染模板，生成文件
 
 ```rs
 // crates/taro_init/src/utils.rs
@@ -1059,7 +1072,7 @@ taro init 的 rust代码中，安装依赖引入了[crates/handlebars rust包](h
 
 如下图所示：
 
-![handlebars-render](./images/handlebars-render.png)
+![handlebars-render.png](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/e1042eabca99460eac71bef4dbc67244~tplv-73owjymdk6-watermark.image?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1720802307&x-orig-sign=abucGTlxr008%2FkiUUgyawtPjfVI%3D)
 
 更多 `handlebars` 用法，参考[handlebars官网](https://handlebarsjs.com/zh/installation/#%E7%94%A8%E6%B3%95)。
 
@@ -1067,7 +1080,7 @@ taro init 的 rust代码中，安装依赖引入了[crates/handlebars rust包](h
 
 我们再来看下开头初始化项目的 `gif` 回顾下整个 `taro init` 过程：
 
-![gif](./images/taro-init-gif-high.gif)
+![taro-init-gif-high.gif](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/d00b03d50cd34c1995c1f047ca5b3fef~tplv-73owjymdk6-watermark.image?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1720801922&x-orig-sign=rfbni%2BTeAF871T8a%2BQ1gwlf4cM8%3D)
 
 根据前面两篇 [1. taro cli init](https://juejin.cn/post/7378363694939783178)、[2. taro 插件机制](https://juejin.cn/spost/7380195796208205824) 文章，我们可以得知：`taro init` 初始化命令，最终调用的是 `packages/taro-cli/src/presets/commands/init.ts` 文件中的 `ctx.registerCommand` 注册的 `init` 命令行的 `fn` 函数。
 
@@ -1130,7 +1143,7 @@ write (cb?: () => void) {
 
 再根据包管理器安装依赖。
 
-----
+***
 
 **如果看完有收获，欢迎点赞、评论、分享、收藏支持。你的支持和肯定，是我写作的动力。也欢迎提建议和交流讨论**。
 
