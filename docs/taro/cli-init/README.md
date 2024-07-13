@@ -19,7 +19,7 @@ theme: smartblue
 
 -   [x] [Taro 源码揭秘 - 1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
 -   [x] [Taro 源码揭秘 - 2. 揭开整个架构的插件系统的秘密](https://juejin.cn/post/7380195796208205824)
--   [x] [Taro 源码揭秘 - 3. 揭开 taro init 初始化项目的背后秘密](https://juejin.cn/post/7390335741586931738)
+-   [x] [Taro 源码揭秘 - 3. 每次创建新的 taro 项目（taro init）的背后原理是什么](https://juejin.cn/post/7390335741586931738)
 -   [ ] cli build
 -   [ ] 等等
 
