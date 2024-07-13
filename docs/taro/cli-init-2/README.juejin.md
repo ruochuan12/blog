@@ -9,7 +9,7 @@ theme: smartblue
 
 大家好，我是[若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
 
-截至目前（`2024-07-12`），`taro` 正式版是 `3.6.33`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。所以我们直接学习 `4.x`，`4.x` 分支最新 `beta` 版本是 `4.0.0-beta.118`。
+截至目前（`2024-07-12`），`taro` 正式版是 `3.6.34`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。所以我们直接学习 `4.x`，`4.x` 最新版本是 `4.0.0`。
 
 计划写一个 `taro` 源码揭秘系列，欢迎持续关注。初步计划有如下文章：
 
@@ -44,16 +44,17 @@ npm dist-tag @tarojs/cli
 
 如图所示：
 
-![taro-cli-npm-dist-tag.png](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/ab74e8a43d8a4b09be9ba92b9731167d~tplv-73owjymdk6-watermark.image?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1720801901&x-orig-sign=JRa%2FrAOxLHJ7pssoRO8oMLW3RI4%3D)
+![taro-cli-npm-dist-tag.png](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/8363b1ec059b4ea4b57523cf81dc5198~tplv-73owjymdk6-watermark.image?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1720947881&x-orig-sign=Cq5C5YQIm4cXVanUoC%2BshUYj6jw%3D)
 
-我们先用 `@tarojs/cli@beta` 初始化一个项目看看。全局安装相对麻烦，我们不全局安装，使用 `npx` 来运行 `beta tag` 版本。
+目前 `lastest` 标签（默认版本）是 `3.6.34`，`next` 标签是 `4.0.0`。后续 `lastest` 标签会设置为 `4.x` 版本。
+
+我们先用 `@tarojs/cli@next` 初始化一个项目看看。全局安装相对麻烦，我们不全局安装，使用 `npx` 来运行 `next tag` 版本。
 
 ```bash
-npx @tarojs/cli@beta init taro4-beta
+npx @tarojs/cli@next init taro4-next
 ```
 
 这个初始化完整的过程，我用 [GIPHY CAPTURE](https://giphy.com/apps/giphycapture) 工具录制了一个`gif`，如下图所示：
-
 
 ![taro-init-gif-high.gif](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/d00b03d50cd34c1995c1f047ca5b3fef~tplv-73owjymdk6-watermark.image?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1720801922&x-orig-sign=rfbni%2BTeAF871T8a%2BQ1gwlf4cM8%3D)
 
@@ -163,7 +164,7 @@ export default class Project extends Creator {
 
 `Project` 继承了 `Creator` 类。
 
-构造函数中，使用 semver.lt 判断当前 `node` 版本是否低于 `v18.0.0`，如果低于则报错。
+构造函数中，使用 `semver.lt` 判断当前 `node` 版本是否低于 `v18.0.0`，如果低于则报错。
 [semver](https://www.npmjs.com/package/semver) 是一个版本号比较库，可以用来判断 `node` 版本是否符合要求。
 
 其次就是初始化 `this.rootPath` 和 `this.conf`。
@@ -201,9 +202,9 @@ init () {
 
 输出就是这个图：
 
-![taro-init-0.png](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/297a785334f74d488103195caecc106b~tplv-73owjymdk6-watermark.image?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1720802000&x-orig-sign=AEPO4lZdqB4SWPs0iTrOqr8OdGE%3D)
+![taro-init-0.png](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/f31775fa8fcd4af0bbb4b5fcf85fe7a5~tplv-73owjymdk6-watermark.image?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1720948695&x-orig-sign=cKscXAHnOGywBM%2BURnCFmEDlnFw%3D)
 
-其中`👽 Taro v4.0.0-beta.116` 输出的是 `tarojs-cli/package.json` 的版本，[第一篇文章 4. taro-cli/src/utils/index.ts](https://juejin.cn/post/7378363694939783178#heading-6) 中有详细讲述，这里就不再赘述了。
+其中`👽 Taro v4.0.0` 输出的是 `tarojs-cli/package.json` 的版本，[第一篇文章 4. taro-cli/src/utils/index.ts](https://juejin.cn/post/7378363694939783178#heading-6) 中有详细讲述，这里就不再赘述了。
 
 输出`获取 taro 全局配置成功`是指获取 `~/.taro-global-config/index.json` 文件的插件集 `presets` 和插件 `plugins`。[第一篇文章 6.2.2 config.initGlobalConfig 初始化全局配置](https://juejin.cn/post/7378363694939783178#heading-12)中有详细讲述，`spinner.succeed('获取 taro 全局配置成功')` 这里就不再赘述了。
 
@@ -252,7 +253,7 @@ const conf = {
   compiler: "Webpack5",
   hideDefaultTemplate: undefined,
   css: "Sass",
-  date: "2024-7-9",
+  date: "2024-7-12",
 }
 ```
 
@@ -293,7 +294,17 @@ async ask () {
 
 > [`inquirer`](https://www.npmjs.com/package/inquirer) 是一个命令行交互库，可以用来创建命令行程序。
 
-如果参数中没指定相应参数，那么就询问用户输入项目名称、描述、选择框架（React、PReact、Vue3、Solid）、是否启用TS、CSS预处理器（Sass、less、Stylus、无等）、编译工具（webpack、vite）、包管理工具（npm、yarn、pnpm）等。
+如果参数中没指定相应参数，那么就询问：
+- 项目名称
+- 项目介绍
+- 选择框架（`React、PReact、Vue3、Solid`）
+- 是否启用TS
+- CSS预处理器（`Sass、less、Stylus、无等`）
+- 编译工具（`webpack、vite`）
+- 包管理工具（`npm、yarn、pnpm`）
+- 选择模板源（`gitee最快、github最新、CLI 内置模板等`）
+- 选择模板（`默认模板等`）
+- 等等
 
 如图所示：
 
@@ -823,17 +834,19 @@ module.exports = {
 
 ## 7. 调试 rust 代码
 
+我们从 `write` 函数调用 `createProject` 函数，可以看到 `createProject` 等是从  `@tarojs/binding` 引入的。
+
 ```ts
 import { CompilerType, createProject, CSSType, FrameworkType, NpmType, PeriodType } from '@tarojs/binding'
 ```
 
-简单来说就是：通过 [napi-rs](https://napi.rs/docs/introduction/getting-started) 把`create_project`函数暴露给`nodejs`，然后通过 `nodejs` 调用 `rust` 的 `create_project` 函数。
+简单来说就是：通过 [napi-rs](https://napi.rs/docs/introduction/getting-started) 把 `create_project` 函数暴露给 `nodejs` ，然后通过 `nodejs` 调用 `rust` 的 `create_project` 函数。
 
-用 `rust` 改造 `taro init` 这部分代码的作者 `@luckyadam`，写了一篇文章。可以参考学习[解锁前端新潜能：如何使用 Rust 锈化前端工具链](https://juejin.cn/post/7321410906426998810)
+关于具体细节，用 `rust` 改造 `taro init` 这部分代码的作者 `@luckyadam`，写了一篇文章。可以参考学习[解锁前端新潜能：如何使用 Rust 锈化前端工具链](https://juejin.cn/post/7321410906426998810)，我在这里就不赘述了。
 
 > 安装 `VSCode` 插件 [rust-analyzer](https://marketplace.visualstudio.com/items?itemName=rust-lang.rust-analyzer) (方便跳转代码定义等) 和调试代码的插件 [CodeLLDB](https://marketplace.visualstudio.com/items?itemName=llvm-vs-code-extensions.lldb-dap)
 
-[rust-lang.org rust 官网](https://www.rust-lang.org/zh-CN/)
+更多 `rust` 学习，可参考 [rust 官网：rust-lang.org](https://www.rust-lang.org/zh-CN/)
 
 我们在 `.vscode/launch.json` 中的原有的 `debug-init` 命令行调试配置，修改 `"type": "lldb",` 配置如下：
 
@@ -863,7 +876,7 @@ import { CompilerType, createProject, CSSType, FrameworkType, NpmType, PeriodTyp
 
 ![taro-init-debugger-rust.png](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/be3872872be04cf3b1b947f120f40168~tplv-73owjymdk6-watermark.image?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1720802238&x-orig-sign=d6kCNyG7mlkm86CIJ4%2BTlMTDIQI%3D)
 
-我们继续来看 `crates/native_binding/src/lib.rs` 文件中的 create\_project （nodejs 中调用则是createProject）函数：
+我们继续来看 `crates/native_binding/src/lib.rs` 文件中的 `create_project` （ `nodejs` 中调用则是 `createProject` ）函数：
 
 ## 8. rust create\_project 创建项目
 
@@ -961,9 +974,9 @@ pub async fn create(
 `create` 主要做了以下几件事情：
 
 1.  创建项目目录
-2.  创建项目文件 creator.create\_files
-3.  初始化 git init\_git
-4.  安装依赖 install\_deps
+2.  创建项目文件 `creator.create_files`
+3.  初始化 `git init_git`
+4.  安装依赖 `install_deps`
 
 如下图所示：
 

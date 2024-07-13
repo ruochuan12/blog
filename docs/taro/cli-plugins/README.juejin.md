@@ -3,7 +3,6 @@ highlight: darcula
 theme: smartblue
 ---
 
-
 ## 1. 前言
 
 大家好，我是[若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（5.8k+人）第一的专栏，写有几十篇源码文章。
@@ -13,7 +12,7 @@ theme: smartblue
 计划写一个 `taro` 源码揭秘系列，欢迎持续关注。初步计划有如下文章：
 
 *   [x] [Taro 源码揭秘 - 1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
-*   [x] [Taro 源码揭秘 - 2. 揭开整个架构的插件系统的秘密](https://juejin.cn/spost/7380195796208205824)
+*   [x] [Taro 源码揭秘 - 2. 揭开整个架构的插件系统的秘密](https://juejin.cn/post/7380195796208205824)
 *   [ ] init 初始化项目
 *   [ ] cli build
 *   [ ] 等等
@@ -85,7 +84,7 @@ export default class Kernel extends EventEmitter {
 
 如下图所示：
 
-![Kernal 实例对象](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d24e56d10868432d84321ebf914efddb~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3840&h=2160&s=1210663&e=png&b=272727)
+![Kernal 实例对象](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/d24e56d10868432d84321ebf914efddb~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3840\&h=2160\&s=1210663\&e=png\&b=272727)
 
 本文我们主要是学习 `initPresetsAndPlugins` 具体实现。
 
@@ -94,10 +93,9 @@ export default class Kernel extends EventEmitter {
 本文讲述的函数源码位置是 `packages/taro-service/src/Kernel.ts`。
 基本包含在下图中。
 
-![函数](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bbdd0824fd514f2a897eb56538fdc62f~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3476&h=1998&s=698113&e=png&b=262626)
+![函数](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bbdd0824fd514f2a897eb56538fdc62f~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3476\&h=1998\&s=698113\&e=png\&b=262626)
 
 我们来看 CLI 调用 `new Kernal` 的地方，源码所在位置 `packages/taro-cli/src/cli.ts`
-
 
 ```ts
 // packages/taro-cli/src/cli.ts
@@ -138,19 +136,19 @@ export default (ctx: IPluginContext) => {
 
 传入的参数 `presets` 预设插件集合如下图所示：
 
-![presets.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bd26560928c9405bad0e76976e3b27a5~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3086&h=1872&s=505474&e=png&b=252525)
+![presets.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/bd26560928c9405bad0e76976e3b27a5~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3086\&h=1872\&s=505474\&e=png\&b=252525)
 
 其中 `hooks/build.js` 如下图所示：
 
-![build hooks 钩子](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b9ed1da3219b438f963e0978d1c3f2f1~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1920&h=1080&s=733033&e=jpg&b=262626)
+![build hooks 钩子](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/b9ed1da3219b438f963e0978d1c3f2f1~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1920\&h=1080\&s=733033\&e=jpg\&b=262626)
 
 使用 [ctx.registerMethod](https://docs.taro.zone/docs/plugin-custom#ctxregistermethodarg-string---name-string-fn-function--fn-function) 注册方法。其中 `ctx` 就是 `Kernal` 实例对象。
 
-![ctx.registerMethod.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fc7a938140f64d0d83890a3163252b8e~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3176&h=1548&s=427999&e=png&b=fffdfd)
+![ctx.registerMethod.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fc7a938140f64d0d83890a3163252b8e~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3176\&h=1548\&s=427999\&e=png\&b=fffdfd)
 
 源码实现如下，存入到 `methods Map` 中。后面我们会再次遇到它。
 
-![ctx.registerMethod-2.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fe3afb90ab514707a80c4ae10e3bd4c1~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2502&h=1342&s=422966&e=png&b=262626)
+![ctx.registerMethod-2.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fe3afb90ab514707a80c4ae10e3bd4c1~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2502\&h=1342\&s=422966\&e=png\&b=262626)
 
 ## 3. initPresetsAndPlugins 初始化预设插件集合和插件
 
@@ -287,7 +285,7 @@ export function mergePlugins(dist: PluginItem[], src: PluginItem[]) {
 
 执行后 `resolvePresetsOrPlugins` 函数得到的 `resolvedCliAndProjectPresets` 如图所示：
 
-![得到的 resolvedCliAndProjectPresets](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6d11dd55b87d43fc9917949cfd08a540~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3720&h=1356&s=697190&e=png&b=282828)
+![得到的 resolvedCliAndProjectPresets](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/6d11dd55b87d43fc9917949cfd08a540~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3720\&h=1356\&s=697190\&e=png\&b=282828)
 
 `globalConfigRootPath` 路径是： `/Users/用户名/.taro-global-config`
 
@@ -506,7 +504,7 @@ initPreset(preset: IPreset, isGlobalConfigPreset?: boolean) {
 > 3.  this.methods 数组绑定  this 指向到 Kernal 实例对象上
 > 4.  kernelApis 的方法，代理绑定下 this 指向到 Kernal 实例对象上。
 
-![methods.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9b43d0875af54efd9f6d59b54455f9c8~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1844&h=1608&s=290976&e=png&b=252525)
+![methods.png](https://p9-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/9b43d0875af54efd9f6d59b54455f9c8~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=1844\&h=1608\&s=290976\&e=png\&b=252525)
 
 因为 `new Proxy` 代理后，可以直接使用 `ctx.methodName` 直接调用相应方法。
 
@@ -572,7 +570,7 @@ registerCommand (command: ICommand) {
 
 `command` 和 `hooks` 如下图所示：
 
-![command-hooks.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fda61f5f21a841f684676317820253dc~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2102&h=1874&s=333498&e=png&b=272727)
+![command-hooks.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/fda61f5f21a841f684676317820253dc~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2102\&h=1874\&s=333498\&e=png\&b=272727)
 
 #### 6.1.3 registerPlatform 注册平台
 
@@ -653,11 +651,11 @@ addPluginOptsSchema (schema) {
 
 这个方法主要做了如下几件事：
 
-> 1. 注册插件到 `plugins Map` 中。
+> 1.  注册插件到 `plugins Map` 中。
 
 最终的插件 `plugins` 如图所示：
 
-![plugins.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2562b0e928ff4ff4ac9224cf80ddf3ea~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2084&h=1870&s=510691&e=png&b=272727)
+![plugins.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2562b0e928ff4ff4ac9224cf80ddf3ea~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2084\&h=1870\&s=510691\&e=png\&b=272727)
 
 ## 8. resolvePlugins 解析插件
 
@@ -702,10 +700,10 @@ resolvePlugins(
 
 这个方法主要做了如下几件事：
 
-> 1. 合并预设插件集合中的插件、CLI 和项目中配置的插件
-> 2. `resolvedCliAndProjectPlugins` CLI 和项目中配置的插件
-> 3. 合并全局预设插件集合中的插件、全局配置的插件
-> 4. 最后遍历所有解析后的插件一次调用 `this.initPlugin` 初始化插件
+> 1.  合并预设插件集合中的插件、CLI 和项目中配置的插件
+> 2.  `resolvedCliAndProjectPlugins` CLI 和项目中配置的插件
+> 3.  合并全局预设插件集合中的插件、全局配置的插件
+> 4.  最后遍历所有解析后的插件一次调用 `this.initPlugin` 初始化插件
 
 ## 9. initPlugin 初始化插件
 
@@ -722,10 +720,10 @@ initPlugin(plugin: IPlugin) {
 
 这个方法主要做了如下几件事：
 
-> 1. initPluginCtx 初始化插件的 ctx
-> 2. 注册插件
-> 3. `apply` 执行插件，插件本身也是一个函数，传入插件 `pluginCtx` 对象（包含 `register`、`registerCommand`、`registerMethods` 等方法的对象），作为 `ctx`，传入参数 `opts`
-> 4. 校验插件的参数是否符合要求
+> 1.  initPluginCtx 初始化插件的 ctx
+> 2.  注册插件
+> 3.  `apply` 执行插件，插件本身也是一个函数，传入插件 `pluginCtx` 对象（包含 `register`、`registerCommand`、`registerMethods` 等方法的对象），作为 `ctx`，传入参数 `opts`
+> 4.  校验插件的参数是否符合要求
 
 ## 10. checkPluginOpts 校验插件的参数
 
@@ -812,7 +810,7 @@ applyCliCommandPlugin(commandNames: string[] = []) {
 }
 ```
 
-![applyCliCommandPlugin.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/519d967c41c84d15b9e6dca50dc9dfce~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3228&h=1696&s=453934&e=png&b=f6f8fa)
+![applyCliCommandPlugin.png](https://p1-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/519d967c41c84d15b9e6dca50dc9dfce~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3228\&h=1696\&s=453934\&e=png\&b=f6f8fa)
 
 ## 12. 总结
 
@@ -867,7 +865,7 @@ resolvedPresetsOrPlugins.push(resolvedItem);
 
 最终的插件 `plugins` 如图所示：
 
-![plugins.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2562b0e928ff4ff4ac9224cf80ddf3ea~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2084&h=1870&s=510691&e=png&b=272727)
+![plugins.png](https://p6-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/2562b0e928ff4ff4ac9224cf80ddf3ea~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=2084\&h=1870\&s=510691\&e=png\&b=272727)
 
 ```ts
 initPlugin(plugin: IPlugin) {
@@ -898,13 +896,14 @@ register(){
 从 `Kernal` 的实例对象中，取出相应的 `hooks`，使用 [tapable](https://github.com/webpack/tapable) 的 `AsyncSeriesWaterfallHook` 钩子串联起来，依次执行 `hook.fn` 方法。
 
 调试如图所示：
-![applyPlugins](./images/applyPlugins.png)
+
+![applyPlugins.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ad03ef2a38e24a82a2ac8510ce7639d0~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3840&h=2086&s=903063&e=png&b=262626)
 
 从而达到调用的是 `command/init.ts` 中的 `fn` 函数。**不得不惊叹一声：Taro 插件机制设计的秒啊**。
 
 强烈建议读者朋友们，空闲时自己看着文章，多尝试调试源码。单看文章，可能觉得看懂了，但自己调试可能会发现更多细节，收获更多。
 
----
+***
 
 **如果看完有收获，欢迎点赞、评论、分享、收藏支持。你的支持和肯定，是我写作的动力**。
 
