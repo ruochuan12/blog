@@ -1154,7 +1154,11 @@ write (cb?: () => void) {
 
 根据数据渲染 `handlebars` 模板，创建项目，生成文件。
 
-再根据包管理器安装依赖。
+再根据包管理器安装依赖。最后打印创建项目成功，请进入项目目录工作。
+
+整个 `taro init` 创建新项目流程用一张图表示如图所示：
+
+![taro init 创建新项目流程](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/daea13af8f3845abaf7e710df3392fc6~tplv-73owjymdk6-watermark.image?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1721049696&x-orig-sign=hITt%2BMU9LwAlzQ%2BsWY2R2YzyuNE%3D)
 
 ***
 
