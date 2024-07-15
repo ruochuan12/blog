@@ -9,7 +9,7 @@ theme: smartblue
 
 大家好，我是[若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
 
-截至目前（`2024-07-12`），`taro` 正式版是 `3.6.33`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。所以我们直接学习 `4.x`，`4.x` 分支最新 `beta` 版本是 `4.0.0-beta.118`。
+截至目前（`2024-07-12`），`taro` 正式版是 `3.6.34`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。所以我们直接学习 `4.x`，`4.x` 最新版本是 `4.0.0`。
 
 计划写一个 `taro` 源码揭秘系列，欢迎持续关注。初步计划有如下文章：
 
@@ -32,7 +32,6 @@ theme: smartblue
 
 关于克隆项目、环境准备、如何调试代码等，参考[第一篇文章-准备工作、调试](https://juejin.cn/post/7378363694939783178#heading-1)。后续文章基本不再过多赘述。
 >文章中基本是先放源码，源码中不做过多解释。源码后面再做简单讲述。
-
 
 ```ts
 import {
@@ -254,6 +253,415 @@ async function checkConfig ({ projectConfig, helper }) {
   const result = await validateConfig(projectConfig, helper)
   return result
 }
+```
+
+## 插件 weapp
+
+```ts
+// packages/taro-platform-weapp/src/index.ts
+import Weapp from './program'
+
+import type { IPluginContext } from '@tarojs/service'
+
+// 让其它平台插件可以继承此平台
+export { Weapp }
+
+export interface IOptions {
+  enablekeyboardAccessory?: boolean
+}
+
+export default (ctx: IPluginContext, options: IOptions) => {
+  ctx.registerPlatform({
+    name: 'weapp',
+    useConfigName: 'mini',
+    async fn ({ config }) {
+      console.log('registerPlatform', config)
+      const program = new Weapp(ctx, config, options || {})
+      await program.start()
+    }
+  })
+}
+```
+
+>packages/taro-platform-weapp/src/program.ts
+
+```ts
+// packages/taro-platform-weapp/src/program.ts
+import { TaroPlatformBase } from '@tarojs/service'
+
+import { components } from './components'
+import { Template } from './template'
+
+import type { IOptions } from './index'
+
+const PACKAGE_NAME = '@tarojs/plugin-platform-weapp'
+
+export default class Weapp extends TaroPlatformBase {
+  template: Template
+  platform = 'weapp'
+  globalObject = 'wx'
+  projectConfigJson: string = this.config.projectConfigName || 'project.config.json'
+  runtimePath = `${PACKAGE_NAME}/dist/runtime`
+  taroComponentsPath = `${PACKAGE_NAME}/dist/components-react`
+  fileType = {
+    templ: '.wxml',
+    style: '.wxss',
+    config: '.json',
+    script: '.js',
+    xs: '.wxs'
+  }
+
+  /**
+   * 1. setupTransaction - init
+   * 2. setup
+   * 3. setupTransaction - close
+   * 4. buildTransaction - init
+   * 5. build
+   * 6. buildTransaction - close
+   */
+  constructor (ctx, config, pluginOptions?: IOptions) {
+    super(ctx, config)
+    this.template = new Template(pluginOptions)
+    this.setupTransaction.addWrapper({
+      close () {
+        this.modifyTemplate(pluginOptions)
+        this.modifyWebpackConfig()
+      }
+    })
+  }
+
+  /**
+   * 增加组件或修改组件属性
+   */
+  modifyTemplate (pluginOptions?: IOptions) {
+    const template = this.template
+    template.mergeComponents(this.ctx, components)
+    template.voidElements.add('voip-room')
+    template.focusComponents.add('editor')
+    if (pluginOptions?.enablekeyboardAccessory) {
+      template.voidElements.delete('input')
+      template.voidElements.delete('textarea')
+    }
+  }
+
+  /**
+   * 修改 Webpack 配置
+   */
+  modifyWebpackConfig () {
+    this.ctx.modifyWebpackChain(({ chain }) => {
+      // 解决微信小程序 sourcemap 映射失败的问题，#9412
+      chain.output.devtoolModuleFilenameTemplate((info) => {
+        const resourcePath = info.resourcePath.replace(/[/\\]/g, '_')
+        return `webpack://${info.namespace}/${resourcePath}`
+      })
+    })
+  }
+}
+
+```
+- weapp =>
+- TaroPlatformBase
+- TaroPlatform
+
+## TaroPlatformBase
+
+```ts
+import * as path from 'node:path'
+
+import { recursiveMerge } from '@tarojs/helper'
+import { isObject, PLATFORM_TYPE } from '@tarojs/shared'
+
+import { getPkgVersion } from '../utils/package'
+import TaroPlatform from './platform'
+
+import type { RecursiveTemplate, UnRecursiveTemplate } from '@tarojs/shared/dist/template'
+import type { TConfig } from '../utils/types'
+
+interface IFileType {
+  templ: string
+  style: string
+  config: string
+  script: string
+  xs?: string
+}
+
+export abstract class TaroPlatformBase<T extends TConfig = TConfig> extends TaroPlatform<T> {
+  platformType = PLATFORM_TYPE.MINI
+
+  abstract globalObject: string
+  abstract fileType: IFileType
+  abstract template: RecursiveTemplate | UnRecursiveTemplate
+  projectConfigJson?: string
+  taroComponentsPath?: string
+
+  private projectConfigJsonOutputPath: string
+
+  /**
+   * 1. 清空 dist 文件夹
+   * 2. 输出编译提示
+   * 3. 生成 project.config.json
+   */
+  private async setup () {
+    await this.setupTransaction.perform(this.setupImpl, this)
+    this.ctx.onSetupClose?.(this)
+  }
+
+  private setupImpl () {
+    const { output } = this.config
+    // webpack5 原生支持 output.clean 选项，但是 webpack4 不支持， 为统一行为，这里做一下兼容
+    // （在 packages/taro-mini-runner/src/webpack/chain.ts 和 packages/taro-webpack-runner/src/utils/chain.ts 的 makeConfig 中对 clean 选项做了过滤）
+    // 仅 output.clean 为 false 时不清空输出目录
+    // eslint-disable-next-line eqeqeq
+    if (output == undefined || output.clean == undefined || output.clean === true) {
+      this.emptyOutputDir()
+    } else if (isObject(output.clean)) {
+      this.emptyOutputDir(output.clean.keep || [])
+    }
+    this.printDevelopmentTip(this.platform)
+    if (this.projectConfigJson) {
+      this.generateProjectConfig(this.projectConfigJson)
+    }
+    if (this.ctx.initialConfig.logger?.quiet === false) {
+      const { printLog, processTypeEnum } = this.ctx.helper
+      printLog(processTypeEnum.START, '开发者工具-项目目录', `${this.ctx.paths.outputPath}`)
+    }
+    // Webpack5 代码自动热重载
+    if (this.compiler === 'webpack5' && this.config.isWatch && this.projectConfigJsonOutputPath) {
+      try {
+        const projectConfig = require(this.projectConfigJsonOutputPath)
+        if (projectConfig.setting?.compileHotReLoad === true) {
+          this.ctx.modifyWebpackChain(({ chain }) => {
+            chain.plugin('TaroMiniHMRPlugin')
+              .use(require(path.join(__dirname, './webpack/hmr-plugin.js')).default)
+          })
+        }
+      } catch (e) {} // eslint-disable-line no-empty
+    }
+  }
+
+  protected printDevelopmentTip (platform: string) {
+    const tips: string[] = []
+    const config = this.config
+    const { chalk } = this.helper
+
+    if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
+      const { isWindows } = this.helper
+      const exampleCommand = isWindows
+        ? `$ set NODE_ENV=production && taro build --type ${platform} --watch`
+        : `$ NODE_ENV=production taro build --type ${platform} --watch`
+
+      tips.push(chalk.yellowBright(`预览模式生成的文件较大，设置 NODE_ENV 为 production 可以开启压缩。
+Example:
+${exampleCommand}`))
+    }
+
+    if (this.compiler === 'webpack5' && !config.cache?.enable) {
+      tips.push(chalk.yellowBright('建议开启持久化缓存功能，能有效提升二次编译速度，详情请参考: https://docs.taro.zone/docs/config-detail#cache。'))
+    }
+
+    if (tips.length) {
+      console.log(chalk.yellowBright('Tips:'))
+      tips.forEach((item, index) => console.log(`${chalk.yellowBright(index + 1)}. ${item}`))
+      console.log('\n')
+    }
+  }
+
+  /**
+   * 返回当前项目内的 runner 包
+   */
+  protected async getRunner () {
+    const { appPath } = this.ctx.paths
+    const { npm } = this.helper
+
+    const runnerPkg = this.compiler === 'vite' ? '@tarojs/vite-runner' : '@tarojs/webpack5-runner'
+
+    const runner = await npm.getNpmPkg(runnerPkg, appPath)
+
+    return runner.bind(null, appPath)
+  }
+
+  /**
+   * 准备 runner 参数
+   * @param extraOptions 需要额外合入 Options 的配置项
+   */
+  protected getOptions (extraOptions = {}) {
+    const { ctx, globalObject, fileType, template } = this
+
+    const config = recursiveMerge(Object.assign({}, this.config), {
+      env: {
+        FRAMEWORK: JSON.stringify(this.config.framework),
+        TARO_ENV: JSON.stringify(this.platform),
+        TARO_PLATFORM: JSON.stringify(this.platformType),
+        TARO_VERSION: JSON.stringify(getPkgVersion())
+      }
+    })
+
+    return {
+      ...config,
+      nodeModulesPath: ctx.paths.nodeModulesPath,
+      buildAdapter: config.platform,
+      platformType: this.platformType,
+      globalObject,
+      fileType,
+      template,
+      ...extraOptions
+    }
+  }
+
+  /**
+   * 调用 runner 开始编译
+   * @param extraOptions 需要额外传入 runner 的配置项
+   */
+  private async build (extraOptions = {}) {
+    this.ctx.onBuildInit?.(this)
+    await this.buildTransaction.perform(this.buildImpl, this, extraOptions)
+  }
+
+  private async buildImpl (extraOptions = {}) {
+    const runner = await this.getRunner()
+    const options = this.getOptions(
+      Object.assign(
+        {
+          runtimePath: this.runtimePath,
+          taroComponentsPath: this.taroComponentsPath
+        },
+        extraOptions
+      )
+    )
+    await runner(options)
+  }
+
+  /**
+   * 生成 project.config.json
+   * @param src 项目源码中配置文件的名称
+   * @param dist 编译后配置文件的名称，默认为 'project.config.json'
+   */
+  protected generateProjectConfig (src: string, dist = 'project.config.json') {
+    if (this.config.isBuildNativeComp) return
+    this.ctx.generateProjectConfig({
+      srcConfigName: src,
+      distConfigName: dist
+    })
+    this.projectConfigJsonOutputPath = `${this.ctx.paths.outputPath}/${dist}`
+  }
+
+  /**
+   * 递归替换对象的 key 值
+   */
+  protected recursiveReplaceObjectKeys (obj, keyMap) {
+    Object.keys(obj).forEach((key) => {
+      if (keyMap[key]) {
+        obj[keyMap[key]] = obj[key]
+        if (typeof obj[key] === 'object') {
+          this.recursiveReplaceObjectKeys(obj[keyMap[key]], keyMap)
+        }
+        delete obj[key]
+      } else if (keyMap[key] === false) {
+        delete obj[key]
+      } else if (typeof obj[key] === 'object') {
+        this.recursiveReplaceObjectKeys(obj[key], keyMap)
+      }
+    })
+  }
+
+  /**
+   * 调用 runner 开启编译
+   */
+  public async start () {
+    await this.setup()
+    await this.build()
+  }
+}
+
+```
+
+## TaroPlatform
+
+```ts
+import { PLATFORM_TYPE } from '@tarojs/shared'
+
+import type { Func } from '@tarojs/taro/types/compile'
+import type { IPluginContext, TConfig } from '../utils/types'
+
+interface IWrapper {
+  init? (): void
+  close? (): void
+}
+
+const VALID_COMPILER = ['webpack5', 'vite']
+const DEFAULT_COMPILER = 'webpack5'
+
+export class Transaction<T = TaroPlatform> {
+  wrappers: IWrapper[] = []
+
+  async perform (fn: Func, scope: T, ...args: any[]) {
+    this.initAll(scope)
+    await fn.call(scope, ...args)
+    this.closeAll(scope)
+  }
+
+  initAll (scope: T) {
+    const wrappers = this.wrappers
+    wrappers.forEach(wrapper => wrapper.init?.call(scope))
+  }
+
+  closeAll (scope: T) {
+    const wrappers = this.wrappers
+    wrappers.forEach(wrapper => wrapper.close?.call(scope))
+  }
+
+  addWrapper (wrapper: IWrapper) {
+    this.wrappers.push(wrapper)
+  }
+}
+
+export default abstract class TaroPlatform<T extends TConfig = TConfig> {
+  protected ctx: IPluginContext
+  protected config: T
+  protected helper: IPluginContext['helper']
+  protected compiler: string
+
+  abstract platformType: PLATFORM_TYPE
+  abstract platform: string
+  abstract runtimePath: string | string[]
+
+  protected setupTransaction = new Transaction<this>()
+  protected buildTransaction = new Transaction<this>()
+
+  constructor (ctx: IPluginContext, config: T) {
+    this.ctx = ctx
+    this.helper = ctx.helper
+    this.config = config
+    this.updateOutputPath(config)
+    const _compiler = config.compiler
+    this.compiler = typeof _compiler === 'object' ? _compiler.type : _compiler
+    // Note: 兼容 webpack4 和不填写 compiler 的情况，默认使用 webpack5
+    if (!VALID_COMPILER.includes(this.compiler)) {
+      this.compiler = DEFAULT_COMPILER
+    }
+  }
+
+  protected emptyOutputDir (excludes: Array<string | RegExp> = []) {
+    const { outputPath } = this.ctx.paths
+    this.helper.emptyDirectory(outputPath, { excludes })
+  }
+
+  /**
+   * 如果分端编译详情 webpack 配置了 output 则需更新 outputPath 位置
+   */
+  private updateOutputPath (config: TConfig) {
+    const platformPath = config.output?.path
+    if (platformPath) {
+      this.ctx.paths.outputPath = platformPath
+    }
+  }
+
+  /**
+   * 调用 runner 开启编译
+   */
+  abstract start(): Promise<void>
+}
+
 ```
 
 ## links
