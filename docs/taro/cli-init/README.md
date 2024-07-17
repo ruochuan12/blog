@@ -47,8 +47,6 @@ git checkout f53250b68f007310bf098e77c6113e2012983e82
 # 4.0.2
 ```
 
-后续文章尽量会与 `taro` `4.x` 版本保持更新。
-
 看一个开源项目，第一步应该是先看 [README.md](https://github.com/NervJS/taro.git) 再看 [贡献文档](https://github.com/NervJS/taro/blob/4.x/CONTRIBUTING.md) 和 `package.json`。
 
 环境准备
