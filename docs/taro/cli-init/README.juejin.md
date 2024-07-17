@@ -7,7 +7,7 @@ theme: smartblue
 
 大家好，我是[若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
 
-截至目前（`2024-07-12`），`taro` 正式版是 `3.6.34`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。所以我们直接学习 `4.x`，`4.x` 最新版本是 `4.0.0`。
+截至目前（`2024-07-17`），`taro` 正式版是 `3.6.34`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。目前已经发布 `4.x`。所以我们直接学习 `main` 分支最新版本是 `4.0.2`。
 
 [多编译内核生态下的极速研发体验](https://taro-docs.jd.com/blog/2023/03/29/D2_17) 官方博客有如下图。
 
@@ -36,13 +36,13 @@ theme: smartblue
 ```bash
 # 克隆项目
 git clone https://github.com/NervJS/taro.git
-# 切换到分支 4.x
-git checkout 4.x
+# 切换到分支 main
+git checkout main
 # 写文章时，项目当前 hash
-git checkout a7fcf67b3acd065b85f2fdc8d999b9d2cb2f3058
-# chore(release): publish 4.0.0 --tag=next
+git checkout f53250b68f007310bf098e77c6113e2012983e82
+# Merge branch 'main' into 4.x
 # 写文章时，当前版本
-# 4.0.0
+# 4.0.2
 ```
 
 后续文章尽量会与 `taro` `4.x` 版本保持更新。
