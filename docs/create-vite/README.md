@@ -19,7 +19,7 @@ theme: smartblue
 
 我们知道 `vite 3.0` 发布了。什么？你不知道？想起有好友问：如何关注前端新技术、新热点等，我的回答是关注相关的 `Github` 和 `Twitter`，或者关注我的【公众号@若川视野】也可以啊。
 
-你一般会很开心的 `npm create vite@lastest` 初始化一个 `vite` 项目。
+你一般会很开心的 `npm create vite@latest` 初始化一个 `vite` 项目。
 
 那么你知道它的原理是什么吗？
 
@@ -29,7 +29,7 @@ theme: smartblue
 
 [npm init 文档](https://docs.npmjs.com/cli/v8/commands/npm-init)有写。`create` 其实就是 `init` 的一个别名。
 
-也就是说 `npm create vite@lastest` 相当于 => `npx create-vite@lastest`，`latest` 是版本号，目前最新版本可以通过以下命令查看。
+也就是说 `npm create vite@latest` 相当于 => `npx create-vite@latest`，`latest` 是版本号，目前最新版本可以通过以下命令查看。
 
 ```bash
 npm dist-tag ls create-vite
@@ -369,7 +369,7 @@ function pkgFromUserAgent(userAgent) {
 第一句 `pkgFromUserAgent`函数，是从使用了什么包管理器创建项目，那么就输出 `npm/yarn/pnpm` 相应的命令。
 
 ```sh
-npm create vite@lastest
+npm create vite@latest
 yarn create vite
 pnpm create vite
 ```
