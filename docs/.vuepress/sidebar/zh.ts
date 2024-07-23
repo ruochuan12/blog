@@ -19,7 +19,7 @@ export const zhSidebar = sidebar({
 			children: [
 				"/taro/cli-init/",
 				"/taro/cli-plugins/",
-				"/taro/cli-init2/",
+				"/taro/cli-init-2/",
 			],
 		},
 		{

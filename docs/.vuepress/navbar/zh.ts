@@ -16,7 +16,7 @@ export const zhNavbar = navbar([
 	},
 	{
 		text: "Github",
-		link: "https://github.com/lxchuan12/blog"
+		link: "https://github.com/ruochuan12/blog"
 	},
 	{ text: "公众号：若川视野", link: "https://image-static.segmentfault.com/355/182/3551821948-5df888aa1dc88_articlex" },
 
