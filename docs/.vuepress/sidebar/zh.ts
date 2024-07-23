@@ -12,6 +12,17 @@ export const zhSidebar = sidebar({
 			]
 		},
 		{
+			text: "taro源码揭秘", // 必要的
+			// path: '/about/',      // 可选的, 应该是一个绝对路径
+			// collapsible: true, // 可选的, 默认值是 true,
+			// sidebarDepth: 2, // 可选的, 默认值是 1
+			children: [
+				"/taro/cli-init/",
+				"/taro/cli-plugins/",
+				"/taro/cli-init2/",
+			],
+		},
+		{
 			text: "vant组件库源码", // 必要的
 			// path: '/about/',      // 可选的, 应该是一个绝对路径
 			// collapsible: true, // 可选的, 默认值是 true,
