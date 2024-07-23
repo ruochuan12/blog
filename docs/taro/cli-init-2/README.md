@@ -44,7 +44,7 @@ npm dist-tag @tarojs/cli
 如图所示：
 ![npm dist-tag @tarojs/cli](./images/taro-cli-npm-dist-tag.png)
 
-目前 `lastest` 标签（默认版本）是 `3.6.34`，`next` 标签是 `4.0.0`。后续 `lastest` 标签会设置为 `4.x` 版本。
+目前 `latest` 标签（默认版本）是 `3.6.34`，`next` 标签是 `4.0.0`。后续 `latest` 标签会设置为 `4.x` 版本。
 
 我们先用 `@tarojs/cli@next` 初始化一个项目看看。全局安装相对麻烦，我们不全局安装，使用 `npx` 来运行 `next tag` 版本。
 
