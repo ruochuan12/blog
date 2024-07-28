@@ -1,0 +1,114 @@
+<mxfile host="app.diagrams.net" modified="2024-07-28T15:11:45.879Z" agent="Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36" etag="ddzDYVbISFaG1Z5rBWBA" version="24.5.4" type="device">
+  <diagram name="第 1 页" id="kRA24mDB09dX-2mMvFWV">
+    <mxGraphModel dx="2206" dy="2294" grid="1" gridSize="10" guides="1" tooltips="1" connect="0" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" background="#ffffff" math="0" shadow="0">
+      <root>
+        <mxCell id="0" />
+        <mxCell id="1" parent="0" />
+        <mxCell id="ssWEEHNptahoOb6r9hR0-26" value="" style="verticalLabelPosition=bottom;verticalAlign=top;html=1;shape=mxgraph.basic.rect;fillColor2=none;strokeWidth=1;size=20;indent=5;sketch=1;curveFitting=1;jiggle=2;shadow=1;fillColor=#e3c800;strokeColor=#B09500;fontColor=#000000;" vertex="1" parent="1">
+          <mxGeometry x="1102" y="-180" width="170" height="865" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-24" value="" style="verticalLabelPosition=bottom;verticalAlign=top;html=1;shape=mxgraph.basic.rect;fillColor2=none;strokeWidth=1;size=20;indent=5;sketch=1;curveFitting=1;jiggle=2;shadow=1;fillColor=#ffcc99;strokeColor=#36393d;" vertex="1" parent="1">
+          <mxGeometry x="414" y="-180" width="170" height="870" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-20" style="edgeStyle=orthogonalEdgeStyle;rounded=0;hachureGap=4;orthogonalLoop=1;jettySize=auto;html=1;fontFamily=Architects Daughter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DArchitects%2BDaughter;fontSize=20;sketch=1;curveFitting=1;jiggle=2;" edge="1" parent="1" source="B9IK0UFBpRTpUl3e1h62-1" target="ssWEEHNptahoOb6r9hR0-4">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-23" value="&lt;span style=&quot;font-family: Helvetica; font-size: 20px;&quot;&gt;通过 babel 和 rollup 打包构建成 commonjs&lt;br&gt;文件开头追加 promise-ployfill&lt;/span&gt;" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];sketch=1;hachureGap=4;jiggle=2;curveFitting=1;fontFamily=Architects Daughter;fontSource=https%3A%2F%2Ffonts.googleapis.com%2Fcss%3Ffamily%3DArchitects%2BDaughter;fontSize=20;" vertex="1" connectable="0" parent="ssWEEHNptahoOb6r9hR0-20">
+          <mxGeometry x="-0.15" y="3" relative="1" as="geometry">
+            <mxPoint x="27" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B9IK0UFBpRTpUl3e1h62-1" value="入口文件 app.config.ts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;labelBackgroundColor=none;sketch=1;curveFitting=1;jiggle=2;fontSize=20;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="442" y="-95" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-13" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;exitX=1;exitY=0.5;exitDx=0;exitDy=0;fontSize=20;sketch=1;curveFitting=1;jiggle=2;" edge="1" parent="1" source="B9IK0UFBpRTpUl3e1h62-2" target="ssWEEHNptahoOb6r9hR0-5">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-14" value="通过 babel 和 rollup 打包构建成 commonjs" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=20;" vertex="1" connectable="0" parent="ssWEEHNptahoOb6r9hR0-13">
+          <mxGeometry x="-0.028" y="3" relative="1" as="geometry">
+            <mxPoint y="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="B9IK0UFBpRTpUl3e1h62-2" value="页面 ts" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;labelBackgroundColor=none;sketch=1;curveFitting=1;jiggle=2;fontSize=20;shadow=1;" parent="1" vertex="1">
+          <mxGeometry x="442" y="445" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-15" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=20;sketch=1;curveFitting=1;jiggle=2;" edge="1" parent="1" source="ssWEEHNptahoOb6r9hR0-1" target="ssWEEHNptahoOb6r9hR0-6">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-16" value="直接复制粘贴修改文件后缀名到dist目录" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=20;" vertex="1" connectable="0" parent="ssWEEHNptahoOb6r9hR0-15">
+          <mxGeometry x="-0.0187" y="-3" relative="1" as="geometry">
+            <mxPoint y="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-1" value="页面 html" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;labelBackgroundColor=none;sketch=1;curveFitting=1;jiggle=2;fontSize=20;shadow=1;glass=0;" vertex="1" parent="1">
+          <mxGeometry x="442" y="30" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-9" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=20;sketch=1;curveFitting=1;jiggle=2;" edge="1" parent="1" source="ssWEEHNptahoOb6r9hR0-2" target="ssWEEHNptahoOb6r9hR0-7">
+          <mxGeometry relative="1" as="geometry">
+            <mxPoint x="626" y="205" as="targetPoint" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-10" value="通过 postcss 编译" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=20;" vertex="1" connectable="0" parent="ssWEEHNptahoOb6r9hR0-9">
+          <mxGeometry x="-0.1308" y="4" relative="1" as="geometry">
+            <mxPoint x="22" y="3" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-2" value="页面 css" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;labelBackgroundColor=none;sketch=1;curveFitting=1;jiggle=2;fontSize=20;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="442" y="175" width="114" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-11" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;fontSize=20;sketch=1;curveFitting=1;jiggle=2;" edge="1" parent="1" source="ssWEEHNptahoOb6r9hR0-3" target="ssWEEHNptahoOb6r9hR0-8">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-12" value="直接复制拷贝到 dist 目录" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=20;" vertex="1" connectable="0" parent="ssWEEHNptahoOb6r9hR0-11">
+          <mxGeometry x="-0.0187" y="2" relative="1" as="geometry">
+            <mxPoint y="-1" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-3" value="页面 json" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;labelBackgroundColor=none;sketch=1;curveFitting=1;jiggle=2;fontSize=20;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="442" y="305" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-4" value="入口文件 app.config.js" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cdeb8b;strokeColor=#36393d;textShadow=0;labelBorderColor=none;labelBackgroundColor=none;fontSize=20;align=center;sketch=1;curveFitting=1;jiggle=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1127" y="-100" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-5" value="页面 js" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cdeb8b;strokeColor=#36393d;textShadow=0;labelBorderColor=none;labelBackgroundColor=none;fontSize=20;align=center;sketch=1;curveFitting=1;jiggle=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1127" y="440" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-6" value="页面 wxml" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cdeb8b;strokeColor=#36393d;textShadow=0;labelBorderColor=none;labelBackgroundColor=none;fontSize=20;align=center;sketch=1;curveFitting=1;jiggle=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1127" y="35" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-7" value="页面 wxss" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cdeb8b;strokeColor=#36393d;textShadow=0;labelBorderColor=none;labelBackgroundColor=none;fontSize=20;align=center;sketch=1;curveFitting=1;jiggle=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1127" y="170" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-8" value="页面 json" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cdeb8b;strokeColor=#36393d;textShadow=0;labelBorderColor=none;labelBackgroundColor=none;fontSize=20;align=center;sketch=1;curveFitting=1;jiggle=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1127" y="300" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-25" value="src" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=20;" vertex="1" parent="1">
+          <mxGeometry x="472" y="-170" width="50" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-27" value="dist" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=20;" vertex="1" parent="1">
+          <mxGeometry x="1162" y="-180" width="50" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-53" style="edgeStyle=orthogonalEdgeStyle;rounded=0;orthogonalLoop=1;jettySize=auto;html=1;entryX=0;entryY=0.5;entryDx=0;entryDy=0;fontSize=20;sketch=1;curveFitting=1;jiggle=2;" edge="1" parent="1" source="ssWEEHNptahoOb6r9hR0-55" target="ssWEEHNptahoOb6r9hR0-56">
+          <mxGeometry relative="1" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-54" value="直接复制粘贴到 dist 目录" style="edgeLabel;html=1;align=center;verticalAlign=middle;resizable=0;points=[];fontSize=20;" vertex="1" connectable="0" parent="ssWEEHNptahoOb6r9hR0-53">
+          <mxGeometry x="-0.0187" y="-3" relative="1" as="geometry">
+            <mxPoint x="-1" y="-4" as="offset" />
+          </mxGeometry>
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-55" value="其他文件" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#e1d5e7;strokeColor=#9673a6;labelBackgroundColor=none;sketch=1;curveFitting=1;jiggle=2;fontSize=20;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="442" y="570" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-56" value="其他文件" style="rounded=1;whiteSpace=wrap;html=1;fillColor=#cdeb8b;strokeColor=#36393d;textShadow=0;labelBorderColor=none;labelBackgroundColor=none;fontSize=20;align=center;sketch=1;curveFitting=1;jiggle=2;shadow=1;" vertex="1" parent="1">
+          <mxGeometry x="1127" y="565" width="120" height="60" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-57" value="build.js 文件，通过 Chokidar 监听 src 文件变化，根据不同文件类型处理到 dist 目录" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=20;" vertex="1" parent="1">
+          <mxGeometry x="477" y="-240" width="760" height="40" as="geometry" />
+        </mxCell>
+        <mxCell id="ssWEEHNptahoOb6r9hR0-58" value="By@公众号：若川视野 微信号：ruochuan02" style="text;html=1;align=center;verticalAlign=middle;resizable=0;points=[];autosize=1;strokeColor=none;fillColor=none;fontSize=20;" vertex="1" parent="1">
+          <mxGeometry x="852" y="720" width="420" height="40" as="geometry" />
+        </mxCell>
+      </root>
+    </mxGraphModel>
+  </diagram>
+</mxfile>

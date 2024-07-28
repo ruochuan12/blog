@@ -37,6 +37,10 @@
 
 ## 文章列表
 
+- [Taro 源码揭秘 - 1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](../taro/cli-init/)
+- [Taro 源码揭秘 - 2. 揭开整个架构的插件系统的秘密](../taro/cli-plugins/)
+- [Taro 源码揭秘 - 3. 每次创建新的 taro 项目（taro init）的背后原理是什么](../taro/cli-init-2/)
+
 **vant 组件库源码分析系列：**
 
 - 52.[vant4.0 正式发布了，分析其源码学会用 vue3 写一个图片懒加载组件！](../vant/lazyload/)
@@ -50,6 +54,8 @@
 - 48.[vant 4 即将正式发布，支持暗黑主题，那么是如何实现的呢](../vant/dark-theme/)
 
 **学习源码整体架构系列：**
+
+- [开发小程序又一新选择 vue-mini，据说性能是 Taro 的 10 倍，遥遥领先](../vue-mini-analysis/)
 
 - 47.[神器啊，从未想过 VSCode 还能这样直接打开仓库URL，原理揭秘~](../open-in-github/)
 

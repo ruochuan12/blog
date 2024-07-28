@@ -41,6 +41,7 @@ export const zhSidebar = sidebar({
 			collapsible: true, // 可选的, 默认值是 true,
 			// sidebarDepth: 2, // 可选的, 默认值是 1
 			children: [
+				"/vue-mini-analysis/",
 				"/open-in-github/",
 				"/react-use/",
 				"/vue-debugger/",
