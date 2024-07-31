@@ -3,10 +3,15 @@ import { defineUserConfig } from "vuepress";
 import pluginSide from "./components/plugin-side/src/node/index";
 // import { backToTopPlugin } from "@vuepress/plugin-back-to-top";
 import { googleAnalyticsPlugin } from "@vuepress/plugin-google-analytics";
-import { searchProPlugin } from "vuepress-plugin-search-pro";
+
 import theme from "./theme.js";
+import { viteBundler } from '@vuepress/bundler-vite'
 
 export default defineUserConfig({
+	bundler: viteBundler({
+		viteOptions: {},
+		vuePluginOptions: {},
+	}),
 	// 设置正在使用的语言
 	lang: "zh-CN",
 	base: "/",
@@ -73,10 +78,6 @@ export default defineUserConfig({
 			// 配置项
 			// ga: "UA-145436866-1", // UA-00000000-0
 			id: "UA-145436866-1",
-		}),
-		searchProPlugin({
-			// 配置选项
-			indexContent: true,
-		}),
+		})
 	],
 });

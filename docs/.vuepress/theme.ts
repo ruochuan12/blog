@@ -1,4 +1,5 @@
 import { hopeTheme } from "vuepress-theme-hope";
+import { searchProPlugin } from "vuepress-plugin-search-pro";
 import {
 	// enNavbar,
 	zhNavbar,
@@ -71,6 +72,10 @@ export default hopeTheme({
 	},
 
 	plugins: {
+		searchPro: {
+			// 配置选项
+			indexContent: true,
+		},
 		comment: {
 			// @ts-expect-error: You should generate and use your own comment service
 			// provider: "Waline",
