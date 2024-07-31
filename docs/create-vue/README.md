@@ -7,7 +7,7 @@ theme: smartblue
 
 ## 1. 前言
 
->大家好，我是[若川](https://lxchuan12.gitee.io)。欢迎关注我的[公众号若川视野](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/12/13/16efe57ddc7c9eb3~tplv-t2oaga2asx-image.image "https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/12/13/16efe57ddc7c9eb3~tplv-t2oaga2asx-image.image")，最近组织了[**源码共读活动**](https://www.yuque.com/ruochuan12/notice)，感兴趣的可以加我微信 [ruochuan12](https://juejin.cn/pin/7005372623400435725) 参与，已进行两个多月，大家一起交流学习，共同进步。
+>大家好，我是[若川](https://ruochuan12.github.io)。欢迎关注我的[公众号若川视野](https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/12/13/16efe57ddc7c9eb3~tplv-t2oaga2asx-image.image "https://p1-jj.byteimg.com/tos-cn-i-t2oaga2asx/gold-user-assets/2019/12/13/16efe57ddc7c9eb3~tplv-t2oaga2asx-image.image")，最近组织了[**源码共读活动**](https://www.yuque.com/ruochuan12/notice)，感兴趣的可以加我微信 [ruochuan12](https://juejin.cn/pin/7005372623400435725) 参与，已进行两个多月，大家一起交流学习，共同进步。
 
 想学源码，极力推荐之前我写的[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093) 包含`jQuery`、`underscore`、`lodash`、`vuex`、`sentry`、`axios`、`redux`、`koa`、`vue-devtools`、`vuex4`、`koa-compose`、`vue-next-release`、`vue-this`等十余篇源码文章。
 
@@ -245,7 +245,7 @@ for (const flags of flagCombinations) {
 }
 ```
 
->**调试**：`VSCode`打开项目，`VSCode`高版本(1.50+)可以在 `create-vue/package.json` => `scripts` => `"test": "node test.js"`。鼠标悬停在`test`上会有调试脚本提示，选择调试脚本。如果对调试不熟悉，可以看我之前的文章[koa-compose](https://lxchuan12.gitee.io/koa-compose)，写的很详细。
+>**调试**：`VSCode`打开项目，`VSCode`高版本(1.50+)可以在 `create-vue/package.json` => `scripts` => `"test": "node test.js"`。鼠标悬停在`test`上会有调试脚本提示，选择调试脚本。如果对调试不熟悉，可以看我之前的文章[koa-compose](https://ruochuan12.github.io/koa-compose)，写的很详细。
 
 调试时，大概率你会遇到：`create-vue/index.js` 文件中，`__dirname` 报错问题。可以按照如下方法解决。在 `import` 的语句后，添加如下语句，就能愉快的调试了。
 

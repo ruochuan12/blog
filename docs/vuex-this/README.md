@@ -138,7 +138,7 @@ actions: {
 
 ### 4.2 为什么 actions 对象里的自定义函数 第一个参数就是 store 实例。
 
-以下是简单源码，有缩减，感兴趣的可以看我的文章 [Vuex 源码文章](https://lxchuan12.gitee.io/vuex)
+以下是简单源码，有缩减，感兴趣的可以看我的文章 [Vuex 源码文章](https://ruochuan12.github.io/vuex)
 
 ```js
 class Store{

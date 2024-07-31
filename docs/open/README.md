@@ -7,7 +7,7 @@ theme: smartblue
 
 ## 1. 前言
 
->大家好，我是[若川](https://lxchuan12.gitee.io)。欢迎关注我的[公众号若川视野](https://lxchuan12.gitee.io)，最近组织了[源码共读活动](https://juejin.cn/pin/7005372623400435725)，感兴趣的可以加我微信 [ruochuan12](https://juejin.cn/pin/7005372623400435725) 参与，如今已进行三个月，大家一起交流学习，共同进步，很多人都表示收获颇丰。
+>大家好，我是[若川](https://ruochuan12.github.io)。欢迎关注我的[公众号若川视野](https://ruochuan12.github.io)，最近组织了[源码共读活动](https://juejin.cn/pin/7005372623400435725)，感兴趣的可以加我微信 [ruochuan12](https://juejin.cn/pin/7005372623400435725) 参与，如今已进行三个月，大家一起交流学习，共同进步，很多人都表示收获颇丰。
 
 想学源码，极力推荐之前我写的[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093) 包含`jQuery`、`underscore`、`lodash`、`vuex`、`sentry`、`axios`、`redux`、`koa`、`vue-devtools`、`vuex4`、`koa-compose`、`vue 3.2 发布`、`vue-this`、`create-vue`、`玩具vite`等10余篇源码文章。
 
@@ -85,7 +85,7 @@ yarn start
 
 ![为此我截了图](./images/terminal.png)
 
-终端我用的是 `window terminal`，推荐我之前的文章：[使用 ohmyzsh 打造 windows、ubuntu、mac 系统高效终端命令行工具](https://lxchuan12.gitee.io/oh-my-zsh/)，用过都说好。
+终端我用的是 `window terminal`，推荐我之前的文章：[使用 ohmyzsh 打造 windows、ubuntu、mac 系统高效终端命令行工具](https://ruochuan12.github.io/oh-my-zsh/)，用过都说好。
 
 `webpack`、`vue-cli`和`create-react-app`，它们三者都有个特点就是不约而同的使用了[open](https://github.com/sindresorhus/open)。
 
@@ -118,11 +118,11 @@ yarn start
 
 ```bash
 # mac
-open https://lxchuan12.gitee.io
+open https://ruochuan12.github.io
 # win
-start https://lxchuan12.gitee.io
+start https://ruochuan12.github.io
 # linux
-xdg-open https://lxchuan12.gitee.io
+xdg-open https://ruochuan12.github.io
 ```
 
 [windows start 文档](https://docs.microsoft.com/zh-cn/windows-server/administration/windows-commands/start)
@@ -163,11 +163,11 @@ cd open && yarn
 // open-analysis/examples/index.js
 (async () => {
     const open = require('../open/index.js');
-    await open('https://lxchuan12.gitee.io');
+    await open('https://ruochuan12.github.io');
 })();
 ```
 
-在 `await open('https://lxchuan12.gitee.io');` 打上断点。在终端命令行中执行
+在 `await open('https://ruochuan12.github.io');` 打上断点。在终端命令行中执行
 
 ```bash
 node examples/index.js
@@ -262,11 +262,11 @@ const baseOpen = async options => {
 
 ```bash
 # mac
-open https://lxchuan12.gitee.io
+open https://ruochuan12.github.io
 # win
-start https://lxchuan12.gitee.io
+start https://ruochuan12.github.io
 # linux
-xdg-open https://lxchuan12.gitee.io
+xdg-open https://ruochuan12.github.io
 ```
 
 ## 5. 总结

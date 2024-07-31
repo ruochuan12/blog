@@ -10,11 +10,11 @@ import {
 } from "./sidebar/index.js";
 
 export default hopeTheme({
-	hostname: "https://lxchuan12.gitee.io",
+	hostname: "https://ruochuan12.github.io",
 
 	author: {
 		name: "若川",
-		url: "https://lxchuan12.gitee.io",
+		url: "https://ruochuan12.github.io",
 	},
 
 	iconAssets: "iconfont",
@@ -52,7 +52,7 @@ export default hopeTheme({
 			// sidebar
 			sidebar: zhSidebar,
 
-			footer: "欢迎加我微信 <a href='https://juejin.cn/pin/7217386885793595453'>ruochuan02</a>，参加源码共读，一起学习源码",
+			footer: "欢迎加我微信 <a href='https://juejin.cn/pin/7217386885793595453' target='_blank'>ruochuan02</a>，参加源码共读，一起学习源码",
 
 			displayFooter: true,
 

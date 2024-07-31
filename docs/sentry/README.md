@@ -2,7 +2,7 @@
 
 ## 1. 前言
 
->大家好，我是[若川](https://lxchuan12.gitee.io)。我倾力持续组织了一年[每周大家一起学习200行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（4.1k+人）第一的专栏，写有20余篇源码文章。
+>大家好，我是[若川](https://ruochuan12.github.io)。我倾力持续组织了一年[每周大家一起学习200行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（4.1k+人）第一的专栏，写有20余篇源码文章。
 
 >这是`学习源码整体架构系列`第四篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。文章学习的是打包整合后的代码，不是实际仓库中的拆分的代码。
 
@@ -82,7 +82,7 @@ window.addEventListener('error', function(e) {
 2.利用`Image`对象上报 (主流方式)
 
 `Image`上报错误方式：
-` (new Image()).src = 'https://lxchuan12.gitee.io/error?name=若川'`
+` (new Image()).src = 'https://ruochuan12.github.io/error?name=若川'`
 
 ## 3. Sentry 前端异常监控基本原理
 
@@ -899,7 +899,7 @@ this._invokeClient('captureEvent')
 ## 关于
 
 作者：常以**若川**为名混迹于江湖。前端路上 | PPT爱好者 | 所知甚少，唯善学。<br>
-[若川的博客](https://lxchuan12.gitee.io)，使用`vuepress`重构了，阅读体验可能更好些<br>
+[若川的博客](https://ruochuan12.github.io)，使用`vuepress`重构了，阅读体验可能更好些<br>
 [掘金专栏](https://juejin.im/user/1415826704971918/posts)，欢迎关注~<br>
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，欢迎关注~<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，欢迎关注~<br>

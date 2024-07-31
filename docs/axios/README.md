@@ -2,7 +2,7 @@
 
 ## 1. 前言
 
->大家好，我是[若川](https://lxchuan12.gitee.io)。我倾力持续组织了一年[每周大家一起学习200行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（4.1k+人）第一的专栏，写有20余篇源码文章。
+>大家好，我是[若川](https://ruochuan12.github.io)。我倾力持续组织了一年[每周大家一起学习200行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（4.1k+人）第一的专栏，写有20余篇源码文章。
 
 >这是`学习源码整体架构系列`第六篇。整体架构这词语好像有点大，姑且就算是源码整体结构吧，主要就是学习是代码整体结构，不深究其他不是主线的具体函数的实现。本篇文章学习的是实际仓库的代码。
 
@@ -375,7 +375,7 @@ function forEach(obj, fn) {
 }
 ```
 
-如果对`Object`相关的`API`不熟悉，可以查看笔者之前写过的一篇文章。[JavaScript 对象所有API解析](https://lxchuan12.gitee.io/js-object-api/)
+如果对`Object`相关的`API`不熟悉，可以查看笔者之前写过的一篇文章。[JavaScript 对象所有API解析](https://ruochuan12.github.io/js-object-api/)
 
 #### 4.1.6 第三部分
 
@@ -1544,7 +1544,7 @@ CancelToken.prototype.throwIfRequested = function throwIfRequested() {
 ## 关于
 
 作者：常以**若川**为名混迹于江湖。前端路上 | PPT爱好者 | 所知甚少，唯善学。<br>
-[若川的博客](https://lxchuan12.gitee.io)，使用`vuepress`重构了，阅读体验可能更好些<br>
+[若川的博客](https://ruochuan12.github.io)，使用`vuepress`重构了，阅读体验可能更好些<br>
 [掘金专栏](https://juejin.cn/user/1415826704971918/posts)，欢迎关注~<br>
 [`segmentfault`前端视野专栏](https://segmentfault.com/blog/lxchuan12)，欢迎关注~<br>
 [知乎前端视野专栏](https://zhuanlan.zhihu.com/lxchuan12)，欢迎关注~<br>

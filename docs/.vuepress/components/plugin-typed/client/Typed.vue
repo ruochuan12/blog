@@ -6,7 +6,7 @@
 <script>
 
 export default {
-  name: 'Typed',
+  name: 'vue-typed-js',
 
   props: {
   },
@@ -27,5 +27,5 @@ export default {
 }
 </script>
 
-<style lang='stylus' scoped>
+<style lang='scss' scoped>
 </style>

@@ -2,13 +2,13 @@
   <div class="ruochuan12-side">
     <img class="ruochuan12-side-image" src="./images/ruochuan02.jpg"/>
 	<div class="text-center">
-    <!-- <vue-typed-js :loop="true"
+    <vue-typed-js :loop="true"
         :typeSpeed="100"
       :backSpeed="20"
       :strings="['欢迎扫码加我微信']">
       <span class="typing"></span>
-    </vue-typed-js> -->
-    <span>欢迎扫码加我微信</span><br>
+    </vue-typed-js>
+    <!-- <span>欢迎扫码加我微信</span><br> -->
 	<span>拉你进源码共读群</span><br>
 	<span>一起学习源码</span><br>
 	</div>

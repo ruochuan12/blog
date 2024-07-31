@@ -2,7 +2,7 @@
      * middleware
      * @author 若川
      * @date 2020-06-06 22:15:36
-     * @link https://lxchuan12.gitee.io
+     * @link https://ruochuan12.github.io
      */
 function compose(...funcs) {
     if (funcs.length === 0) {
