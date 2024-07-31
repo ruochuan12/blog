@@ -35,8 +35,10 @@ jobs:
             - name: 安装 pnpm
               uses: pnpm/action-setup@v4
               with:
-                  version: 9.x
-                  run_install: true
+                  version: 9
+                  run_install: |
+                    - recursive: true
+                    args: [--no-frozen-lockfile, --strict-peer-dependencies]
 
             - name: 设置 Node.js
               uses: actions/setup-node@v4
