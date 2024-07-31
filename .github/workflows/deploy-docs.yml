@@ -28,7 +28,6 @@ jobs:
           run_install: |
             - recursive: true
               args: [--no-frozen-lockfile, --strict-peer-dependencies]
-            # - args: [--global, gulp, prettier, typescript]
 
       - name: 设置 Node.js
         uses: actions/setup-node@v4
