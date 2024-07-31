@@ -27,7 +27,7 @@ jobs:
           version: 9
           run_install: |
             - recursive: true
-              args: [--no-frozen-lockfile, --strict-peer-dependencies]
+              args: [--no-frozen-lockfile]
 
       - name: 设置 Node.js
         uses: actions/setup-node@v4
