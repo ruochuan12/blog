@@ -13,8 +13,7 @@
 		"update-package": "pnpm dlx vp-update",
 		"release": "release-it",
 		"deploy": "bash ./scripts/deploy.sh",
-		"preinstall": "npx only-allow pnpm",
-		"detect-sensitive-content": "node scripts/detect-sensitive-content.cjs"
+		"preinstall": "npx only-allow pnpm"
 	},
 	"repository": {
 		"type": "git",
