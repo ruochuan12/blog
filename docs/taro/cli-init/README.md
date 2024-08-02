@@ -71,6 +71,8 @@ node -v
 cd taro
 # 安装依赖
 pnpm i
+# 如果网络不好，一直安装不上可以指定国内镜像站，速度比较快
+pnpm i --registry=https://registry.npmmirror.com
 # 编译构建
 pnpm build
 ```
