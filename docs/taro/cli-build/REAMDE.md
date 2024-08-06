@@ -41,6 +41,7 @@ pnpm i
 初始化项目，选择`React`、`TS`、`CLI默认模板`
 
 ```json
+// .vscode/launch.json
 {
   "version": "0.2.0",
   "configurations": [
@@ -54,8 +55,6 @@ pnpm i
         "build",
         "--type",
         "weapp",
-        // "h5",
-        // "--watch"
       ],
       "console": "integratedTerminal",
       "skipFiles": ["<node_internals>/**"]
@@ -63,6 +62,8 @@ pnpm i
   ]
 }
 ```
+
+调试微信小程序打包。
 
 ```ts
 import {
@@ -152,7 +153,13 @@ async function checkConfig ({ projectConfig, helper }) {
 }
 ```
 
-调用的是插件。
+```js
+await ctx.applyPlugins({
+  name: platform,
+});
+```
+
+调用的是端平台插件，本文以微信小程序为例，所以调用的是 weapp。对应的源码文件路径是：`packages/taro-platform-weapp/src/index.ts`。我们来看具体实现。
 
 ## 端平台插件 weapp
 
@@ -174,13 +181,14 @@ export default (ctx: IPluginContext, options: IOptions) => {
     name: 'weapp',
     useConfigName: 'mini',
     async fn ({ config }) {
-      console.log('registerPlatform', config)
       const program = new Weapp(ctx, config, options || {})
       await program.start()
     }
   })
 }
 ```
+
+`ctx.registerPlatform` 注册 `weapp` 平台插件，调用 `Weapp` 构造函数，传入 `ctx` 、`config` 和 `options` 等配置。
 
 ## new Weapp
 
@@ -260,16 +268,20 @@ export default class Weapp extends TaroPlatformBase {
 }
 
 ```
-- weapp =>
-- TaroPlatformBase
-- TaroPlatform
 
-## TaroPlatformBase
+- class Weapp 继承于抽象类 TaroPlatformBase 继承于抽象类 TaroPlatform
+
+## TaroPlatformBase 端平台插件基础抽象类
+
+关于抽象类和更多类相关，可以参考：
+[TypeScript 入门教程 - 类](https://ts.xcatliu.com/advanced/class.html)
+>抽象类（Abstract Class）：抽象类是供其他类继承的基类，抽象类不允许被实例化。抽象类中的抽象方法必须在子类中被实现
 
 ```ts
+// packages/taro-service/src/platform-plugin-base/mini.ts
 import * as path from 'node:path'
 
-import { recursiveMerge } from '@tarojs/helper'
+import { recursiveMerge, taroJsMiniComponentsPath } from '@tarojs/helper'
 import { isObject, PLATFORM_TYPE } from '@tarojs/shared'
 
 import { getPkgVersion } from '../utils/package'
@@ -292,8 +304,9 @@ export abstract class TaroPlatformBase<T extends TConfig = TConfig> extends Taro
   abstract globalObject: string
   abstract fileType: IFileType
   abstract template: RecursiveTemplate | UnRecursiveTemplate
+  // Note: 给所有的小程序平台一个默认的 taroComponentsPath
+  taroComponentsPath: string = taroJsMiniComponentsPath
   projectConfigJson?: string
-  taroComponentsPath?: string
 
   private projectConfigJsonOutputPath: string
 
@@ -479,6 +492,7 @@ ${exampleCommand}`))
 ## TaroPlatform
 
 ```ts
+// packages/taro-service/src/platform-plugin-base/platform.ts
 import { PLATFORM_TYPE } from '@tarojs/shared'
 
 import type { Func } from '@tarojs/taro/types/compile'
@@ -567,7 +581,22 @@ export default abstract class TaroPlatform<T extends TConfig = TConfig> {
 
 ## runner
 
+- index.js
+
+```js
+if (process.env.TARO_PLATFORM === 'web') {
+  module.exports = require('./dist/index.h5.js').default
+} else if (process.env.TARO_PLATFORM === 'harmony' || process.env.TARO_ENV === 'harmony') {
+  module.exports = require('./dist/index.harmony.js').default
+} else {
+  module.exports = require('./dist/index.mini.js').default
+}
+
+module.exports.default = module.exports
+```
+
 ```ts
+// packages/taro-webpack5-runner/src/index.mini.ts
 import { chalk } from '@tarojs/helper'
 import Prebundle from '@tarojs/webpack5-prebundle'
 import { isEmpty } from 'lodash'
