@@ -3,7 +3,7 @@ highlight: darcula
 theme: smartblue
 ---
 
-# Taro 源码揭秘 - 4. build 编译打包整体流程
+# Taro 源码揭秘 - 4. 日常 npm run dev 开发小程序，build 编译打包整体流程是怎样的
 
 ## 1. 前言
 
@@ -26,19 +26,48 @@ theme: smartblue
 等等
 ```
 
+经常使用 `Taro` 开发小程序的小伙伴，一定日常使用 `npm run dev:weapp` 等命令运行小程序。我们这篇文章就来解读这个命令背后，`Taro` 到底做了什么。
+`npm run dev:weapp` 对应的是 `taro build --type weapp --watch`。<br>
+`npm run build:weapp` 对应的是 `taro build --type weapp`。<br>
+
 关于克隆项目、环境准备、如何调试代码等，参考[第一篇文章-准备工作、调试](https://juejin.cn/post/7378363694939783178#heading-1)。后续文章基本不再过多赘述。
 >文章中基本是先放源码，源码中不做过多解释。源码后面再做简单讲述。
 
-调试
+## 调试源码
 
 ```bash
 npx @taro/cli init taro4-debug
 cd taro4-debug
 # 安装依赖
 pnpm i
+# 写文章时最新的版本是 4.0.4
 ```
 
-初始化项目，选择`React`、`TS`、`CLI默认模板`
+初始化项目，选择`React`、`TS`、`CLI默认模板`、`pnpm`。
+
+### 调试方式1：使用项目里的依赖
+
+```bash
+git clone https://github.com/NervJS/taro.git
+cd taro
+pnpm i
+pnpm run build
+# 写文章时最新的版本是 4.0.4，可以 git checkout 39dd83eb0bfc2a937acd79b289c7c2ec6e59e202
+# 39dd83eb0bfc2a937acd79b289c7c2ec6e59e202
+# chore(release): publish 4.0.4 (#16202)
+```
+
+优点，无需多余的配置，可以直接调试本身项目。
+缺点：安装的 `taro` 依赖都是 `dist` 目录，压缩过后的，不方便查看原始代码。
+
+我们使用调试方法2。
+
+### 调试方式2：使用 taro 源码
+
+优点：可以调试本身不压缩的源码。
+缺点：需要配置 `launch.json`。还需要在对应的 `dist` 配置修改 `taro-platform-weapp` 等包的路径。
+
+不配置会报错，路径不对。
 
 ```json
 // .vscode/launch.json
