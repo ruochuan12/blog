@@ -38,7 +38,7 @@
 		"@vuepress/plugin-google-analytics": "^2.0.0-rc.37",
 		"@vuepress/utils": "2.0.0-rc.14",
 		"release-it": "^17.6.0",
-		"vue": "^3.4.35",
+		"vue": "^3.4.37",
 		"vuepress": "^2.0.0-rc.14",
 		"vuepress-plugin-md-enhance": "^2.0.0-rc.52",
 		"vuepress-plugin-search-pro": "^2.0.0-rc.52",
