@@ -9,7 +9,7 @@ theme: smartblue
 
 大家好，我是[若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
 
-截至目前（`2024-07-17`），`taro` 正式版是 `3.6.34`，[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。文章提到将于 2024 年第二季度，发布 `4.x`。目前已经发布 `4.x`。所以我们直接学习 `main` 分支最新版本是 `4.0.2`。
+截至目前（`2024-08-12`），`taro` 正式版是 `4.0.4`，官方文章正式文章暂未发布。官方之前发过[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。
 
 计划写一个 `taro` 源码揭秘系列，欢迎持续关注。初步计划有如下文章：
 
@@ -43,7 +43,9 @@ pnpm i
 # 写文章时最新的版本是 4.0.4
 ```
 
-初始化项目，选择`React`、`TS`、`CLI默认模板`、`pnpm`。
+初始化一个项目，方便调试，选择`React`、`TS`、`webpack`、`CLI默认模板`、`pnpm`。
+
+![初始化项目](./images/taro-init.png)
 
 ### 调试方式1：使用项目里的依赖
 
@@ -56,6 +58,8 @@ pnpm run build
 # 39dd83eb0bfc2a937acd79b289c7c2ec6e59e202
 # chore(release): publish 4.0.4 (#16202)
 ```
+
+![调试项目中的依赖](./images/taro-project-debugger.png)
 
 优点，无需多余的配置，可以直接调试本身项目。
 缺点：安装的 `taro` 依赖都是 `dist` 目录，压缩过后的，不方便查看原始代码。
@@ -91,6 +95,10 @@ pnpm run build
   ]
 }
 ```
+
+我把 `taro` 源码和 `taro4-debug` 克隆到了同一个目录 `github`。
+
+重点添加配置 "cwd": "/Users/ruochuan/git-source/github/taro4-debug"、 `"args": ["build","--type","weapp" ]` 和 `"console": "integratedTerminal"`
 
 调试微信小程序打包。
 
