@@ -12,7 +12,7 @@ export const zhNavbar = navbar([
 	},
 	{
 		text: "掘金",
-		link: "https://juejin.cn/user/1415826704971918/columns"
+		link: "https://juejin.cn/column/6960551178908205093"
 	},
 	{
 		text: "Github",
