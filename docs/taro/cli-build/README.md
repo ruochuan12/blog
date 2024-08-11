@@ -190,6 +190,15 @@ async function checkConfig ({ projectConfig, helper }) {
 }
 ```
 
+Taro build 插件主要做了以下几件事：
+
+- 判断 `config/index` 配置文件是否存在。
+- 判断 `platfrom` 参数是否是字符串，这里是 `weapp`，如果不是，退出程序。
+- 使用 `checkConfig` 函数校验配置文件 `config/index`，如果配置文件出错，退出程序。
+- 调用 `ctx.applyPlugins(hooks.ON_BUILD_START)` （编译开始）钩子。
+- 调用 `ctx.applyPlugins({ name: platform, })` （调用 weapp） 钩子。
+- 调用 `ctx.applyPlugins(hooks.ON_BUILD_COMPLETE)` （编译结束）钩子。
+
 ```js
 await ctx.applyPlugins({
   name: platform,
@@ -197,6 +206,8 @@ await ctx.applyPlugins({
 ```
 
 调用的是端平台插件，本文以微信小程序为例，所以调用的是 weapp。对应的源码文件路径是：`packages/taro-platform-weapp/src/index.ts`。我们来看具体实现。
+
+
 
 ## 端平台插件 weapp
 
