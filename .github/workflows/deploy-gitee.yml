@@ -2,14 +2,6 @@ name: Deploy
 
 on:
     workflow_dispatch:
-    push:
-        branches:
-            - main
-            - vuepress-v2
-    pull_request:
-        branches:
-            - main
-            - vuepress-v2
 
 # permissions:
 #     contents: write
