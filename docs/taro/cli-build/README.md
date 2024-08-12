@@ -59,7 +59,9 @@ pnpm run build
 # chore(release): publish 4.0.4 (#16202)
 ```
 
-![调试项目中的依赖](./images/taro-project-debugger.png)
+方式1调试截图如下：
+
+![使用项目中的依赖调试](./images/taro-project-debugger.png)
 
 优点，无需多余的配置，可以直接调试本身项目。
 缺点：安装的 `taro` 依赖都是 `dist` 目录，压缩过后的，不方便查看原始代码。
@@ -96,6 +98,10 @@ pnpm run build
 }
 ```
 
+方式2调试截图如下：
+
+![使用 taro 源码调试](./images/taro-debugger.png)
+
 我把 `taro` 源码和 `taro4-debug` 克隆到了同一个目录 `github`。
 
 重点添加配置 "cwd": "/Users/ruochuan/git-source/github/taro4-debug"、 `"args": ["build","--type","weapp" ]` 和 `"console": "integratedTerminal"`
@@ -103,6 +109,7 @@ pnpm run build
 调试微信小程序打包。
 
 ```ts
+// packages/taro-cli/src/presets/commands/build.ts
 import {
   MessageKind,
   validateConfig
@@ -238,7 +245,7 @@ export default (ctx: IPluginContext, options: IOptions) => {
 
 `ctx.registerPlatform` 注册 `weapp` 平台插件，调用 `Weapp` 构造函数，传入 `ctx` 、`config` 和 `options` 等配置。
 
-## new Weapp
+## new Weapp 构造函数
 
 >packages/taro-platform-weapp/src/program.ts
 
@@ -537,22 +544,17 @@ ${exampleCommand}`))
 
 ```
 
-## TaroPlatform
+## TaroPlatform 端平台插件抽象类
+
+### Transaction
 
 ```ts
 // packages/taro-service/src/platform-plugin-base/platform.ts
-import { PLATFORM_TYPE } from '@tarojs/shared'
-
-import type { Func } from '@tarojs/taro/types/compile'
-import type { IPluginContext, TConfig } from '../utils/types'
 
 interface IWrapper {
   init? (): void
   close? (): void
 }
-
-const VALID_COMPILER = ['webpack5', 'vite']
-const DEFAULT_COMPILER = 'webpack5'
 
 export class Transaction<T = TaroPlatform> {
   wrappers: IWrapper[] = []
@@ -577,6 +579,18 @@ export class Transaction<T = TaroPlatform> {
     this.wrappers.push(wrapper)
   }
 }
+
+```
+
+```ts
+// packages/taro-service/src/platform-plugin-base/platform.ts
+import { PLATFORM_TYPE } from '@tarojs/shared'
+
+import type { Func } from '@tarojs/taro/types/compile'
+import type { IPluginContext, TConfig } from '../utils/types'
+
+const VALID_COMPILER = ['webpack5', 'vite']
+const DEFAULT_COMPILER = 'webpack5'
 
 export default abstract class TaroPlatform<T extends TConfig = TConfig> {
   protected ctx: IPluginContext
@@ -740,6 +754,10 @@ export default async function build (appPath: string, rawConfig: IMiniBuildConfi
 }
 
 ```
+
+## 流程梳理
+
+- new WeappBuild
 
 ## links
 
