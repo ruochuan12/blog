@@ -108,6 +108,8 @@ pnpm run build
 
 调试微信小程序打包。
 
+根据前面两篇 [1. taro cli init](https://juejin.cn/post/7378363694939783178)、[2. taro 插件机制](https://juejin.cn/spost/7380195796208205824) 文章，我们可以得知：`taro build` 初始化命令，最终调用的是 `packages/taro-cli/src/presets/commands/build.ts` 文件中的 `ctx.registerCommand` 注册的 `build` 命令行的 `fn` 函数。
+
 ```ts
 // packages/taro-cli/src/presets/commands/build.ts
 import {
@@ -199,12 +201,14 @@ async function checkConfig ({ projectConfig, helper }) {
 
 Taro build 插件主要做了以下几件事：
 
-- 判断 `config/index` 配置文件是否存在。
+- 判断 `config/index` 配置文件是否存在，如果不存在，则报错退出程序。
 - 判断 `platfrom` 参数是否是字符串，这里是 `weapp`，如果不是，退出程序。
-- 使用 `checkConfig` 函数校验配置文件 `config/index`，如果配置文件出错，退出程序。
+- 使用 `@tarojs/plugin-doctor` 中的 `validateConfig` 方法 (`checkConfig`) 函数校验配置文件 `config/index`，如果配置文件出错，退出程序。
 - 调用 `ctx.applyPlugins(hooks.ON_BUILD_START)` （编译开始）钩子。
 - 调用 `ctx.applyPlugins({ name: platform, })` （调用 weapp） 钩子。
 - 调用 `ctx.applyPlugins(hooks.ON_BUILD_COMPLETE)` （编译结束）钩子。
+
+其中
 
 ```js
 await ctx.applyPlugins({
@@ -213,8 +217,6 @@ await ctx.applyPlugins({
 ```
 
 调用的是端平台插件，本文以微信小程序为例，所以调用的是 weapp。对应的源码文件路径是：`packages/taro-platform-weapp/src/index.ts`。我们来看具体实现。
-
-
 
 ## 端平台插件 weapp
 
@@ -244,6 +246,8 @@ export default (ctx: IPluginContext, options: IOptions) => {
 ```
 
 `ctx.registerPlatform` 注册 `weapp` 平台插件，调用 `Weapp` 构造函数，传入 `ctx` 、`config` 和 `options` 等配置。
+
+<!-- TODO: program 截图 -->
 
 ## new Weapp 构造函数
 
