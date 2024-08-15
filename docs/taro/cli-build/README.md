@@ -43,7 +43,7 @@ pnpm i
 # 写文章时最新的版本是 4.0.4
 ```
 
-初始化一个项目，方便调试，选择`React`、`TS`、`webpack`、`CLI默认模板`、`pnpm`。
+初始化一个项目，方便调试，选择`React`、`TS`、`Less`、`pnpm`、`webpack5`、`CLI内置默认模板`。
 
 ![初始化项目](./images/taro-init.png)
 
@@ -70,10 +70,16 @@ pnpm run build
 
 ### 调试方式2：使用 taro 源码
 
-优点：可以调试本身不压缩的源码。
-缺点：需要配置 `launch.json`。还需要在对应的 `dist` 配置修改 `taro-platform-weapp` 等包的路径。
+我把 `taro` 源码和 `taro4-debug` 克隆到了同一个目录 `github`。
 
-不配置会报错，路径不对。
+优点：可以调试本身不压缩的源码。因为 `taro` 自身打包生成了对应的 `sourcemap` 文件，所以可以调试源码文件。
+缺点：
+- 1. 需要配置 `.vscode/launch.json`。
+- 2. 还需要在对应的 `dist` 文件包的路径。
+
+配置 `.vscode/launch.json`
+
+重点添加配置 "cwd": "/Users/ruochuan/git-source/github/taro4-debug"、 `"args": ["build","--type","weapp" ]` 和 `"console": "integratedTerminal"`
 
 ```json
 // .vscode/launch.json
@@ -98,13 +104,44 @@ pnpm run build
 }
 ```
 
+修改以下两个包的路径。
+
+- `@tarojs/plugin-platform-weapp` => `../taro/packages/taro-platform-weapp/index.js`
+- `@tarojs/webpack5-runner` => `../taro/packages/taro-webpack5-runner/index.js`
+
+对应的具体代码位置如下
+
+```js
+// packages/taro-cli/dist/cli.js
+switch (platform) {
+	// 省略一些平台
+	case 'weapp': {
+		kernel.optsPlugins.push(path.resolve(`../taro/packages/taro-platform-${platform}/index.js`))
+		// kernel.optsPlugins.push(`@tarojs/plugin-platform-${platform}`);
+		break;
+	}
+}
+```
+
+```js
+// packages/taro-service/dist/platform-plugin-base/mini.js
+getRunner() {
+	return __awaiter(this, void 0, void 0, function* () {
+		const { appPath } = this.ctx.paths;
+		const { npm } = this.helper;
+		const runnerPkg = this.compiler === 'vite' ? '@tarojs/vite-runner' : '@tarojs/webpack5-runner';
+		// const runner = yield npm.getNpmPkg(runnerPkg, appPath);
+		const runner = require(path.resolve('../taro/packages/taro-webpack5-runner/index.js'));
+		return runner.bind(null, appPath);
+	});
+}
+```
+
+不配置的话，不会调用对应的 taro 文件源码，而是调用项目中的依赖包源码，路径不对。
+
 方式2调试截图如下：
 
 ![使用 taro 源码调试](./images/taro-debugger.png)
-
-我把 `taro` 源码和 `taro4-debug` 克隆到了同一个目录 `github`。
-
-重点添加配置 "cwd": "/Users/ruochuan/git-source/github/taro4-debug"、 `"args": ["build","--type","weapp" ]` 和 `"console": "integratedTerminal"`
 
 调试微信小程序打包。
 
@@ -179,12 +216,7 @@ export default (ctx: IPluginContext) => {
             ...config,
             isWatch,
             mode: isProduction ? 'production' : 'development',
-            blended,
-            isBuildNativeComp,
-            withoutBuild,
-            newBlended,
-            noInjectGlobalStyle,
-			// 省略若干钩子
+			// 省略若干参数和若干钩子
           },
         },
       })
@@ -204,9 +236,9 @@ Taro build 插件主要做了以下几件事：
 - 判断 `config/index` 配置文件是否存在，如果不存在，则报错退出程序。
 - 判断 `platfrom` 参数是否是字符串，这里是 `weapp`，如果不是，退出程序。
 - 使用 `@tarojs/plugin-doctor` 中的 `validateConfig` 方法 (`checkConfig`) 函数校验配置文件 `config/index`，如果配置文件出错，退出程序。
-- 调用 `ctx.applyPlugins(hooks.ON_BUILD_START)` （编译开始）钩子。
+- 调用 `ctx.applyPlugins(hooks.ON_BUILD_START)` （编译开始）`onBuildStart` 钩子。
 - 调用 `ctx.applyPlugins({ name: platform, })` （调用 weapp） 钩子。
-- 调用 `ctx.applyPlugins(hooks.ON_BUILD_COMPLETE)` （编译结束）钩子。
+- 调用 `ctx.applyPlugins(hooks.ON_BUILD_COMPLETE)` （编译结束）`onBuildComplete` 钩子。
 
 其中
 
@@ -247,7 +279,7 @@ export default (ctx: IPluginContext, options: IOptions) => {
 
 `ctx.registerPlatform` 注册 `weapp` 平台插件，调用 `Weapp` 构造函数，传入 `ctx` 、`config` 和 `options` 等配置。
 
-<!-- TODO: program 截图 -->
+![extends](./images/extends.png)
 
 ## new Weapp 构造函数
 
@@ -292,38 +324,14 @@ export default class Weapp extends TaroPlatformBase {
     this.template = new Template(pluginOptions)
     this.setupTransaction.addWrapper({
       close () {
+		//   增加组件或修改组件属性
         this.modifyTemplate(pluginOptions)
+		// 修改 Webpack 配置
         this.modifyWebpackConfig()
       }
     })
   }
-
-  /**
-   * 增加组件或修改组件属性
-   */
-  modifyTemplate (pluginOptions?: IOptions) {
-    const template = this.template
-    template.mergeComponents(this.ctx, components)
-    template.voidElements.add('voip-room')
-    template.focusComponents.add('editor')
-    if (pluginOptions?.enablekeyboardAccessory) {
-      template.voidElements.delete('input')
-      template.voidElements.delete('textarea')
-    }
-  }
-
-  /**
-   * 修改 Webpack 配置
-   */
-  modifyWebpackConfig () {
-    this.ctx.modifyWebpackChain(({ chain }) => {
-      // 解决微信小程序 sourcemap 映射失败的问题，#9412
-      chain.output.devtoolModuleFilenameTemplate((info) => {
-        const resourcePath = info.resourcePath.replace(/[/\\]/g, '_')
-        return `webpack://${info.namespace}/${resourcePath}`
-      })
-    })
-  }
+//   省略代码
 }
 
 ```
@@ -394,49 +402,9 @@ export abstract class TaroPlatformBase<T extends TConfig = TConfig> extends Taro
     if (this.projectConfigJson) {
       this.generateProjectConfig(this.projectConfigJson)
     }
-    if (this.ctx.initialConfig.logger?.quiet === false) {
-      const { printLog, processTypeEnum } = this.ctx.helper
-      printLog(processTypeEnum.START, '开发者工具-项目目录', `${this.ctx.paths.outputPath}`)
-    }
-    // Webpack5 代码自动热重载
-    if (this.compiler === 'webpack5' && this.config.isWatch && this.projectConfigJsonOutputPath) {
-      try {
-        const projectConfig = require(this.projectConfigJsonOutputPath)
-        if (projectConfig.setting?.compileHotReLoad === true) {
-          this.ctx.modifyWebpackChain(({ chain }) => {
-            chain.plugin('TaroMiniHMRPlugin')
-              .use(require(path.join(__dirname, './webpack/hmr-plugin.js')).default)
-          })
-        }
-      } catch (e) {} // eslint-disable-line no-empty
-    }
-  }
-
-  protected printDevelopmentTip (platform: string) {
-    const tips: string[] = []
-    const config = this.config
-    const { chalk } = this.helper
-
-    if (process.env.NODE_ENV !== 'production' && process.env.NODE_ENV !== 'test') {
-      const { isWindows } = this.helper
-      const exampleCommand = isWindows
-        ? `$ set NODE_ENV=production && taro build --type ${platform} --watch`
-        : `$ NODE_ENV=production taro build --type ${platform} --watch`
-
-      tips.push(chalk.yellowBright(`预览模式生成的文件较大，设置 NODE_ENV 为 production 可以开启压缩。
-Example:
-${exampleCommand}`))
-    }
-
-    if (this.compiler === 'webpack5' && !config.cache?.enable) {
-      tips.push(chalk.yellowBright('建议开启持久化缓存功能，能有效提升二次编译速度，详情请参考: https://docs.taro.zone/docs/config-detail#cache。'))
-    }
-
-    if (tips.length) {
-      console.log(chalk.yellowBright('Tips:'))
-      tips.forEach((item, index) => console.log(`${chalk.yellowBright(index + 1)}. ${item}`))
-      console.log('\n')
-    }
+	// 打印开发者工具-项目目录
+	// Webpack5 代码自动热重载
+    // 省略若干代码
   }
 
   /**
@@ -451,34 +419,6 @@ ${exampleCommand}`))
     const runner = await npm.getNpmPkg(runnerPkg, appPath)
 
     return runner.bind(null, appPath)
-  }
-
-  /**
-   * 准备 runner 参数
-   * @param extraOptions 需要额外合入 Options 的配置项
-   */
-  protected getOptions (extraOptions = {}) {
-    const { ctx, globalObject, fileType, template } = this
-
-    const config = recursiveMerge(Object.assign({}, this.config), {
-      env: {
-        FRAMEWORK: JSON.stringify(this.config.framework),
-        TARO_ENV: JSON.stringify(this.platform),
-        TARO_PLATFORM: JSON.stringify(this.platformType),
-        TARO_VERSION: JSON.stringify(getPkgVersion())
-      }
-    })
-
-    return {
-      ...config,
-      nodeModulesPath: ctx.paths.nodeModulesPath,
-      buildAdapter: config.platform,
-      platformType: this.platformType,
-      globalObject,
-      fileType,
-      template,
-      ...extraOptions
-    }
   }
 
   /**
@@ -519,25 +459,6 @@ ${exampleCommand}`))
   }
 
   /**
-   * 递归替换对象的 key 值
-   */
-  protected recursiveReplaceObjectKeys (obj, keyMap) {
-    Object.keys(obj).forEach((key) => {
-      if (keyMap[key]) {
-        obj[keyMap[key]] = obj[key]
-        if (typeof obj[key] === 'object') {
-          this.recursiveReplaceObjectKeys(obj[keyMap[key]], keyMap)
-        }
-        delete obj[key]
-      } else if (keyMap[key] === false) {
-        delete obj[key]
-      } else if (typeof obj[key] === 'object') {
-        this.recursiveReplaceObjectKeys(obj[key], keyMap)
-      }
-    })
-  }
-
-  /**
    * 调用 runner 开启编译
    */
   public async start () {
@@ -554,7 +475,6 @@ ${exampleCommand}`))
 
 ```ts
 // packages/taro-service/src/platform-plugin-base/platform.ts
-
 interface IWrapper {
   init? (): void
   close? (): void
@@ -661,44 +581,17 @@ if (process.env.TARO_PLATFORM === 'web') {
 module.exports.default = module.exports
 ```
 
+调用的是打包后的文件 `dist/index.mini.js`，源码文件是 `packages/taro-webpack5-runner/src/index.mini.ts`。
+
 ```ts
 // packages/taro-webpack5-runner/src/index.mini.ts
-import { chalk } from '@tarojs/helper'
-import Prebundle from '@tarojs/webpack5-prebundle'
-import { isEmpty } from 'lodash'
+
 import webpack from 'webpack'
-
-import { Prerender } from './prerender/prerender'
-import { errorHandling } from './utils/webpack'
-import { MiniCombination } from './webpack/MiniCombination'
-
-import type { Stats } from 'webpack'
-import type { IMiniBuildConfig } from './utils/types'
-
+//   省略若干代码
 export default async function build (appPath: string, rawConfig: IMiniBuildConfig): Promise<Stats | void> {
   const combination = new MiniCombination(appPath, rawConfig)
   await combination.make()
-
-  const { enableSourceMap, entry = {}, runtimePath } = combination.config
-  const prebundle = new Prebundle({
-    appPath,
-    sourceRoot: combination.sourceRoot,
-    chain: combination.chain,
-    enableSourceMap,
-    entry,
-    isWatch: combination.config.isWatch,
-    runtimePath,
-    isBuildPlugin: combination.isBuildPlugin,
-    alias: combination.config.alias,
-    defineConstants: combination.config.defineConstants,
-    modifyAppConfig: combination.config.modifyAppConfig
-  })
-  try {
-    await prebundle.run(combination.getPrebundleOptions())
-  } catch (error) {
-    console.error(error)
-    console.warn(chalk.yellow('依赖预编译失败，已经为您跳过预编译步骤，但是编译速度可能会受到影响。'))
-  }
+  //   省略若干代码
 
   const webpackConfig = combination.chain.toConfig()
   const config = combination.config
@@ -707,39 +600,9 @@ export default async function build (appPath: string, rawConfig: IMiniBuildConfi
     if (config.withoutBuild) return
 
     const compiler = webpack(webpackConfig)
-    const onBuildFinish = config.onBuildFinish
-    let prerender: Prerender
-
-    const onFinish = function (error: Error | null, stats: Stats | null) {
-      if (typeof onBuildFinish !== 'function') return
-
-      onBuildFinish({
-        error,
-        stats,
-        isWatch: config.isWatch
-      })
-    }
 
     const callback = async (err: Error, stats: Stats) => {
-      const errorLevel = typeof config.compiler !== 'string' && config.compiler?.errorLevel || 0
-      if (err || stats.hasErrors()) {
-        const error = err ?? stats.toJson().errors
-        onFinish(error, null)
-        reject(error)
-        errorHandling(errorLevel, stats)
-        return
-      }
-
-      if (!isEmpty(config.prerender)) {
-        prerender = prerender ?? new Prerender(config, webpackConfig, stats, config.template)
-        await prerender.render()
-      }
-
-      // const res = stats.toString({
-      //   logging: 'verbose'
-      // })
-      // console.log('res: ', res)
-
+    //   省略若干代码
       onFinish(null, stats)
       resolve(stats)
     }
