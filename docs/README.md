@@ -58,7 +58,7 @@
 
 **学习源码整体架构系列：**
 
-- 48. [开发小程序又一新选择 vue-mini，据说性能是 Taro 的 10 倍，遥遥领先](../vue-mini-analysis/)
+- 48.[开发小程序又一新选择 vue-mini，据说性能是 Taro 的 10 倍，遥遥领先](../vue-mini-analysis/)
 
 - 47.[神器啊，从未想过 VSCode 还能这样直接打开仓库URL，原理揭秘~](../open-in-github/)
 
