@@ -3,7 +3,7 @@ highlight: darcula
 theme: smartblue
 ---
 
-# Taro 源码揭秘 - 4. 每次 npm run dev:weapp 开发小程序，build 编译打包是如何实现的？
+# Taro 4.0 已正式发布 - 4. 每次 npm run dev:weapp 开发小程序，build 编译打包是如何实现的？
 
 ## 1. 前言
 
@@ -16,7 +16,7 @@ theme: smartblue
 -   [x] [Taro 源码揭秘 - 1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
 -   [x] [Taro 源码揭秘 - 2. 揭开整个架构的插件系统的秘密](https://juejin.cn/spost/7380195796208205824)
 -   [x] [Taro 源码揭秘 - 3. 每次创建新的 taro 项目（taro init）的背后原理是什么](https://juejin.cn/post/7390335741586931738)
--   [ ] cli build
+-   [x] [Taro 4.0 已正式发布 - 4. 每次 npm run dev:weapp 开发小程序，build 编译打包是如何实现的？](https://juejin.cn/post/7403193330271682612)
 -   [ ] 等等
 
 学完本文，你将学到：
@@ -258,7 +258,7 @@ async function checkConfig ({ projectConfig, helper }) {
 `Taro` `build` 插件主要做了以下几件事：
 
 - 判断 `config/index` 配置文件是否存在，如果不存在，则报错退出程序。
-- 判断 `platfrom` 参数是否是字符串，这里是 `weapp`，如果不是，退出程序。
+- 判断 `platform` 参数是否是字符串，这里是 `weapp`，如果不是，退出程序。
 - 使用 `@tarojs/plugin-doctor` 中的 `validateConfig` 方法 (`checkConfig`) 函数校验配置文件 `config/index`，如果配置文件出错，退出程序。
 - 调用 `ctx.applyPlugins(hooks.ON_BUILD_START)` （编译开始）`onBuildStart` 钩子。
 - 调用 `ctx.applyPlugins({ name: platform, })` （调用 weapp） 钩子。
