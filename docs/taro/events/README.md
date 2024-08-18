@@ -24,7 +24,9 @@ theme: smartblue
 学完本文，你将学到：
 
 ```bash
-1. Taro 源码中发布订阅机制 Events 是如何实现的
+1. 了解发布订阅机制
+2. 了解 taro 一些 npm 包的作用，寻找到 Events 源码
+3. Taro 源码中发布订阅机制 Events 是如何实现的
 等等
 ```
 
@@ -143,7 +145,7 @@ trigger(eventName, ...args){
 
 `trigger` 传入 `eventName` 和参数，遍历所有事件，如果 `eventName` 匹配，则执行 `handler`。
 
-[Taro events 自行实现所有代码，可打开调试运行](https://code.juejin.cn/pen/7404393720948195354)
+[Taro events 自行实现所有代码 demo，可打开调试运行](https://code.juejin.cn/pen/7404393720948195354)
 
 ## 4. 在茫茫源码中寻找 class Events 实现
 
@@ -293,21 +295,29 @@ export class Events {
 }
 ```
 
+`eventSplitter` 事件分割符 `,`。
+`callbacks` 对象存储事件名和回调函数。
+
 ### 5.1 on 事件监听
 
 ```js
 on (eventName: EventName, callback: (...args: any[]) => void, context?: any): this {
 	let event: EventName | undefined, tail, _eventName: EventName[]
+	// 如果没传 callback 函数，则直接返回 this
 	if (!callback) {
 		return this
 	}
+	// 支持 symbol 事件名写法
+	// 也支持 事件名1,事件名2,事件名3 的写法
 	if (typeof eventName === 'symbol') {
 		_eventName = [eventName]
 	} else {
+		// 事件名1,事件名2,事件名3 分割成数组
 		_eventName = eventName.split(Events.eventSplitter)
 	}
 	this.callbacks ||= {}
 	const calls = this.callbacks
+	// 遍历事件名数组
 	while ((event = _eventName.shift())) {
 		const list = calls[event]
 		const node: any = list ? list.tail : {}
@@ -319,9 +329,24 @@ on (eventName: EventName, callback: (...args: any[]) => void, context?: any): th
 			next: list ? list.next : node
 		}
 	}
+	// return this 支持链式调用
 	return this
 }
 ```
+
+```ts
+{
+	'eventName1': {
+		tail: {},
+		next: {
+			next: {},
+			context: context,
+			callback: callback,
+		},
+	}
+}
+```
+
 
 ### 5.2 once 事件监听只执行一次
 
@@ -338,6 +363,8 @@ once (events: EventName, callback: (...r: any[]) => void, context?: any): this {
 }
 ```
 
+执行一遍后，调用 `off` 方法移除事件。
+
 ### 5.3 off 事件移除
 
 ```ts
@@ -350,11 +377,15 @@ off (events?: EventName, callback?: (...args: any[]) => void, context?: any) {
 		delete this.callbacks
 		return this
 	}
+	// 如果是 symbol 事件名，数组
 	if (typeof events === 'symbol') {
 		_events = [events]
 	} else {
+		// 事件名1,事件名2,事件名3 分割成数组
+		// 没有传事件名，则移除所有事件
 		_events = events ? events.split(Events.eventSplitter) : Object.keys(calls)
 	}
+	// 遍历事件名数组
 	while ((event = _events.shift())) {
 		let node: any = calls[event]
 		delete calls[event]
@@ -363,11 +394,11 @@ off (events?: EventName, callback?: (...args: any[]) => void, context?: any) {
 		}
 		const tail = node.tail
 		while ((node = node.next) !== tail) {
-		const cb = node.callback
-		const ctx = node.context
-		if ((callback && cb !== callback) || (context && ctx !== context)) {
-			this.on(event, cb, ctx)
-		}
+			const cb = node.callback
+			const ctx = node.context
+			if ((callback && cb !== callback) || (context && ctx !== context)) {
+				this.on(event, cb, ctx)
+			}
 		}
 	}
 	return this
@@ -548,13 +579,18 @@ call<K extends Extract<keyof T, string>> (hookName: K, ...rest: Parameters<T[K]>
   }
 ```
 
-## 总结
+## 9. 总结
 
+我们通过文档[Taro 消息机制](https://taro-docs.jd.com/docs/next/apis/about/events)，了解到 `Taro` 提供了`Events` 和 `Taro.eventCenter` 对象，用于发布订阅。我们根据文档也实现了。
+
+我们在茫茫源码中，寻找 `class Events` 的实现，依次在 `@tarojs/taro` => `@tarojs/api` => `@tarojs/runtime` => `@tarojs/shared` 层层查找，我们终于在 `packages/shared/src/event-emitter.ts` 找到了 `class Events` 的实现代码。
+
+`class Events` 用链表存储事件，实现了 `on、once、off、trigger` 等方法，用于发布订阅。
 
 ----
 
 **如果看完有收获，欢迎点赞、评论、分享、收藏支持。你的支持和肯定，是我写作的动力。也欢迎提建议和交流讨论**。
 
-作者：常以**若川**为名混迹于江湖。所知甚少，唯善学。[若川的博客](https://ruochuan12.github.io)
+作者：常以**若川**为名混迹于江湖。所知甚少，唯善学。[若川的博客](https://ruochuan12.github.io)，[github blog](https://github.com/ruochuan12/blog)，欢迎`star`。
 
 最后可以持续关注我[@若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
