@@ -335,19 +335,58 @@ on (eventName: EventName, callback: (...args: any[]) => void, context?: any): th
 }
 ```
 
+这里可能有点抽象，我们举个例子：
+
+```ts
+function fn1(){}
+function fn2(){}
+function fn3(){}
+function fn4(){}
+const events = new Events()
+.on('eventName1', fn1)
+.on('eventName1', fn2)
+.on('eventName1', fn3)
+.on('eventName2', fn4);
+
+console.log(events.callbacks);
+```
+
+`events.callbacks` 对象存储如下结构：
+
 ```ts
 {
-	'eventName1': {
-		tail: {},
-		next: {
-			next: {},
-			context: context,
-			callback: callback,
-		},
-	}
+  eventName1: {
+    tail: {
+    },
+    next: {
+      next: {
+        next: {
+          next: {
+          },
+          context: undefined,
+          callback: function fn3(){},
+        },
+        context: undefined,
+        callback: function fn2(){},
+      },
+      context: undefined,
+      callback: function fn1(){},
+    },
+  },
+  eventName2: {
+    tail: {
+    },
+    next: {
+      next: {
+      },
+      context: undefined,
+      callback: function fn4(){},
+    },
+  },
 }
 ```
 
+也就是链表形式。
 
 ### 5.2 once 事件监听只执行一次
 
@@ -358,6 +397,7 @@ once (events: EventName, callback: (...r: any[]) => void, context?: any): this {
 		this.off(events, wrapper, context)
 	}
 
+	// 执行一次后，调用 off 方法移除事件
 	this.on(events, wrapper, context)
 
 	return this
@@ -378,7 +418,7 @@ off (events?: EventName, callback?: (...args: any[]) => void, context?: any) {
 		delete this.callbacks
 		return this
 	}
-	// 如果是 symbol 事件名，数组
+	// 如果是 symbol 事件名，组成数组
 	if (typeof events === 'symbol') {
 		_events = [events]
 	} else {
@@ -389,8 +429,10 @@ off (events?: EventName, callback?: (...args: any[]) => void, context?: any) {
 	// 遍历事件名数组
 	while ((event = _events.shift())) {
 		let node: any = calls[event]
+		// 删除事件对象
 		delete calls[event]
 		if (!node || !(callback || context)) {
+			// 删除，进行下一次循环
 			continue
 		}
 		const tail = node.tail
@@ -411,14 +453,19 @@ off (events?: EventName, callback?: (...args: any[]) => void, context?: any) {
 ```ts
 trigger (events: EventName, ...args: any[]) {
 	let event: EventName | undefined, node, calls: EventCallbacks | undefined, _events: EventName[]
+	// callbacks 对象不存在，则直接返回 this
 	if (!(calls = this.callbacks)) {
 		return this
 	}
+	// 如果是 symbol 事件名，组成数组 [events]
 	if (typeof events === 'symbol') {
 		_events = [events]
 	} else {
+		// 事件名1,事件名2,事件名3 分割成数组
 		_events = events.split(Events.eventSplitter)
 	}
+	// 遍历事件名数组
+	// 遍历链表，依次执行回调函数
 	while ((event = _events.shift())) {
 		if ((node = calls[event])) {
 			const tail = node.tail
@@ -431,6 +478,11 @@ trigger (events: EventName, ...args: any[]) {
 }
 ```
 
+遍历链表，依次执行回调函数。
+tail 结尾作为判断，到末尾了，终止遍历。
+
+接着我们来学习 `eventCenter` 全局消息中心的实现。
+
 ## 6. eventCenter 全局消息中心
 
 ```ts
@@ -441,7 +493,48 @@ const eventCenter = hooks.call('getEventCenter', Events)!
 
 ## 7. hooks
 
-runtime-hooks
+根据上文的信息，我们可以找到 `hooks` 对象的代码位置是 `packages/shared/src/runtime-hooks.ts`。
+
+```js
+// packages/shared/src/runtime-hooks.ts
+import { Events } from './event-emitter'
+import { isFunction } from './is'
+
+import type { Shortcuts } from './template'
+
+// Note: @tarojs/runtime 不依赖 @tarojs/taro, 所以不能改为从 @tarojs/taro 引入 (可能导致循环依赖)
+type TFunc = (...args: any[]) => any
+
+// hook 类型
+export enum HOOK_TYPE {
+  SINGLE,
+  MULTI,
+  WATERFALL
+}
+
+// hook 对象
+interface Hook {
+  type: HOOK_TYPE
+  initial?: TFunc | null
+}
+
+// Node 对象
+interface Node {
+  next: Node
+  context?: any
+  callback?: TFunc
+}
+
+// TaroHook 函数
+export function TaroHook (type: HOOK_TYPE, initial?: TFunc): Hook {
+  return {
+    type,
+    initial: initial || null
+  }
+}
+```
+
+这段代码声明了一些 `TS` 接口和类型等，`TaroHook` 函数返回一个 `Hook` 对象。
 
 ```ts
 // packages/shared/src/runtime-hooks.ts
@@ -464,45 +557,11 @@ export const hooks = new TaroHooks<ITaroHooks>({
 })
 ```
 
+`hooks` 对象是 `TaroHooks` 的实例对象。`TaroHooks` 继承自 `Events`。
+
 我们来看 `TaroHooks` 的具体实现
 
 ## 8. class TaroHooks 的具体实现
-
-```js
-// packages/shared/src/runtime-hooks.ts
-import { Events } from './event-emitter'
-import { isFunction } from './is'
-
-import type { Shortcuts } from './template'
-
-// Note: @tarojs/runtime 不依赖 @tarojs/taro, 所以不能改为从 @tarojs/taro 引入 (可能导致循环依赖)
-type TFunc = (...args: any[]) => any
-
-export enum HOOK_TYPE {
-  SINGLE,
-  MULTI,
-  WATERFALL
-}
-
-interface Hook {
-  type: HOOK_TYPE
-  initial?: TFunc | null
-}
-
-interface Node {
-  next: Node
-  context?: any
-  callback?: TFunc
-}
-
-export function TaroHook (type: HOOK_TYPE, initial?: TFunc): Hook {
-  return {
-    type,
-    initial: initial || null
-  }
-}
-
-```
 
 ```ts
 // packages/shared/src/runtime-hooks.ts
@@ -511,7 +570,25 @@ export class TaroHooks<T extends Record<string, TFunc> = any> extends Events {
 
   constructor (hooks: Record<keyof T, Hook>, opts?) {
     super(opts)
+	// 初始化 hooks 对象
+	/**
+	 *
+	{
+		getMiniLifecycle,
+		getEventCenter: {
+			type: 0,
+			initial: (Events) => new Events(),
+		},
+		initNativeApi,
+		省略了一些其他hooks
+	}
+
+	 *
+	 */
     this.hooks = hooks
+	// 遍历 hooks 对象，
+	// 如果 initial 是函数，调用 this.on 方法，监听事件
+	// getEventCenter 的 type 是 SINGLE， initial 是函数 (Events) => new Events()
     for (const hookName in hooks) {
       const { initial } = hooks[hookName]
       if (isFunction(initial)) {
@@ -521,6 +598,7 @@ export class TaroHooks<T extends Record<string, TFunc> = any> extends Events {
   }
 
   private tapOneOrMany<K extends Extract<keyof T, string>> (hookName: K, callback: T[K] | T[K][]) {
+	// 列表，变量
     const list = isFunction(callback) ? [callback] : callback
     list.forEach(cb => this.on(hookName, cb))
   }
@@ -551,11 +629,14 @@ tap<K extends Extract<keyof T, string>> (hookName: K, callback: T[K] | T[K][]) {
 
 ```ts
 call<K extends Extract<keyof T, string>> (hookName: K, ...rest: Parameters<T[K]>): ReturnType<T[K]> | undefined {
+	// 获取 hooks 对象
+	// call('getEventCenter', Events);
     const hook = this.hooks[hookName]
     if (!hook) return
 
     const { type } = hook
 
+    // Events 对象 中的事件名称、回调函数等对象
     const calls = this.callbacks
     if (!calls) return
 
@@ -567,8 +648,11 @@ call<K extends Extract<keyof T, string>> (hookName: K, ...rest: Parameters<T[K]>
       let args = rest
       let res
 
+	  // 遍历链表，依次执行回调函数
+	  //  判断条件，节点不等于列表的末尾
       while (node !== tail) {
         res = node.callback?.apply(node.context || this, args)
+		// 如果是 waterfall，则 args 是 [res]
         if (type === HOOK_TYPE.WATERFALL) {
           const params: any = [res]
           args = params
@@ -580,6 +664,37 @@ call<K extends Extract<keyof T, string>> (hookName: K, ...rest: Parameters<T[K]>
   }
 ```
 
+因为 `TaroHooks` 是继承自 `Events`，所以 `call` 实现和 `Events` 的 `trigger` 触发事件类似。
+都是遍历链表，依次执行回调函数。还有一个判断，就是 `type` 是 `HOOK_TYPE.WATERFALL` 的时候，将返回值作为参数传给下一个回调。
+
+换句话说
+
+```ts
+// 调用 call 方法，触发事件
+import { Events, hooks } from '@tarojs/shared'
+const eventCenter = hooks.call('getEventCenter', Events)!
+/**
+ *
+	getEventCenter: {
+		type: 0,
+		initial: (Events) => new Events(),
+	}
+ *
+ */
+```
+
+简化之后，其实就是：
+
+```ts
+const events = new Events();
+events.on('getEventCenter', (Events) => new Events())
+events.trigger('getEventCenter', Events));
+
+const eventCenter = new Events();
+```
+
+单从 `getEventCenter` 函数来看，好像有些多此一举，为啥要这样写呢？可能是为了修复多个平台的bug。暂时不知道好处是啥，知道的读者朋友也可以反馈告知。
+
 ## 9. 总结
 
 我们通过文档[Taro 消息机制](https://taro-docs.jd.com/docs/next/apis/about/events)，了解到 `Taro` 提供了`Events` 和 `Taro.eventCenter` 对象，用于发布订阅。我们根据文档也实现了。
@@ -587,6 +702,8 @@ call<K extends Extract<keyof T, string>> (hookName: K, ...rest: Parameters<T[K]>
 我们在茫茫源码中，寻找 `class Events` 的实现，依次在 `@tarojs/taro` => `@tarojs/api` => `@tarojs/runtime` => `@tarojs/shared` 层层查找，我们终于在 `packages/shared/src/event-emitter.ts` 找到了 `class Events` 的实现代码。
 
 `class Events` 用链表存储事件，实现了 `on、once、off、trigger` 等方法，用于发布订阅。
+
+`Taro.eventCenter` 对象其实也是 `class Events` 的实例，只不过绕了一圈，用 `TaroHooks` 实例 `hooks.call('getEventCenter', Events)` 来获取。
 
 ----
 
