@@ -186,52 +186,26 @@ module.exports.default = module.exports
 
 >暴露给 @tarojs/taro 的所有端的公有 API。`@tarojs/api` 会跨 node/浏览器/小程序/React Native 使用，不得使用/包含平台特有特性。
 
+入口文件：`packages/taro-api/src/index.ts`
+
 ```js
 // packages/taro-api/src/index.ts
 /* eslint-disable camelcase */
-import {
-  Current,
-  eventCenter,
-  Events,
-  getCurrentInstance,
-  nextTick,
-  options
-} from '@tarojs/runtime'
+import { Current, eventCenter, Events, getCurrentInstance, nextTick, options } from '@tarojs/runtime'
 
-import { ENV_TYPE, getEnv } from './env'
-import Link, { interceptorify } from './interceptor'
-import * as interceptors from './interceptor/interceptors'
-import {
-  Behavior,
-  getInitPxTransform,
-  getPreload,
-  getPxTransform,
-} from './tools'
+// 省略若干代码
 
 const Taro: Record<string, unknown> = {
-  Behavior,
-  getEnv,
-  ENV_TYPE,
-  Link,
-  interceptors,
-  Current,
-  getCurrentInstance,
-  options,
-  nextTick,
-  eventCenter,
-  Events,
-  getInitPxTransform,
-  interceptorify
+  // 省略若干代码
+  Current, getCurrentInstance, options, nextTick, eventCenter, Events,
 }
 
-Taro.initPxTransform = getInitPxTransform(Taro)
-Taro.preload = getPreload(Current)
-Taro.pxTransform = getPxTransform(Taro)
+// 省略若干代码
 
 export default Taro
 ```
 
-这个文件代码不多，就不省略了。`eventCenter,Events`是从 `@tarojs/runtime` 引入的。
+这个文件代码不多，省略了一部分。默认导出`Taro`，其中 `eventCenter,Events`是从 `@tarojs/runtime` 引入的。
 
 `@tarojs/runtime` 对应的源码路径是 `taro/packages/taro-runtime`
 
