@@ -335,7 +335,9 @@ on (eventName: EventName, callback: (...args: any[]) => void, context?: any): th
 }
 ```
 
-这里可能有点抽象，我们举个例子：
+这里可能有点抽象，我们举个例子调试下：
+
+我们直接找到打包后的代码，路径：`taro/packages/shared/dist/event-emitter.js`，注释`// export { Events };`，追加如下代码：
 
 ```ts
 function fn1(){}
@@ -351,7 +353,16 @@ const events = new Events()
 console.log(events.callbacks);
 ```
 
-`events.callbacks` 对象存储如下结构：
+打开终端，新建 `JavaScript Debug Terminal` 调试，运行：
+
+```bash
+node packages/shared/dist/event-emitter.js
+```
+
+调试截图如下：
+![调试 events](./images/events-debugger.png)
+
+复制监视的 `events.callbacks` 的值，它的对象存储如下结构：
 
 ```ts
 {
@@ -386,7 +397,9 @@ console.log(events.callbacks);
 }
 ```
 
-也就是链表形式。
+![events callbacks 结构图](./drawio/callbacks.svg)
+
+也就是链表形式。同名的事件名，会追加到链表的 `next` 节点。所以同名的事件名，可以触发多个 `callback` 函数。
 
 ### 5.2 once 事件监听只执行一次
 
