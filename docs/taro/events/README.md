@@ -87,12 +87,14 @@ Taro.eventCenter.off
 
 ## 3. 根据文档使用实现 Events
 
-文档中，有如下几个需求：
+文档中，主要有如下几个需求点：
 
 - 监听同个事件，同时绑定多个 handler
 - 触发事件，传入多个参数
 - 取消监听一个事件某个 handler
 - 取消监听所有事件
+
+我们可以先自行实现一个符合要求的 `Events` 类，然后再去 `Taro` 源码中寻找实现，最后可以对比各自的实现优缺点。
 
 ### 3.1 初步实现 Events
 
@@ -102,7 +104,7 @@ class Events {
         this.callbacks = [];
     }
 	on(eventName, callback){
-        this.push({
+        this.callbacks.push({
             eventName,
             callback,
         });
