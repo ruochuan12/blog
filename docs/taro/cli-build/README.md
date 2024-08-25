@@ -277,6 +277,8 @@ await ctx.applyPlugins({
 
 ## 3. 端平台插件 Weapp
 
+[Taro文档 - 端平台插件](https://docs.taro.zone/docs/platform-plugin/) 中，有对端平台插件的比较详细的描述，可以参考学习。不过我们直接学习微信小程序端平台插件源码。
+
 ```ts
 // packages/taro-platform-weapp/src/index.ts
 import Weapp from './program'
@@ -735,7 +737,7 @@ ctx.registerPlatform({
 
 ![plugins](./images/plugins.png)也是开发者开发插件配置钩子的执行。
 
-更多 `Taro` 实现细节也可以参考[官方文档：Taro 实现细节](https://docs.taro.zone/docs/implement-note)
+更多 `Taro` 端平台插件实现细节可参考[Taro文档 - 端平台插件](https://docs.taro.zone/docs/platform-plugin/)，更多 `Taro` 实现细节也可以参考[官方文档：Taro 实现细节](https://docs.taro.zone/docs/implement-note)。
 
 ----
 
