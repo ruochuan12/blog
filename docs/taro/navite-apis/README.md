@@ -28,7 +28,29 @@ theme: smartblue
 等等
 ```
 
-## 2. tarojs/taro
+## 文档
+
+[Taro 文档 - API 说明](https://docs.taro.zone/docs/apis/about/desc)
+
+![文档截图](./images/docs-apis.png)
+
+```ts
+import Taro from '@tarojs/taro'
+
+Taro.request(url).then(function (res) {
+  console.log(res)
+})
+```
+
+我们具体来分析下，`Taro` 源码中是如何实现 `Taro.xxx` 访问 `wx.xxx` 的，并且是如何实现 `promisify` 的。
+
+`promisify` 把回调函数转成 `promise` 避免回调地狱问题。面试也经常考察此题。我之前写过一篇文章：[从22行有趣的源码库中，我学到了 callback promisify 化的 Node.js 源码实现](https://juejin.cn/post/7028731182216904740)
+
+我们日常开发都会引入 `tarojs/taro`，然后调用 `Taro.xxx` 方法。
+
+我们先来看 `tarojs/taro` 的代码。
+
+## tarojs/taro
 
 ```ts
 // packages/taro/index.js
@@ -44,7 +66,6 @@ module.exports.default = module.exports
 ```
 
 ## src/program.ts
-
 
 ```ts
 // packages/taro-platform-weapp/src/program.ts
