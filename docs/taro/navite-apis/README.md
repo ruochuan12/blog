@@ -20,7 +20,7 @@ theme: smartblue
 -   [x] [Taro 4.0 已发布 - 5.高手都在用的发布订阅机制 Events 在 Taro 中是如何实现的？](https://juejin.cn/post/7403915119448915977)
 -   [ ] 等等
 
-前面 4 篇文章都是讲述编译相关的，CLI、插件机制、初始化项目、编译构建流程。第 5 篇我们来讲些相对简单的，Taro 是如何实现发布订阅机制 Events 的。
+前面 4 篇文章都是讲述编译相关的，CLI、插件机制、初始化项目、编译构建流程。第 6 篇我们来讲些相对简单的，Taro 是如何实现 `Taro.xxx` 能访问 `wx.xxx`。
 
 学完本文，你将学到：
 
@@ -157,7 +157,7 @@ export const hostConfig = {
 
 ```
 
-## initNativeApi
+## initNativeApi 初始化原始 api
 
 ```ts
 // packages/taro-platform-weapp/src/apis.ts
@@ -198,7 +198,7 @@ export function initNativeApi (taro) {
 
 ```
 
-## processApis
+## processApis 处理 apis
 
 ```ts
 // packages/shared/src/native-apis.ts
@@ -229,6 +229,18 @@ function processApis (taro, global, config: IProcessApisIOptions = {}) {
   }
 
   apis.forEach(key => {
+    // 省略，拆开到下方
+  })
+
+  !config.isOnlyPromisify && equipCommonApis(taro, global, config)
+}
+
+```
+
+### apis.forEach
+
+```js
+apis.forEach(key => {
     if (_needPromiseApis.has(key)) {
       const originKey = key
       taro[originKey] = (options: Record<string, any> | string = {}, ...args) => {
@@ -327,14 +339,14 @@ function processApis (taro, global, config: IProcessApisIOptions = {}) {
       }
     }
   })
-
-  !config.isOnlyPromisify && equipCommonApis(taro, global, config)
-}
-
 ```
+
 
 ## 总结
 
+## links
+
+- [Taro文档 - 端平台插件](https://docs.taro.zone/docs/platform-plugin/)
 
 ----
 
