@@ -3,7 +3,7 @@ highlight: darcula
 theme: smartblue
 ---
 
-# Taro 4.0 已发布 - 6. 为啥 Taro.xxx 能访问 wx.xxx ?
+# Taro 4.0 已发布 - 6. 为什么 Taro.xxx 能访问 wx.xxx ?
 
 ## 1. 前言
 
