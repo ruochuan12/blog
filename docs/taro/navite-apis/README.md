@@ -28,7 +28,7 @@ theme: smartblue
 等等
 ```
 
-## 文档
+## 2. 文档
 
 [Taro 文档 - API 说明](https://docs.taro.zone/docs/apis/about/desc)
 
@@ -50,7 +50,7 @@ Taro.request(url).then(function (res) {
 
 我们先来看 `tarojs/taro` 的代码。
 
-## tarojs/taro
+## 3. tarojs/taro
 
 ```ts
 // packages/taro/index.js
@@ -65,7 +65,12 @@ module.exports = taro
 module.exports.default = module.exports
 ```
 
-## src/program.ts
+`hooks` 在上篇文章[Taro 4.0 已正式发布 - 5.高手都在用的发布订阅机制 Events 在 Taro 中是如何实现的？](https://juejin.cn/post/7403915119448915977#heading-20)讲过。
+简单来说就是 `tap` 是注册事件，`call` 是触发事件。其中 `mergeReconciler` 函数中注册`initNativeApi`函数。
+
+这时我们需要来寻找 `initNativeApi` 函数在哪里实现的。可以在Taro源码中根据 `initNativeApi` 关键字搜索。或者之前的第三篇文章 [3. taro build](https://juejin.cn/post/7403193330271682612)。我们知道端平台插件的代码在 `@tarojs/plugin-platform-weapp` 包中，路径是 `packages/taro-platform-weapp/src/program.ts`。
+
+## 4. new Weapp 端平台插件
 
 ```ts
 // packages/taro-platform-weapp/src/program.ts
@@ -85,7 +90,11 @@ export default class Weapp extends TaroPlatformBase {
 }
 ```
 
-## src/runtime.ts
+`runtimePath` 路径：`@tarojs/plugin-platform-weapp/dist/runtime`。
+
+对应的运行时路径 `packages/taro-platform-weapp/src/runtime.ts`。
+
+## 5. 运行时 src/runtime.ts
 
 ```ts
 // packages/taro-platform-weapp/src/runtime.ts
@@ -97,7 +106,12 @@ mergeReconciler(hostConfig)
 mergeInternalComponents(components)
 ```
 
-## mergeReconciler
+- 使用 mergeReconciler 函数把自定义的 hostConfig 合并到全局 [Reconciler](https://docs.taro.zone/docs/platform-plugin/reconciler) 中。
+- 使用 mergeInternalComponents 函数把自定义组件信息 [components.ts](https://docs.taro.zone/docs/platform-plugin/platform-mini#31-%E7%BC%96%E5%86%99-componentsts) 合并到全局 internalComponents 组件信息对象中。
+
+我们来看下 `mergeReconciler` 函数的实现。
+
+## 6. mergeReconciler 函数
 
 ```ts
 // packages/shared/src/utils.ts
@@ -109,14 +123,11 @@ export function mergeReconciler (hostConfig, hooksForTest?) {
     obj.tap(key, hostConfig[key])
   })
 }
-
 ```
 
-```ts
-// packages/shared/src/utils.ts
-```
+`obj.tap(key, hostConfig[key])` 是注册事件，在 `call` 调用。
 
-## hostConfig
+## 7. hostConfig
 
 ```ts
 // packages/taro-platform-weapp/src/runtime-utils.ts
@@ -139,25 +150,19 @@ export const hostConfig = {
     return config
   },
   transferHydrateData (data, element, componentsAlias) {
-    if (element.isTransferElement) {
-      const pages = getCurrentPages()
-      const page = pages[pages.length - 1]
-      data[Shortcuts.NodeName] = element.dataName
-      page.setData({
-        [toCamelCase(data.nn)]: data
-      })
-      return {
-        sid: element.sid,
-        [Shortcuts.Text]: '',
-        [Shortcuts.NodeName]: componentsAlias['#text']?._num || '8'
-      }
-    }
+    // 省略若干代码
   },
 }
 
 ```
 
-## initNativeApi 初始化原始 api
+我们接着来看 `initNativeApi` 函数。
+
+## 8. initNativeApi 初始化原始 api
+
+```ts
+// packages/taro-platform-weapp/src/apis.ts
+```
 
 ```ts
 // packages/taro-platform-weapp/src/apis.ts
@@ -198,7 +203,9 @@ export function initNativeApi (taro) {
 
 ```
 
-## processApis 处理 apis
+`initNativeApi` 函数中调用了 `processApis` 函数，把 `wx` 的 api 转换成 `taro` 的 api。我们接着来看 `processApis` 函数的具体实现。
+
+## 9. processApis 处理 apis
 
 ```ts
 // packages/shared/src/native-apis.ts
@@ -209,15 +216,21 @@ const needPromiseApis = new Set<string>([
   'chooseAddress', 'chooseImage', 'chooseLocation', 'downloadFile','getLocation', 'navigateBack', 'navigateTo', 'openDocument', 'openLocation', 'reLaunch', 'redirectTo', 'scanCode', 'showModal', 'showToast', 'switchTab', 'uploadFile',
 ])
 
+// processApis 参数对象
 interface IProcessApisIOptions {
   // 不需要 promisify 的 api
   noPromiseApis?: Set<string>
-  //   希望 promisify 的 api
+  // 需要 promisify 的 api
   needPromiseApis?: Set<string>
+  // handleSyncApis 磨平差异
   handleSyncApis?: (key: string, global: IObject, args: any[]) => any
+  // 改变 key 或 option 字段，如需要把支付宝标准的字段对齐微信标准的字段
   transformMeta?: (key: string, options: IObject) => { key: string, options: IObject }
+  //  修改 apis
   modifyApis?: (apis: Set<string>) => void
+  //  修改返回结果
   modifyAsyncResult?: (key: string, res) => void
+//   是否只 promisify，只在 plugin-inject 端使用
   isOnlyPromisify?: boolean
   [propName: string]: any
 }
@@ -226,6 +239,9 @@ function processApis (taro, global, config: IProcessApisIOptions = {}) {
 	// 省略...
 }
 ```
+
+是否只 `promisify`，只在 `@tarojs/plugin-inject` 插件使用
+> 可以为小程序平台注入公共的组件、API 等逻辑
 
 ```ts
 // packages/shared/src/native-apis.ts
@@ -266,7 +282,18 @@ function processApis (taro, global, config: IProcessApisIOptions = {}) {
 
 ```
 
-### apis.forEach 需要 promisify 的 api 逻辑
+### 9.1 apis.forEach 需要 promisify 的 api 逻辑
+
+`nonsupport` 函数
+
+```ts
+// packages/shared/src/utils.ts
+export function nonsupport (api) {
+  return function () {
+    console.warn(`小程序暂不支持 ${api}`)
+  }
+}
+```
 
 ```js
 // packages/shared/src/native-apis.ts
@@ -303,43 +330,12 @@ apis.forEach(key => {
 
         // Promise 化
         const p: any = new Promise((resolve, reject) => {
-          obj.success = res => {
-            config.modifyAsyncResult?.(key, res)
-            options.success?.(res)
-            if (key === 'connectSocket') {
-              resolve(
-                Promise.resolve().then(() => task ? Object.assign(task, res) : res)
-              )
-            } else {
-              resolve(res)
-            }
-          }
-          obj.fail = res => {
-            options.fail?.(res)
-            reject(res)
-          }
-          obj.complete = res => {
-            options.complete?.(res)
-          }
-          if (args.length) {
-            task = global[key](obj, ...args)
-          } else {
-            task = global[key](obj)
-          }
+          // 省略...，拆开在下方
         })
 
         // 给 promise 对象挂载属性
         if (['uploadFile', 'downloadFile'].includes(key)) {
-          equipTaskMethodsIntoPromise(task, p)
-          p.progress = cb => {
-            task?.onProgressUpdate(cb)
-            return p
-          }
-          p.abort = cb => {
-            cb?.()
-            task?.abort()
-            return p
-          }
+          // 省略实现...
         }
         return p
       }
@@ -349,46 +345,90 @@ apis.forEach(key => {
   })
 ```
 
+`promisify` 具体实现
+
 ```ts
-// packages/shared/src/utils.ts
-export function nonsupport (api) {
-  return function () {
-    console.warn(`小程序暂不支持 ${api}`)
-  }
-}
+// Promise 化
+const p: any = new Promise((resolve, reject) => {
+	obj.success = res => {
+		config.modifyAsyncResult?.(key, res)
+		options.success?.(res)
+		if (key === 'connectSocket') {
+			resolve(
+				Promise.resolve().then(() => task ? Object.assign(task, res) : res)
+			)
+		} else {
+			resolve(res)
+		}
+	}
+	obj.fail = res => {
+		options.fail?.(res)
+		reject(res)
+	}
+	obj.complete = res => {
+		options.complete?.(res)
+	}
+	if (args.length) {
+		task = global[key](obj, ...args)
+	} else {
+		task = global[key](obj)
+	}
+})
 ```
 
-### apis.forEach 不需要 promisify 的 api 逻辑
+```ts
+// 给 promise 对象挂载属性
+if (['uploadFile', 'downloadFile'].includes(key)) {
+	// 省略实现...
+	equipTaskMethodsIntoPromise(task, p)
+	p.progress = cb => {
+		task?.onProgressUpdate(cb)
+		return p
+	}
+	p.abort = cb => {
+		cb?.()
+		task?.abort()
+		return p
+	}
+}
+
+```
+
+### 9.2 apis.forEach 不需要 promisify 的 api 逻辑
 
 ```ts
 // packages/shared/src/native-apis.ts
-let platformKey = key
-
-// 改变 key 或 option 字段，如需要把支付宝标准的字段对齐微信标准的字段
-if (config.transformMeta) {
-	platformKey = config.transformMeta(key, {}).key
-}
-
-// API 不存在
-if (!global.hasOwnProperty(platformKey)) {
-	taro[key] = nonsupport(key)
-	return
-}
-if (isFunction(global[key])) {
-	taro[key] = (...args) => {
-		if (config.handleSyncApis) {
-			return config.handleSyncApis(key, global, args)
-		} else {
-			return global[platformKey].apply(global, args)
-		}
-	}
+if (_needPromiseApis.has(key)) {
+	// 省略，上方
 } else {
-	// 属性类型
-	taro[key] = global[platformKey]
+	let platformKey = key
+	// 改变 key 或 option 字段，如需要把支付宝标准的字段对齐微信标准的字段
+	if (config.transformMeta) {
+		platformKey = config.transformMeta(key, {}).key
+	}
+
+	// API 不存在
+	if (!global.hasOwnProperty(platformKey)) {
+		taro[key] = nonsupport(key)
+		return
+	}
+	if (isFunction(global[key])) {
+		taro[key] = (...args) => {
+			if (config.handleSyncApis) {
+				return config.handleSyncApis(key, global, args)
+			} else {
+				return global[platformKey].apply(global, args)
+			}
+		}
+	} else {
+		// 属性类型
+		taro[key] = global[platformKey]
+	}
 }
+
 ```
 
-## 总结
+## 10. 总结
 
 ## links
 

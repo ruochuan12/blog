@@ -22,6 +22,7 @@ export const zhSidebar = sidebar({
 				"/taro/cli-init-2/",
 				"/taro/cli-build/",
 				"/taro/events/",
+				"/taro/native-apis/",
 			],
 		},
 		{
