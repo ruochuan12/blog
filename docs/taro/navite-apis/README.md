@@ -9,7 +9,7 @@ theme: smartblue
 
 大家好，我是[若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
 
-截至目前（`2024-08-18`），[`taro 4.0` 正式版已经发布](https://github.com/NervJS/taro/releases/tag/v4.0.3)，目前最新是 `4.0.4`，官方`4.0`正式版本的介绍文章暂未发布。官方之前发过[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。
+截至目前（`2024-08-18`），[`taro 4.0` 正式版已经发布](https://github.com/NervJS/taro/releases/tag/v4.0.3)，目前最新是 `4.0.5`，官方`4.0`正式版本的介绍文章暂未发布。官方之前发过[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。
 
 计划写一个 `taro` 源码揭秘系列，欢迎持续关注。
 
@@ -202,9 +202,38 @@ export function initNativeApi (taro) {
 
 ```ts
 // packages/shared/src/native-apis.ts
+
+// 需要 promisify 的 api 列表（内置的，所有端平台都用得上的）
+const needPromiseApis = new Set<string>([
+  // 省略了很多 api，这里相对常用的留一些
+  'chooseAddress', 'chooseImage', 'chooseLocation', 'downloadFile','getLocation', 'navigateBack', 'navigateTo', 'openDocument', 'openLocation', 'reLaunch', 'redirectTo', 'scanCode', 'showModal', 'showToast', 'switchTab', 'uploadFile',
+])
+
+interface IProcessApisIOptions {
+  // 不需要 promisify 的 api
+  noPromiseApis?: Set<string>
+  //   希望 promisify 的 api
+  needPromiseApis?: Set<string>
+  handleSyncApis?: (key: string, global: IObject, args: any[]) => any
+  transformMeta?: (key: string, options: IObject) => { key: string, options: IObject }
+  modifyApis?: (apis: Set<string>) => void
+  modifyAsyncResult?: (key: string, res) => void
+  isOnlyPromisify?: boolean
+  [propName: string]: any
+}
+
 function processApis (taro, global, config: IProcessApisIOptions = {}) {
+	// 省略...
+}
+```
+
+```ts
+// packages/shared/src/native-apis.ts
+function processApis (taro, global, config: IProcessApisIOptions = {}) {
+  // 端平台插件中定义的一些需要 promisify 的 api
   const patchNeedPromiseApis = config.needPromiseApis || []
   const _needPromiseApis = new Set<string>([...patchNeedPromiseApis, ...needPromiseApis])
+  //  保留的 api
   const preserved = [
     'getEnv',
     'interceptors',
@@ -237,9 +266,10 @@ function processApis (taro, global, config: IProcessApisIOptions = {}) {
 
 ```
 
-### apis.forEach
+### apis.forEach 需要 promisify 的 api 逻辑
 
 ```js
+// packages/shared/src/native-apis.ts
 apis.forEach(key => {
     if (_needPromiseApis.has(key)) {
       const originKey = key
@@ -314,33 +344,49 @@ apis.forEach(key => {
         return p
       }
     } else {
-      let platformKey = key
-
-      // 改变 key 或 option 字段，如需要把支付宝标准的字段对齐微信标准的字段
-      if (config.transformMeta) {
-        platformKey = config.transformMeta(key, {}).key
-      }
-
-      // API 不存在
-      if (!global.hasOwnProperty(platformKey)) {
-        taro[key] = nonsupport(key)
-        return
-      }
-      if (isFunction(global[key])) {
-        taro[key] = (...args) => {
-          if (config.handleSyncApis) {
-            return config.handleSyncApis(key, global, args)
-          } else {
-            return global[platformKey].apply(global, args)
-          }
-        }
-      } else {
-        taro[key] = global[platformKey]
-      }
+    	// 拆开，放在下方
     }
   })
 ```
 
+```ts
+// packages/shared/src/utils.ts
+export function nonsupport (api) {
+  return function () {
+    console.warn(`小程序暂不支持 ${api}`)
+  }
+}
+```
+
+### apis.forEach 不需要 promisify 的 api 逻辑
+
+```ts
+// packages/shared/src/native-apis.ts
+let platformKey = key
+
+// 改变 key 或 option 字段，如需要把支付宝标准的字段对齐微信标准的字段
+if (config.transformMeta) {
+	platformKey = config.transformMeta(key, {}).key
+}
+
+// API 不存在
+if (!global.hasOwnProperty(platformKey)) {
+	taro[key] = nonsupport(key)
+	return
+}
+if (isFunction(global[key])) {
+	taro[key] = (...args) => {
+		if (config.handleSyncApis) {
+			return config.handleSyncApis(key, global, args)
+		} else {
+			return global[platformKey].apply(global, args)
+		}
+	}
+} else {
+	// 属性类型
+	taro[key] = global[platformKey]
+}
+```
 
 ## 总结
 
