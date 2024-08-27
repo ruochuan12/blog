@@ -3,24 +3,24 @@ highlight: darcula
 theme: smartblue
 ---
 
-# Taro 4.0 已发布 - 6. 为什么 Taro.xxx 能访问 wx.xxx ?
+# Taro 4.0 已正式发布 - 6. 为什么通过 Taro.xxx 能调用各个小程序平台的 API，如何实现的?
 
 ## 1. 前言
 
 大家好，我是[若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
 
-截至目前（`2024-08-18`），[`taro 4.0` 正式版已经发布](https://github.com/NervJS/taro/releases/tag/v4.0.3)，目前最新是 `4.0.5`，官方`4.0`正式版本的介绍文章暂未发布。官方之前发过[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。
+截至目前（`2024-08-28`），[`taro 4.0` 正式版已经发布](https://github.com/NervJS/taro/releases/tag/v4.0.3)，目前最新是 `4.0.5`，官方`4.0`正式版本的介绍文章暂未发布。官方之前发过[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。
 
 计划写一个 `taro` 源码揭秘系列，欢迎持续关注。
 
--   [x] [Taro 源码揭秘 - 1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
--   [x] [Taro 源码揭秘 - 2. 揭开整个架构的插件系统的秘密](https://juejin.cn/spost/7380195796208205824)
--   [x] [Taro 源码揭秘 - 3. 每次创建新的 taro 项目（taro init）的背后原理是什么](https://juejin.cn/post/7390335741586931738)
--   [x] [Taro 4.0 已正式发布 - 4. 每次 npm run dev:weapp 开发小程序，build 编译打包是如何实现的？](https://juejin.cn/post/7403193330271682612)
--   [x] [Taro 4.0 已发布 - 5.高手都在用的发布订阅机制 Events 在 Taro 中是如何实现的？](https://juejin.cn/post/7403915119448915977)
+-   [x] [1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
+-   [x] [2. 揭开整个架构的插件系统的秘密](https://juejin.cn/spost/7380195796208205824)
+-   [x] [3. 每次创建新的 taro 项目（taro init）的背后原理是什么](https://juejin.cn/post/7390335741586931738)
+-   [x] [4. 每次 npm run dev:weapp 开发小程序，build 编译打包是如何实现的？](https://juejin.cn/post/7403193330271682612)
+-   [x] [5. 高手都在用的发布订阅机制 Events 在 Taro 中是如何实现的？](https://juejin.cn/post/7403915119448915977)
 -   [ ] 等等
 
-前面 4 篇文章都是讲述编译相关的，CLI、插件机制、初始化项目、编译构建流程。第 6 篇我们来讲些相对简单的，Taro 是如何实现 `Taro.xxx` 能访问 `wx.xxx`。
+前面 4 篇文章都是讲述编译相关的，CLI、插件机制、初始化项目、编译构建流程。第 6 篇我们来讲些相对简单的，Taro 是如何实现 `Taro.xxx` 能访问 `wx.xxx`（文章以微信小程序为例）。
 
 学完本文，你将学到：
 
@@ -44,13 +44,34 @@ Taro.request(url).then(function (res) {
 
 我们具体来分析下，`Taro` 源码中是如何实现 `Taro.xxx` 访问 `wx.xxx` 的，并且是如何实现 `promisify` 的。
 
-`promisify` 把回调函数转成 `promise` 避免回调地狱问题。面试也经常考察此题。我之前写过一篇文章：[从22行有趣的源码库中，我学到了 callback promisify 化的 Node.js 源码实现](https://juejin.cn/post/7028731182216904740)
+`promisify` 把回调函数转成 `promise` 避免回调地狱问题。面试也经常考察此题。我之前写过一篇文章：[从22行有趣的源码库中，我学到了 callback promisify 化的 Node.js 源码实现](https://juejin.cn/post/7028731182216904740#heading-11)
 
-我们日常开发都会引入 `tarojs/taro`，然后调用 `Taro.xxx` 方法。
+文章中简单的 `promisify` 函数实现如下：
 
-我们先来看 `tarojs/taro` 的代码。
+```ts
+// 简单的 promisify 函数
+function promisify(original){
+    function fn(...args){
+        return new Promise((resolve, reject) => {
+            args.push((err, ...values) => {
+                if(err){
+                    return reject(err);
+                }
+                resolve(values);
+            });
+            // original.apply(this, args);
+            Reflect.apply(original, this, args);
+        });
+    }
+    return fn;
+}
+```
 
-## 3. tarojs/taro
+我们日常开发都会引入 `@tarojs/taro`，然后调用 `Taro.xxx` 方法，比如 `Taro.navigateTo`，微信小程序调用的是 `wx.navigateTo`，支付宝小程序则是 `my.navigateTo`。
+
+我们先来看 `@tarojs/taro` 的代码。
+
+## 3. @tarojs/taro taro 入口
 
 ```ts
 // packages/taro/index.js
@@ -65,7 +86,7 @@ module.exports = taro
 module.exports.default = module.exports
 ```
 
-`hooks` 在上篇文章[Taro 4.0 已正式发布 - 5.高手都在用的发布订阅机制 Events 在 Taro 中是如何实现的？](https://juejin.cn/post/7403915119448915977#heading-20)讲过。
+`hooks` 和 `@tarojs/api` 在上篇文章[5.高手都在用的发布订阅机制 Events 在 Taro 中是如何实现的？](https://juejin.cn/post/7403915119448915977#heading-20)讲过。
 简单来说就是 `tap` 是注册事件，`call` 是触发事件。其中 `mergeReconciler` 函数中注册`initNativeApi`函数。
 
 这时我们需要来寻找 `initNativeApi` 函数在哪里实现的。可以在Taro源码中根据 `initNativeApi` 关键字搜索。或者之前的第三篇文章 [3. taro build](https://juejin.cn/post/7403193330271682612)。我们知道端平台插件的代码在 `@tarojs/plugin-platform-weapp` 包中，路径是 `packages/taro-platform-weapp/src/program.ts`。
@@ -94,7 +115,7 @@ export default class Weapp extends TaroPlatformBase {
 
 对应的运行时路径 `packages/taro-platform-weapp/src/runtime.ts`。
 
-## 5. 运行时 src/runtime.ts
+## 5. 运行时 runtime.ts
 
 ```ts
 // packages/taro-platform-weapp/src/runtime.ts
@@ -106,8 +127,8 @@ mergeReconciler(hostConfig)
 mergeInternalComponents(components)
 ```
 
-- 使用 mergeReconciler 函数把自定义的 hostConfig 合并到全局 [Reconciler](https://docs.taro.zone/docs/platform-plugin/reconciler) 中。
-- 使用 mergeInternalComponents 函数把自定义组件信息 [components.ts](https://docs.taro.zone/docs/platform-plugin/platform-mini#31-%E7%BC%96%E5%86%99-componentsts) 合并到全局 internalComponents 组件信息对象中。
+- 使用 `mergeReconciler` 函数把自定义的 hostConfig 合并到全局 [Reconciler](https://docs.taro.zone/docs/platform-plugin/reconciler) 中。
+- 使用 `mergeInternalComponents` 函数把自定义组件信息 [components.ts](https://docs.taro.zone/docs/platform-plugin/platform-mini#31-%E7%BC%96%E5%86%99-componentsts) 合并到全局 internalComponents 组件信息对象中。
 
 我们来看下 `mergeReconciler` 函数的实现。
 
@@ -162,10 +183,6 @@ export const hostConfig = {
 
 ```ts
 // packages/taro-platform-weapp/src/apis.ts
-```
-
-```ts
-// packages/taro-platform-weapp/src/apis.ts
 import { processApis } from '@tarojs/shared'
 
 import { needPromiseApis } from './apis-list'
@@ -203,7 +220,7 @@ export function initNativeApi (taro) {
 
 ```
 
-`initNativeApi` 函数中调用了 `processApis` 函数，把 `wx` 的 api 转换成 `taro` 的 api。我们接着来看 `processApis` 函数的具体实现。
+`initNativeApi` 函数中调用了 `processApis` 函数，把 `wx` 的 `api` 转换成 `taro` 的 `api`。我们接着来看 `processApis` 函数的具体实现。
 
 ## 9. processApis 处理 apis
 
@@ -240,8 +257,7 @@ function processApis (taro, global, config: IProcessApisIOptions = {}) {
 }
 ```
 
-是否只 `promisify`，只在 `@tarojs/plugin-inject` 插件使用
-> 可以为小程序平台注入公共的组件、API 等逻辑
+我们来看 `processApis` 函数的具体实现。
 
 ```ts
 // packages/shared/src/native-apis.ts
@@ -279,7 +295,6 @@ function processApis (taro, global, config: IProcessApisIOptions = {}) {
 
   !config.isOnlyPromisify && equipCommonApis(taro, global, config)
 }
-
 ```
 
 ### 9.1 apis.forEach 需要 promisify 的 api 逻辑
@@ -376,10 +391,11 @@ const p: any = new Promise((resolve, reject) => {
 })
 ```
 
+上传和下载文件的 `API` 需要特殊处理，因为它们返回的是 `Task` 对象，需要将 `Task` 对象的属性和方法挂载到 `Promise` 对象上。
+
 ```ts
 // 给 promise 对象挂载属性
 if (['uploadFile', 'downloadFile'].includes(key)) {
-	// 省略实现...
 	equipTaskMethodsIntoPromise(task, p)
 	p.progress = cb => {
 		task?.onProgressUpdate(cb)
@@ -391,8 +407,32 @@ if (['uploadFile', 'downloadFile'].includes(key)) {
 		return p
 	}
 }
-
 ```
+
+`equipTaskMethodsIntoPromise` 方法的实现如下：
+
+```ts
+/**
+ * 将Task对象中的方法挂载到promise对象中，适配小程序api原生返回结果
+ * @param task Task对象 {RequestTask | DownloadTask | UploadTask}
+ * @param promise Promise
+ */
+function equipTaskMethodsIntoPromise (task, promise) {
+  if (!task || !promise) return
+  const taskMethods = ['abort', 'onHeadersReceived', 'offHeadersReceived', 'onProgressUpdate', 'offProgressUpdate', 'onChunkReceived', 'offChunkReceived']
+  task && taskMethods.forEach(method => {
+    if (method in task) {
+      promise[method] = task[method].bind(task)
+    }
+  })
+}
+```
+
+| [文档 - wx.uploadFile](https://developers.weixin.qq.com/miniprogram/dev/api/network/upload/wx.uploadFile.html) |
+---
+| [文档 - 返回值 UploadTask](https://developers.weixin.qq.com/miniprogram/dev/api/network/upload/UploadTask.html) |
+| [文档 - wx.downloadFile](https://developers.weixin.qq.com/miniprogram/dev/api/network/download/wx.downloadFile.html) |
+| [文档 - 返回值 DownloadTask](https://developers.weixin.qq.com/miniprogram/dev/api/network/download/DownloadTask.html) |
 
 ### 9.2 apis.forEach 不需要 promisify 的 api 逻辑
 
@@ -427,6 +467,88 @@ if (_needPromiseApis.has(key)) {
 }
 
 ```
+
+### 9.3 挂载常用 API
+
+```ts
+function processApis (taro, global, config: IProcessApisIOptions = {}) {
+	// 省略若干代码...
+	// 最后一行代码
+	!config.isOnlyPromisify && equipCommonApis(taro, global, config)
+}
+```
+
+`equipCommonApis` 的实现。
+
+```ts
+/**
+ * 挂载常用 API
+ * @param taro Taro 对象
+ * @param global 小程序全局对象，如微信的 wx，支付宝的 my
+ */
+function equipCommonApis (taro, global, apis: Record<string, any> = {}) {
+  //   省略若干代码
+  taro.canIUseWebp = getCanIUseWebp(taro)
+  taro.getCurrentPages = getCurrentPages || nonsupport('getCurrentPages')
+  taro.getApp = getApp || nonsupport('getApp')
+  taro.env = global.env || {}
+
+  try {
+    taro.requirePlugin = requirePlugin || nonsupport('requirePlugin')
+  } catch (error) {
+    taro.requirePlugin = nonsupport('requirePlugin')
+  }
+  taro.miniGlobal = taro.options.miniGlobal = global
+}
+```
+
+`isOnlyPromisify` 参数为 `true`，表示只 `promisify`。
+
+### 9.4 @tarojs/plugin-inject 插件注入公共的组件、API 等逻辑
+
+是否只 `promisify`，只在 `@tarojs/plugin-inject` 插件使用
+> 可以为小程序平台注入公共的组件、API 等逻辑
+
+```ts
+// packages/taro-plugin-inject/src/runtime.ts
+import { mergeInternalComponents, mergeReconciler, processApis } from '@tarojs/shared'
+
+import { needPromiseApis, noPromiseApis } from './apis-list'
+import { components } from './components'
+
+const hostConfig = {
+  initNativeApi (taro) {
+    const global = taro.miniGlobal
+    processApis(taro, global, {
+      noPromiseApis,
+      needPromiseApis,
+      isOnlyPromisify: true
+    })
+  }
+}
+
+mergeReconciler(hostConfig)
+mergeInternalComponents(components)
+```
+
+```ts
+// packages/taro-plugin-inject/src/apis-list.ts
+export const noPromiseApis = new Set([])
+export const needPromiseApis = new Set([])
+```
+
+```ts
+function injectApis (fs, syncApis, asyncApis) {
+  fs.writeFileSync(path.resolve(__dirname, '../dist/apis-list.js'), `
+export const noPromiseApis = new Set(${syncApis ? JSON.stringify(syncApis) : JSON.stringify([])});
+export const needPromiseApis = new Set(${asyncApis ? JSON.stringify(asyncApis) : JSON.stringify([])});
+`)
+}
+```
+
+这一步注入开发者自定义的同步、异步 `apis` 等。
+
+后续有时间再单独写一篇文章分析 `@tarojs/plugin-inject` 的具体实现，这里限于篇幅就不详细讲述了。
 
 ## 10. 总结
 
