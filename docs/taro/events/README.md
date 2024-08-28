@@ -598,23 +598,27 @@ export class TaroHooks<T extends Record<string, TFunc> = any> extends Events {
 }
 ```
 
-### 8.1 tap 实现
+### 8.1 tap 方法 - 监听事件
 
 ```ts
 tap<K extends Extract<keyof T, string>> (hookName: K, callback: T[K] | T[K][]) {
     const hooks = this.hooks
     const { type, initial } = hooks[hookName]
     if (type === HOOK_TYPE.SINGLE) {
+	  // 单个类型的hook，则取消监听事件，重新监听事件
       this.off(hookName)
       this.on(hookName, isFunction(callback) ? callback : callback[callback.length - 1])
     } else {
+	  // 不是，则取消监听指定回调函数的事件，重新监听一个或多个事件
       initial && this.off(hookName, initial)
       this.tapOneOrMany(hookName, callback)
     }
   }
 ```
 
-### 8.2 call 实现
+`tap` 方法是监听事件，`hook`类型是`SINGLE`类型时，直接取消，重新监听。不是`SINGLE`类型时，则取消监听指定回调函数的事件，重新监听一个或多个事件。
+
+### 8.2 call 方法 - 触发事件
 
 ```ts
 call<K extends Extract<keyof T, string>> (hookName: K, ...rest: Parameters<T[K]>): ReturnType<T[K]> | undefined {
