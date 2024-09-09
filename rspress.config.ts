@@ -50,6 +50,7 @@ export default defineConfig({
 			"mini-webpack",
 			"**/images/**/*",
 			"**/**/README.md",
+			"debounce",
 		],
 		// exclude: ['**/fragments/**'],
 		// extensions: ['.jsx', '.md', '.mdx'],
