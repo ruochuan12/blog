@@ -6,10 +6,12 @@ on:
         branches:
             - main
             - vuepress-v2
+            - feature/rspress
     pull_request:
         branches:
             - main
             - vuepress-v2
+            - feature/rspress
 
 # permissions:
 #     contents: write

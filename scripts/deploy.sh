@@ -11,7 +11,8 @@ VERSION=$(grep version package.json | sed -E 's/^.*"([^"]+)".*$/\1/')
 npm run build
 
 # 进入生成的文件夹
-cd docs/.vuepress/dist
+# cd docs/.vuepress/dist
+cd doc_build
 
 # 如果是发布到自定义域名
 # echo 'www.lxchuan12.cn' > CNAME
