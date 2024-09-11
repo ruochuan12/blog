@@ -137,7 +137,7 @@ npm i
 
 hooks，这里我简单画了一个图。
 
-![思维导图](./images/npm-run-release.png)
+![思维导图](./images/npm-run-release@若川.png)
 
 #### 3.1.1 before:init
 
@@ -373,7 +373,7 @@ export {
 ## 5. gulp clear && cross-env NODE_ENV=production rollup -c -m
 
 - gulp clear
-
+  
 ```js
 // 清空打包后的 dist 目录
 const clear = gulp.task('clear', async function() {
@@ -466,7 +466,7 @@ const buildConfig = ({es5, browser = true, minifiedVersion = true, alias, ...con
       // 压缩
       minified && terser(),
       minified && bundleSize(),
-      // 使用 babel
+      // 使用 babel 
       ...(es5 ? [babel({
         babelHelpers: 'bundled',
         presets: ['@babel/preset-env']
@@ -595,7 +595,7 @@ export default async () => {
 用 `rollup` 打包生成四种格式的文件。
 
 如图所示：
-![npm-run-release](./images/npm-run-release.png)
+![npm-run-release](./images/npm-run-release@若川.png)
 
 ---
 

@@ -492,6 +492,17 @@ function equipCommonApis (taro, global, apis: Record<string, any> = {}) {
   taro.getApp = getApp || nonsupport('getApp')
   taro.env = global.env || {}
 
+  // 添加request 和 拦截器
+  // request & interceptors
+  const request = apis.request || getNormalRequest(global)
+  function taroInterceptor (chain) {
+    return request(chain.requestParams)
+  }
+  const link = new taro.Link(taroInterceptor)
+  taro.request = link.request.bind(link)
+  taro.addInterceptor = link.addInterceptor.bind(link)
+  taro.cleanInterceptors = link.cleanInterceptors.bind(link)
+
   try {
     taro.requirePlugin = requirePlugin || nonsupport('requirePlugin')
   } catch (error) {
@@ -502,6 +513,9 @@ function equipCommonApis (taro, global, apis: Record<string, any> = {}) {
 ```
 
 `isOnlyPromisify` 参数为 `true`，表示只 `promisify`。
+
+添加一些公共的 API。`request` 和拦截器等。`request` 这部分的具体实现，相对比较复杂，我们后续再单独写一篇文章来讲述。
+[Taro 文档 有这些 API](https://taro-docs.jd.com/docs/next/apis/framework/getCurrentPages)
 
 ### 9.4 @tarojs/plugin-inject 插件注入公共的组件、API 等逻辑
 
