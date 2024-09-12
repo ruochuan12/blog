@@ -10,3 +10,5 @@ dist/
 .DS_Store
 **/**/.DS_Store
 doc_build
+
+**/**/index.md
