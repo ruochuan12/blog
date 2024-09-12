@@ -30,11 +30,11 @@
 	},
 	"homepage": "https://github.com/ruochuan12/blog#readme",
 	"dependencies": {
-		"rspress": "^1.30.0"
+		"rspress": "^1.31.0"
 	},
 	"devDependencies": {
 		"@release-it/conventional-changelog": "^5.1.1",
-		"@types/node": "^16",
+		"@types/node": "^16.18.108",
 		"git-cz": "^4.9.0",
 		"globby": "^14.0.2",
 		"release-it": "^17.6.0",

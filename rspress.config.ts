@@ -260,6 +260,7 @@ export default defineConfig({
 						"/taro/cli-build/",
 						"/taro/events/",
 						"/taro/native-apis/",
+						"/taro/request/",
 					],
 				},
 				{
