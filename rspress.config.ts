@@ -14,11 +14,11 @@ export default defineConfig({
 	description:
 		"若川，微信搜索「若川视野」关注我，长期交流学习。写有《学习源码整体架构系列》。包含jquery源码、underscore源码、lodash源码、sentry源码、vuex源码、axios源码、koa源码、redux源码。前端路上，PPT爱好者，所知甚少，唯善学。",
 	//   lang: 'zh',
-	//   icon: '/favicon.ico',
-	//   logo: {
-	//     light: '/rspress-light-logo.png',
-	//     dark: '/rspress-dark-logo.png',
-	//   },
+	icon: "/favicon.ico",
+	// logo: {
+	// 	light: "/logo-2.jpg",
+	// 	dark: "/logo-2.jpg",
+	// },
 	head: [
 		["link", { rel: "icon", href: "/favicon.ico" }],
 		["link", { rel: "mainfest", href: "/mainfest.json" }],
