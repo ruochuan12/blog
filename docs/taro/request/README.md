@@ -3,7 +3,7 @@ highlight: darcula
 theme: smartblue
 ---
 
-# Taro 4.0 已正式发布 - 6. 为什么通过 Taro.xxx 能调用各个小程序平台的 API，如何设计实现的?
+# Taro 4.0 已正式发布 - 7. Taro.request 是如何实现的
 
 ## 1. 前言
 
@@ -32,14 +32,298 @@ theme: smartblue
 ```
 
 
-equipCommonApis
-
 
 ## 2. Taro 文档 - API 说明
 
+```ts
+import Taro from '@tarojs/taro'
+
+Taro.request(url).then(function (res) {
+  console.log(res)
+})
+```
+
+```ts
+const { hooks } = require('@tarojs/runtime')
+const taro = require('@tarojs/api').default
+
+if (hooks.isExist('initNativeApi')) {
+  hooks.call('initNativeApi', taro)
+}
+
+module.exports = taro
+module.exports.default = module.exports
+
+```
 
 
+equipCommonApis
 
+```ts
+// packages/shared/src/native-apis.ts
+/**
+ * 挂载常用 API
+ * @param taro Taro 对象
+ * @param global 小程序全局对象，如微信的 wx，支付宝的 my
+ */
+function equipCommonApis (taro, global, apis: Record<string, any> = {}) {
+  //   省略若干代码
+
+  // 添加request 和 拦截器
+  // request & interceptors
+  const request = apis.request || getNormalRequest(global)
+  function taroInterceptor (chain) {
+    return request(chain.requestParams)
+  }
+  const link = new taro.Link(taroInterceptor)
+  taro.request = link.request.bind(link)
+  taro.addInterceptor = link.addInterceptor.bind(link)
+  taro.cleanInterceptors = link.cleanInterceptors.bind(link)
+  //   省略若干代码
+}
+```
+
+## getNormalRequest
+
+```ts
+// packages/shared/src/native-apis.ts
+function getNormalRequest (global) {
+  return function request (options) {
+    options = options
+      ? (
+        isString(options)
+          ? { url: options }
+          : options
+      )
+      : {}
+
+    const originSuccess = options.success
+    const originFail = options.fail
+    const originComplete = options.complete
+    let requestTask
+    const p: any = new Promise((resolve, reject) => {
+      options.success = res => {
+        originSuccess && originSuccess(res)
+        resolve(res)
+      }
+      options.fail = res => {
+        originFail && originFail(res)
+        reject(res)
+      }
+
+      options.complete = res => {
+        originComplete && originComplete(res)
+      }
+
+      requestTask = global.request(options)
+    })
+
+    equipTaskMethodsIntoPromise(requestTask, p)
+
+    p.abort = (cb) => {
+      cb && cb()
+      if (requestTask) {
+        requestTask.abort()
+      }
+      return p
+    }
+    return p
+  }
+}
+```
+
+```ts
+/* eslint-disable camelcase */
+import { Current, eventCenter, Events, getCurrentInstance, nextTick, options } from '@tarojs/runtime'
+
+import { ENV_TYPE, getEnv } from './env'
+import Link, { interceptorify } from './interceptor'
+import * as interceptors from './interceptor/interceptors'
+import { Behavior, getInitPxTransform, getPreload, getPxTransform } from './tools'
+
+const Taro: Record<string, unknown> = {
+  Behavior,
+  getEnv,
+  ENV_TYPE,
+  Link,
+  interceptors,
+  Current,
+  getCurrentInstance,
+  options,
+  nextTick,
+  eventCenter,
+  Events,
+  getInitPxTransform,
+  interceptorify,
+}
+
+Taro.initPxTransform = getInitPxTransform(Taro)
+Taro.preload = getPreload(Current)
+Taro.pxTransform = getPxTransform(Taro)
+
+export default Taro
+
+```
+
+## Link
+
+# `@tarojs/api`
+
+暴露给 @tarojs/taro 的所有端的公有 API。`@tarojs/api` 会跨 node/浏览器/小程序/React Native 使用，不得使用/包含平台特有特性。
+
+
+### src/interceptor/index.ts
+
+```ts
+// packages/taro-api/src/interceptor/index.ts
+import Chain from './chain'
+
+import type { IRequestParams, TInterceptor } from './chain'
+
+export default class Link {
+  taroInterceptor: TInterceptor
+  chain: Chain
+
+  constructor (interceptor: TInterceptor) {
+    this.taroInterceptor = interceptor
+    this.chain = new Chain()
+  }
+
+  request (requestParams: IRequestParams) {
+    const chain = this.chain
+    const taroInterceptor = this.taroInterceptor
+
+    chain.interceptors = chain.interceptors
+      .filter(interceptor => interceptor !== taroInterceptor)
+      .concat(taroInterceptor)
+
+    return chain.proceed({ ...requestParams })
+  }
+
+  addInterceptor (interceptor: TInterceptor) {
+    this.chain.interceptors.push(interceptor)
+  }
+
+  cleanInterceptors () {
+    this.chain = new Chain()
+  }
+}
+
+export function interceptorify (promiseifyApi) {
+  return new Link(function (chain) {
+    return promiseifyApi(chain.requestParams)
+  })
+}
+
+```
+
+### src/interceptor/chain.ts
+
+```ts
+// packages/taro-api/src/interceptor/chain.ts
+
+import { isFunction } from '@tarojs/shared'
+
+export type TInterceptor = (c: Chain) => Promise<void>
+
+export interface IRequestParams {
+  timeout?: number
+  method?: string
+  url?: string
+  data?: unknown
+}
+
+export default class Chain {
+  index: number
+  requestParams: IRequestParams
+  interceptors: TInterceptor[]
+
+  constructor (requestParams?: IRequestParams, interceptors?: TInterceptor[], index?: number) {
+    this.index = index || 0
+    this.requestParams = requestParams || {}
+    this.interceptors = interceptors || []
+  }
+
+  proceed (requestParams: IRequestParams = {}) {
+    this.requestParams = requestParams
+    if (this.index >= this.interceptors.length) {
+      throw new Error('chain 参数错误, 请勿直接修改 request.chain')
+    }
+    const nextInterceptor = this._getNextInterceptor()
+    const nextChain = this._getNextChain()
+    const p = nextInterceptor(nextChain)
+    const res = p.catch(err => Promise.reject(err))
+    Object.keys(p).forEach(k => isFunction(p[k]) && (res[k] = p[k]))
+    return res
+  }
+
+  _getNextInterceptor () {
+    return this.interceptors[this.index]
+  }
+
+  _getNextChain () {
+    return new Chain(this.requestParams, this.interceptors, this.index + 1)
+  }
+}
+
+```
+
+### src/interceptor/interceptors.ts
+
+```ts
+// packages/taro-api/src/interceptor/interceptors.ts
+import { isFunction, isUndefined } from '@tarojs/shared'
+
+import type Chain from './chain'
+
+export function timeoutInterceptor (chain: Chain) {
+  const requestParams = chain.requestParams
+  let p: Promise<void>
+  const res = new Promise<void>((resolve, reject) => {
+    const timeout: ReturnType<typeof setTimeout> = setTimeout(() => {
+      clearTimeout(timeout)
+      reject(new Error('网络链接超时,请稍后再试！'))
+    }, (requestParams && requestParams.timeout) || 60000)
+
+    p = chain.proceed(requestParams)
+    p
+      .then(res => {
+        if (!timeout) return
+        clearTimeout(timeout)
+        resolve(res)
+      })
+      .catch(err => {
+        timeout && clearTimeout(timeout)
+        reject(err)
+      })
+  })
+  // @ts-ignore
+  if (!isUndefined(p) && isFunction(p.abort)) res.abort = p.abort
+
+  return res
+}
+
+export function logInterceptor (chain: Chain) {
+  const requestParams = chain.requestParams
+  const { method, data, url } = requestParams
+
+  // eslint-disable-next-line no-console
+  console.log(`http ${method || 'GET'} --> ${url} data: `, data)
+
+  const p = chain.proceed(requestParams)
+  const res = p
+    .then(res => {
+      // eslint-disable-next-line no-console
+      console.log(`http <-- ${url} result:`, res)
+      return res
+    })
+  // @ts-ignore
+  if (isFunction(p.abort)) res.abort = p.abort
+
+  return res
+}
+
+```
 
 ----
 
