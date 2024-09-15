@@ -12,3 +12,4 @@ dist/
 doc_build
 
 **/**/index.md
+!docs/read-source-code/index.md
