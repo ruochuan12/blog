@@ -2,37 +2,54 @@
 
 <div style="height: 60px">
 <vue-typed-js :loop="true"
-    :typeSpeed="100"
-    :backSpeed="20"
-    :loopCount="10" :strings="['你好，我是若川。欢迎扫码加我微信 ruochuan02 ~', '拉你进源码共读群，一起学习源码~']">
+	:typeSpeed="100"
+	:backSpeed="20"
+	:loopCount="10" :strings="['你好，我是若川。欢迎扫码加我微信 ruochuan02 ~', '拉你进源码共读群，一起学习源码~']">
   <h3 class="typing"></h3>
 </vue-typed-js>
 </div>
 
->大家好，我是[若川](https://ruochuan12.github.io)。我倾力持续组织了一年[每周大家一起学习200行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（4.1k+人）第一的专栏，写有20余篇源码文章。
+你好，我是[**若川**](https://ruochuan12.github.io)。江西人，某不那么知名的陶瓷大学毕业生，目前在`杭州`从事`前端开发`工作。常以**若川**为名混迹于江湖。更详细的可以点击[关于我](/about/)<br>
 
-微信扫码或搜索「若川视野」<img src="./about/wechat-mini.jpg"  width="120" height="120" title="我的公众号若川视野，值得你关注" alt="我的公众号若川视野，值得你关注"/>关注我，专注前端技术分享。江西人，某不那么知名的陶瓷大学毕业生，目前在`杭州`从事`前端开发`工作。常以**若川**为名混迹于江湖。更详细的可以点击[关于我](../about/)<br>
-我历时很久写了《**学习源码整体架构系列**》20余篇文章，包含[jQuery](../jquery)、[underscore](../underscore)、[lodash](../lodash)、[sentry](../sentry)、[vuex](../vuex)、[axios](../axios)、[koa](../koa)、[redux](../redux)、[vue-devtools](../open-in-editor)、[vuex4](../vuex4)、[vue3 工具函数](../vue-next-utils)、[vue3 发布](../vue-next-release)、[koa-compose](../koa-compose)、[vue-this](../vue-this)、[create-vue](../create-vue)、[玩具 vite](../vue-dev-server/)、[神器 ni](../ni/)、[vue-utils](../vue-utils/)、[open](../open/)、[promisify](../promisify/)、[element 初始化组件](../element-new/) 等源码，详细的写了我是如何看源码的，并且绘制了大量的关系图和原理图，应该算是比较好的**学习源码**的文章。[更多可参考我的这篇知乎回答：有哪些必看的js库？](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650746362&idx=1&sn=afe3a26cdbde1d423aae4fa99355f369&chksm=88662e76bf11a760a7f0a8565b9e8d52f5e4f056dc2682f213eec6475127d71f6f1d203d6c3a&token=1233343990&lang=zh_CN#rd)
+## 关于
 
-> 我的博客地址：[https://ruochuan12.github.io](../)，**建议加个书签**，也可以百度搜索[**若川**](https://www.baidu.com/s?ie=utf-8&f=8&rsv_bp=1&tn=SE_Pclogo_6ysd4c7a&wd=%E8%8B%A5%E5%B7%9D&oq=%25E4%25BB%258A%25E6%2597%25A5%25E6%2596%25B0%25E9%25B2%259C%25E4%25BA%258B&rsv_pq=d5d2506b003fe4bc&rsv_t=9f60noZ4n6uVgTXKStiYbZUcvyfAkfkMCTUyAQKh6Bb2Kvsfkhq%2FmkhNpAfcTyhz2cKYaBIMw73l&rqlang=cn&rsv_enter=1&rsv_dl=tb&rsv_sug3=1&rsv_sug2=0&rsv_btype=t&inputT=1388&rsv_sug4=1388)，找到我。
+写有 [《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093) 几十篇。目前是掘金关注人数最多的专栏，欢迎你的关注。
+
+我历时很久写了《**学习源码整体架构系列**》20余篇文章，包含[jQuery](/jquery)、[underscore](/underscore)、[lodash](/lodash)、[sentry](/sentry)、[vuex](/vuex)、[axios](/axios)、[koa](/koa)、[redux](/redux)、[vue-devtools](/open-in-editor)、[vuex4](/vuex4)、[vue3 工具函数](/vue-next-utils)、[vue3 发布](/vue-next-release)、[koa-compose](/koa-compose)、[vue-this](/vue-this)、[create-vue](/create-vue)、[玩具 vite](/vue-dev-server/)、[神器 ni](/ni/)、[vue-utils](/vue-utils/)、[open](/open/)、[promisify](/promisify/)、[element 初始化组件](/element-new/) 等源码，详细的写了我是如何看源码的，并且绘制了大量的关系图和原理图，应该算是比较好的**学习源码**的文章。[更多可参考我的这篇知乎回答：有哪些必看的js库？](https://mp.weixin.qq.com/s?__biz=MzA5MjQwMzQyNw==&mid=2650746362&idx=1&sn=afe3a26cdbde1d423aae4fa99355f369&chksm=88662e76bf11a760a7f0a8565b9e8d52f5e4f056dc2682f213eec6475127d71f6f1d203d6c3a&token=1233343990&lang=zh_CN#rd)
+
+> 我的博客地址：[https://ruochuan12.github.io](https://ruochuan12.github.io)，**建议加个书签**，也可以必应/谷歌搜索[**若川**](https://cn.bing.com/search?q=%E8%8B%A5%E5%B7%9D&form=QBLH&sp=-1&pq=%E8%8B%A5%E5%B7%9D&sc=8-2&qs=n&sk=&cvid=1E0CFA8878E149E384504CB8E18847D4&ghsh=0&ghacc=0&ghpl=)，找到我。
 >
-另外，你可以在以下网站（点击图片跳转）关注我（你的关注是对我的肯定）：<br>
+另外，你可以在关注我的[![公众号](https://img.shields.io/badge/公众号-@若川视野-000000.svg?style=flat-square&logo=WeChat)](https://mp.weixin.qq.com/s/OVH6gP0R29oRSzNhoob4SQ)（你的关注是对我的肯定）。<br>
 
-[![公众号](https://img.shields.io/badge/公众号-@若川视野-000000.svg?style=flat-square&logo=WeChat)](https://image-static.segmentfault.com/355/182/3551821948-5df888aa1dc88_articlex)
-[![知乎](https://img.shields.io/badge/dynamic/json?color=0084ff&label=知乎@若川&query=%24.data.totalSubs&url=https%3A%2F%2Fapi.spencerwoo.com%2Fsubstats%2F%3Fsource%3Dzhihu%26queryKey%3Dlxchuan12)](https://www.zhihu.com/people/lxchuan12)
-[![掘金](https://img.shields.io/badge/%E6%8E%98%E9%87%91-@%E8%8B%A5%E5%B7%9D-000000.svg?style=flat-square&logo=Juejin)](https://juejin.cn/user/1415826704971918/posts)
-[![segmentfault](https://img.shields.io/badge/segmentfault-@%E8%8B%A5%E5%B7%9D-000000.svg?style=flat-square&logo=Segmentfault)](https://segmentfault.com/blog/lxchuan12)
-[![语雀](https://img.shields.io/badge/语雀-@%E8%8B%A5%E5%B7%9D-000000.svg?style=flat-square&logo=Segmentfault)](https://www.yuque.com/lxchuan12/blog)
-[![github](https://img.shields.io/github/stars/lxchuan12/blog?label=Stars&style=flat-square&logo=GitHub)](https://github.com/ruochuan12/blog)
+公众号「[若川视野](https://mp.weixin.qq.com/s/nXb2hHMCarInRbHYHcNhVA)」，关注回复「pdf」限时获取前端优质书籍pdf。**公众号日常更新，值得你关注学习，每天进步一点点**。
 
-我运营了公众号「若川视野」，关注回复「pdf」限时获取前端优质书籍pdf。**公众号经常更新，值得你关注学习，每天进步一点点**。
+### 源码共读
+
+- **为了能帮助到更多对源码感兴趣、想学会看源码、提升自己前端技术能力的同学**。<br/>
+- **倾力组织了3年多[每周一起学习200行左右的源码共读活动](https://www.yuque.com/ruochuan12/notice/p0)，- 目前已经更新到56期。已有5000多人参与**。<br>
+- 答疑解惑：我有空会的都会在群里免费答疑解惑。另外还有掘金[源码共读圈子](https://juejin.cn/pin/club/7397452244134264882)和[源码共读话题](https://juejin.cn/theme/detail/7397456491671715866?contentType=1)提问或者解答问题<br>
+- 如何参与：感兴趣[点此扫码加我微信 `ruochuan02` 进源码共读微信群参与](https://juejin.cn/pin/7217386885793595453)。<br>
+- 参与流程：简单来说：看群公告任务=>学习任务推荐文章或者源码=>群里或者掘金[源码共读圈子](https://juejin.cn/pin/club/7397452244134264882)或者[源码共读话题](https://juejin.cn/theme/detail/7397456491671715866?contentType=1)提问=>输出简短的笔记或者简短的读后感在源码共读话题。<br>
+- 为满足不同人群访问需求，源码共读链接有多份：[语雀链接有树形菜单比较推荐](https://www.yuque.com/ruochuan12/notice/p0)、[掘金链接](https://www.yuque.com/ruochuan12/notice/p0)、[自建网站](https://ruochuan-f2e.github.io/read-source-code/)、[github仓库](https://github.com/ruochuan-f2e/read-source-code)
+
+### 联系
+
+- [微信号：若川 ruochuan02](https://juejin.cn/pin/7217386885793595453)，欢迎加我微信拉你进源码共读群交流，注明昵称-城市-毕业年份，基本来者不拒。<br>
+- [掘金@若川](https://juejin.cn/user/1415826704971918)，常在掘金活跃。<br>
+- [公众号:若川视野](https://mp.weixin.qq.com/s/nXb2hHMCarInRbHYHcNhVA)，偶尔会有广告。<br>
+- [若川的博客](https://ruochuan12.github.io)，基本包含写过的所有文章。<br>
+- [github:ruochuan12](https://github.com/ruochuan12)，常在 github 活跃。<br>
+- [github blog](https://github.com/ruochuan12/blog)，基本包含写过的所有文章，欢迎 `star`。<br>
+- [语雀@若川](https://www.yuque.com/lxchuan12/blog)，暂时活跃比较少。<br>
+- [知乎@若川](https://www.zhihu.com/people/lxchuan12)，暂时活跃比较少。<br>
+- [segmentfault@若川](https://segmentfault.com/blog/lxchuan12)，之前常在 `segmentfault` 答疑解惑。
 
 ## 知乎高赞问答
 
-[若川知乎回答：做了两年前端开发，平时就是拿 Vue 写写页面和组件，简历的项目经历应该怎么写得好看？](https://www.zhihu.com/question/384048633/answer/1134746899)<br>
-[若川知乎问答：有哪些必看的js库？](https://www.zhihu.com/question/429436558/answer/1575251772)<br>
-[若川知乎回答：一年内的前端看不懂前端框架源码怎么办？](https://www.zhihu.com/question/350289336/answer/910970733)<br>
-[若川知乎回答：怎么才能学好前端？](https://www.zhihu.com/question/372962058/answer/1026884916)<br>
+- [若川知乎回答：做了两年前端开发，平时就是拿 Vue 写写页面和组件，简历的项目经历应该怎么写得好看？](https://www.zhihu.com/question/384048633/answer/1134746899)<br>
+- [若川知乎问答：有哪些必看的js库？](https://www.zhihu.com/question/429436558/answer/1575251772)<br>
+- [若川知乎回答：一年内的前端看不懂前端框架源码怎么办？](https://www.zhihu.com/question/350289336/answer/910970733)<br>
+- [若川知乎回答：怎么才能学好前端？](https://www.zhihu.com/question/372962058/answer/1026884916)<br>
 如果觉得不错，可以点个赞^_^
 
 ## 文章列表
