@@ -23,16 +23,16 @@
 
 公众号「[若川视野](https://mp.weixin.qq.com/s/nXb2hHMCarInRbHYHcNhVA)」，关注回复「pdf」限时获取前端优质书籍pdf。**公众号日常更新，值得你关注学习，每天进步一点点**。
 
-### 源码共读
+## 源码共读
 
 - **为了能帮助到更多对源码感兴趣、想学会看源码、提升自己前端技术能力的同学**。<br/>
 - **倾力组织了3年多[每周一起学习200行左右的源码共读活动](https://www.yuque.com/ruochuan12/notice/p0)，- 目前已经更新到56期。已有5000多人参与**。<br>
 - 答疑解惑：我有空会的都会在群里免费答疑解惑。另外还有掘金[源码共读圈子](https://juejin.cn/pin/club/7397452244134264882)和[源码共读话题](https://juejin.cn/theme/detail/7397456491671715866?contentType=1)提问或者解答问题<br>
 - 如何参与：感兴趣[点此扫码加我微信 `ruochuan02` 进源码共读微信群参与](https://juejin.cn/pin/7217386885793595453)。<br>
 - 参与流程：简单来说：看群公告任务=>学习任务推荐文章或者源码=>群里或者掘金[源码共读圈子](https://juejin.cn/pin/club/7397452244134264882)或者[源码共读话题](https://juejin.cn/theme/detail/7397456491671715866?contentType=1)提问=>输出简短的笔记或者简短的读后感在源码共读话题。<br>
-- 为满足不同人群访问需求，源码共读链接有多份：[语雀链接有树形菜单比较推荐](https://www.yuque.com/ruochuan12/notice/p0)、[掘金链接](https://www.yuque.com/ruochuan12/notice/p0)、[自建网站](https://ruochuan-f2e.github.io/read-source-code/)、[github仓库](https://github.com/ruochuan-f2e/read-source-code)
+- 为满足不同人群访问需求，源码共读链接有多份：[语雀链接有树形菜单比较推荐](https://www.yuque.com/ruochuan12/notice/p0)、[掘金链接](https://juejin.cn/post/7079706017579139102/)、[自建网站](https://ruochuan12.github.io/read-source-code/index)、[github仓库](https://github.com/ruochuan12/blog/tree/main/docs/read-source-code)
 
-### 联系
+## 联系
 
 - [微信号：若川 ruochuan02](https://juejin.cn/pin/7217386885793595453)，欢迎加我微信拉你进源码共读群交流，注明昵称-城市-毕业年份，基本来者不拒。<br>
 - [掘金@若川](https://juejin.cn/user/1415826704971918)，常在掘金活跃。<br>
