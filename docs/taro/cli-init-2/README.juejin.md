@@ -14,7 +14,7 @@ theme: smartblue
 计划写一个 `taro` 源码揭秘系列，欢迎持续关注。初步计划有如下文章：
 
 *   [x] [Taro 源码揭秘 - 1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
-*   [x] [Taro 源码揭秘 - 2. 揭开整个架构的插件系统的秘密](https://juejin.cn/spost/7380195796208205824)
+*   [x] [Taro 源码揭秘 - 2. 揭开整个架构的插件系统的秘密](https://juejin.cn/post/7380195796208205824)
 *   [x] [Taro 源码揭秘 - 3. 每次创建新的 taro 项目（taro init）的背后原理是什么](https://juejin.cn/post/7390335741586931738)
 *   [x] [Taro 4.0 已正式发布 - 4. 每次 npm run dev:weapp 开发小程序，build 编译打包是如何实现的？](https://juejin.cn/post/7403193330271682612)
 *   [x] [Taro 4.0 已发布 - 5.高手都在用的发布订阅机制 Events 在 Taro 中是如何实现的？](https://juejin.cn/post/7403915119448915977)
@@ -89,7 +89,7 @@ npx @tarojs/cli@next init taro4-next
 
 ## 3. init 命令行 fn 函数
 
-根据前面两篇 [1. taro cli init](https://juejin.cn/post/7378363694939783178)、[2. taro 插件机制](https://juejin.cn/spost/7380195796208205824) 文章，我们可以得知：`taro init` 初始化命令，最终调用的是 `packages/taro-cli/src/presets/commands/init.ts` 文件中的 `ctx.registerCommand` 注册的 `init` 命令行的 `fn` 函数。
+根据前面两篇 [1. taro cli init](https://juejin.cn/post/7378363694939783178)、[2. taro 插件机制](https://juejin.cn/post/7380195796208205824) 文章，我们可以得知：`taro init` 初始化命令，最终调用的是 `packages/taro-cli/src/presets/commands/init.ts` 文件中的 `ctx.registerCommand` 注册的 `init` 命令行的 `fn` 函数。
 
 ```ts
 // packages/taro-cli/src/presets/commands/init.ts
@@ -1096,7 +1096,7 @@ taro init 的 rust代码中，安装依赖引入了[crates/handlebars rust包](h
 
 ![taro-init-gif-high.gif](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/d00b03d50cd34c1995c1f047ca5b3fef~tplv-73owjymdk6-watermark.image?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1720801922&x-orig-sign=rfbni%2BTeAF871T8a%2BQ1gwlf4cM8%3D)
 
-根据前面两篇 [1. taro cli init](https://juejin.cn/post/7378363694939783178)、[2. taro 插件机制](https://juejin.cn/spost/7380195796208205824) 文章，我们可以得知：`taro init` 初始化命令，最终调用的是 `packages/taro-cli/src/presets/commands/init.ts` 文件中的 `ctx.registerCommand` 注册的 `init` 命令行的 `fn` 函数。
+根据前面两篇 [1. taro cli init](https://juejin.cn/post/7378363694939783178)、[2. taro 插件机制](https://juejin.cn/post/7380195796208205824) 文章，我们可以得知：`taro init` 初始化命令，最终调用的是 `packages/taro-cli/src/presets/commands/init.ts` 文件中的 `ctx.registerCommand` 注册的 `init` 命令行的 `fn` 函数。
 
 可以根据配置 `.vscode/launch.json` 文件调试 `taro init` `node` 部分代码和 `rust` 配置 `type:lldb` 代码。
 
