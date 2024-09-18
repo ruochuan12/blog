@@ -51,7 +51,7 @@ Taro.request(url).then(function (res) {
 
 我们来看下 `Taro` 拦截器相关的文档：
 
-![添加拦截器](./images/addInterceptor.png)
+![添加拦截器.png](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/f15e1eb7732f424b9e9db10bd6ee2236~tplv-73owjymdk6-jj-mark-v1:0:0:0:0:5o6Y6YeR5oqA5pyv56S-5Yy6IEAg6Iul5bed:q75.awebp?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1726756556&x-orig-sign=PgKPoXcDFV6xwWxW0WIeFqdOpd0%3D)
 
 `Taro.addInterceptor` 示例代码1
 
@@ -80,7 +80,7 @@ Taro.addInterceptor(Taro.interceptors.timeoutInterceptor)
 Taro.request({ url })
 ```
 
-![清除所有拦截器](./images/clearInterceptor.png)
+![清除所有拦截器.png](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/5ef663a84f94483fbebfdafbcff1e4ab~tplv-73owjymdk6-jj-mark-v1:0:0:0:0:5o6Y6YeR5oqA5pyv56S-5Yy6IEAg6Iul5bed:q75.awebp?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1726756581&x-orig-sign=5O%2BNq2ZTrUtiwOfFaUtoTjjnlZk%3D)
 
 `Taro.cleanInterceptors` 清除所有拦截器
 
@@ -253,7 +253,7 @@ function equipTaskMethodsIntoPromise (task, promise) {
 
 我们来看下 `@tarojs/api` 目录，如下图所示：
 
-![@tarojs/api 目录](./images/dir.png)
+![@tarojs/api 目录.png](https://p0-xtjj-private.juejin.cn/tos-cn-i-73owjymdk6/345bf88840b9494d9cd6de5edf53f3de~tplv-73owjymdk6-jj-mark-v1:0:0:0:0:5o6Y6YeR5oqA5pyv56S-5Yy6IEAg6Iul5bed:q75.awebp?policy=eyJ2bSI6MywidWlkIjoiMTQxNTgyNjcwNDk3MTkxOCJ9&rk3s=e9ecf3d6&x-orig-authkey=f32326d3454f2ac7e96d3d06cdbb035152127018&x-orig-expires=1726756614&x-orig-sign=lNy06QdolNrlwy1fzJGh%2BxeE%2FOw%3D)
 
 入口文件 `packages/taro-api/src/index.ts`。
 
