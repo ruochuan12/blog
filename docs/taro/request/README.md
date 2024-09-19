@@ -420,6 +420,7 @@ export default class Chain {
 	// 第六步：捕获错误
     const res = p.catch(err => Promise.reject(err))
 	// 第七步：遍历实例对象 promise，如果是函数就赋值到 res[k] = p[k];
+	// 这里其实是兼容小程序 api 原生返回结果 promise 对象上还有 abort 等函数方法。
     Object.keys(p).forEach(k => isFunction(p[k]) && (res[k] = p[k]))
 	// 第八步：返回 res promise
     return res
@@ -427,9 +428,112 @@ export default class Chain {
 }
 ```
 
-## 6. 内置的两个拦截器
+`chain.proceed` 简单来说就是调用下一个拦截器函数（async）。
 
-内置的拦截器，Taro 文档中有说明。
+## 6. 借助项目提供的 jest 测试用例调试拦截器
+
+`chain.proceed` 函数比较抽象，第一次看没有看懂很正常。
+
+我们可以借助项目中提供的测试用例进行调试。
+
+我们很容易就找到了拦截器的测试用例文件：`packages/taro-api/__tests__/interceptorify.test.ts`。我们来看测试用例的具体代码：
+
+```ts
+// packages/taro-api/__tests__/interceptorify.test.ts
+import Taro from '@tarojs/taro'
+
+describe('taro interceptorify', () => {
+  it('onion competency model', async () => {
+    interface IParams {
+      msg: string
+    }
+	// 转为拦截器，相当于是 wx.request
+    const execLink = Taro.interceptorify<IParams, IParams>(async function (requestParams) {
+      requestParams.msg += '__exec'
+      return requestParams
+    })
+	// 添加拦截器1
+    execLink.addInterceptor(async function (chain) {
+      chain.requestParams.msg += '__before1'
+      const params = await chain.proceed(chain.requestParams)
+      params.msg += '__after1'
+      return params
+    })
+	// 添加拦截器2
+    execLink.addInterceptor(async function (chain) {
+      chain.requestParams.msg += '__before2'
+      const params = await chain.proceed(chain.requestParams)
+      params.msg += '__after2'
+      return params
+    })
+	// 添加拦截器3
+    execLink.addInterceptor(async function (chain) {
+      chain.requestParams.msg += '__before3'
+      const params = await chain.proceed(chain.requestParams)
+      params.msg += '__after3'
+      return params
+    })
+	// 执行 request 把拦截器串联起来
+    const res1 = await execLink.request({ msg: 'test1' })
+    expect(res1.msg).toBe('test1__before1__before2__before3__exec__after3__after2__after1')
+
+	// 清空拦截器
+    execLink.cleanInterceptors()
+	// 再执行结果
+    const res2 = await execLink.request({ msg: 'test2' })
+    expect(res2.msg).toBe('test2__exec')
+  })
+})
+
+```
+
+虽然看起来代码比较多，但我们可以看到这部分代码做的事情相对简单：
+
+- `Taro.interceptorify` 类似于是封装 `wx.request`，`my.request`
+
+```ts
+// 前文提到的
+// packages/shared/src/native-apis.ts
+const request = apis.request || getNormalRequest(global)
+function taroInterceptor (chain) {
+	return request(chain.requestParams)
+}
+const link = new taro.Link(taroInterceptor)
+```
+
+- `execLink.addInterceptor` 添加拦截器 1、2、3。
+- 执行 `await execLink.request()` 把拦截器从第 0 个开始串联起来。
+- 输出结果，符合期望。
+- `execLink.cleanInterceptors()` 清空拦截器。
+- 再执行 `await execLink.request()`。
+- 输出结果，符合期望。
+- 测试用例通过。
+
+`msg` 结果是这样：`test1__before1__before2__before3__exec__after3__after2__after1`，就能很好的反应出拦截器（async 函数）的执行顺序。熟悉的小伙伴会知道这是典型的洋葱模型。Taro 文档也有说明：拦截器的调用顺序遵循洋葱模型。
+
+如果了解 `koa-compose`，就会发现 `chain.proceed` 其实就是 `koa-compose` 中的 `next` 方法。只不过实现方式不一样而已。
+我曾经写过 [50行代码串行Promise，koa洋葱模型原来是这么实现？](https://juejin.cn/post/7005375860509245471)，可以对比学习。
+
+关于如何调试，[贡献文档-单元测试](https://github.com/NervJS/taro/blob/main/CONTRIBUTING.md#4-%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95)中有提到：
+
+>`package.json` 中设置了 `test:ci` 命令的子包都配备了单元测试。
+>开发者在修改这些包后，请运行 `pnpm --filter [package-name] run test:ci`，检查测试用例是否都能通过。
+
+我们提前在 `packages/taro-api/__tests__/interceptorify.test.ts` 文件中根据自己情况打好断点，再新建一个终端`JavaScript debug Termial`，执行 `pnpm --filter @tarojs/api run test:ci` 即可触发断点。调试如下图所示：
+
+![调试拦截器图](./images/debugger.png)
+
+`Taro` 源码项目准备安装依赖在[第一篇文章](https://juejin.cn/post/7378363694939783178#heading-1)中有详细说明，这里就不再赘述。
+
+如果不太会调试，可参考我的文章[新手向：前端程序员必学基本技能——调试 JS 代码](https://juejin.cn/post/7030584939020042254)，或者[据说 90%的人不知道可以用测试用例(Vitest)调试开源项目(Vue3) 源码](https://juejin.cn/post/7212263304394981432)
+
+我们调试完后，再去看 `Taro` 文档和拦截器相关代码就会豁然开朗，会有更深刻的理解。
+
+这时不得不感慨一句：**设计的很惊艳！**
+
+我们接着来看内置的拦截器，就比较简单一些了，Taro 文档中有说明。
+
+## 7. 内置的两个拦截器
 
 >`Taro` 提供了两个内置拦截器 `logInterceptor` 与 `timeoutInterceptor`，分别用于打印请求的相关信息和在请求超时时抛出错误。
 
@@ -445,9 +549,9 @@ Taro.request({ url })
 
 `@tarojs/api` 入口文件也有导出内置的拦截器挂载到 `Taro` 上。
 
-我们接着来学习它们的实现。
+我们接着来学习它们的具体实现。
 
-### 6.1 timeoutInterceptor 超时拦截器
+### 7.1 timeoutInterceptor 超时拦截器
 
 ```ts
 // packages/taro-api/src/interceptor/interceptors.ts
@@ -477,13 +581,16 @@ export function timeoutInterceptor (chain: Chain) {
       })
   })
   // @ts-ignore
+  // 这里是兼容 小程序 原生 api 返回结果，不过感觉是不是少兼容了
   if (!isUndefined(p) && isFunction(p.abort)) res.abort = p.abort
 
   return res
 }
 ```
 
-### 6.2 logInterceptor 日志拦截器
+简言之：超时拦截器。
+
+### 7.2 logInterceptor 日志拦截器
 
 ```ts
 // packages/taro-api/src/interceptor/interceptors.ts
@@ -502,6 +609,7 @@ export function logInterceptor (chain: Chain) {
       return res
     })
   // @ts-ignore
+  // 这里是兼容 小程序 原生 api 返回结果，不过感觉是不是少兼容了
   if (isFunction(p.abort)) res.abort = p.abort
 
   return res
@@ -509,11 +617,23 @@ export function logInterceptor (chain: Chain) {
 
 ```
 
-## 7. 总结
+简言之：就是输出下日志。
 
-我们从文档出发`Taro.request` 的使用和文档中拦截器的使用，分析了 `Taro.request` 的具体实现和 `Taro` 的 `request` 请求和响应拦截器实现。
+## 8. 总结
+
+我们从文档出发 `Taro.request` 的使用和文档中拦截器的使用，分析了 `Taro.request` 的具体实现和 `Taro` 的 `request` 请求和响应拦截器实现。
 端平台插件运行时（runtime）挂载 `global.request`。
 `@tarojs/taro`、`@tarojs/api` 中实现的 `Chain` 链和 `Link` `request` 构造函数。
+
+最后，我们再回顾下：
+
+>Taro文档：在调用 `Taro.request` 发起请求之前，调用 `Taro.addInterceptor` 方法为请求添加拦截器，拦截器的调用顺序遵循洋葱模型。 拦截器是一个函数，接受 `chain` 对象作为参数。`chain` 对象中含有 `requestParmas` 属性，代表请求参数。拦截器内最后需要调用 `chain.proceed(requestParams)` 以调用下一个拦截器或发起请求。
+
+拦截器的调用顺序遵循洋葱模型，测试用例中输出顺序：`test1__before1__before2__before3__exec__after3__after2__after1`。
+
+`test1` 是 `Taro.request` 传入的参数，`__exec` 是最开始的参数。`before、after` 数字对应的是拦截器（async 函数 `fn1, fn2, fn3`）。
+
+总之 `Taro` 拦截器**设计的很惊艳**，是设计模式中的职责链模式实现。和 [koa-compose-文章](https://juejin.cn/post/7005375860509245471)、[axios-文章](https://juejin.cn/post/6844904019987529735#heading-21) 是实现的类似功能、只是实现方式不一样。
 
 ----
 
