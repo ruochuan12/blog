@@ -265,6 +265,7 @@ export default defineConfig({
 						"/taro/events/",
 						"/taro/native-apis/",
 						"/taro/request/",
+						"/taro/webpack5-runner/",
 					],
 				},
 				{
