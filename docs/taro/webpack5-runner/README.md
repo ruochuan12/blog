@@ -56,8 +56,475 @@ npx taro inspect -t weapp -o webpack.config.js
 
 ![webpack.config.js 配置](./images/webpack.config.js.png)
 
+[webpack 中文文档](https://webpack.docschina.org/configuration/plugins/#plugins)
+
+[webpack 英文文档](https://webpack.js.org/configuration/plugins/#plugins)
+
+### webpack 配置
+
 ```ts
-export default {}
+export default {
+  target: [
+    'web',
+    'es5'
+  ],
+  watchOptions: {
+    aggregateTimeout: 200
+  },
+  mode: 'production',
+  devtool: false,
+  output: {
+    chunkLoadingGlobal: 'webpackJsonp',
+    path: '/Users/ruochuan/git-source/github/taro4-debug/dist',
+    publicPath: '/',
+    filename: '[name].js',
+    chunkFilename: '[name].js',
+    globalObject: 'wx',
+    enabledLibraryTypes: [],
+    devtoolModuleFilenameTemplate: function () { /* omitted long function */ }
+  },
+  // 省略...，拆分在下方
+}
+```
+
+### webpack.resolve
+
+```ts
+export default {
+  resolve: {
+    symlinks: true,
+    fallback: {
+      fs: false,
+      path: false
+    },
+    alias: {
+      'regenerator-runtime': '/Users/ruochuan/git-source/github/taro4-debug/node_modules/.pnpm/regenerator-runtime@0.11.1/node_modules/regenerator-runtime/runtime-module.js',
+      '@tarojs/runtime': '/Users/ruochuan/git-source/github/taro4-debug/node_modules/@tarojs/runtime/dist/index.js',
+      '@tarojs/shared': '/Users/ruochuan/git-source/github/taro4-debug/node_modules/@tarojs/shared/dist/index.js',
+      '@tarojs/components$': '@tarojs/plugin-platform-weapp/dist/components-react',
+      'react-dom$': '@tarojs/react',
+      'react-dom/client$': '@tarojs/react'
+    },
+    extensions: [
+      '.js',
+      '.jsx',
+      '.ts',
+      '.tsx',
+      '.mjs',
+      '.vue'
+    ],
+    mainFields: [
+      'browser',
+      'module',
+      'jsnext:main',
+      'main'
+    ],
+    plugins: [
+      /* config.resolve.plugin('MultiPlatformPlugin') */
+      new MultiPlatformPlugin(
+        'described-resolve',
+        'resolve',
+        {
+			// 省略对象
+		}
+      ),
+      /* config.resolve.plugin('tsconfig-paths') */
+      new TsconfigPathsPlugin()
+    ]
+  },
+  resolveLoader: {
+    modules: [
+      'node_modules'
+    ]
+  },
+}
+```
+
+### webpack.module
+
+```ts
+export default {
+  module: {
+    rules: [
+      /* config.module.rule('sass') */
+      {
+        test: /\.sass$/,
+        oneOf: [
+			// 省略...
+		]
+      },
+      /* config.module.rule('scss') */
+      {
+        test: /\.scss$/,
+        oneOf: [
+			// 省略...
+		]
+      },
+      /* config.module.rule('less') */
+      {
+        test: /\.less$/,
+        oneOf: [
+			// 省略...
+		]
+      },
+      /* config.module.rule('stylus') */
+      {
+        test: /\.styl(us)?$/,
+        oneOf: [
+			// 省略...
+		]
+      },
+      /* config.module.rule('normalCss') */
+      {
+        test: /\.(css|qss|jxss|wxss|acss|ttss)(\?.*)?$/,
+        oneOf: [
+			// 省略...
+		]
+      },
+      /* config.module.rule('script') */
+      {
+        test: /\.m?[tj]sx?$/i,
+        include: [
+          '/Users/ruochuan/git-source/github/taro4-debug/src',
+          filename => /(?<=node_modules[\\/]).*taro/.test(filename)
+        ],
+        use: [
+          /* config.module.rule('script').use('babelLoader') */
+          {
+            loader: '/Users/ruochuan/git-source/github/taro4-debug/node_modules/.pnpm/babel-loader@8.2.1_@babel+core@7.25.2_webpack@5.91.0_@swc+core@1.3.96_/node_modules/babel-loader/lib/index.js',
+            options: {
+              compact: false
+            }
+          }
+        ]
+      },
+      /* config.module.rule('template') */
+      {
+        test: /\.(wxml|axml|ttml|qml|swan|jxml)(\?.*)?$/,
+        type: 'asset/resource',
+        generator: {
+          filename: function () { /* omitted long function */ }
+        },
+        use: [
+          /* config.module.rule('template').use('0') */
+          {
+            loader: '/Users/ruochuan/git-source/github/taro4-debug/node_modules/.pnpm/@tarojs+webpack5-runner@4.0.5_@babel+core@7.25.2_@swc+core@1.3.96_@tarojs+runtime@4.0.5_less@_dqy5wzlfr4ijnqdlohwafjxvqi/node_modules/@tarojs/webpack5-runner/dist/loaders/miniTemplateLoader.js',
+            options: {
+              buildAdapter: 'weapp'
+            }
+          }
+        ]
+      },
+      /* config.module.rule('xscript') */
+      {
+        test: /\.wxs$/,
+        type: 'asset/resource',
+        generator: {
+          filename: function () { /* omitted long function */ }
+        },
+        use: [
+          /* config.module.rule('xscript').use('0') */
+          {
+            loader: '/Users/ruochuan/git-source/github/taro4-debug/node_modules/.pnpm/@tarojs+webpack5-runner@4.0.5_@babel+core@7.25.2_@swc+core@1.3.96_@tarojs+runtime@4.0.5_less@_dqy5wzlfr4ijnqdlohwafjxvqi/node_modules/@tarojs/webpack5-runner/dist/loaders/miniXScriptLoader.js'
+          }
+        ]
+      },
+      /* config.module.rule('media') */
+      {
+        test: /\.(mp4|webm|ogg|mp3|m4a|wav|flac|aac)(\?.*)?$/,
+        type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            maxSize: 10240
+          }
+        },
+        generator: {
+          emit: undefined,
+          outputPath: undefined,
+          publicPath: undefined,
+          filename: function () { /* omitted long function */ }
+        }
+      },
+      /* config.module.rule('font') */
+      {
+        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+        type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            maxSize: 10240
+          }
+        },
+        generator: {
+          emit: undefined,
+          outputPath: undefined,
+          publicPath: undefined,
+          filename: function () { /* omitted long function */ }
+        }
+      },
+      /* config.module.rule('image') */
+      {
+        test: /\.(png|jpe?g|gif|bpm|svg|webp)(\?.*)?$/,
+        type: 'asset',
+        parser: {
+          dataUrlCondition: {
+            maxSize: 2048
+          }
+        },
+        generator: {
+          emit: undefined,
+          outputPath: undefined,
+          publicPath: undefined,
+          filename: function () { /* omitted long function */ }
+        }
+      }
+    ]
+  },
+}
+```
+
+- @tarojs/webpack5-runner/dist/loaders/miniTemplateLoader.js
+- @tarojs/webpack5-runner/dist/loaders/miniXScriptLoader.js
+
+
+### webpack.optimization
+
+```ts
+export default {
+  optimization: {
+    sideEffects: true,
+    minimize: true,
+    usedExports: true,
+    runtimeChunk: {
+      name: 'runtime'
+    },
+    splitChunks: {
+      chunks: 'all',
+      maxInitialRequests: Infinity,
+      minSize: 0,
+      cacheGroups: {
+        'default': false,
+        defaultVendors: false,
+        common: {
+          name: 'common',
+          minChunks: 2,
+          priority: 1
+        },
+        vendors: {
+          name: 'vendors',
+          minChunks: 2,
+          test: function () { /* omitted long function */ },
+          priority: 10
+        },
+        taro: {
+          name: 'taro',
+          test: module => helper_1.REG_TARO_SCOPED_PACKAGE.test(module.context),
+          priority: 100
+        }
+      }
+    },
+    minimizer: [
+      /* config.optimization.minimizer('terserPlugin') */
+      new TerserPlugin(
+        {
+          parallel: true,
+          terserOptions: {
+			// 省略...
+		  }
+        }
+      ),
+      /* config.optimization.minimizer('cssoWebpackPlugin') */
+      new CssMinimizerPlugin(
+        {
+          test: /\.(css|scss|sass|less|styl|stylus|wxss|acss|ttss|jxss|qss)(\?.*)?$/,
+          parallel: true,
+          minify: function () { /* omitted long function */ },
+          minimizerOptions: {
+            preset: [
+				// 省略...
+			]
+          }
+        }
+      )
+    ]
+  },
+}
+```
+
+### webpack.plugins
+
+```ts
+export default {
+  plugins: [
+    /* config.plugin('webpackbar') */
+    new TaroWebpackBarPlugin(
+      {
+        reporters: [
+          'basic',
+          'fancy',
+          {
+            done: function () { /* omitted long function */ }
+          }
+        ],
+        basic: false,
+        fancy: true
+      }
+    ),
+    /* config.plugin('providerPlugin') */
+    new ProvidePlugin(
+      {
+        window: [
+          '@tarojs/runtime',
+          'window'
+        ],
+        document: [
+          '@tarojs/runtime',
+          'document'
+        ],
+        navigator: [
+          '@tarojs/runtime',
+          'navigator'
+        ],
+        requestAnimationFrame: [
+          '@tarojs/runtime',
+          'requestAnimationFrame'
+        ],
+        cancelAnimationFrame: [
+          '@tarojs/runtime',
+          'cancelAnimationFrame'
+        ],
+        Element: [
+          '@tarojs/runtime',
+          'TaroElement'
+        ],
+        SVGElement: [
+          '@tarojs/runtime',
+          'SVGElement'
+        ],
+        MutationObserver: [
+          '@tarojs/runtime',
+          'MutationObserver'
+        ],
+        history: [
+          '@tarojs/runtime',
+          'history'
+        ],
+        location: [
+          '@tarojs/runtime',
+          'location'
+        ],
+        URLSearchParams: [
+          '@tarojs/runtime',
+          'URLSearchParams'
+        ],
+        URL: [
+          '@tarojs/runtime',
+          'URL'
+        ]
+      }
+    ),
+    /* config.plugin('definePlugin') */
+    new DefinePlugin(
+      {
+        'process.env.FRAMEWORK': '"react"',
+        'process.env.TARO_ENV': '"weapp"',
+        'process.env.TARO_PLATFORM': '"mini"',
+        'process.env.TARO_VERSION': '"4.0.5"',
+        'process.env.SUPPORT_TARO_POLYFILL': '"disabled"',
+        ENABLE_INNER_HTML: true,
+        ENABLE_ADJACENT_HTML: false,
+        ENABLE_SIZE_APIS: false,
+        ENABLE_TEMPLATE_CONTENT: false,
+        ENABLE_CLONE_NODE: false,
+        ENABLE_CONTAINS: false,
+        ENABLE_MUTATION_OBSERVER: false
+      }
+    ),
+    /* config.plugin('miniCssExtractPlugin') */
+    new MiniCssExtractPlugin(
+      {
+        filename: '[name].wxss',
+        chunkFilename: '[name].wxss'
+      }
+    ),
+    /* config.plugin('miniSplitChunksPlugin') */
+    new MiniSplitChunksPlugin(
+      {
+        exclude: undefined,
+        fileType: {
+          templ: '.wxml',
+          style: '.wxss',
+          config: '.json',
+          script: '.js',
+          xs: '.wxs'
+        },
+        combination: {
+			// 省略...
+		}
+      }
+    ),
+    /* config.plugin('miniPlugin') */
+    new TaroMiniPlugin(
+      {
+        commonChunks: [
+          'runtime',
+          'vendors',
+          'taro',
+          'common'
+        ],
+        constantsReplaceList: {
+          'process.env.FRAMEWORK': '"react"',
+          'process.env.TARO_ENV': '"weapp"',
+          'process.env.TARO_PLATFORM': '"mini"',
+          'process.env.TARO_VERSION': '"4.0.5"',
+          'process.env.SUPPORT_TARO_POLYFILL': '"disabled"',
+          ENABLE_INNER_HTML: true,
+          ENABLE_ADJACENT_HTML: false,
+          ENABLE_SIZE_APIS: false,
+          ENABLE_TEMPLATE_CONTENT: false,
+          ENABLE_CLONE_NODE: false,
+          ENABLE_CONTAINS: false,
+          ENABLE_MUTATION_OBSERVER: false
+        },
+        pxTransformConfig: {
+          platform: 'weapp',
+          designWidth: 750,
+          deviceRatio: {
+            '375': 2,
+            '640': 1.17,
+            '750': 1,
+            '828': 0.905
+          }
+        },
+        hot: false,
+        combination: {
+			// 省略对象
+		},
+        loaderMeta: {
+          importFrameworkStatement: '\nimport * as React from \'react\'\nimport ReactDOM from \'react-dom\'\n',
+          mockAppStatement: '\nclass App extends React.Component {\n  render () {\n    return this.props.children\n  }\n}\n',
+          frameworkArgs: 'React, ReactDOM, config',
+          creator: 'createReactApp',
+          creatorLocation: '@tarojs/plugin-framework-react/dist/runtime',
+          importFrameworkName: 'React',
+          extraImportForWeb: '',
+          execBeforeCreateWebApp: '',
+          modifyConfig(config, source) {
+              Object.assign(config, addConfig(source));
+          }
+        }
+      }
+    )
+  ],
+  performance: {
+    maxEntrypointSize: 2000000
+  },
+  // 入口文件
+  entry: {
+    app: [
+      '/Users/ruochuan/git-source/github/taro4-debug/src/app.ts'
+    ]
+  }
+}
 ```
 
 ----
