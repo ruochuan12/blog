@@ -161,6 +161,18 @@ node ./packages/taro-cli/bin/taro init taro-init-debug
 
 ![vscode 调试源码](./images/vscode-debugger.png)
 
+也可以使用项目中提供的测试用例 `packages/taro-cli/src/__tests__/cli.spec.ts` 提前打断点调试源码。[贡献文档-单元测试](https://github.com/NervJS/taro/blob/main/CONTRIBUTING.md#4-%E5%8D%95%E5%85%83%E6%B5%8B%E8%AF%95)中有提到：
+
+> `package.json` 中设置了 `test:ci` 命令的子包都配备了单元测试。
+> 开发者在修改这些包后，请运行 `pnpm --filter [package-name] run test:ci`，检查测试用例是否都能通过。
+
+```bash
+# JavaScript Debug Terminal
+pnpm --filter @tarojs/cli run test:ci
+```
+
+调试和上图类似，就不截调试图了。
+
 调试时应该会报错 `binding` `taro.[os-platform].node`。如下图所示：
 
 ![binding-error](./images/binding-error.png)
