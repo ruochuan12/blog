@@ -31,15 +31,15 @@
 	},
 	"homepage": "https://github.com/ruochuan12/blog#readme",
 	"dependencies": {
-		"rspress": "^1.31.1"
+		"rspress": "^1.32.0"
 	},
 	"devDependencies": {
 		"@release-it/conventional-changelog": "^5.1.1",
-		"@types/node": "^16.18.108",
+		"@types/node": "^16.18.113",
 		"chokidar": "^4.0.1",
 		"git-cz": "^4.9.0",
 		"globby": "^14.0.2",
-		"release-it": "^17.6.0",
+		"release-it": "^17.7.0",
 		"rsbuild-plugin-google-analytics": "^1.0.3",
 		"rspress-plugin-font-open-sans": "^1.0.0",
 		"rspress-plugin-reading-time": "^0.3.0"
