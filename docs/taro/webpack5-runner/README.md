@@ -9,7 +9,7 @@ theme: smartblue
 
 大家好，我是[若川](https://ruochuan12.github.io)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
 
-截至目前（`2024-09-18`），[`taro 4.0` 正式版已经发布](https://github.com/NervJS/taro/releases/tag/v4.0.3)，目前最新是 `4.0.5`，官方`4.0`正式版本的介绍文章暂未发布。官方之前发过[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。
+截至目前（`2024-10-08`），[`taro 4.0` 正式版已经发布](https://github.com/NervJS/taro/releases/tag/v4.0.3)，目前最新是 `4.0.6`，官方`4.0`正式版本的介绍文章暂未发布。官方之前发过[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。
 
 计划写一个 `taro` 源码揭秘系列，欢迎持续关注。
 
@@ -36,6 +36,43 @@ theme: smartblue
 等等
 ```
 
+## webpack 打包构建
+
+```ts
+// packages/taro-webpack5-runner/src/index.mini.ts
+
+import webpack from 'webpack'
+//   省略若干代码
+export default async function build (appPath: string, rawConfig: IMiniBuildConfig): Promise<Stats | void> {
+  const combination = new MiniCombination(appPath, rawConfig)
+  await combination.make()
+  //   省略若干代码
+
+  const webpackConfig = combination.chain.toConfig()
+  const config = combination.config
+
+  return new Promise<Stats | void>((resolve, reject) => {
+    if (config.withoutBuild) return
+
+    const compiler = webpack(webpackConfig)
+
+	// 省略若干代码...
+
+    if (config.isWatch) {
+      compiler.watch({
+        aggregateTimeout: 300,
+        poll: undefined
+      }, callback)
+    } else {
+      compiler.run((err: Error, stats: Stats) => {
+        compiler.close(err2 => callback(err || err2, stats))
+      })
+    }
+  })
+}
+```
+
+
 ## 2. 输出打包编译 taro 的 webpack 配置
 
 ```bash
@@ -52,7 +89,7 @@ cd taro4-debug
 npx taro inspect -t weapp -o webpack.config.js
 ```
 
-执行上面脚本后，我们就把 taro 编译微信小程序的 webpack 配置输出到了 webpack.config.js 文件。我们在开头追加 `export default` 方便查看整个文件。如下图所示：
+执行上面脚本后，我们就把 taro 编译微信小程序的 webpack 配置输出到了 `webpack.config.js` 文件。我们在开头追加 `export default` 方便查看整个文件。如下图所示：
 
 ![webpack.config.js 配置](./images/webpack.config.js.png)
 
@@ -60,7 +97,152 @@ npx taro inspect -t weapp -o webpack.config.js
 
 [webpack 英文文档](https://webpack.js.org/configuration/plugins/#plugins)
 
-### webpack 配置
+
+原理
+
+```ts
+import * as path from 'node:path'
+
+import {
+  ENTRY,
+  OUTPUT_DIR,
+  resolveScriptPath,
+  SOURCE_DIR
+} from '@tarojs/helper'
+import { getPlatformType } from '@tarojs/shared'
+
+import * as hooks from '../constant'
+
+import type { IPluginContext } from '@tarojs/service'
+
+export default (ctx: IPluginContext) => {
+  ctx.registerCommand({
+    name: 'inspect',
+    optionsMap: {
+      '-t, --type [typeName]': 'Build type, weapp/swan/alipay/tt/h5/quickapp/rn/qq/jd',
+      '-o, --output [outputPath]': 'output config to outputPath'
+    },
+    synopsisList: [
+      'taro inspect --type weapp',
+      'taro inspect --type weapp --output inspect.config.js',
+      'taro inspect --type weapp plugins',
+      'taro inspect --type weapp module.rules.0'
+    ],
+    async fn ({ _, options }) {
+      const { fs, chalk } = ctx.helper
+      const platform = options.type || options.t
+
+      verifyIsTaroProject(ctx)
+      verifyPlatform(platform, chalk)
+
+      const configName = ctx.platforms.get(platform)?.useConfigName || ''
+      process.env.TARO_ENV = platform
+      process.env.TARO_PLATFORM = getPlatformType(platform, configName)
+
+      let config = getConfig(ctx, platform)
+      config = {
+        ...config,
+        ...config[configName]
+      }
+      delete config.mini
+      delete config.h5
+
+      const isProduction = process.env.NODE_ENV === 'production'
+      const outputPath = options.output || options.o
+      const mode = outputPath ? 'output' : 'console'
+      const extractPath = _[1]
+
+      await ctx.applyPlugins({
+        name: platform,
+        opts: {
+          config: {
+            ...config,
+            isWatch: !isProduction,
+            mode: isProduction ? 'production' : 'development',
+            async modifyWebpackChain (chain, webpack, data) {
+              await ctx.applyPlugins({
+                name: hooks.MODIFY_WEBPACK_CHAIN,
+                initialVal: chain,
+                opts: {
+                  chain,
+                  webpack,
+                  data
+                }
+              })
+            },
+            onWebpackChainReady (chain) {
+              const webpackConfig = chain.toConfig()
+              const { toString } = chain.constructor
+              const config = extractConfig(webpackConfig, extractPath)
+              const res = toString(config)
+
+              if (mode === 'console') {
+                const highlight = require('cli-highlight').default
+                console.info(highlight(res, { language: 'js' }))
+              } else if (mode === 'output' && outputPath) {
+                fs.writeFileSync(outputPath, res)
+              }
+
+              process.exit(0)
+            }
+          }
+        }
+      })
+    }
+  })
+}
+
+/** 是否 Taro 项目根路径 */
+function verifyIsTaroProject (ctx: IPluginContext) {
+  const { fs, chalk, PROJECT_CONFIG } = ctx.helper
+  const { configPath } = ctx.paths
+
+  if (!configPath || !fs.existsSync(configPath)) {
+    console.log(chalk.red(`找不到项目配置文件${PROJECT_CONFIG}，请确定当前目录是 Taro 项目根目录!`))
+    process.exit(1)
+  }
+}
+
+/** 检查平台类型 */
+function verifyPlatform (platform, chalk) {
+  if (typeof platform !== 'string') {
+    console.log(chalk.red('请传入正确的编译类型！'))
+    process.exit(0)
+  }
+}
+
+/** 整理 config */
+function getConfig (ctx: IPluginContext, platform: string) {
+  const { initialConfig } = ctx
+  const sourceDirName = initialConfig.sourceRoot || SOURCE_DIR
+  const outputDirName = initialConfig.outputRoot || OUTPUT_DIR
+  const sourceDir = path.join(ctx.appPath, sourceDirName)
+  const entryFilePath = resolveScriptPath(path.join(sourceDir, ENTRY))
+
+  const entry = {
+    [ENTRY]: [entryFilePath]
+  }
+
+  return {
+    ...initialConfig,
+    entry,
+    sourceRoot: sourceDirName,
+    outputRoot: outputDirName,
+    platform
+  }
+}
+
+/** 按路径取出 webpackConfig 内的对应值 */
+function extractConfig (webpackConfig, extractPath: string | undefined) {
+  if (!extractPath) return webpackConfig
+
+  const list = extractPath.split('.')
+  return list.reduce((config, current) => config[current], webpackConfig)
+}
+
+```
+
+## webpack 配置
 
 ```ts
 export default {
@@ -285,7 +467,6 @@ export default {
 - @tarojs/webpack5-runner/dist/loaders/miniTemplateLoader.js
 - @tarojs/webpack5-runner/dist/loaders/miniXScriptLoader.js
 
-
 ### webpack.optimization
 
 ```ts
@@ -471,47 +652,7 @@ export default {
           'taro',
           'common'
         ],
-        constantsReplaceList: {
-          'process.env.FRAMEWORK': '"react"',
-          'process.env.TARO_ENV': '"weapp"',
-          'process.env.TARO_PLATFORM': '"mini"',
-          'process.env.TARO_VERSION': '"4.0.5"',
-          'process.env.SUPPORT_TARO_POLYFILL': '"disabled"',
-          ENABLE_INNER_HTML: true,
-          ENABLE_ADJACENT_HTML: false,
-          ENABLE_SIZE_APIS: false,
-          ENABLE_TEMPLATE_CONTENT: false,
-          ENABLE_CLONE_NODE: false,
-          ENABLE_CONTAINS: false,
-          ENABLE_MUTATION_OBSERVER: false
-        },
-        pxTransformConfig: {
-          platform: 'weapp',
-          designWidth: 750,
-          deviceRatio: {
-            '375': 2,
-            '640': 1.17,
-            '750': 1,
-            '828': 0.905
-          }
-        },
-        hot: false,
-        combination: {
-			// 省略对象
-		},
-        loaderMeta: {
-          importFrameworkStatement: '\nimport * as React from \'react\'\nimport ReactDOM from \'react-dom\'\n',
-          mockAppStatement: '\nclass App extends React.Component {\n  render () {\n    return this.props.children\n  }\n}\n',
-          frameworkArgs: 'React, ReactDOM, config',
-          creator: 'createReactApp',
-          creatorLocation: '@tarojs/plugin-framework-react/dist/runtime',
-          importFrameworkName: 'React',
-          extraImportForWeb: '',
-          execBeforeCreateWebApp: '',
-          modifyConfig(config, source) {
-              Object.assign(config, addConfig(source));
-          }
-        }
+		// 省略若干参数...
       }
     )
   ],
@@ -524,6 +665,16 @@ export default {
       '/Users/ruochuan/git-source/github/taro4-debug/src/app.ts'
     ]
   }
+}
+```
+
+## TaroMiniPlugin
+
+```ts
+// packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
+
+export default class TaroMiniPlugin {
+	// ...
 }
 ```
 
