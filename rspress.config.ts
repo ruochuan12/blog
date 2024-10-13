@@ -405,6 +405,22 @@ export default defineConfig({
 				  text: '公告',
 				  items: [
 					{
+					  text: '第60期 | Taro 源码揭秘 - 7. Taro.request 和请求响应拦截器是如何实现的',
+					  link: '/read-source-code/p60',
+					},
+					{
+					  text: '第59期 | Taro 源码揭秘 - 6. 为什么通过 Taro.xxx 能调用各个小程序平台的 API，如何设计实现的',
+					  link: '/read-source-code/p59',
+					},
+					{
+					  text: '第58期 | Taro 源码揭秘 - 5.高手都在用的发布订阅机制 Events 在 Taro 中是如何实现的？',
+					  link: '/read-source-code/p58',
+					},
+					{
+					  text: '# 第57期 | Taro 源码揭秘 4.每次 npm run dev_weapp 开发小程序，build 编译打包是如何实现的？',
+					  link: '/read-source-code/p57',
+					},
+					{
 					  text: '第56期 | 开发小程序又一新选择 vue-mini，据说性能是 Taro 的 10 倍，遥遥领先',
 					  link: '/read-source-code/p56',
 					},
