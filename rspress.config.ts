@@ -131,12 +131,12 @@ export default defineConfig({
 				link: '/read-source-code/'
 			},
 			{
-				text: "源码共读",
-				link: "https://www.yuque.com/ruochuan12/read-source-code/p0",
+				text: "源码共读-其他链接",
+				link: "https://www.yuque.com/ruochuan12/notice/p0",
 				items: [
 					{
 						text: "语雀链接",
-						link: "https://www.yuque.com/ruochuan12/read-source-code/p0",
+						link: "https://www.yuque.com/ruochuan12/notice/p0",
 					},
 					{
 						text: "掘金链接",
@@ -148,7 +148,7 @@ export default defineConfig({
 					},
 					{
 						text: "github仓库",
-						link: "https://github.com/ruochuan-f2e/read-source-code",
+						link: "https://github.com/ruochuan12/blog/tree/main/docs/read-source-code",
 					},
 				],
 			},
