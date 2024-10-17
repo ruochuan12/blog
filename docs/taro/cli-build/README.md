@@ -3,7 +3,7 @@ highlight: darcula
 theme: smartblue
 ---
 
-# Taro 4.0 已正式发布 - 4. 每次 npm run dev:weapp 开发小程序，build 编译打包是如何实现的？
+# Taro 源码揭秘 - 4. 每次 npm run dev:weapp 开发小程序，build 编译打包是如何实现的？
 
 ## 1. 前言
 

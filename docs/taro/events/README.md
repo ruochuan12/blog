@@ -3,7 +3,7 @@ highlight: darcula
 theme: smartblue
 ---
 
-# Taro 4.0 已发布 - 5.高手都在用的发布订阅机制 Events 在 Taro 中是如何实现的？
+# Taro 源码揭秘 - 5.高手都在用的发布订阅机制 Events 在 Taro 中是如何实现的？
 
 ## 1. 前言
 

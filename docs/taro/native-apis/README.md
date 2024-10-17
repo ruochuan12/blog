@@ -3,7 +3,7 @@ highlight: darcula
 theme: smartblue
 ---
 
-# Taro 4.0 已正式发布 - 6. 为什么通过 Taro.xxx 能调用各个小程序平台的 API，如何设计实现的?
+# Taro 源码揭秘 - 6. 为什么通过 Taro.xxx 能调用各个小程序平台的 API，如何设计实现的?
 
 ## 1. 前言
 
