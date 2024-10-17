@@ -902,7 +902,7 @@ register(){
 
 ![applyPlugins.png](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/ad03ef2a38e24a82a2ac8510ce7639d0~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=3840&h=2086&s=903063&e=png&b=262626)
 
-从而达到调用的是 `command/init.ts` 中的 `fn` 函数。**不得不惊叹一声：Taro 插件机制设计的秒啊**。
+从而达到调用的是 `command/init.ts` 中的 `fn` 函数。**不得不惊叹一声：Taro 插件机制设计的妙啊**。
 
 强烈建议读者朋友们，空闲时自己看着文章，多尝试调试源码。单看文章，可能觉得看懂了，但自己调试可能会发现更多细节，收获更多。
 

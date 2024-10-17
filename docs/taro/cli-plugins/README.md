@@ -903,7 +903,7 @@ register(){
 调试如图所示：
 ![applyPlugins](./images/applyPlugins.png)
 
-从而达到调用的是 `command/init.ts` 中的 `fn` 函数。**不得不惊叹一声：Taro 插件机制设计的秒啊**。
+从而达到调用的是 `command/init.ts` 中的 `fn` 函数。**不得不惊叹一声：Taro 插件机制设计的妙啊**。
 
 强烈建议读者朋友们，空闲时自己看着文章，多尝试调试源码。单看文章，可能觉得看懂了，但自己调试可能会发现更多细节，收获更多。
 
