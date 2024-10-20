@@ -31,7 +31,7 @@
 	},
 	"homepage": "https://github.com/ruochuan12/blog#readme",
 	"dependencies": {
-		"rspress": "^1.34.0"
+		"rspress": "^1.34.1"
 	},
 	"devDependencies": {
 		"@release-it/conventional-changelog": "^5.1.1",
