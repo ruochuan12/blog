@@ -36,7 +36,7 @@ theme: smartblue
 等等
 ```
 
-## webpack 打包构建
+## 2. webpack 打包构建
 
 ```ts
 // packages/taro-webpack5-runner/src/index.mini.ts
@@ -72,8 +72,7 @@ export default async function build (appPath: string, rawConfig: IMiniBuildConfi
 }
 ```
 
-
-## 2. 输出打包编译 taro 的 webpack 配置
+## 3. 输出打包编译 taro 的 webpack 配置
 
 ```bash
 npx @tarojs/cli@latest init taro4-debug
@@ -242,10 +241,29 @@ function extractConfig (webpackConfig, extractPath: string | undefined) {
 
 ```
 
-## webpack 配置
+## 4. webpack 配置
+
+按文档配置顺序
 
 ```ts
 export default {
+  entry: {
+    app: [
+      '/Users/ruochuan/git-source/github/taro4-debug/src/app.ts'
+    ]
+  },
+  mode: 'production',
+  output: {},
+
+  module: {
+  },
+
+  resolve: {},
+  resolveLoader: {},
+
+  optimization: {},
+  plugins: [],
+  devtool: false,
   target: [
     'web',
     'es5'
@@ -253,11 +271,41 @@ export default {
   watchOptions: {
     aggregateTimeout: 200
   },
+  performance: {
+    maxEntrypointSize: 2000000
+  },
+}
+
+```
+
+### entry 入口
+
+```ts
+export default {
+  // 入口文件
+  entry: {
+    app: [
+      '/Users/ruochuan/git-source/github/taro4-debug/src/app.ts'
+    ]
+  }
+}
+```
+
+### mode
+
+```ts
+export default {
   mode: 'production',
-  devtool: false,
+}
+```
+
+### output
+
+```ts
+export default {
   output: {
     chunkLoadingGlobal: 'webpackJsonp',
-    path: '/Users/ruochuan/git-source/github/taro4-debug/dist',
+    path: '/Users/ruochuan/git-source/github/taro4.0.6-debug/dist',
     publicPath: '/',
     filename: '[name].js',
     chunkFilename: '[name].js',
@@ -265,64 +313,10 @@ export default {
     enabledLibraryTypes: [],
     devtoolModuleFilenameTemplate: function () { /* omitted long function */ }
   },
-  // 省略...，拆分在下方
 }
 ```
 
-### webpack.resolve
-
-```ts
-export default {
-  resolve: {
-    symlinks: true,
-    fallback: {
-      fs: false,
-      path: false
-    },
-    alias: {
-      'regenerator-runtime': '/Users/ruochuan/git-source/github/taro4-debug/node_modules/.pnpm/regenerator-runtime@0.11.1/node_modules/regenerator-runtime/runtime-module.js',
-      '@tarojs/runtime': '/Users/ruochuan/git-source/github/taro4-debug/node_modules/@tarojs/runtime/dist/index.js',
-      '@tarojs/shared': '/Users/ruochuan/git-source/github/taro4-debug/node_modules/@tarojs/shared/dist/index.js',
-      '@tarojs/components$': '@tarojs/plugin-platform-weapp/dist/components-react',
-      'react-dom$': '@tarojs/react',
-      'react-dom/client$': '@tarojs/react'
-    },
-    extensions: [
-      '.js',
-      '.jsx',
-      '.ts',
-      '.tsx',
-      '.mjs',
-      '.vue'
-    ],
-    mainFields: [
-      'browser',
-      'module',
-      'jsnext:main',
-      'main'
-    ],
-    plugins: [
-      /* config.resolve.plugin('MultiPlatformPlugin') */
-      new MultiPlatformPlugin(
-        'described-resolve',
-        'resolve',
-        {
-			// 省略对象
-		}
-      ),
-      /* config.resolve.plugin('tsconfig-paths') */
-      new TsconfigPathsPlugin()
-    ]
-  },
-  resolveLoader: {
-    modules: [
-      'node_modules'
-    ]
-  },
-}
-```
-
-### webpack.module
+### module
 
 ```ts
 export default {
@@ -467,7 +461,61 @@ export default {
 - @tarojs/webpack5-runner/dist/loaders/miniTemplateLoader.js
 - @tarojs/webpack5-runner/dist/loaders/miniXScriptLoader.js
 
-### webpack.optimization
+
+### resolve
+
+```ts
+export default {
+  resolve: {
+    symlinks: true,
+    fallback: {
+      fs: false,
+      path: false
+    },
+    alias: {
+      'regenerator-runtime': '/Users/ruochuan/git-source/github/taro4-debug/node_modules/.pnpm/regenerator-runtime@0.11.1/node_modules/regenerator-runtime/runtime-module.js',
+      '@tarojs/runtime': '/Users/ruochuan/git-source/github/taro4-debug/node_modules/@tarojs/runtime/dist/index.js',
+      '@tarojs/shared': '/Users/ruochuan/git-source/github/taro4-debug/node_modules/@tarojs/shared/dist/index.js',
+      '@tarojs/components$': '@tarojs/plugin-platform-weapp/dist/components-react',
+      'react-dom$': '@tarojs/react',
+      'react-dom/client$': '@tarojs/react'
+    },
+    extensions: [
+      '.js',
+      '.jsx',
+      '.ts',
+      '.tsx',
+      '.mjs',
+      '.vue'
+    ],
+    mainFields: [
+      'browser',
+      'module',
+      'jsnext:main',
+      'main'
+    ],
+    plugins: [
+      /* config.resolve.plugin('MultiPlatformPlugin') */
+      new MultiPlatformPlugin(
+        'described-resolve',
+        'resolve',
+        {
+			// 省略对象
+		}
+      ),
+      /* config.resolve.plugin('tsconfig-paths') */
+      new TsconfigPathsPlugin()
+    ]
+  },
+  resolveLoader: {
+    modules: [
+      'node_modules'
+    ]
+  },
+}
+```
+
+### optimization
 
 ```ts
 export default {
@@ -531,7 +579,7 @@ export default {
 }
 ```
 
-### webpack.plugins
+### plugins
 
 ```ts
 export default {
@@ -656,25 +704,34 @@ export default {
       }
     )
   ],
-  performance: {
-    maxEntrypointSize: 2000000
-  },
-  // 入口文件
-  entry: {
-    app: [
-      '/Users/ruochuan/git-source/github/taro4-debug/src/app.ts'
-    ]
-  }
 }
 ```
 
-## TaroMiniPlugin
+#### TaroMiniPlugin
 
 ```ts
 // packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
 
 export default class TaroMiniPlugin {
 	// ...
+}
+```
+
+### devtool、target、watchOptions、performance
+
+```ts
+export default {
+  devtool: false,
+  target: [
+    'web',
+    'es5'
+  ],
+  watchOptions: {
+    aggregateTimeout: 200
+  },
+  performance: {
+    maxEntrypointSize: 2000000
+  },
 }
 ```
 
