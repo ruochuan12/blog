@@ -19,7 +19,7 @@ theme: smartblue
 -   [x] [4. 每次 npm run dev:weapp 开发小程序，build 编译打包是如何实现的？](https://juejin.cn/post/7403193330271682612)
 -   [x] [5. 高手都在用的发布订阅机制 Events 在 Taro 中是如何实现的？](https://juejin.cn/post/7403915119448915977)
 -   [x] [6. 为什么通过 Taro.xxx 能调用各个小程序平台的 API，如何设计实现的?](https://juejin.cn/post/7407648740926291968)
--   [ ] [7. Taro.request 和请求响应拦截器是如何实现的](https://juejin.cn/post/7415911762128797696)
+-   [x] [7. Taro.request 和请求响应拦截器是如何实现的](https://juejin.cn/post/7415911762128797696)
 -   [ ] 等等
 
 前面 4 篇文章都是讲述编译相关的，CLI、插件机制、初始化项目、编译构建流程。
@@ -106,6 +106,7 @@ npx taro inspect -t weapp -o webpack.config.js
 原理
 
 ```ts
+// packages/taro-cli/src/presets/commands/inspect.ts
 import * as path from 'node:path'
 
 import {
@@ -255,7 +256,7 @@ export default {
 
 ```
 
-### entry 入口
+### 4.1 entry 入口
 
 入口对象是用于 webpack 查找开始构建 bundle 的地方。上下文是入口文件所处的目录的绝对路径的字符串。
 
@@ -270,7 +271,7 @@ export default {
 }
 ```
 
-### mode 模式
+### 4.2 mode 模式
 
 提供 `mode` 配置选项，告知 `webpack` 使用相应模式的内置优化。
 
@@ -282,7 +283,7 @@ export default {
 }
 ```
 
-### output 输出
+### 4.3 output 输出
 
 `output` 位于对象最顶级键(`key`)，包括了一组选项，指示 `webpack` 如何去输出、以及在哪里输出你的「`bundle`、`asset` 和其他你所打包或使用 `webpack` 载入的任何内容」。
 
@@ -301,12 +302,13 @@ export default {
 }
 ```
 
-### module 模块
+### 4.4 module 模块
 
 这些选项决定了如何处理项目中的不同类型的模块。
 
 ```ts
 export default {
+  // 代码有删减
   module: {
     rules: [
       /* config.module.rule('sass') */
@@ -333,92 +335,125 @@ export default {
       {
         test: /\.(css|qss|jxss|wxss|acss|ttss)(\?.*)?$/,
       },
-      /* config.module.rule('script') */
-      {
-        test: /\.m?[tj]sx?$/i,
-        include: [
-          '/Users/ruochuan/git-source/github/taro4-debug/src',
-          filename => /(?<=node_modules[\\/]).*taro/.test(filename)
-        ],
-        use: [
-          /* config.module.rule('script').use('babelLoader') */
-          {
-            loader: '/Users/ruochuan/git-source/github/taro4-debug/node_modules/.pnpm/babel-loader@8.2.1_@babel+core@7.26.0_webpack@5.91.0_@swc+core@1.3.96_/node_modules/babel-loader/lib/index.js',
-            options: {
-              compact: false
-            }
-          }
-        ]
-      },
-      /* config.module.rule('template') */
-      {
-        test: /\.(wxml|axml|ttml|qml|swan|jxml)(\?.*)?$/,
-        type: 'asset/resource',
-        generator: {
-          filename: function () { /* omitted long function */ }
-        },
-        use: [
-          /* config.module.rule('template').use('0') */
-          {
-            loader: '/Users/ruochuan/git-source/github/taro4-debug/node_modules/.pnpm/@tarojs+webpack5-runner@4.0.7_@babel+core@7.26.0_@swc+core@1.3.96_@tarojs+runtime@4.0.7_less@_emqo6xqihzcps7l7vcv6fz65aa/node_modules/@tarojs/webpack5-runner/dist/loaders/miniTemplateLoader.js',
-            options: {
-              buildAdapter: 'weapp'
-            }
-          }
-        ]
-      },
-      /* config.module.rule('xscript') */
-      {
-        test: /\.wxs$/,
-        type: 'asset/resource',
-        generator: {
-          filename: function () { /* omitted long function */ }
-        },
-        use: [
-          /* config.module.rule('xscript').use('0') */
-          {
-            loader: '/Users/ruochuan/git-source/github/taro4-debug/node_modules/.pnpm/@tarojs+webpack5-runner@4.0.7_@babel+core@7.26.0_@swc+core@1.3.96_@tarojs+runtime@4.0.7_less@_emqo6xqihzcps7l7vcv6fz65aa/node_modules/@tarojs/webpack5-runner/dist/loaders/miniXScriptLoader.js'
-          }
-        ]
-      },
-      /* config.module.rule('media') */
-      {
-        test: /\.(mp4|webm|ogg|mp3|m4a|wav|flac|aac)(\?.*)?$/,
-        type: 'asset',
-        parser: {
-          dataUrlCondition: {
-            maxSize: 10240
-          }
-        },
-        generator: {
-          emit: undefined,
-          outputPath: undefined,
-          publicPath: undefined,
-          filename: function () { /* omitted long function */ }
-        }
-      },
-      /* config.module.rule('font') */
-      {
-        test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
-        type: 'asset',
-		// 省略
-      },
-      /* config.module.rule('image') */
-      {
-        test: /\.(png|jpe?g|gif|bpm|svg|webp)(\?.*)?$/,
-        type: 'asset',
-		// 省略
-      }
+	  // 还有其他配置，拆分到下文
     ]
   },
 }
 ```
 
+#### 4.4.1 config.module.rule('script')
+
+```ts
+/* config.module.rule('script') */
+{
+	test: /\.m?[tj]sx?$/i,
+	include: [
+		'/Users/ruochuan/git-source/github/taro4-debug/src',
+		filename => /(?<=node_modules[\\/]).*taro/.test(filename)
+	],
+	use: [
+		/* config.module.rule('script').use('babelLoader') */
+		{
+			loader: '/Users/ruochuan/git-source/github/taro4-debug/node_modules/.pnpm/babel-loader@8.2.1_@babel+core@7.26.0_webpack@5.91.0_@swc+core@1.3.96_/node_modules/babel-loader/lib/index.js',
+			options: {
+				compact: false
+			}
+		}
+	]
+},
+```
+
+#### 4.4.2 config.module.rule('template')
+
+```ts
+/* config.module.rule('template') */
+{
+	test: /\.(wxml|axml|ttml|qml|swan|jxml)(\?.*)?$/,
+	type: 'asset/resource',
+	generator: {
+		filename: function () { /* omitted long function */ }
+	},
+	use: [
+		/* config.module.rule('template').use('0') */
+		{
+			loader: '/Users/ruochuan/git-source/github/taro4-debug/node_modules/.pnpm/@tarojs+webpack5-runner@4.0.7_@babel+core@7.26.0_@swc+core@1.3.96_@tarojs+runtime@4.0.7_less@_emqo6xqihzcps7l7vcv6fz65aa/node_modules/@tarojs/webpack5-runner/dist/loaders/miniTemplateLoader.js',
+			options: {
+				buildAdapter: 'weapp'
+			}
+		}
+	]
+},
+```
 
 - @tarojs/webpack5-runner/dist/loaders/miniTemplateLoader.js
+
+#### 4.4.3 config.module.rule('xscript')
+
+```ts
+/* config.module.rule('xscript') */
+{
+	test: /\.wxs$/,
+	type: 'asset/resource',
+	generator: {
+		filename: function () { /* omitted long function */ }
+	},
+	use: [
+		/* config.module.rule('xscript').use('0') */
+		{
+			loader: '/Users/ruochuan/git-source/github/taro4-debug/node_modules/.pnpm/@tarojs+webpack5-runner@4.0.7_@babel+core@7.26.0_@swc+core@1.3.96_@tarojs+runtime@4.0.7_less@_emqo6xqihzcps7l7vcv6fz65aa/node_modules/@tarojs/webpack5-runner/dist/loaders/miniXScriptLoader.js'
+		}
+	]
+},
+```
+
 - @tarojs/webpack5-runner/dist/loaders/miniXScriptLoader.js
 
-### resolve 解析
+#### 4.4.4 config.module.rule('media')
+
+```ts
+/* config.module.rule('media') */
+{
+	test: /\.(mp4|webm|ogg|mp3|m4a|wav|flac|aac)(\?.*)?$/,
+	type: 'asset',
+	parser: {
+		dataUrlCondition: {
+			maxSize: 10240
+		}
+	},
+	generator: {
+		emit: undefined,
+		outputPath: undefined,
+		publicPath: undefined,
+		filename: function () { /* omitted long function */ }
+	}
+},
+```
+
+#### 4.4.5 config.module.rule('font')
+
+```ts
+/* config.module.rule('font') */
+{
+	test: /\.(woff2?|eot|ttf|otf)(\?.*)?$/,
+	type: 'asset',
+	// 省略
+},
+```
+
+#### 4.4.5 config.module.rule('image')
+
+```ts
+
+/* config.module.rule('image') */
+{
+	test: /\.(png|jpe?g|gif|bpm|svg|webp)(\?.*)?$/,
+	type: 'asset',
+	// 省略
+}
+```
+
+
+### 4.5 resolve 解析
 
 这些选项能设置模块如何被解析。webpack 提供合理的默认值，但是还是可能会修改一些解析的细节。关于 resolver 具体如何工作的更多解释说明，请查看[模块解析](https://webpack.docschina.org/concepts/module-resolution)。
 
@@ -475,7 +510,7 @@ export default {
 }
 ```
 
-### optimization 优化
+### 4.6 optimization 优化
 
 从 webpack 4 开始，会根据你选择的 mode 来执行不同的优化， 不过所有的优化还是可以手动配置和重写。
 
@@ -541,7 +576,7 @@ export default {
 }
 ```
 
-### plugins 插件
+### 4.7 plugins 插件
 
 `plugins` 选项用于以各种方式自定义 `webpack` 构建过程。`webpack` 附带了各种内置插件，可以通过 `webpack.[plugin-name]` 访问这些插件。请查看 插件页面 获取插件列表和对应文档，但请注意这只是其中一部分，社区中还有许多插件。
 
@@ -567,12 +602,11 @@ export default {
 }
 ```
 
-#### ProvidePlugin
+#### 4.7.1 ProvidePlugin
 
 ```ts
 /* config.plugin('providerPlugin') */
-new ProvidePlugin(
-	{
+new ProvidePlugin({
 	window: [
 		'@tarojs/runtime',
 		'window'
@@ -621,16 +655,14 @@ new ProvidePlugin(
 		'@tarojs/runtime',
 		'URL'
 	]
-	}
-),
+}),
 ```
 
-#### DefinePlugin
+#### 4.7.2 DefinePlugin
 
 ```ts
 /* config.plugin('definePlugin') */
-new DefinePlugin(
-	{
+new DefinePlugin({
 	'process.env.FRAMEWORK': '"react"',
 	'process.env.TARO_ENV': '"weapp"',
 	'process.env.TARO_PLATFORM': '"mini"',
@@ -643,28 +675,24 @@ new DefinePlugin(
 	ENABLE_CLONE_NODE: false,
 	ENABLE_CONTAINS: false,
 	ENABLE_MUTATION_OBSERVER: false
-	}
-),
+}),
 ```
 
-#### MiniCssExtractPlugin
+#### 4.7.3 MiniCssExtractPlugin
 
 ```ts
 /* config.plugin('miniCssExtractPlugin') */
-new MiniCssExtractPlugin(
-	{
+new MiniCssExtractPlugin({
 	filename: '[name].wxss',
 	chunkFilename: '[name].wxss'
-	}
-),
+}),
 ```
 
-#### MiniSplitChunksPlugin
+#### 4.7.4 MiniSplitChunksPlugin
 
 ```ts
 /* config.plugin('miniSplitChunksPlugin') */
-new MiniSplitChunksPlugin(
-	{
+new MiniSplitChunksPlugin({
 	exclude: undefined,
 	fileType: {
 		templ: '.wxml',
@@ -676,16 +704,14 @@ new MiniSplitChunksPlugin(
 	combination: {
 		// 省略...
 	}
-	}
-),
+}),
 ```
 
-#### TaroMiniPlugin
+#### 4.7.5 TaroMiniPlugin
 
 ```js
 /* config.plugin('miniPlugin') */
-new TaroMiniPlugin(
-	{
+new TaroMiniPlugin({
 	commonChunks: [
 		'runtime',
 		'vendors',
@@ -710,10 +736,10 @@ new TaroMiniPlugin(
 		platform: 'weapp',
 		designWidth: 750,
 		deviceRatio: {
-		'375': 2,
-		'640': 1.17,
-		'750': 1,
-		'828': 0.905
+			'375': 2,
+			'640': 1.17,
+			'750': 1,
+			'828': 0.905
 		}
 	},
 	hot: false,
@@ -723,8 +749,7 @@ new TaroMiniPlugin(
 	loaderMeta: {
 		// 省略...
 	}
-	}
-)
+})
 ```
 
 ```ts
@@ -735,7 +760,7 @@ export default class TaroMiniPlugin {
 }
 ```
 
-### devtool
+### 4.8 devtool
 
 ```ts
 export default {
@@ -757,20 +782,20 @@ export default {
 
 使用 SourceMapDevToolPlugin 进行更细粒度的配置。查看 source-map-loader 来处理已有的 source map。
 
-### target 构建目标
+### 4.9 target 构建目标
 
 构建目标(Targets)
 webpack 能够为多种环境或 target 构建编译。想要理解什么是 target 的详细信息， 请阅读 target 概念页面。
 
-### watchOptions 监测选项
+### 4.10 watchOptions 监测选项
 
 Webpack 可以监听文件变化，当它们修改后会重新编译。这个页面介绍了如何启用这个功能，以及当 watch 无法正常运行的时候你可以做的一些调整。
 
-### performance 性能
+### 4.11 performance 性能
 
 这些选项可以控制 webpack 如何通知「资源(asset)和入口起点超过指定文件限制」。 此功能受到 webpack 性能评估的启发。
 
-## 总结
+## 5. 总结
 
 下一篇文章再看是如何组织成 webpack 配置的。
 
