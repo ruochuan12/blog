@@ -73,6 +73,7 @@ export default async function build (appPath: string, rawConfig: IMiniBuildConfi
 ```
 
 ```js
+// 重点就以下这几句
 const combination = new MiniCombination(appPath, rawConfig)
 await combination.make()
 const webpackConfig = combination.chain.toConfig()
@@ -189,7 +190,7 @@ export default (ctx: IPluginContext) => {
 
 ```
 
-搜索
+在 `taro` 源码中，搜索 `onWebpackChainReady`，可以搜索到调用的地方。
 
 [webpack-chain](https://github.com/neutrinojs/webpack-chain)
 
@@ -212,10 +213,10 @@ function onWebpackChainReady(chain){
 	const { toString } = chain.constructor
 	const config = extractConfig(webpackConfig, extractPath)
 	const res = toString(config)
-	// 输出到控制台
-	// 写入文件
+	// 根据传入的模式参数，输出到控制台或者写入文件
 }
 
+// 调用
 onWebpackChainReady(new Chain())
 ```
 
@@ -270,6 +271,10 @@ export default {
   }
 }
 ```
+
+打包后的入口 `app.js`，如图所示：
+
+![入口打包](./images/app.png)
 
 ### 4.2 mode 模式
 
@@ -440,7 +445,7 @@ export default {
 },
 ```
 
-#### 4.4.5 config.module.rule('image')
+#### 4.4.6 config.module.rule('image')
 
 ```ts
 
@@ -451,7 +456,6 @@ export default {
 	// 省略
 }
 ```
-
 
 ### 4.5 resolve 解析
 
@@ -509,6 +513,8 @@ export default {
   },
 }
 ```
+
+创建 `import` 或 `require` 的别名，来确保模块引入变得更简单。[resolvealias](https://webpack.docschina.org/configuration/resolve/#resolvealias)
 
 ### 4.6 optimization 优化
 
