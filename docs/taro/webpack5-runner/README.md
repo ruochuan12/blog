@@ -192,22 +192,7 @@ export default (ctx: IPluginContext) => {
 
 在 `taro` 源码中，搜索 `onWebpackChainReady`，可以搜索到调用的地方。
 
-[webpack-chain](https://github.com/neutrinojs/webpack-chain)
-
 ```ts
-const Chain = require('webpack-chain');
-
-class Chain{
-    static toString(){
-       console.log('string');
-		return {};
-    }
-    toConfig(){
-        console.log('toConfig');
-		return {};
-    }
-}
-
 function onWebpackChainReady(chain){
 	const webpackConfig = chain.toConfig()
 	const { toString } = chain.constructor
@@ -217,12 +202,36 @@ function onWebpackChainReady(chain){
 }
 
 // 调用
-onWebpackChainReady(new Chain())
+onWebpackChainReady(chain)
 ```
+
+其中 `chain` 是 `webpack-chain` 的实例对象。
+
+```ts
+const Chain = require('webpack-chain');
+```
+
+根据上述用法，可以推断 `webpack-chain` 简版代码，有 `class Chain` 类，`toString` 静态方法和 `toConfig` 实例对象方法。可以简单实现 Chain 类如下所示。
+
+```ts
+class Chain{
+	constructor(){}
+    static toString(){
+       console.log('string');
+		return JSON.stringify({});
+    }
+    toConfig(){
+        console.log('toConfig');
+		return {};
+    }
+}
+```
+
+感兴趣的小伙伴可以查看其源码[webpack-chain](https://github.com/neutrinojs/webpack-chain/blob/main/src/Config.js#L47)
 
 ## 4. webpack 配置
 
-按文档配置整理顺序
+按 [`webpack` 文档配置](https://webpack.docschina.org/configuration/)顺序，整理 `taro` 的 `webpack` 配置对象属性的顺序如下。
 
 ```ts
 export default {
