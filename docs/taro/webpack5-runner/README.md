@@ -3,7 +3,7 @@ highlight: darcula
 theme: smartblue
 ---
 
-# Taro 源码揭秘：8. taro 是如何使用 webpack 打包构建小程序的
+# Taro 源码揭秘：8. Taro 是如何使用 webpack 打包构建小程序的？
 
 ## 1. 前言
 
@@ -11,7 +11,7 @@ theme: smartblue
 
 截至目前（`2024-11-07`），目前最新是 [`4.0.7`](https://github.com/NervJS/taro/releases/tag/v4.0.7)，官方`4.0`正式版本的介绍文章暂未发布。官方之前发过[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。
 
-计划写一个 Taro 源码揭秘系列，欢迎持续关注。
+计划写一个 Taro 源码揭秘系列，博客地址：[https://ruochuan12.github.io/taro](https://ruochuan12.github.io/taro) 可以加入书签，持续关注[若川](https://juejin.cn/user/1415826704971918)。
 
 -   [x] [1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
 -   [x] [2. 揭开整个架构的插件系统的秘密](https://juejin.cn/post/7380195796208205824)
@@ -24,7 +24,7 @@ theme: smartblue
 
 前面 4 篇文章都是讲述编译相关的，CLI、插件机制、初始化项目、编译构建流程。
 第 5-7 篇讲述的是运行时相关的 Events、API、request 等。
-第 8 篇接着继续追随第4篇 npm run dev:weapp 的脚步，继续分析 `@tarojs/webpack5-runner`。
+第 8 篇接着继续追随第4篇 npm run dev:weapp 的脚步，继续分析 `@tarojs/webpack5-runner`，Taro 是如何使用 webpack 打包构建小程序的？
 
 关于克隆项目、环境准备、如何调试代码等，参考[第一篇文章-准备工作、调试](https://juejin.cn/post/7378363694939783178#heading-1)。后续文章基本不再过多赘述。
 
@@ -32,7 +32,7 @@ theme: smartblue
 
 ```bash
 1. 如何输出项目的 webpack 配置，原理是什么
-2. taro 生成的 webpack 配置解读
+2. Taro 生成的 webpack 配置解读
 等等
 ```
 
@@ -104,7 +104,7 @@ cd taro4-debug
 npx taro -h
 ```
 
-如下图
+如下图所示：
 ![taro-help](./images/taro-help.png)
 
 ```bash
@@ -212,6 +212,8 @@ export default (ctx: IPluginContext) => {
     }
 ```
 
+`ctx.applyPlugins` 触发平台插件 `weapp`，传入 config ，传入两个钩子函数 `modifyWebpackChain`、`onWebpackChainReady`。
+
 在 `taro` 源码中，搜索 `onWebpackChainReady`，可以搜索到调用的地方。
 
 ```ts
@@ -249,7 +251,7 @@ class Chain{
 }
 ```
 
-感兴趣的小伙伴可以查看其源码[webpack-chain](https://github.com/neutrinojs/webpack-chain/blob/main/src/Config.js#L47)
+感兴趣的小伙伴可以查看其源码 [webpack-chain](https://github.com/neutrinojs/webpack-chain/blob/main/src/Config.js#L47)
 
 ## 4. webpack 配置
 
@@ -655,6 +657,10 @@ export default {
 
 #### 4.6.2 optimization.minimizer
 
+[optimization.minimizer](https://webpack.docschina.org/configuration/optimization/#optimizationminimizer)
+
+允许你通过提供一个或多个定制过的 `TerserPlugin` 实例，覆盖默认压缩工具(`minimizer`)。
+
 ```ts
 export default {
   optimization: {
@@ -686,7 +692,7 @@ export default {
 }
 ```
 
-压缩代码插件 [TerserPlugin](https://www.npmjs.com/package/terser-webpack-plugin)
+压缩代码插件 [terser-webpack-plugin](https://www.npmjs.com/package/terser-webpack-plugin)
 压缩 css 插件 [css-minimizer-webpack-plugin](https://www.npmjs.com/package/css-minimizer-webpack-plugin)
 
 ### 4.7 plugins 插件
@@ -914,13 +920,40 @@ Webpack 可以监听文件变化，当它们修改后会重新编译。这个页
 
 ## 5. 总结
 
-行文至此，我们来总结下本文内容。通过 `npx taro -h` 得知 `inspect` 命令。
+行文至此，我们来总结下本文内容。
+
+通过 `npx @tarojs/taro init taro4-debug` 初始化项目。
+
+通过 `npx taro -h` 得知 `inspect` 命令，可以指定平台和路径，输出项目中的 `webpack` 配置。
 
 ```bash
 npx taro inspect -t weapp -o webpack.config.js
 ```
 
-根据文档，分析了 `webpack` 配置。
+根据文档，分析了 `webpack` 配置，包括 `entry、mode、output、 module、 resolve、optimization、plugins` 等配置。
+
+```ts
+{
+	entry: {
+		app: [
+			'/Users/ruochuan/git-source/github/taro4-debug/src/app.ts'
+		]
+	}
+}
+```
+
+打包后入口文件生成 `app.js`。
+
+module 配置 rules 针对各种文件使用相应的 loader 解析文件。比如图片、字体文件、视频文件，less、sass、js 等。
+针对小程序特定的文件类型，写了特定的 loader 进行处理。
+- tempate => miniTemplateLoader => 源码路径 packages/taro-webpack5-runner/src/loaders/miniTemplateLoader.ts
+- wxs => miniXScriptLoader => 源码路径 packages/taro-webpack5-runner/src/loaders/miniXScriptLoader.ts
+
+`resolve` 解析中的 `alias` 配置了 `regenerator-runtime、@tarojs/runtime、@tarojs/shared、@tarojs/components$、react-dom$、react-dom/client$`
+
+optimization 优化中的 `splitChunks` 分割 `common、taro、vendors` 模块，minimizer 配置了压缩代码插件 [terser-webpack-plugin](https://www.npmjs.com/package/terser-webpack-plugin)、压缩 css 插件 [css-minimizer-webpack-plugin](https://www.npmjs.com/package/css-minimizer-webpack-plugin)
+
+plugins 插件配置中，配置了 webpack.ProvidePlugin、DefinePlugin、MiniCssExtractPlugin 提取 css 到单独文件中、MiniSplitChunksPlugin、TaroMiniPlugin 插件。
 
 后续有时间再单独写文章，分析是如何组织成 `webpack` 配置的。
 

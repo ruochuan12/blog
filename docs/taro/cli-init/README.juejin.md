@@ -13,7 +13,7 @@ theme: smartblue
 
 ![多编译内核架构](https://p3-juejin.byteimg.com/tos-cn-i-k3u1fbpfcp/85718d9f74004f45910a2c7459f999ab~tplv-k3u1fbpfcp-jj-mark:0:0:0:0:q75.image#?w=960&h=540&s=363552&e=png&b=030617)
 
-计划写一个 `taro` 源码揭秘系列，欢迎持续关注。初步计划有如下文章：
+计划写一个 Taro 源码揭秘系列，博客地址：[https://ruochuan12.github.io/taro](https://ruochuan12.github.io/taro) 可以加入书签，持续关注[若川](https://juejin.cn/user/1415826704971918)。
 
 *   [x] [Taro 源码揭秘 - 1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
 *   [x] [Taro 源码揭秘 - 2. 揭开整个架构的插件系统的秘密](https://juejin.cn/post/7380195796208205824)

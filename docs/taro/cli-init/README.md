@@ -3,7 +3,7 @@ highlight: darcula
 theme: smartblue
 ---
 
-# Taro 源码揭秘 - 1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密
+# Taro 源码揭秘：1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密
 
 ## 1. 前言
 
@@ -15,7 +15,7 @@ theme: smartblue
 
 ![多编译内核架构](./images/taro/kernal.png)
 
-计划写一个 `taro` 源码揭秘系列，欢迎持续关注。初步计划有如下文章：
+计划写一个 Taro 源码揭秘系列，博客地址：[https://ruochuan12.github.io/taro](https://ruochuan12.github.io/taro) 可以加入书签，持续关注[若川](https://juejin.cn/user/1415826704971918)。
 
 -   [x] [1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
 -   [x] [2. 揭开整个架构的插件系统的秘密](https://juejin.cn/post/7380195796208205824)
