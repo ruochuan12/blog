@@ -3,15 +3,15 @@ highlight: darcula
 theme: smartblue
 ---
 
-# Taro 源码系列 - 8. webpack5
+# Taro 源码揭秘：8. taro 是如何使用 webpack 打包构建小程序的
 
 ## 1. 前言
 
 大家好，我是[若川](https://ruochuan12.github.io)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
 
-截至目前（`2024-10-28`），目前最新是 [`4.0.7`](https://github.com/NervJS/taro/releases/tag/v4.0.7)，官方`4.0`正式版本的介绍文章暂未发布。官方之前发过[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。
+截至目前（`2024-11-07`），目前最新是 [`4.0.7`](https://github.com/NervJS/taro/releases/tag/v4.0.7)，官方`4.0`正式版本的介绍文章暂未发布。官方之前发过[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。
 
-计划写一个 `taro` 源码揭秘系列，欢迎持续关注。
+计划写一个 Taro 源码揭秘系列，欢迎持续关注。
 
 -   [x] [1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
 -   [x] [2. 揭开整个架构的插件系统的秘密](https://juejin.cn/post/7380195796208205824)
@@ -24,19 +24,23 @@ theme: smartblue
 
 前面 4 篇文章都是讲述编译相关的，CLI、插件机制、初始化项目、编译构建流程。
 第 5-7 篇讲述的是运行时相关的 Events、API、request 等。
-第 8 篇接着继续追随第4篇 npm run dev:weapp 的脚步，继续研究 `@tarojs/webpack5-runner`。
+第 8 篇接着继续追随第4篇 npm run dev:weapp 的脚步，继续分析 `@tarojs/webpack5-runner`。
 
 关于克隆项目、环境准备、如何调试代码等，参考[第一篇文章-准备工作、调试](https://juejin.cn/post/7378363694939783178#heading-1)。后续文章基本不再过多赘述。
 
 学完本文，你将学到：
 
 ```bash
-1. 输出 webpack 配置
-2. webpack 配置简单解读
+1. 如何输出项目的 webpack 配置，原理是什么
+2. taro 生成的 webpack 配置解读
 等等
 ```
 
 ## 2. webpack 打包构建
+
+[4. 每次 npm run dev:weapp 开发小程序，build 编译打包是如何实现的？](https://juejin.cn/post/7403193330271682612)
+
+在第4篇文章末尾，我们可以回顾下，如何获取 `webpack` 配置和 执行 `webpack()` 构建的。
 
 ```ts
 // packages/taro-webpack5-runner/src/index.mini.ts
@@ -74,13 +78,18 @@ export default async function build (appPath: string, rawConfig: IMiniBuildConfi
 
 ```js
 // 重点就以下这几句
+// 生成获取 webpack 配置，执行 webpack(webpackConfig)
 const combination = new MiniCombination(appPath, rawConfig)
 await combination.make()
 const webpackConfig = combination.chain.toConfig()
 const compiler = webpack(webpackConfig)
 ```
 
+我们可以调试代码，从这里输出 `webpackConfig`。不过我们使用另外一种，脚手架提供的 `inspect`。
+
 ## 3. 输出打包编译 taro 的 webpack 配置
+
+我们先初始化一个 `Taro` 项目。
 
 ```bash
 npx @tarojs/cli@latest init taro4-debug
@@ -92,6 +101,22 @@ npx @tarojs/cli@latest init taro4-debug
 
 ```bash
 cd taro4-debug
+npx taro -h
+```
+
+如下图
+![taro-help](./images/taro-help.png)
+
+```bash
+npx taro inspect -h
+```
+
+如下图所示：
+![taro-inspect-help](./images/taro-inspect-help.png)
+
+我们可以知道，-t 指定 weapp -o 指定路径（文件名）
+
+```bash
 # 把 taro 编译微信小程序的 webpack 配置输出到了 webpack.config.js 文件
 npx taro inspect -t weapp -o webpack.config.js
 ```
@@ -100,28 +125,17 @@ npx taro inspect -t weapp -o webpack.config.js
 
 ![webpack.config.js 配置](./images/webpack.config.js.png)
 
-[webpack 中文文档](https://webpack.docschina.org/configuration/plugins/#plugins)
+输出的 webpack 配置文件，有足足 2.4w 行，想想就害怕，不过放心，我们肯定要删减的，只看重点。
 
-[webpack 英文文档](https://webpack.js.org/configuration/plugins/#plugins)
+我们先来看 inspect 插件源码，分析其原理。
 
-原理
+### 3.1 inspect 插件
+
+我们可以从第二篇文章，[2. 揭开整个架构的插件系统的秘密](https://juejin.cn/post/7380195796208205824)
+得知，找到对应插件的源码路径 `packages/taro-cli/src/presets/commands/inspect.ts`。
 
 ```ts
 // packages/taro-cli/src/presets/commands/inspect.ts
-import * as path from 'node:path'
-
-import {
-  ENTRY,
-  OUTPUT_DIR,
-  resolveScriptPath,
-  SOURCE_DIR
-} from '@tarojs/helper'
-import { getPlatformType } from '@tarojs/shared'
-
-import * as hooks from '../constant'
-
-import type { IPluginContext } from '@tarojs/service'
-
 export default (ctx: IPluginContext) => {
   ctx.registerCommand({
     name: 'inspect',
@@ -135,6 +149,19 @@ export default (ctx: IPluginContext) => {
       'taro inspect --type weapp plugins',
       'taro inspect --type weapp module.rules.0'
     ],
+    async fn ({ _, options }) {
+		// 省略，拆分到下方讲述
+	}
+  })
+}
+
+// 省略代码
+
+```
+
+### 3.2 fn 函数
+
+```ts
     async fn ({ _, options }) {
       const { fs, chalk } = ctx.helper
       const platform = options.type || options.t
@@ -183,11 +210,6 @@ export default (ctx: IPluginContext) => {
         }
       })
     }
-  })
-}
-
-// 省略代码
-
 ```
 
 在 `taro` 源码中，搜索 `onWebpackChainReady`，可以搜索到调用的地方。
@@ -231,6 +253,8 @@ class Chain{
 
 ## 4. webpack 配置
 
+[webpack 中文文档](https://webpack.docschina.org/configuration/plugins/#plugins)、[webpack 英文文档](https://webpack.js.org/configuration/plugins/#plugins)
+
 按 [`webpack` 文档配置](https://webpack.docschina.org/configuration/)顺序，整理 `taro` 的 `webpack` 配置对象属性的顺序如下。
 
 ```ts
@@ -265,6 +289,8 @@ export default {
 }
 
 ```
+
+接下来，我们逐一解释这些配置。
 
 ### 4.1 entry 入口
 
@@ -355,6 +381,10 @@ export default {
 }
 ```
 
+针对 `.sass`、`.scss`、`.less`、`.stylus` 文件采用对应的 `loader` 的处理。
+
+和 `normalCss` （`css|qss|jxss|wxss|acss|ttss`）各平台的小程序自身的 `css` 文件的处理。
+
 #### 4.4.1 config.module.rule('script')
 
 ```ts
@@ -376,6 +406,8 @@ export default {
 	]
 },
 ```
+
+针对 js 的采用 `babel-loader` 处理。
 
 #### 4.4.2 config.module.rule('template')
 
@@ -399,7 +431,9 @@ export default {
 },
 ```
 
-- @tarojs/webpack5-runner/dist/loaders/miniTemplateLoader.js
+针对各个平台的小程序模板，采用自定义的 `miniTemplateLoader` 处理。
+
+对应的源码路径是 `@tarojs/webpack5-runner/dist/loaders/miniTemplateLoader.js`
 
 #### 4.4.3 config.module.rule('xscript')
 
@@ -420,7 +454,9 @@ export default {
 },
 ```
 
-- @tarojs/webpack5-runner/dist/loaders/miniXScriptLoader.js
+针对 `wxs` 文件，采用自定义的 `miniXScriptLoader` 处理。
+
+对应的源码路径是 `@tarojs/webpack5-runner/dist/loaders/miniXScriptLoader.js`。
 
 #### 4.4.4 config.module.rule('media')
 
@@ -442,6 +478,8 @@ export default {
 	}
 },
 ```
+
+对于视频文件，采用 资源 `type: 'asset'` 处理。
 
 #### 4.4.5 config.module.rule('font')
 
@@ -468,7 +506,7 @@ export default {
 
 ### 4.5 resolve 解析
 
-这些选项能设置模块如何被解析。webpack 提供合理的默认值，但是还是可能会修改一些解析的细节。关于 resolver 具体如何工作的更多解释说明，请查看[模块解析](https://webpack.docschina.org/concepts/module-resolution)。
+这些选项能设置模块如何被解析。`webpack` 提供合理的默认值，但是还是可能会修改一些解析的细节。关于 resolver 具体如何工作的更多解释说明，请查看[模块解析](https://webpack.docschina.org/concepts/module-resolution)。
 
 ```ts
 export default {
@@ -486,20 +524,8 @@ export default {
       'react-dom$': '@tarojs/react',
       'react-dom/client$': '@tarojs/react'
     },
-    extensions: [
-      '.js',
-      '.jsx',
-      '.ts',
-      '.tsx',
-      '.mjs',
-      '.vue'
-    ],
-    mainFields: [
-      'browser',
-      'module',
-      'jsnext:main',
-      'main'
-    ],
+    extensions: ['.js', '.jsx', '.ts', '.tsx', '.mjs', '.vue'],
+    mainFields: ['browser', 'module', 'jsnext:main', 'main'],
     plugins: [
       /* config.resolve.plugin('MultiPlatformPlugin') */
       new MultiPlatformPlugin(
@@ -523,7 +549,48 @@ export default {
 }
 ```
 
+`symlinks`
+
+是否将符号链接(symlink)解析到它们的符号链接位置(symlink location)。
+
+`alias`
+
 创建 `import` 或 `require` 的别名，来确保模块引入变得更简单。[resolvealias](https://webpack.docschina.org/configuration/resolve/#resolvealias)
+
+平时引入的是组件 `@tarojs/components$` 最终对应平台的 `@tarojs/plugin-platform-weapp/dist/components-react`
+`react-dom$` 对应 `@tarojs/react`。
+
+`extensions`
+
+尝试按顺序解析这些后缀名。如果有多个文件有相同的名字，但后缀名不同，webpack 会解析列在数组首位的后缀的文件 并跳过其余的后缀。
+
+`mainFields`
+
+当从 `npm` 包中导入模块时（例如，`import * as D3 from 'd3'`），此选项将决定在 package.json 中使用哪个字段导入模块。根据 webpack 配置中指定的 `target` 不同，默认值也会有所不同。
+
+`plugins`
+
+应该使用的额外的解析插件列表。
+
+`MultiPlatformPlugin`
+
+此 `enhance-resolve` 插件用于根据当前编译的平台，解析多端文件的后缀。
+
+有些场景，单纯的根据平台变量 `process.env.TARO_ENV` 在一个文件里写判断，相对麻烦。这时就可以直接拆分写多个文件。
+
+`src/index.[js|ts|jsx|tsx]`
+
+比如 微信小程序端 `src/index.weapp.[js|ts|jsx|tsx]`
+H5 端 `src/index.h5.[js|ts|jsx|tsx]`，这样就会根据平台直接读取对应文件。
+
+`TsconfigPathsPlugin`
+
+[tsconfig-paths-webpack-plugin](https://www.npmjs.com/package/tsconfig-paths-webpack-plugin)
+是一个 webpack 插件，它通过解析 TypeScript 导入路径来帮助提高 TypeScript 构建的性能。
+
+当您导入 TypeScript 模块时，webpack 需要将导入路径解析为相应的 TypeScript 文件。默认情况下，webpack 通过在“node_modules”目录中搜索 TypeScript 文件来执行此操作。但是，这可能效率低下，尤其是当您的项目有很多依赖项时。
+
+`tsconfig-paths-webpack-plugin` 提供了一种更高效的方法来解析 TypeScript 导入路径。它通过读取项目的 `tsconfig.json` 文件并生成一组规则来实现此目的，webpack 可以使用这些规则来解析导入路径。这意味着即使您的项目有很多依赖项，webpack 也可以快速轻松地解析导入路径。
 
 ### 4.6 optimization 优化
 
@@ -539,6 +606,23 @@ export default {
       name: 'runtime'
     },
     splitChunks: {
+		// 省略，拆开到下方
+	},
+    minimizer: [
+		// 省略，拆开到下方
+	]
+  },
+}
+```
+
+#### 4.6.1 optimization.splitChunks
+
+对于动态导入模块，默认使用 webpack v4+ 提供的全新的通用分块策略(common chunk strategy)。请在 [SplitChunksPlugin](https://webpack.docschina.org/plugins/split-chunks-plugin/) 页面中查看配置其行为的可用选项。
+
+```ts
+export default {
+  optimization: {
+	splitChunks: {
       chunks: 'all',
       maxInitialRequests: Infinity,
       minSize: 0,
@@ -563,6 +647,17 @@ export default {
         }
       }
     },
+  }
+}
+```
+
+`splitChunks` 切割分成 `vendors、taro、common` 文件（模块）。也就是开头入口文件 `app.js` 中，另外引入的文件。
+
+#### 4.6.2 optimization.minimizer
+
+```ts
+export default {
+  optimization: {
     minimizer: [
       /* config.optimization.minimizer('terserPlugin') */
       new TerserPlugin(
@@ -591,6 +686,9 @@ export default {
 }
 ```
 
+压缩代码插件 [TerserPlugin](https://www.npmjs.com/package/terser-webpack-plugin)
+压缩 css 插件 [css-minimizer-webpack-plugin](https://www.npmjs.com/package/css-minimizer-webpack-plugin)
+
 ### 4.7 plugins 插件
 
 `plugins` 选项用于以各种方式自定义 `webpack` 构建过程。`webpack` 附带了各种内置插件，可以通过 `webpack.[plugin-name]` 访问这些插件。请查看 插件页面 获取插件列表和对应文档，但请注意这只是其中一部分，社区中还有许多插件。
@@ -617,63 +715,67 @@ export default {
 }
 ```
 
-#### 4.7.1 ProvidePlugin
+`TaroWebpackBarPlugin` 继承自 [WebpackBar](https://www.npmjs.com/package/webpackbar)（优雅的进度条），避免因持久化缓存 IdleFileCachePlugin 再度触发 progress 事件，导致 webpackbar 在 100% 后又再渲染的问题。
+
+#### 4.7.1 ProvidePlugin 自动加载模块
+
+`webpack.ProvidePlugin` 自动加载模块，而不必到处 `import` 加载 `require` 它们。
+
+[provide-plugin](https://webpack.docschina.org/plugins/provide-plugin/#root)
+
+```ts
+new webpack.ProvidePlugin({
+  identifier: 'module1',
+  // ...
+});
+```
+
+比如 jQuery。
+
+```ts
+new webpack.ProvidePlugin({
+  $: 'jquery',
+  jQuery: 'jquery',
+});
+```
+
+```ts
+new webpack.ProvidePlugin({
+  identifier: ['module1', 'property1'],
+  // ...
+});
+```
+
+```ts
+// in a module
+$('#item'); // <= works
+jQuery('#item'); // <= also works
+// $ is automatically set to the exports of module "jquery"
+```
 
 ```ts
 /* config.plugin('providerPlugin') */
 new ProvidePlugin({
-	window: [
-		'@tarojs/runtime',
-		'window'
-	],
-	document: [
-		'@tarojs/runtime',
-		'document'
-	],
-	navigator: [
-		'@tarojs/runtime',
-		'navigator'
-	],
-	requestAnimationFrame: [
-		'@tarojs/runtime',
-		'requestAnimationFrame'
-	],
-	cancelAnimationFrame: [
-		'@tarojs/runtime',
-		'cancelAnimationFrame'
-	],
-	Element: [
-		'@tarojs/runtime',
-		'TaroElement'
-	],
-	SVGElement: [
-		'@tarojs/runtime',
-		'SVGElement'
-	],
-	MutationObserver: [
-		'@tarojs/runtime',
-		'MutationObserver'
-	],
-	history: [
-		'@tarojs/runtime',
-		'history'
-	],
-	location: [
-		'@tarojs/runtime',
-		'location'
-	],
-	URLSearchParams: [
-		'@tarojs/runtime',
-		'URLSearchParams'
-	],
-	URL: [
-		'@tarojs/runtime',
-		'URL'
-	]
+	window: ['@tarojs/runtime', 'window'],
+	document: ['@tarojs/runtime', 'document'],
+	navigator: ['@tarojs/runtime', 'navigator'],
+	requestAnimationFrame: ['@tarojs/runtime', 'requestAnimationFrame'],
+	cancelAnimationFrame: ['@tarojs/runtime', 'cancelAnimationFrame'],
+	Element: ['@tarojs/runtime', 'TaroElement'],
+	SVGElement: ['@tarojs/runtime', 'SVGElement'],
+	MutationObserver: ['@tarojs/runtime','MutationObserver' ],
+	history: ['@tarojs/runtime', 'history'],
+	location: ['@tarojs/runtime','location'],
+	URLSearchParams: ['@tarojs/runtime', 'URLSearchParams'],
+	URL: ['@tarojs/runtime', 'URL']
 }),
 ```
 
+这样我们在 `Taro` 项目中的任意地方写 `window、document、navigator` 时。实际引用的是 `@tarojs/runtime` 运行时中模拟实现的。
+
 #### 4.7.2 DefinePlugin
+
+[DefinePlugin](https://webpack.docschina.org/plugins/define-plugin/) 允许在 编译时 将你代码中的变量替换为其他值或表达式。这在需要根据开发模式与生产模式进行不同的操作时，非常有用。例如，如果想在开发构建中进行日志记录，而不在生产构建中进行，就可以定义一个全局常量去判断是否记录日志。这就是 DefinePlugin 的发光之处，设置好它，就可以忘掉开发环境和生产环境的构建规则。
 
 ```ts
 /* config.plugin('definePlugin') */
@@ -693,7 +795,9 @@ new DefinePlugin({
 }),
 ```
 
-#### 4.7.3 MiniCssExtractPlugin
+#### 4.7.3 MiniCssExtractPlugin 提取 css 到单独文件中
+
+[mini-css-extract-plugin](https://www.npmjs.com/package/mini-css-extract-plugin) 此插件将 CSS 提取到单独的文件中。它为每个包含 CSS 的 JS 文件创建一个 CSS 文件。它支持 CSS 和 SourceMaps 的按需加载。
 
 ```ts
 /* config.plugin('miniCssExtractPlugin') */
@@ -704,6 +808,12 @@ new MiniCssExtractPlugin({
 ```
 
 #### 4.7.4 MiniSplitChunksPlugin
+
+```ts
+import SplitChunksPlugin from 'webpack/lib/optimize/SplitChunksPlugin'
+```
+
+继承 `SplitChunksPlugin` 的插件，用于将分包公共依赖提取到单独的文件中
 
 ```ts
 /* config.plugin('miniSplitChunksPlugin') */
@@ -722,7 +832,7 @@ new MiniSplitChunksPlugin({
 }),
 ```
 
-#### 4.7.5 TaroMiniPlugin
+#### 4.7.5 TaroMiniPlugin taro 插件
 
 ```js
 /* config.plugin('miniPlugin') */
@@ -735,17 +845,7 @@ new TaroMiniPlugin({
 	],
 	constantsReplaceList: {
 		'process.env.FRAMEWORK': '"react"',
-		'process.env.TARO_ENV': '"weapp"',
-		'process.env.TARO_PLATFORM': '"mini"',
-		'process.env.TARO_VERSION': '"4.0.7"',
-		'process.env.SUPPORT_TARO_POLYFILL': '"disabled"',
-		ENABLE_INNER_HTML: true,
-		ENABLE_ADJACENT_HTML: false,
-		ENABLE_SIZE_APIS: false,
-		ENABLE_TEMPLATE_CONTENT: false,
-		ENABLE_CLONE_NODE: false,
-		ENABLE_CONTAINS: false,
-		ENABLE_MUTATION_OBSERVER: false
+		// 省略若干代码
 	},
 	pxTransformConfig: {
 		platform: 'weapp',
@@ -766,6 +866,8 @@ new TaroMiniPlugin({
 	}
 })
 ```
+
+对应的源码路径是
 
 ```ts
 // packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
@@ -812,7 +914,15 @@ Webpack 可以监听文件变化，当它们修改后会重新编译。这个页
 
 ## 5. 总结
 
-下一篇文章再看是如何组织成 webpack 配置的。
+行文至此，我们来总结下本文内容。通过 `npx taro -h` 得知 `inspect` 命令。
+
+```bash
+npx taro inspect -t weapp -o webpack.config.js
+```
+
+根据文档，分析了 `webpack` 配置。
+
+后续有时间再单独写文章，分析是如何组织成 `webpack` 配置的。
 
 ----
 
