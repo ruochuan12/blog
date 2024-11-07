@@ -657,9 +657,7 @@ export default {
 
 #### 4.6.2 optimization.minimizer
 
-[optimization.minimizer](https://webpack.docschina.org/configuration/optimization/#optimizationminimizer)
-
-允许你通过提供一个或多个定制过的 `TerserPlugin` 实例，覆盖默认压缩工具(`minimizer`)。
+[optimization.minimizer](https://webpack.docschina.org/configuration/optimization/#optimizationminimizer) 允许你通过提供一个或多个定制过的 `TerserPlugin` 实例，覆盖默认压缩工具(`minimizer`)。
 
 ```ts
 export default {
@@ -922,9 +920,9 @@ Webpack 可以监听文件变化，当它们修改后会重新编译。这个页
 
 行文至此，我们来总结下本文内容。
 
-通过 `npx @tarojs/taro init taro4-debug` 初始化项目。
+通过 `npx @tarojs/cli@latest init taro4-debug` 初始化项目。
 
-通过 `npx taro -h` 得知 `inspect` 命令，可以指定平台和路径，输出项目中的 `webpack` 配置。
+通过 `cd taro4-debug && npx taro -h` 得知 `inspect` 命令，可以指定平台和路径，输出项目中的 `webpack` 配置。
 
 ```bash
 npx taro inspect -t weapp -o webpack.config.js
