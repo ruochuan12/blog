@@ -12,7 +12,7 @@
 		"deploy": "pnpm run copy && bash ./scripts/deploy.sh",
 		"preinstall": "npx only-allow pnpm",
 		"copy": "node ./scripts/copyIndex.js",
-		"dev": "pnpm run copy && rspress dev",
+		"dev": "rspress dev & pnpm run copy",
 		"build": "pnpm run copy && rspress build",
 		"preview": "pnpm run copy && rspress preview"
 	},
@@ -31,7 +31,7 @@
 	},
 	"homepage": "https://github.com/ruochuan12/blog#readme",
 	"dependencies": {
-		"rspress": "^1.37.0"
+		"rspress": "^1.37.1"
 	},
 	"devDependencies": {
 		"@release-it/conventional-changelog": "^5.1.1",
