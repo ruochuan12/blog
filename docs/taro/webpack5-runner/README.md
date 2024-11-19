@@ -75,7 +75,7 @@ module.exports.default = module.exports
  - MiniBaseConfig
  - H5BaseConfig
  - HarmonyBaseConfig
-- webpackPlugin
+- WebpackPlugin
  - MiniWebpackPlugin
  - H5WebpackPlugin
  - HarmonyWebpackPlugin
@@ -99,9 +99,7 @@ export default async function build (appPath: string, rawConfig: IMiniBuildConfi
 
   return new Promise<Stats | void>((resolve, reject) => {
     if (config.withoutBuild) return
-
     const compiler = webpack(webpackConfig)
-
 	// 省略若干代码...
   })
 }
@@ -116,7 +114,7 @@ const webpackConfig = combination.chain.toConfig()
 const compiler = webpack(webpackConfig)
 ```
 
-## Combination
+## Combination 组合
 
 ```ts
 export class MiniCombination extends Combination<IMiniBuildConfig> {
@@ -131,33 +129,12 @@ export class Combination<T extends IMiniBuildConfig | IH5BuildConfig | IHarmonyB
   appPath: string
   config: T
   chain: Chain
-  enableSourceMap: boolean
-  sourceRoot: string
-  outputRoot: string
-  sourceDir: string
-  outputDir: string
-  rawConfig: T
-
-  prebundleOptions?: IPrebundle
-
-  isWeb = isWebPlatform()
-
-  /** special mode */
-  // 将组件打包为原生模块
-  isBuildNativeComp = false
-  // 正常打包页面的同时，把组件也打包成独立的原生模块
-  newBlended = false
+  //   省略若干代码...
 
   constructor (appPath: string, config: T) {
     this.appPath = appPath
     this.rawConfig = config
-    this.sourceRoot = config.sourceRoot || 'src'
-    this.outputRoot = config.outputRoot || 'dist'
-    this.sourceDir = path.resolve(appPath, this.sourceRoot)
-    this.outputDir = path.resolve(appPath, this.outputRoot)
-    this.isBuildNativeComp = !!config.isBuildNativeComp
-    this.newBlended = !!config.newBlended
-    this.enableSourceMap = config.enableSourceMap ?? config.isWatch ?? process.env.NODE_ENV !== 'production'
+    //   省略若干代码...
   }
 
   async make () {
@@ -214,6 +191,27 @@ export class MiniCombination extends Combination<IMiniBuildConfig> {
   process (config: Partial<IMiniBuildConfig>) {
     const baseConfig = new MiniBaseConfig(this.appPath, config)
     const chain = this.chain = baseConfig.chain
+
+    // 省略若干代码...
+
+    chain.merge({
+      entry: webpackEntry,
+      output: webpackOutput,
+      mode,
+      devtool: this.getDevtool(sourceMapType),
+      resolve: {
+        alias: this.getAlias()
+      },
+      plugin,
+      module,
+      optimization: this.getOptimization()
+    })
+  }
+}
+```
+
+```ts
+process (config: Partial<IMiniBuildConfig>) {
     const {
       entry = {},
       output = {},
@@ -264,81 +262,6 @@ export class MiniCombination extends Combination<IMiniBuildConfig> {
     const [, pxtransformOption] = webpackModule.__postcssOption.find(([name]) => name === 'postcss-pxtransform') || []
     webpackPlugin.pxtransformOption = pxtransformOption as any
     const plugin = webpackPlugin.getPlugins()
-
-    chain.merge({
-      entry: webpackEntry,
-      output: webpackOutput,
-      mode,
-      devtool: this.getDevtool(sourceMapType),
-      resolve: {
-        alias: this.getAlias()
-      },
-      plugin,
-      module,
-      optimization: this.getOptimization()
-    })
-  }
-
-  getEntry (entry: IMiniBuildConfig['entry']) {
-    return this.isBuildPlugin ? this.buildNativePlugin.entry : entry
-  }
-
-  getOutput ({ publicPath, globalObject, isBuildPlugin, output }) {
-    return {
-      path: this.outputDir,
-      publicPath,
-      filename: '[name].js',
-      chunkFilename: '[name].js',
-      globalObject,
-      enabledLibraryTypes: isBuildPlugin ? ['commonjs'] : [],
-      ...output
-    }
-  }
-
-  getAlias () {
-    const { alias = {}, taroComponentsPath } = this.config
-    return {
-      ...alias,
-      [`${taroJsComponents}$`]: taroComponentsPath
-    }
-  }
-
-  getOptimization () {
-    return {
-      usedExports: true,
-      runtimeChunk: {
-        name: 'runtime'
-      },
-      splitChunks: {
-        chunks: 'all',
-        maxInitialRequests: Infinity,
-        minSize: 0,
-        cacheGroups: {
-          default: false,
-          defaultVendors: false,
-          common: {
-            name: 'common',
-            minChunks: 2,
-            priority: 1
-          },
-          vendors: {
-            name: 'vendors',
-            minChunks: 2,
-            test: module => {
-              const nodeModulesDirRegx = new RegExp(REG_NODE_MODULES_DIR)
-              return nodeModulesDirRegx.test(module.resource)
-            },
-            priority: 10
-          },
-          taro: {
-            name: 'taro',
-            test: module => REG_TARO_SCOPED_PACKAGE.test(module.context),
-            priority: 100
-          }
-        }
-      }
-    }
-  }
 }
 ```
 
@@ -354,9 +277,10 @@ export class MiniBaseConfig extends BaseConfig {
 }
 ```
 
-## BaseConfig
+## BaseConfig 基本配置类
 
 ```ts
+import Chain from 'webpack-chain'
 export class BaseConfig {
   private _chain: Chain
 
@@ -382,44 +306,8 @@ export class BaseConfig {
       },
       plugin: {
         webpackbar: WebpackPlugin.getWebpackBarPlugin({
-          reporters: [
-            'basic',
-            'fancy',
-            {
-              done (_context, { stats }: { stats: Stats }) {
-                const { warnings, errors } = formatMessages(stats)
-
-                if (stats.hasWarnings()) {
-                  console.log(chalk.bgKeyword('orange')('⚠️ Warnings: \n'))
-                  warnings.forEach(w => console.log(w + '\n'))
-                }
-
-                if (stats.hasErrors()) {
-                  console.log(chalk.bgRed('✖ Errors: \n'))
-                  errors.forEach(e => console.log(e + '\n'))
-                  !config.isWatch && process.exit(1)
-                }
-
-                if (config.isWatch) {
-                  console.log(chalk.gray(`→ Watching... [${new Date().toLocaleString()}]\n`))
-                }
-
-                if (config.logger?.stats === true && config.mode === 'production') {
-                  console.log(chalk.bgBlue('ℹ Stats: \n'))
-                  console.log(stats.toString({
-                    colors: true,
-                    modules: false,
-                    children: false,
-                    chunks: false,
-                    chunkModules: false
-                  }))
-                }
-              }
-            }
-          ],
-          basic: config.logger?.quiet === true,
-          fancy: config.logger?.quiet !== true,
-        })
+			// 省略代码
+		})
       },
       watchOptions: {
         aggregateTimeout: 200
@@ -436,7 +324,7 @@ export class BaseConfig {
 }
 ```
 
-## MiniBaseConfig
+## MiniBaseConfig 小程序基本配置类
 
 ```ts
 export class MiniBaseConfig extends BaseConfig {
@@ -541,19 +429,7 @@ export default class WebpackPlugin {
   static getCopyWebpackPlugin (appPath: string, copy: ICopyOptions) {
     /** @doc https://webpack.js.org/plugins/copy-webpack-plugin */
     const CopyWebpackPlugin = require('copy-webpack-plugin')
-    const globalIgnores: string[] = copy.options?.ignore ?? []
-    const patterns = copy.patterns.map(({ from, to, ignore = [], ...extra }) => {
-      return {
-        from,
-        to: path.resolve(appPath, to),
-        context: appPath,
-        globOptions: {
-          ignore: ignore.concat(globalIgnores)
-        },
-        ...extra
-      }
-    })
-    const args = { patterns }
+    // 省略代码...
     return WebpackPlugin.getPlugin(CopyWebpackPlugin, [args])
   }
 
@@ -585,24 +461,7 @@ export default class WebpackPlugin {
   }
 
   static getCssMinimizerPlugin (minimizer: 'esbuild' | 'lightningcss' | 'csso', minimizerOptions: Record<string, any>) {
-    const CssMinimizerPlugin = require('css-minimizer-webpack-plugin')
-    let minify = CssMinimizerPlugin.cssnanoMinify
-    if (minimizer === 'esbuild') {
-      minify = CssMinimizerPlugin.esbuildMinify
-    } else if (minimizer === 'lightningcss') {
-      minify = CssMinimizerPlugin.lightningCssMinify
-    }
-    const options = {
-      test: REG_STYLE,
-      parallel: true,
-      minify,
-      minimizerOptions: {
-        preset: [
-          'default',
-          minimizerOptions
-        ]
-      }
-    }
+    // 省略代码...
     return WebpackPlugin.getPlugin(CssMinimizerPlugin, [options])
   }
 
@@ -631,114 +490,20 @@ export class MiniWebpackPlugin {
       miniCssExtractPlugin: this.getMiniCssExtractPlugin()
     }
 
-    const copyWebpackPlugin = this.getCopyWebpackPlugin()
-    if (copyWebpackPlugin) plugins.copyWebpackPlugin = copyWebpackPlugin
-
-    if (!this.combination.isBuildPlugin) {
-      /** 需要在 MiniPlugin 前，否则无法获取 entry 地址 */
-      const miniSplitChunksPlugin = this.getMiniSplitChunksPlugin()
-      if (miniSplitChunksPlugin) plugins.miniSplitChunksPlugin = miniSplitChunksPlugin
-    }
-
-    const definePluginOptions = plugins.definePlugin.args[0]
-    const mainPlugin = this.getMainPlugin(definePluginOptions)
-    plugins.miniPlugin = mainPlugin
-
-    if (this.combination.config.experimental?.compileMode === true) {
-      plugins.taroCompileModePlugin = WebpackPlugin.getPlugin(MiniCompileModePlugin, [{
-        combination: this.combination,
-      }])
-    }
+    // 省略若干代码...
 
     return plugins
   }
 
-  getProviderPlugin () {
-    return WebpackPlugin.getProviderPlugin({
-      window: ['@tarojs/runtime', 'window'],
-      document: ['@tarojs/runtime', 'document'],
-      navigator: ['@tarojs/runtime', 'navigator'],
-      requestAnimationFrame: ['@tarojs/runtime', 'requestAnimationFrame'],
-      cancelAnimationFrame: ['@tarojs/runtime', 'cancelAnimationFrame'],
-      Element: ['@tarojs/runtime', 'TaroElement'],
-      SVGElement: ['@tarojs/runtime', 'SVGElement'],
-      MutationObserver: ['@tarojs/runtime', 'MutationObserver'],
-      history: ['@tarojs/runtime', 'history'],
-      location: ['@tarojs/runtime', 'location'],
-      URLSearchParams: ['@tarojs/runtime', 'URLSearchParams'],
-      URL: ['@tarojs/runtime', 'URL'],
-    })
-  }
+  getProviderPlugin () {}
 
-  getDefinePlugin () {
-    const {
-      env = {},
-      runtime = {} as Record<string, boolean>,
-      defineConstants = {},
-      framework = 'react',
-      buildAdapter = PLATFORMS.WEAPP
-    } = this.combination.config
+  getDefinePlugin () {}
 
-    env.FRAMEWORK = JSON.stringify(framework)
-    env.TARO_ENV = JSON.stringify(buildAdapter)
-    env.TARO_PLATFORM = JSON.stringify(process.env.TARO_PLATFORM || PLATFORM_TYPE.MINI)
-    env.SUPPORT_TARO_POLYFILL = env.SUPPORT_TARO_POLYFILL || '"disabled"'
-    const envConstants = Object.keys(env).reduce((target, key) => {
-      target[`process.env.${key}`] = env[key]
-      return target
-    }, {})
+  getCopyWebpackPlugin (){}
 
-    const runtimeConstants = {
-      ENABLE_INNER_HTML: runtime.enableInnerHTML ?? true,
-      ENABLE_ADJACENT_HTML: runtime.enableAdjacentHTML ?? false,
-      ENABLE_SIZE_APIS: runtime.enableSizeAPIs ?? false,
-      ENABLE_TEMPLATE_CONTENT: runtime.enableTemplateContent ?? false,
-      ENABLE_CLONE_NODE: runtime.enableCloneNode ?? false,
-      ENABLE_CONTAINS: runtime.enableContains ?? false,
-      ENABLE_MUTATION_OBSERVER: runtime.enableMutationObserver ?? false
-    }
+  getMiniCssExtractPlugin () {}
 
-    return WebpackPlugin.getDefinePlugin([envConstants, defineConstants, runtimeConstants])
-  }
-
-  getCopyWebpackPlugin () {
-    const combination = this.combination
-    const { appPath, config } = combination
-    const { copy } = config
-    let copyWebpackPlugin
-
-    if (copy?.patterns.length) {
-      copyWebpackPlugin = WebpackPlugin.getCopyWebpackPlugin(appPath, copy)
-    }
-
-    return copyWebpackPlugin
-  }
-
-  getMiniCssExtractPlugin () {
-    const { fileType } = this.combination
-    const { miniCssExtractPluginOption = {} } = this.combination.config
-    const args = Object.assign({
-      filename: `[name]${fileType.style}`,
-      chunkFilename: `[name]${fileType.style}`
-    }, miniCssExtractPluginOption)
-    return WebpackPlugin.getMiniCssExtractPlugin(args)
-  }
-
-  getMiniSplitChunksPlugin () {
-    const { fileType } = this.combination
-    const { optimizeMainPackage } = this.combination
-    let miniSplitChunksPlugin
-
-    if (optimizeMainPackage?.enable) {
-      miniSplitChunksPlugin = WebpackPlugin.getPlugin(MiniSplitChunksPlugin, [{
-        exclude: optimizeMainPackage.exclude,
-        fileType,
-        combination: this.combination
-      }])
-    }
-
-    return miniSplitChunksPlugin
-  }
+  getMiniSplitChunksPlugin () {}
 
   getMainPlugin (definePluginOptions) {
     const { combination } = this
@@ -792,30 +557,7 @@ export class WebpackModule {
   }
 
   static getCSSLoaderWithModule (cssModuleOptions: CssModuleOptionConfig, cssLoaderOption) {
-    const { namingPattern, generateScopedName } = cssModuleOptions
-    const defaultOptions = Object.assign(
-      {
-        importLoaders: 1,
-        modules: {
-          mode: namingPattern === 'module' ? 'local' : 'global',
-          namedExport: false,
-          exportLocalsConvention: 'as-is',
-        }
-      },
-      {
-        modules: isFunction(generateScopedName)
-          ? { getLocalIdent: (context, _, localName) => generateScopedName(localName, context.resourcePath) }
-          : { localIdentName: generateScopedName }
-      }
-    )
-
-    // 更改 namedExport 默认值，以统一旧版本行为
-    // https://github.com/webpack-contrib/css-loader/releases/tag/v7.0.0
-    defaultOptions.modules.namedExport = false
-    defaultOptions.modules.exportLocalsConvention = 'as-is'
-
-    const options = recursiveMerge({}, defaultOptions, cssLoaderOption)
-    return WebpackModule.getLoader('css-loader', options)
+    // 省略代码...
   }
 
   static getExtractCSSLoader () {
@@ -834,40 +576,7 @@ export class WebpackModule {
   }
 
   static getBaseSassOptions () {
-    return {
-      sourceMap: true,
-      implementation: require('sass'),
-      sassOptions: {
-        outputStyle: 'expanded',
-        // https://github.com/sass/dart-sass/blob/main/CHANGELOG.md#js-api
-        silenceDeprecations: ['legacy-js-api'],
-        importer (url, prev, done) {
-          // 让 sass 文件里的 @import 能解析小程序原生样式文体，如 @import "a.wxss";
-          const extname = path.extname(url)
-          // fix: @import 文件可以不带scss/sass缀，如: @import "define";
-          if (extname === '.scss' || extname === '.sass' || extname === '.css' || !extname) {
-            return null
-          } else {
-            const filePath = path.resolve(path.dirname(prev), url)
-            fs.access(filePath, fs.constants.F_OK, (err) => {
-              if (err) {
-                console.log(err)
-                return null
-              } else {
-                fs.readFile(filePath)
-                  .then(res => {
-                    done({ contents: res.toString() })
-                  })
-                  .catch(err => {
-                    console.log(err)
-                    return null
-                  })
-              }
-            })
-          }
-        }
-      }
-    }
+    // 省略代码...
   }
 
   static getSassLoader (sassLoaderOption) {
@@ -908,69 +617,15 @@ export class WebpackModule {
   }
 
   static getMediaRule (sourceRoot: string, options) {
-    const maxSize = getAssetsMaxSize(options, MEDIA_LIMIT)
-    return {
-      test: REG_MEDIA,
-      type: 'asset',
-      parser: {
-        dataUrlCondition: {
-          maxSize,
-        }
-      },
-      generator: {
-        emit: options.emitFile || options.emit,
-        outputPath: options.outputPath,
-        publicPath: options.publicPath,
-        filename ({ filename }) {
-          if (isFunction(options.name)) return options.name(filename)
-          return options.name || filename.replace(sourceRoot + '/', '')
-        }
-      }
-    }
+	// 省略代码...
   }
 
   static getFontRule (sourceRoot: string, options) {
-    const maxSize = getAssetsMaxSize(options, FONT_LIMIT)
-    return {
-      test: REG_FONT,
-      type: 'asset',
-      parser: {
-        dataUrlCondition: {
-          maxSize,
-        }
-      },
-      generator: {
-        emit: options.emitFile || options.emit,
-        outputPath: options.outputPath,
-        publicPath: options.publicPath,
-        filename ({ filename }) {
-          if (isFunction(options.name)) return options.name(filename)
-          return options.name || filename.replace(sourceRoot + '/', '')
-        }
-      }
-    }
+	// 省略代码...
   }
 
   static getImageRule (sourceRoot: string, options) {
-    const maxSize = getAssetsMaxSize(options, IMAGE_LIMIT)
-    return {
-      test: REG_IMAGE,
-      type: 'asset',
-      parser: {
-        dataUrlCondition: {
-          maxSize,
-        }
-      },
-      generator: {
-        emit: options.emitFile || options.emit,
-        outputPath: options.outputPath,
-        publicPath: options.publicPath,
-        filename ({ filename }) {
-          if (isFunction(options.name)) return options.name(filename)
-          return options.name || filename.replace(sourceRoot + '/', '')
-        }
-      }
-    }
+    // 省略代码...
   }
 }
 ```
@@ -1093,131 +748,27 @@ export class MiniWebpackModule {
   }
 
   getCSSLoaders (postcssPlugins: any[], cssModuleOption: PostcssOption.cssModules) {
-    const { config } = this.combination
-    const {
-      cssLoaderOption
-    } = config
-    const extractCSSLoader = WebpackModule.getExtractCSSLoader()
-    const cssLoader = WebpackModule.getCSSLoader(cssLoaderOption)
-    const postCSSLoader = WebpackModule.getPostCSSLoader({
-      postcssOptions: {
-        plugins: postcssPlugins
-      }
-    })
-
-    const cssLoaders: CSSLoaders = [{
-      use: [
-        extractCSSLoader,
-        cssLoader,
-        postCSSLoader
-      ]
-    }]
-
-    if (cssModuleOption.enable) {
-      const cssModuleOptionConfig: CssModuleOptionConfig = recursiveMerge({}, {
-        namingPattern: 'module',
-        generateScopedName: '[name]__[local]___[hash:base64:5]'
-      }, cssModuleOption.config)
-      const cssLoaderWithModule = WebpackModule.getCSSLoaderWithModule(cssModuleOptionConfig, cssLoaderOption)
-      const styleModuleReg = /(.*\.module).*\.(css|s[ac]ss|less|styl)\b/
-      const styleGlobalReg = /(.*\.global).*\.(css|s[ac]ss|less|styl)\b/
-      let cssModuleCondition
-
-      if (cssModuleOptionConfig.namingPattern === 'module') {
-        /* 不排除 node_modules 内的样式 */
-        cssModuleCondition = styleModuleReg
-        // for vue
-        cssLoaders.unshift({
-          resourceQuery: /module=/,
-          use: [
-            extractCSSLoader,
-            cssLoaderWithModule,
-            postCSSLoader
-          ]
-        })
-      } else {
-        cssModuleCondition = {
-          and: [
-            { not: styleGlobalReg },
-            { not: isNodeModule }
-          ]
-        }
-      }
-      cssLoaders.unshift({
-        include: [cssModuleCondition],
-        use: [
-          extractCSSLoader,
-          cssLoaderWithModule,
-          postCSSLoader
-        ]
-      })
-    }
-
-    return cssLoaders
+    // 省略代码...
   }
 
   getScriptRule () {
-    const { sourceDir, config } = this.combination
-    const { compile = {} } = this.combination.config
-    const rule: IRule = WebpackModule.getScriptRule()
-
-    rule.include = [
-      sourceDir,
-      filename => /(?<=node_modules[\\/]).*taro/.test(filename)
-    ]
-    if (Array.isArray(compile.include)) {
-      rule.include.unshift(...compile.include)
-    }
-
-    if (Array.isArray(compile.exclude)) {
-      rule.exclude = [...compile.exclude]
-    }
-
-    if (config.experimental?.compileMode === true) {
-      rule.use.compilerLoader = WebpackModule.getLoader(path.resolve(__dirname, '../loaders/miniCompilerLoader'), {
-        platform: config.platform.toUpperCase(),
-        template: config.template,
-        FILE_COUNTER_MAP,
-      })
-    }
-
-    return rule
+    // 省略代码...
   }
 
   parsePostCSSOptions () {
-    const { postcss: postcssOption = {} } = this.combination.config
-    const defaultCssModuleOption: PostcssOption.cssModules = {
-      enable: false,
-      config: {
-        namingPattern: 'global',
-        generateScopedName: '[name]__[local]___[hash:base64:5]'
-      }
-    }
-
-    const cssModuleOption: PostcssOption.cssModules = recursiveMerge({}, defaultCssModuleOption, postcssOption.cssModules)
-
-    return {
-      postcssOption,
-      cssModuleOption
-    }
+    // 省略代码...
   }
 
   getMediaRule () {
-    const sourceRoot = this.combination.sourceRoot
-    const { mediaUrlLoaderOption = {} } = this.combination.config
-    return WebpackModule.getMediaRule(sourceRoot, mediaUrlLoaderOption)
+    // 省略代码...
   }
 
   getFontRule () {
-    const sourceRoot = this.combination.sourceRoot
-    const { fontUrlLoaderOption = {} } = this.combination.config
-    return WebpackModule.getFontRule(sourceRoot, fontUrlLoaderOption)
+    // 省略代码...
   }
 
   getImageRule () {
-    const sourceRoot = this.combination.sourceRoot
-    const { imageUrlLoaderOption = {} } = this.combination.config
-    return WebpackModule.getImageRule(sourceRoot, imageUrlLoaderOption)
+    // 省略代码...
   }
 }
 ```
