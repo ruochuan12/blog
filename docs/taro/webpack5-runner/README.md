@@ -38,15 +38,19 @@ theme: smartblue
 
 ## 2. webpack 打包构建
 
-[4. 每次 npm run dev:weapp 开发小程序，build 编译打包是如何实现的？](https://juejin.cn/post/7403193330271682612)
-
-在第4篇文章末尾，我们可以回顾下，如何获取 `webpack` 配置和 执行 `webpack()` 构建的。
+在[第4篇文章](https://juejin.cn/post/7403193330271682612)末尾，我们可以回顾下，如何获取 `webpack` 配置和执行 `webpack()` 构建的。还有[第8篇文章](https://juejin.cn/post/7434175547784020031) 把所有 `webpack` 配置输出出来，并解析了一些重要配置。
 
 ## @tarojs/webpack5-runner
 
 暴露给 `@tarojs/cli` 的小程序/H5 Webpack 启动器。
 
-这个 `npm` 包，主要要解决的问题是。把 `taro` 项目用 `webpack` 编译到小程序、h5、鸿蒙。
+关于打包编译官方有一篇博客[多编译内核生态下的极速研发体验](https://taro-docs.jd.com/blog/2023/03/29/D2_17)，主要讲述思想和流程。
+
+`Taro RFC` [支持使用 Webpack5 编译小程序和 H5 应用](https://github.com/NervJS/taro/discussions/11533)，讲述了 webpack4 重构为 webpack5 主要的一些修改和优化等。
+
+我们这篇文章主要分析 `@tarojs/webpack5-runner` 小程序部分的具体源码实现。
+
+这个 `npm` 包，主要要解决的问题是：把 `taro` 项目用 `webpack` 编译到小程序、h5、鸿蒙。会涉及到比较多代码是类似或者可以共用的。
 
 `package.json` 入口文件 `"main": "index.js"` 入口文件 `index.js`
 
@@ -65,24 +69,13 @@ module.exports.default = module.exports
 ![webpack5 编译内核](./images/webpack-kernal.png)
 
 我们来看 `webpack` 文件夹 `packages/taro-webpack5-runner/src/webpack` 主要文件如下：
-<!-- packages/taro-webpack5-runner/src/webpack -->
 
-- Combination
- - MiniCombination
- - H5Combination
- - HarmonyCombination
-- BaseConfig
- - MiniBaseConfig
- - H5BaseConfig
- - HarmonyBaseConfig
-- WebpackPlugin
- - MiniWebpackPlugin
- - H5WebpackPlugin
- - HarmonyWebpackPlugin
-- WebpackModule
- - MiniWebpackModule
- - H5WebpackModule
- - HarmonyWebpackModule
+基础类 | 小程序 | H5 | 鸿蒙
+---|---|---|---
+Combination | MiniCombination | H5Combination | HarmonyCombination
+BaseConfig | MiniBaseConfig | H5BaseConfig | HarmonyBaseConfig
+WebpackPlugin | MiniWebpackPlugin | H5WebpackPlugin| HarmonyWebpackPlugin
+WebpackModule | MiniWebpackModule | H5WebpackModule |HarmonyWebpackModule
 
 ```ts
 // packages/taro-webpack5-runner/src/index.mini.ts
@@ -113,6 +106,8 @@ await combination.make()
 const webpackConfig = combination.chain.toConfig()
 const compiler = webpack(webpackConfig)
 ```
+
+调用构造函数 `new MiniCombination(appPath, rawConfig)` 生成 `combination` 对象。
 
 ## Combination 组合
 
@@ -146,6 +141,19 @@ export class Combination<T extends IMiniBuildConfig | IH5BuildConfig | IHarmonyB
   process (_config: Partial<T>) {}
 
   async pre (rawConfig: T) {
+    // 拆分放到下方
+  }
+
+  async post (config: T, chain: Chain) {
+    // 拆分放到下方
+  }
+}
+```
+
+### pre 前置处理
+
+```ts
+async pre (rawConfig: T) {
     const preMode = rawConfig.mode || process.env.NODE_ENV
     const mode = ['production', 'development', 'none'].find(e => e === preMode) ||
       (!rawConfig.isWatch || process.env.NODE_ENV === 'production' ? 'production' : 'development')
@@ -158,8 +166,12 @@ export class Combination<T extends IMiniBuildConfig | IH5BuildConfig | IHarmonyB
       frameworkExts: rawConfig.frameworkExts || SCRIPT_EXT
     }
   }
+```
 
-  async post (config: T, chain: Chain) {
+### post 后置处理
+
+```ts
+async post (config: T, chain: Chain) {
     const { modifyWebpackChain, webpackChain, onWebpackChainReady } = config
     const data: IModifyChainData = {
       componentConfig
@@ -174,10 +186,11 @@ export class Combination<T extends IMiniBuildConfig | IH5BuildConfig | IHarmonyB
       onWebpackChainReady(chain)
     }
   }
-}
 ```
 
-## MiniCombination
+调用配置中的钩子函数 `modifyWebpackChain`、`webpackChain`、`onWebpackChainReady`。
+
+## MiniCombination 小程序 组合
 
 ```ts
 export class MiniCombination extends Combination<IMiniBuildConfig> {
@@ -192,7 +205,7 @@ export class MiniCombination extends Combination<IMiniBuildConfig> {
     const baseConfig = new MiniBaseConfig(this.appPath, config)
     const chain = this.chain = baseConfig.chain
 
-    // 省略若干代码...
+    // 省略若干代码...拆分到下方在讲述
 
     chain.merge({
       entry: webpackEntry,
@@ -209,6 +222,129 @@ export class MiniCombination extends Combination<IMiniBuildConfig> {
   }
 }
 ```
+
+这里是 chain 是 [webpack-chain](https://github.com/neutrinojs/webpack-chain) 链式调用的实例对象。虽然到目前这个 npm包 已经不维护了，但是下载量极大。
+>webpack-chain 使用链式 API 生成并简化 webpack 4 配置的修改。
+
+最后 `chain.merge` 入口、出口、插件、模块等，整个过程就结束了，完美撒花~当然，我们肯定不会只限于此。
+
+我们先来看看 `MiniBaseConfig` 的具体实现。
+
+```ts
+export class MiniBaseConfig extends BaseConfig {
+  defaultTerserOptions = {
+	// 省略
+  }
+
+  constructor(appPath: string, config: Partial<IMiniBuildConfig>) {
+    super(appPath, config)
+  }
+}
+```
+
+可以看出继承自 `BaseConfig` 基本配置类。
+
+我们来看看 `BaseConfig` 类的具体实现。
+
+## BaseConfig 基本配置类
+
+```ts
+import Chain from 'webpack-chain'
+export class BaseConfig {
+  private _chain: Chain
+
+  constructor (appPath: string, config: Config) {
+    const chain = this._chain = new Chain()
+    chain.merge({
+      target: ['web', 'es5'],
+      resolve: {
+        extensions: ['.js', '.jsx', '.ts', '.tsx', '.mjs', '.vue'],
+        symlinks: true,
+        plugin: {
+          MultiPlatformPlugin: {
+            plugin: MultiPlatformPlugin,
+            args: ['described-resolve', 'resolve', { chain }]
+          }
+        }
+      },
+	  // 省略若干代码...
+    })
+
+    // 持久化缓存
+	// 省略若干代码...
+  }
+
+  // minimizer 配置
+  protected setMinimizer (config: Config, defaultTerserOptions) {
+	// 省略若干代码...
+	this.chain.merge({
+      optimization: {
+        minimize,
+        minimizer
+      }
+    })
+  }
+
+  get chain () {
+    return this._chain
+  }
+}
+```
+
+## MiniBaseConfig 小程序基本配置类
+
+```ts
+export class MiniBaseConfig extends BaseConfig {
+  defaultTerserOptions = {
+    parse: {
+      ecma: 8,
+    },
+    compress: {
+      ecma: 5,
+      warnings: false,
+	  //   省略代码...
+    },
+    output: {
+      ecma: 5,
+      comments: false,
+      ascii_only: true,
+    },
+  }
+
+  constructor(appPath: string, config: Partial<IMiniBuildConfig>) {
+    super(appPath, config)
+    const mainFields = [...defaultMainFields]
+    const resolveOptions = {
+      basedir: appPath,
+      mainFields,
+    }
+    this.chain.merge({
+      resolve: {
+        mainFields,
+        alias: {
+          // 小程序使用 regenerator-runtime@0.11
+          'regenerator-runtime': require.resolve('regenerator-runtime'),
+          // 开发组件库时 link 到本地调试，runtime 包需要指向本地 node_modules 顶层的 runtime，保证闭包值 Current 一致，shared 也一样
+          '@tarojs/runtime': resolveSync('@tarojs/runtime', resolveOptions),
+          '@tarojs/shared': resolveSync('@tarojs/shared', resolveOptions),
+        },
+        // [Webpack 4] config.node: { fs: false, path: false }
+        // [Webpack 5] config.resolve.fallback
+        fallback: {
+          fs: false,
+          path: false,
+        },
+      },
+	  // 省略若干代码...
+    })
+
+    this.setMinimizer(config, this.defaultTerserOptions)
+  }
+}
+
+```
+
+## 再探 MiniCombination 实例对象的 process 函数
 
 ```ts
 process (config: Partial<IMiniBuildConfig>) {
@@ -265,212 +401,7 @@ process (config: Partial<IMiniBuildConfig>) {
 }
 ```
 
-```ts
-export class MiniBaseConfig extends BaseConfig {
-  defaultTerserOptions = {
-	// 省略
-  }
-
-  constructor(appPath: string, config: Partial<IMiniBuildConfig>) {
-    super(appPath, config)
-  }
-}
-```
-
-## BaseConfig 基本配置类
-
-```ts
-import Chain from 'webpack-chain'
-export class BaseConfig {
-  private _chain: Chain
-
-  constructor (appPath: string, config: Config) {
-    const chain = this._chain = new Chain()
-    chain.merge({
-      target: ['web', 'es5'],
-      resolve: {
-        extensions: ['.js', '.jsx', '.ts', '.tsx', '.mjs', '.vue'],
-        symlinks: true,
-        plugin: {
-          MultiPlatformPlugin: {
-            plugin: MultiPlatformPlugin,
-            args: ['described-resolve', 'resolve', { chain }]
-          }
-        }
-      },
-      resolveLoader: {
-        modules: ['node_modules']
-      },
-      output: {
-        chunkLoadingGlobal: 'webpackJsonp'
-      },
-      plugin: {
-        webpackbar: WebpackPlugin.getWebpackBarPlugin({
-			// 省略代码
-		})
-      },
-      watchOptions: {
-        aggregateTimeout: 200
-      }
-    })
-
-    // 持久化缓存
-	// 省略代码
-  }
-
-  get chain () {
-    return this._chain
-  }
-}
-```
-
-## MiniBaseConfig 小程序基本配置类
-
-```ts
-export class MiniBaseConfig extends BaseConfig {
-  defaultTerserOptions = {
-    parse: {
-      ecma: 8,
-    },
-    compress: {
-      ecma: 5,
-      warnings: false,
-      arrows: false,
-      collapse_vars: false,
-      comparisons: false,
-      computed_props: false,
-      hoist_funs: false,
-      hoist_props: false,
-      hoist_vars: false,
-      inline: false,
-      loops: false,
-      negate_iife: false,
-      properties: false,
-      reduce_funcs: false,
-      reduce_vars: false,
-      switches: false,
-      toplevel: false,
-      typeofs: false,
-      booleans: true,
-      if_return: true,
-      sequences: true,
-      unused: true,
-      conditionals: true,
-      dead_code: true,
-      evaluate: true,
-    },
-    output: {
-      ecma: 5,
-      comments: false,
-      ascii_only: true,
-    },
-  }
-
-  constructor(appPath: string, config: Partial<IMiniBuildConfig>) {
-    super(appPath, config)
-    const mainFields = [...defaultMainFields]
-    const resolveOptions = {
-      basedir: appPath,
-      mainFields,
-    }
-    this.chain.merge({
-      resolve: {
-        mainFields,
-        alias: {
-          // 小程序使用 regenerator-runtime@0.11
-          'regenerator-runtime': require.resolve('regenerator-runtime'),
-          // 开发组件库时 link 到本地调试，runtime 包需要指向本地 node_modules 顶层的 runtime，保证闭包值 Current 一致，shared 也一样
-          '@tarojs/runtime': resolveSync('@tarojs/runtime', resolveOptions),
-          '@tarojs/shared': resolveSync('@tarojs/shared', resolveOptions),
-        },
-        // [Webpack 4] config.node: { fs: false, path: false }
-        // [Webpack 5] config.resolve.fallback
-        fallback: {
-          fs: false,
-          path: false,
-        },
-      },
-      optimization: {
-        sideEffects: true,
-      },
-      performance: {
-        maxEntrypointSize: 2 * 1000 * 1000,
-      },
-    })
-
-    this.setMinimizer(config, this.defaultTerserOptions)
-  }
-}
-
-```
-
-## WebpackPlugin 提供应用所需插件
-
-```ts
-import path from 'node:path'
-
-import { REG_STYLE } from '@tarojs/helper'
-import webpack from 'webpack'
-
-import { TaroWebpackBarPlugin } from '../plugins/WebpackBarPlugin'
-
-import type { ICopyOptions } from '@tarojs/taro/types/compile'
-
-export type PluginArgs = Record<string, any>[]
-
-export default class WebpackPlugin {
-  static getPlugin (plugin, args: PluginArgs) {
-    return {
-      plugin,
-      args
-    }
-  }
-
-  static getCopyWebpackPlugin (appPath: string, copy: ICopyOptions) {
-    /** @doc https://webpack.js.org/plugins/copy-webpack-plugin */
-    const CopyWebpackPlugin = require('copy-webpack-plugin')
-    // 省略代码...
-    return WebpackPlugin.getPlugin(CopyWebpackPlugin, [args])
-  }
-
-  static getProviderPlugin (args: Record<string, string | string[]>) {
-    return WebpackPlugin.getPlugin(webpack.ProvidePlugin, [args])
-  }
-
-  static getDefinePlugin (definitionsList: Record<string, string>[]) {
-    const definitions = Object.assign({}, ...definitionsList)
-    return WebpackPlugin.getPlugin(webpack.DefinePlugin, [definitions])
-  }
-
-  static getMiniCssExtractPlugin (args: Record<string, any>) {
-    const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-    return WebpackPlugin.getPlugin(MiniCssExtractPlugin, [args])
-  }
-
-  static getTerserPlugin (terserOptions) {
-    const TerserPlugin = require('terser-webpack-plugin')
-    return WebpackPlugin.getPlugin(TerserPlugin, [{
-      parallel: true,
-      terserOptions
-    }])
-  }
-
-  static getESBuildMinifyPlugin (esbuildMinifyOptions) {
-    const ESBuildMinifyPlugin = require('esbuild-loader').EsbuildPlugin
-    return WebpackPlugin.getPlugin(ESBuildMinifyPlugin, [esbuildMinifyOptions])
-  }
-
-  static getCssMinimizerPlugin (minimizer: 'esbuild' | 'lightningcss' | 'csso', minimizerOptions: Record<string, any>) {
-    // 省略代码...
-    return WebpackPlugin.getPlugin(CssMinimizerPlugin, [options])
-  }
-
-  static getWebpackBarPlugin (webpackBarOptions = {}) {
-    return WebpackPlugin.getPlugin(TaroWebpackBarPlugin, [webpackBarOptions])
-  }
-}
-
-```
+我们来看下
 
 ## MiniWebpackPlugin 提供小程序应用所需插件
 
@@ -494,140 +425,8 @@ export class MiniWebpackPlugin {
 
     return plugins
   }
-
-  getProviderPlugin () {}
-
-  getDefinePlugin () {}
-
-  getCopyWebpackPlugin (){}
-
-  getMiniCssExtractPlugin () {}
-
-  getMiniSplitChunksPlugin () {}
-
-  getMainPlugin (definePluginOptions) {
-    const { combination } = this
-
-    const options = {
-      commonChunks: this.getCommonChunks(),
-      constantsReplaceList: definePluginOptions,
-      pxTransformConfig: this.pxtransformOption?.config || {},
-      hot: false,
-      combination,
-    }
-
-    const plugin = combination.isBuildNativeComp ? BuildNativePlugin : MiniPlugin
-    return WebpackPlugin.getPlugin(plugin, [options])
-  }
-
-  getCommonChunks () {
-    const { buildNativePlugin, config } = this.combination
-    const { commonChunks } = config
-    const defaultCommonChunks = buildNativePlugin?.commonChunks || ['runtime', 'vendors', 'taro', 'common']
-    let customCommonChunks: string[] = defaultCommonChunks
-    if (isFunction(commonChunks)) {
-      customCommonChunks = commonChunks(defaultCommonChunks.concat()) || defaultCommonChunks
-    } else if (isArray(commonChunks) && commonChunks.length) {
-      customCommonChunks = commonChunks
-    }
-    return customCommonChunks
-  }
 }
 
-```
-
-## WebpackModule 处理不同模块加载规则
-
-```ts
-export class WebpackModule {
-  static getLoader (loaderName: string, options: Record<string, any> = {}) {
-    return {
-      loader: require.resolve(loaderName),
-      options
-    }
-  }
-
-  static getCSSLoader (cssLoaderOption) {
-    const defaultOptions = {
-      importLoaders: 1,
-      modules: false
-    }
-    const options = Object.assign(defaultOptions, cssLoaderOption)
-    return WebpackModule.getLoader('css-loader', options)
-  }
-
-  static getCSSLoaderWithModule (cssModuleOptions: CssModuleOptionConfig, cssLoaderOption) {
-    // 省略代码...
-  }
-
-  static getExtractCSSLoader () {
-    const MiniCssExtractPlugin = require('mini-css-extract-plugin')
-    return {
-      loader: MiniCssExtractPlugin.loader
-    }
-  }
-
-  static getStyleLoader (options) {
-    return WebpackModule.getLoader('style-loader', options)
-  }
-
-  static getPostCSSLoader (options) {
-    return WebpackModule.getLoader('postcss-loader', options)
-  }
-
-  static getBaseSassOptions () {
-    // 省略代码...
-  }
-
-  static getSassLoader (sassLoaderOption) {
-    const options = recursiveMerge<any>({}, WebpackModule.getBaseSassOptions(), {
-      sassOptions: {
-        indentedSyntax: true
-      }
-    }, sassLoaderOption)
-    return WebpackModule.getLoader('sass-loader', options)
-  }
-
-  static getScssLoader (sassLoaderOption) {
-    const options = recursiveMerge({}, WebpackModule.getBaseSassOptions(), sassLoaderOption)
-    return WebpackModule.getLoader('sass-loader', options)
-  }
-
-  static getLessLoader (options) {
-    return WebpackModule.getLoader('less-loader', options)
-  }
-
-  static getStylusLoader (options) {
-    return WebpackModule.getLoader('stylus-loader', options)
-  }
-
-  static getResolveUrlLoader (options = {}) {
-    return WebpackModule.getLoader('resolve-url-loader', options)
-  }
-
-  static getScriptRule () {
-    return {
-      test: REG_SCRIPTS,
-      use: {
-        babelLoader: WebpackModule.getLoader('babel-loader', {
-          compact: false
-        })
-      }
-    }
-  }
-
-  static getMediaRule (sourceRoot: string, options) {
-	// 省略代码...
-  }
-
-  static getFontRule (sourceRoot: string, options) {
-	// 省略代码...
-  }
-
-  static getImageRule (sourceRoot: string, options) {
-    // 省略代码...
-  }
-}
 ```
 
 ## MiniWebpackModule 处理小程序模块加载规则
@@ -643,90 +442,9 @@ export class MiniWebpackModule {
 
   getModules () {
     const { appPath, config, sourceRoot, fileType } = this.combination
-    const {
-      buildAdapter,
-      sassLoaderOption,
-      lessLoaderOption,
-      stylusLoaderOption,
-      designWidth,
-      deviceRatio
-    } = config
-
-    const { postcssOption, cssModuleOption } = this.parsePostCSSOptions()
-
-    this.__postcssOption = getDefaultPostcssConfig({
-      designWidth,
-      deviceRatio,
-      postcssOption,
-      alias: config.alias,
-    })
-
-    const postcssPlugins = getPostcssPlugins(appPath, this.__postcssOption)
-
-    const cssLoaders = this.getCSSLoaders(postcssPlugins, cssModuleOption)
-    const resolveUrlLoader = WebpackModule.getResolveUrlLoader()
-    const sassLoader = WebpackModule.getSassLoader(sassLoaderOption)
-    const scssLoader = WebpackModule.getScssLoader(sassLoaderOption)
-    const lessLoader = WebpackModule.getLessLoader(lessLoaderOption)
-    const stylusLoader = WebpackModule.getStylusLoader(stylusLoaderOption)
 
     const rule: Record<string, IRule> = {
-      sass: {
-        test: REG_SASS_SASS,
-        oneOf: this.addCSSLoader(cssLoaders, resolveUrlLoader, sassLoader)
-      },
-      scss: {
-        test: REG_SASS_SCSS,
-        oneOf: this.addCSSLoader(cssLoaders, resolveUrlLoader, scssLoader)
-      },
-      less: {
-        test: REG_LESS,
-        oneOf: this.addCSSLoader(cssLoaders, lessLoader)
-      },
-      stylus: {
-        test: REG_STYLUS,
-        oneOf: this.addCSSLoader(cssLoaders, stylusLoader)
-      },
-      normalCss: {
-        test: REG_CSS,
-        oneOf: cssLoaders
-      },
-
-      script: this.getScriptRule(),
-
-      template: {
-        test: REG_TEMPLATE,
-        type: 'asset/resource',
-        generator: {
-          filename ({ filename }) {
-            const extname = path.extname(filename)
-            const nodeModulesRegx = new RegExp(REG_NODE_MODULES, 'gi')
-
-            return filename
-              .replace(sourceRoot + '/', '')
-              .replace(extname, fileType.templ)
-              .replace(nodeModulesRegx, 'npm')
-          }
-        },
-        use: [WebpackModule.getLoader(path.resolve(__dirname, '../loaders/miniTemplateLoader'), {
-          buildAdapter
-        })]
-      },
-
-      xscript: {
-        test: new RegExp(`\\${this.combination.fileType.xs || 'wxs'}$`),
-        type: 'asset/resource',
-        generator: {
-          filename ({ filename }) {
-            const nodeModulesRegx = new RegExp(REG_NODE_MODULES, 'gi')
-
-            return filename
-              .replace(sourceRoot + '/', '')
-              .replace(nodeModulesRegx, 'npm')
-          }
-        },
-        use: [WebpackModule.getLoader(path.resolve(__dirname, '../loaders/miniXScriptLoader'))]
-      },
+      //   省略若干代码...
 
       media: this.getMediaRule(),
 
@@ -736,45 +454,105 @@ export class MiniWebpackModule {
     }
     return { rule }
   }
-
-  addCSSLoader (cssLoaders, ...loader) {
-    const cssLoadersCopy = cloneDeep(cssLoaders)
-    cssLoadersCopy.forEach(item => {
-      if (item.use) {
-        item.use = [...item.use, ...loader]
-      }
-    })
-    return cssLoadersCopy
-  }
-
-  getCSSLoaders (postcssPlugins: any[], cssModuleOption: PostcssOption.cssModules) {
-    // 省略代码...
-  }
-
-  getScriptRule () {
-    // 省略代码...
-  }
-
-  parsePostCSSOptions () {
-    // 省略代码...
-  }
-
-  getMediaRule () {
-    // 省略代码...
-  }
-
-  getFontRule () {
-    // 省略代码...
-  }
-
-  getImageRule () {
-    // 省略代码...
-  }
 }
 ```
 
-## link
+## WebpackPlugin 提供应用所需插件
 
-[多编译内核生态下的极速研发体验](https://taro-docs.jd.com/blog/2023/03/29/D2_17)
+```ts
+export default class WebpackPlugin {
+  static getPlugin (plugin, args: PluginArgs) {
+    return {
+      plugin,
+      args
+    }
+  }
 
-[支持使用 Webpack5 编译小程序和 H5 应用](https://github.com/NervJS/taro/discussions/11533)
+  static getCopyWebpackPlugin (appPath: string, copy: ICopyOptions) {
+    /** @doc https://webpack.js.org/plugins/copy-webpack-plugin */
+    const CopyWebpackPlugin = require('copy-webpack-plugin')
+    // 省略代码...
+    return WebpackPlugin.getPlugin(CopyWebpackPlugin, [args])
+  }
+
+  // 省略若干代码...
+}
+
+```
+
+## WebpackModule 处理不同模块加载规则
+
+```ts
+export class WebpackModule {
+  static getLoader (loaderName: string, options: Record<string, any> = {}) {
+    return {
+      loader: require.resolve(loaderName),
+      options
+    }
+  }
+  static getCSSLoader (cssLoaderOption) {
+    const defaultOptions = {
+      importLoaders: 1,
+      modules: false
+    }
+    const options = Object.assign(defaultOptions, cssLoaderOption)
+    return WebpackModule.getLoader('css-loader', options)
+  }
+  // 省略若干代码...
+}
+```
+
+## 总结
+
+```ts
+import webpack from 'webpack-chain';
+class BaseConfig {
+	constructor(){
+		this.chain = new Chain();
+		// 多端都用的上的基础配置
+		this.chain.merge({});
+	}
+}
+
+class MiniBaseConfig extends BaseConfig{
+	constructor(){
+		// 小程序端用的上的基础配置
+		this.chain.merge({});
+	}
+}
+
+class Combination {
+	constructor (appPath: string, config: T) {
+		this.appPath = appPath
+		this.rawConfig = config
+		//   省略若干代码...
+	}
+
+	async make () {
+		await this.pre(this.rawConfig)
+		this.process(this.config)
+		await this.post(this.config, this.chain)
+	}
+
+	process (_config: Partial<T>) {}
+
+	async pre (rawConfig: T) {
+	}
+
+	async post (config: T, chain: Chain) {
+	}
+};
+
+class MiniCombination extends Combination{
+	process(){
+		const config = new MiniBaseConfig();
+		this.chain.merge({});
+	}
+}
+
+// build
+const combination = new MiniCombination(appPath, rawConfig)
+await combination.make()
+const webpackConfig = combination.chain.toConfig()
+const compiler = webpack(webpackConfig)
+```
