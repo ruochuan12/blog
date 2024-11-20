@@ -5,6 +5,8 @@ import chokidar from 'chokidar';
 
 const globalPaths = await globby(['docs/**/README.md']);
 
+const __DEV__ = process.argv.includes('--watch');
+
 const copyFile = (paths = globalPaths) => {
 	paths.forEach((path) => {
 		fs.copyFile(path, path.replace(/README\.md/, 'index.md'), (err) => {
@@ -34,4 +36,9 @@ const watch = () => {
 	});
 }
 
-watch();
+if(__DEV__){
+	watch();
+}
+else{
+	copyFile();
+}

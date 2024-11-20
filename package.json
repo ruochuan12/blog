@@ -9,12 +9,13 @@
 		"commit": "git-cz",
 		"update-package": "pnpm dlx vp-update",
 		"release": "release-it",
-		"deploy": "pnpm run copy && bash ./scripts/deploy.sh",
+		"deploy": "pnpm run copy:build && bash ./scripts/deploy.sh",
 		"preinstall": "npx only-allow pnpm",
-		"copy": "node ./scripts/copyIndex.js",
-		"dev": "rspress dev & pnpm run copy",
-		"build": "pnpm run copy && rspress build",
-		"preview": "pnpm run copy && rspress preview"
+		"copy:dev": "node ./scripts/copyIndex.js --watch",
+		"copy:build": "node ./scripts/copyIndex.js",
+		"dev": "rspress dev & pnpm run copy:dev",
+		"build": "pnpm run copy:build && rspress build",
+		"preview": "pnpm run copy:build && rspress preview"
 	},
 	"repository": {
 		"type": "git",
