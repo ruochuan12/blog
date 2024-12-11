@@ -3,7 +3,7 @@ highlight: darcula
 theme: smartblue
 ---
 
-# Taro 源码揭秘：10.
+# Taro 源码揭秘：10. taro taroMiniPlugin 插件
 
 ## 1. 前言
 
@@ -68,7 +68,66 @@ export default {
 
 ## 插件入口 apply 函数
 
-###
+```ts
+export default class TaroMiniPlugin {
+	// 插件入口
+	apply (compiler: Compiler) {
+    this.context = compiler.context
+    this.appEntry = this.getAppEntry(compiler)
+
+    const {
+      commonChunks,
+      combination,
+      framework,
+      isBuildPlugin,
+      newBlended,
+    } = this.options
+
+    const {
+      addChunkPages,
+      onCompilerMake,
+      modifyBuildAssets,
+      onParseCreateElement,
+    } = combination.config
+
+    /** build mode */
+    compiler.hooks.run.tapAsync()
+
+    /** watch mode */
+    compiler.hooks.watchRun.tapAsync()
+
+    /** compilation.addEntry */
+    compiler.hooks.make.tapAsync()
+
+    compiler.hooks.compilation.tap()
+
+    compiler.hooks.afterEmit.tapAsync()
+
+    new TaroNormalModulesPlugin(onParseCreateElement).apply(compiler)
+
+    newBlended && this.addLoadChunksPlugin(compiler)
+  }
+}
+```
+
+## compiler.hooks.run.tapAsync
+
+```ts
+/** build mode */
+compiler.hooks.run.tapAsync(
+	PLUGIN_NAME,
+	this.tryAsync<Compiler>(async compiler => {
+		await this.run(compiler)
+		new TaroLoadChunksPlugin({
+			commonChunks: commonChunks,
+			isBuildPlugin,
+			addChunkPages,
+			pages: this.pages,
+			framework: framework
+		}).apply(compiler)
+	})
+)
+```
 
 ### run
 
