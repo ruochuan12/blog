@@ -32,11 +32,11 @@
 	},
 	"homepage": "https://github.com/ruochuan12/blog#readme",
 	"dependencies": {
-		"rspress": "^1.37.1"
+		"rspress": "^1.38.0"
 	},
 	"devDependencies": {
 		"@release-it/conventional-changelog": "^5.1.1",
-		"@types/node": "^16.18.119",
+		"@types/node": "^16.18.122",
 		"chokidar": "^4.0.1",
 		"git-cz": "^4.9.0",
 		"globby": "^14.0.2",
