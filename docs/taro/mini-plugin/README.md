@@ -26,7 +26,7 @@ theme: smartblue
 
 前面 4 篇文章都是讲述编译相关的，CLI、插件机制、初始化项目、编译构建流程。
 第 5-7 篇讲述的是运行时相关的 Events、API、request 等。
-第 9 篇接着继续追随第4篇和第8篇的脚步，继续分析 [`@tarojs/webpack5-runner`](https://github.com/NervJS/taro/tree/main/packages/taro-webpack5-runner)，Taro 是如何生成 webpack 配置进行构建小程序的？
+第 9 篇接着继续追随第 4 篇和第 8 篇的脚步，继续分析 [`@tarojs/webpack5-runner`](https://github.com/NervJS/taro/tree/main/packages/taro-webpack5-runner)，Taro 是如何生成 webpack 配置进行构建小程序的？
 
 关于克隆项目、环境准备、如何调试代码等，参考[第一篇文章-准备工作、调试](https://juejin.cn/post/7378363694939783178#heading-1)。后续文章基本不再过多赘述。
 
@@ -42,26 +42,41 @@ theme: smartblue
 
 ```ts
 export default class TaroMiniPlugin {
-	constructor (options: ITaroMiniPluginOptions) {
+	constructor(options: ITaroMiniPluginOptions) {
 		this.options = {};
 	}
 	// 插件入口
-	apply (compiler) {
-	}
+	apply(compiler) {}
 }
 ```
 
 ```ts
 // webpack.config.js
 export default {
-  entry: {},
-  output: {},
-  plugins: [
-    new TaroMiniPlugin({
-      // 配置项
-	}),
-  ],
+	entry: {},
+	output: {},
+	plugins: [
+		new TaroMiniPlugin({
+			// 配置项
+		}),
+	],
 };
+```
+
+webpack 源码
+
+```ts
+// lib/webpack.js
+// https://github.com/webpack/webpack/blob/main/lib/webpack.js#L75-L84
+if (Array.isArray(options.plugins)) {
+	for (const plugin of options.plugins) {
+		if (typeof plugin === "function") {
+			plugin.call(compiler, compiler);
+		} else if (plugin) {
+			plugin.apply(compiler);
+		}
+	}
+}
 ```
 
 ![taro-webpack](./images/taro-webpack.png)
@@ -71,44 +86,50 @@ export default {
 ```ts
 export default class TaroMiniPlugin {
 	// 插件入口
-	apply (compiler: Compiler) {
-    this.context = compiler.context
-    this.appEntry = this.getAppEntry(compiler)
+	apply(compiler: Compiler) {
+		this.context = compiler.context;
+		this.appEntry = this.getAppEntry(compiler);
 
-    const {
-      commonChunks,
-      combination,
-      framework,
-      isBuildPlugin,
-      newBlended,
-    } = this.options
+		const {
+			commonChunks,
+			combination,
+			framework,
+			isBuildPlugin,
+			newBlended,
+		} = this.options;
 
-    const {
-      addChunkPages,
-      onCompilerMake,
-      modifyBuildAssets,
-      onParseCreateElement,
-    } = combination.config
+		const {
+			addChunkPages,
+			onCompilerMake,
+			modifyBuildAssets,
+			onParseCreateElement,
+		} = combination.config;
 
-    /** build mode */
-    compiler.hooks.run.tapAsync()
+		/** build mode */
+		compiler.hooks.run.tapAsync();
 
-    /** watch mode */
-    compiler.hooks.watchRun.tapAsync()
+		/** watch mode */
+		compiler.hooks.watchRun.tapAsync();
 
-    /** compilation.addEntry */
-    compiler.hooks.make.tapAsync()
+		/** compilation.addEntry */
+		compiler.hooks.make.tapAsync();
 
-    compiler.hooks.compilation.tap()
+		compiler.hooks.compilation.tap();
 
-    compiler.hooks.afterEmit.tapAsync()
+		compiler.hooks.afterEmit.tapAsync();
 
-    new TaroNormalModulesPlugin(onParseCreateElement).apply(compiler)
+		new TaroNormalModulesPlugin(onParseCreateElement).apply(compiler);
 
-    newBlended && this.addLoadChunksPlugin(compiler)
-  }
+		newBlended && this.addLoadChunksPlugin(compiler);
+	}
 }
 ```
+
+- compiler.hooks.run.tapAsync();
+- compiler.hooks.watchRun.tapAsync();
+- compiler.hooks.make.tapAsync();
+- compiler.hooks.compilation.tap();
+- compiler.hooks.afterEmit.tapAsync();
 
 ## compiler.hooks.run.tapAsync
 
@@ -116,17 +137,17 @@ export default class TaroMiniPlugin {
 /** build mode */
 compiler.hooks.run.tapAsync(
 	PLUGIN_NAME,
-	this.tryAsync<Compiler>(async compiler => {
-		await this.run(compiler)
+	this.tryAsync<Compiler>(async (compiler) => {
+		await this.run(compiler);
 		new TaroLoadChunksPlugin({
 			commonChunks: commonChunks,
 			isBuildPlugin,
 			addChunkPages,
 			pages: this.pages,
-			framework: framework
-		}).apply(compiler)
+			framework: framework,
+		}).apply(compiler);
 	})
-)
+);
 ```
 
 ### run
