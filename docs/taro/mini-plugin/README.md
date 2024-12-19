@@ -150,6 +150,10 @@ compiler.hooks.run.tapAsync(
 );
 ```
 
+调试源码。本文就不赘述了，分别是[第1篇 taro init](https://juejin.cn/post/7378363694939783178#heading-1)和[第4篇 npm run dev:weapp](https://juejin.cn/post/7403193330271682612#heading-2)详细讲述过。
+
+![before-run](./images/mini-plugin-before-run.png)
+
 ### run
 
 ```ts
@@ -171,3 +175,5 @@ async run (compiler: Compiler) {
 	}
 }
 ```
+
+![after-run](./images/mini-plugin-after-run.png)

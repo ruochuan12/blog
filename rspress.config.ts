@@ -267,6 +267,7 @@ export default defineConfig({
 						"/taro/request/",
 						"/taro/webpack5/",
 						"/taro/webpack5-runner/",
+						"/taro/mini-plugin/",
 					],
 				},
 				{
