@@ -3,7 +3,7 @@ highlight: darcula
 theme: smartblue
 ---
 
-# Taro 源码揭秘：10. taro taroMiniPlugin 插件
+# Taro 源码揭秘：10. 核心
 
 ## 1. 前言
 
@@ -81,7 +81,39 @@ if (Array.isArray(options.plugins)) {
 
 ![taro-webpack](./images/taro-webpack.png)
 
+## 插件属性
+
+```ts
+export default class TaroMiniPlugin {
+	/** 插件配置选项 */
+	options: IOptions;
+	context: string;
+	/** app 入口文件路径 */
+	appEntry: string;
+	/** app config 配置内容 */
+	appConfig: AppConfig;
+	/** app、页面、组件的配置集合 */
+	filesConfig: IMiniFilesConfig = {};
+	isWatch = false;
+	/** 页面列表 */
+	pages = new Set<IComponent>();
+	components = new Set<IComponent>();
+	/** 新的混合原生编译模式 newBlended 模式下，需要单独编译成原生代码的 component 的Map */
+	nativeComponents = new Map<string, IComponent>();
+	/** tabbar icon 图片路径列表 */
+	tabBarIcons = new Set<string>();
+	prerenderPages = new Set<string>();
+	dependencies = new Map<string, TaroSingleEntryDependency>();
+	loadChunksPlugin: TaroLoadChunksPlugin;
+	themeLocation: string;
+	pageLoaderName = "@tarojs/taro-loader/lib/page";
+	independentPackages = new Map<string, IndependentPackage>();
+}
+```
+
 ## 插件入口 apply 函数
+
+我们来看
 
 ```ts
 export default class TaroMiniPlugin {
@@ -98,12 +130,7 @@ export default class TaroMiniPlugin {
 			newBlended,
 		} = this.options;
 
-		const {
-			addChunkPages,
-			onCompilerMake,
-			modifyBuildAssets,
-			onParseCreateElement,
-		} = combination.config;
+		// 省略若干代码...
 
 		/** build mode */
 		compiler.hooks.run.tapAsync();
@@ -125,11 +152,13 @@ export default class TaroMiniPlugin {
 }
 ```
 
-- compiler.hooks.run.tapAsync();
-- compiler.hooks.watchRun.tapAsync();
-- compiler.hooks.make.tapAsync();
-- compiler.hooks.compilation.tap();
-- compiler.hooks.afterEmit.tapAsync();
+[tapable](https://github.com/webpack/tapable) 事件机制
+
+-   compiler.hooks.run.tapAsync();
+-   compiler.hooks.watchRun.tapAsync();
+-   compiler.hooks.make.tapAsync();
+-   compiler.hooks.compilation.tap();
+-   compiler.hooks.afterEmit.tapAsync();
 
 ## compiler.hooks.run.tapAsync
 
@@ -150,11 +179,11 @@ compiler.hooks.run.tapAsync(
 );
 ```
 
-调试源码。本文就不赘述了，分别是[第1篇 taro init](https://juejin.cn/post/7378363694939783178#heading-1)和[第4篇 npm run dev:weapp](https://juejin.cn/post/7403193330271682612#heading-2)详细讲述过。
+调试源码。本文就不赘述了，分别是[第 1 篇 taro init](https://juejin.cn/post/7378363694939783178#heading-1)和[第 4 篇 npm run dev:weapp](https://juejin.cn/post/7403193330271682612#heading-2)详细讲述过。
 
 ![before-run](./images/mini-plugin-before-run.png)
 
-### run
+### run 函数 - 分析 app 入口文件，搜集页面、组件信息
 
 ```ts
 /**
@@ -177,3 +206,251 @@ async run (compiler: Compiler) {
 ```
 
 ![after-run](./images/mini-plugin-after-run.png)
+
+## compiler.hooks.watchRun.tapAsync
+
+```ts
+/** watch mode */
+compiler.hooks.watchRun.tapAsync(
+	PLUGIN_NAME,
+	this.tryAsync<Compiler>(async (compiler) => {
+		const changedFiles = this.getChangedFiles(compiler);
+		if (changedFiles && changedFiles?.size > 0) {
+			this.isWatch = true;
+		}
+		await this.run(compiler);
+		if (!this.loadChunksPlugin) {
+			this.loadChunksPlugin = new TaroLoadChunksPlugin({
+				commonChunks: commonChunks,
+				isBuildPlugin,
+				addChunkPages,
+				pages: this.pages,
+				framework: framework,
+			});
+			this.loadChunksPlugin.apply(compiler);
+		}
+	})
+);
+```
+
+## compiler.hooks.make.tapAsync
+
+```ts
+/** compilation.addEntry */
+compiler.hooks.make.tapAsync(
+	PLUGIN_NAME,
+	this.tryAsync<Compilation>(async (compilation) => {
+		const dependencies = this.dependencies;
+		const promises: Promise<null>[] = [];
+		this.compileIndependentPages(
+			compiler,
+			compilation,
+			dependencies,
+			promises
+		);
+		dependencies.forEach((dep) => {
+			promises.push(
+				new Promise<null>((resolve, reject) => {
+					compilation.addEntry(
+						this.options.sourceDir,
+						dep,
+						{
+							name: dep.name,
+							...dep.options,
+						},
+						(err) => (err ? reject(err) : resolve(null))
+					);
+				})
+			);
+		});
+		await Promise.all(promises);
+		await onCompilerMake?.(compilation, compiler, this);
+	})
+);
+```
+
+遍历收集好的页面 `dependencies` 页面依赖，添加入口 `addEntry`。
+
+## compiler.hooks.compilation.tap
+
+```ts
+compiler.hooks.compilation.tap(
+	PLUGIN_NAME,
+	(compilation, { normalModuleFactory }) => {
+		/** For Webpack compilation get factory from compilation.dependencyFactories by denpendence's constructor */
+		compilation.dependencyFactories.set(
+			EntryDependency,
+			normalModuleFactory
+		);
+		compilation.dependencyFactories.set(
+			TaroSingleEntryDependency as any,
+			normalModuleFactory
+		);
+
+		/**
+		 * webpack NormalModule 在 runLoaders 真正解析资源的前一刻，
+		 * 往 NormalModule.loaders 中插入对应的 Taro Loader
+		 */
+		compiler.webpack.NormalModule.getCompilationHooks(
+			compilation
+		).loader.tap(
+			PLUGIN_NAME,
+			(_loaderContext, module: /** TaroNormalModule */ any) => {
+				// 拆开放在下方讲述
+			}
+		);
+
+		const {
+			PROCESS_ASSETS_STAGE_ADDITIONAL,
+			PROCESS_ASSETS_STAGE_OPTIMIZE,
+			PROCESS_ASSETS_STAGE_REPORT,
+		} = compiler.webpack.Compilation;
+
+		// 拆开放在下方讲述
+		compilation.hooks.processAssets.tapAsync();
+	}
+);
+```
+
+### compiler.webpack.NormalModule.getCompilationHooks(compilation).loader.tap
+
+```ts
+/**
+ * webpack NormalModule 在 runLoaders 真正解析资源的前一刻，
+ * 往 NormalModule.loaders 中插入对应的 Taro Loader
+ */
+compiler.webpack.NormalModule.getCompilationHooks(compilation).loader.tap(
+	PLUGIN_NAME,
+	(_loaderContext, module: /** TaroNormalModule */ any) => {
+		const { framework, loaderMeta, pxTransformConfig } = this.options;
+
+		if (module.miniType === META_TYPE.ENTRY) {
+			const loaderName = "@tarojs/taro-loader";
+			if (!isLoaderExist(module.loaders, loaderName)) {
+				module.loaders.unshift({
+					loader: loaderName,
+					options: {
+						// 省略参数 ...
+					},
+				});
+			}
+		} else if (module.miniType === META_TYPE.PAGE) {
+			let isIndependent = false;
+			this.independentPackages.forEach(({ pages }) => {
+				if (pages.includes(module.resource)) {
+					isIndependent = true;
+				}
+			});
+			const isNewBlended = this.nativeComponents.has(module.name);
+			const loaderName =
+				isNewBlended || isBuildPlugin
+					? "@tarojs/taro-loader/lib/native-component"
+					: isIndependent
+					? "@tarojs/taro-loader/lib/independentPage"
+					: this.pageLoaderName;
+
+			if (!isLoaderExist(module.loaders, loaderName)) {
+				module.loaders.unshift({
+					loader: loaderName,
+					options: {
+						// 省略参数 ...
+					},
+				});
+			}
+		} else if (module.miniType === META_TYPE.COMPONENT) {
+			const loaderName = isBuildPlugin
+				? "@tarojs/taro-loader/lib/native-component"
+				: "@tarojs/taro-loader/lib/component";
+			if (!isLoaderExist(module.loaders, loaderName)) {
+				module.loaders.unshift({
+					loader: loaderName,
+					options: {
+						// 省略参数 ...
+					},
+				});
+			}
+		}
+	}
+);
+```
+
+-   入口文件使用 @tarojs/taro-loader
+-   页面使用 @tarojs/taro-loader/lib/page
+-   原生组件使用 @tarojs/taro-loader/lib/native-component
+-   组件使用 @tarojs/taro-loader/lib/component
+-   独立分包使用 @tarojs/taro-loader/lib/independentPage
+
+### compilation.hooks.processAssets.tapAsync
+
+```ts
+const {
+	PROCESS_ASSETS_STAGE_ADDITIONAL,
+	PROCESS_ASSETS_STAGE_OPTIMIZE,
+	PROCESS_ASSETS_STAGE_REPORT,
+} = compiler.webpack.Compilation;
+compilation.hooks.processAssets.tapAsync(
+	{
+		name: PLUGIN_NAME,
+		stage: PROCESS_ASSETS_STAGE_ADDITIONAL,
+	},
+	this.tryAsync<any>(async () => {
+		// 如果是子编译器，证明是编译独立分包，进行单独的处理
+		if ((compilation as any).__tag === CHILD_COMPILER_TAG) {
+			await this.generateIndependentMiniFiles(compilation, compiler);
+		} else {
+			await this.generateMiniFiles(compilation, compiler);
+		}
+	})
+);
+compilation.hooks.processAssets.tapAsync(
+	{
+		name: PLUGIN_NAME,
+		// 删除 assets 的相关操作放在触发时机较后的 Stage，避免过早删除出现的一些问题，#13988
+		// Stage 触发顺序：https://webpack.js.org/api/compilation-hooks/#list-of-asset-processing-stages
+		stage: PROCESS_ASSETS_STAGE_OPTIMIZE,
+	},
+	this.tryAsync<any>(async () => {
+		await this.optimizeMiniFiles(compilation, compiler);
+	})
+);
+
+compilation.hooks.processAssets.tapAsync(
+	{
+		name: PLUGIN_NAME,
+		// 该 stage 是最后执行的，确保 taro 暴露给用户的钩子 modifyBuildAssets 在内部处理完 assets 之后再调用
+		stage: PROCESS_ASSETS_STAGE_REPORT,
+	},
+	this.tryAsync<any>(async () => {
+		if (typeof modifyBuildAssets === "function") {
+			await modifyBuildAssets(compilation.assets, this);
+		}
+	})
+);
+```
+
+-   生成小程序文件
+-   优化文件
+-   修改编译产物
+
+## compiler.hooks.afterEmit.tapAsync
+
+```ts
+compiler.hooks.afterEmit.tapAsync(
+	PLUGIN_NAME,
+	this.tryAsync<Compilation>(async (compilation) => {
+		await this.addTarBarFilesToDependencies(compilation);
+	})
+);
+```
+
+生成文件之后，添加 tabbar 文件到依赖中。
+
+## 总结
+
+---
+
+**如果看完有收获，欢迎点赞、评论、分享、收藏支持。你的支持和肯定，是我写作的动力。也欢迎提建议和交流讨论**。
+
+作者：常以**若川**为名混迹于江湖。所知甚少，唯善学。[若川的博客](https://ruochuan12.github.io)，[github blog](https://github.com/ruochuan12/blog)，可以点个 `star` 鼓励下持续创作。
+
+最后可以持续关注我[@若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
