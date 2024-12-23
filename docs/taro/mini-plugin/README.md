@@ -3,7 +3,7 @@ highlight: darcula
 theme: smartblue
 ---
 
-# Taro 源码揭秘：10. 核心
+# Taro 源码揭秘：10. Taro 到底是怎样转换成小程序文件的？
 
 ## 1. 前言
 
@@ -26,14 +26,16 @@ theme: smartblue
 
 前面 4 篇文章都是讲述编译相关的，CLI、插件机制、初始化项目、编译构建流程。
 第 5-7 篇讲述的是运行时相关的 Events、API、request 等。
-第 9 篇接着继续追随第 4 篇和第 8 篇的脚步，继续分析 [`@tarojs/webpack5-runner`](https://github.com/NervJS/taro/tree/main/packages/taro-webpack5-runner)，Taro 是如何生成 webpack 配置进行构建小程序的？
+第 10 篇接着继续追随第 4 篇和第 8、9 篇的脚步，分析 TaroMiniPlugin webpack 的插件实现。
 
 关于克隆项目、环境准备、如何调试代码等，参考[第一篇文章-准备工作、调试](https://juejin.cn/post/7378363694939783178#heading-1)。后续文章基本不再过多赘述。
 
 学完本文，你将学到：
 
 ```bash
-1. Taro
+1. Taro 到底是怎样转换成小程序的？
+2. 对 webpack 自定义插件和 compiler 钩子等有更深刻的认识
+3. 对 webpack 自定义loader 等有更深刻的认识
 等等
 ```
 
@@ -41,6 +43,7 @@ theme: smartblue
 [compiler 钩子](https://webpack.docschina.org/api/compiler-hooks/)
 
 ```ts
+// packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
 export default class TaroMiniPlugin {
 	constructor(options: ITaroMiniPluginOptions) {
 		this.options = {};
@@ -109,6 +112,42 @@ export default class TaroMiniPlugin {
 	pageLoaderName = "@tarojs/taro-loader/lib/page";
 	independentPackages = new Map<string, IndependentPackage>();
 }
+```
+
+**入口文件**
+
+```ts
+// src/app.ts
+import { PropsWithChildren } from 'react'
+import { useLaunch } from '@tarojs/taro'
+import './app.less'
+
+function App({ children }: PropsWithChildren<any>) {
+  useLaunch(() => {
+    console.log('App launched.')
+  })
+  // children 是将要会渲染的页面
+  return children
+}
+
+export default App
+```
+
+**入口配置**
+
+```ts
+// src/app.config.ts
+export default defineAppConfig({
+  pages: [
+    'pages/index/index'
+  ],
+  window: {
+    backgroundTextStyle: 'light',
+    navigationBarBackgroundColor: '#fff',
+    navigationBarTitleText: 'WeChat',
+    navigationBarTextStyle: 'black'
+  }
+})
 ```
 
 ## 插件入口 apply 函数
@@ -446,6 +485,8 @@ compiler.hooks.afterEmit.tapAsync(
 生成文件之后，添加 tabbar 文件到依赖中。
 
 ## 总结
+
+简单来说，TaroMiniPlugin 是 webpack 插件。主要读取入口文件、入口配置，页面、页面配置和组件等，收集起来。然后交给 `webpack` 处理（对应的 `taro-loader`），输出对应平台的小程序文件（template、css、json等）。
 
 ---
 
