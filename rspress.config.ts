@@ -3,12 +3,13 @@ import { defineConfig } from "rspress/config";
 import readingTime from "rspress-plugin-reading-time";
 import { pluginGoogleAnalytics } from "rsbuild-plugin-google-analytics";
 import { pluginFontOpenSans } from "rspress-plugin-font-open-sans";
+import mermaid from "rspress-plugin-mermaid";
 
 export default defineConfig({
 	root: path.join(__dirname, "docs"),
 	//   root: 'docs',
 	title: "若川的博客",
-	lang: "zh",
+	lang: "",
 	keywords:
 		"若川，微信搜索「若川视野」关注我，长期交流学习。写有《学习源码整体架构系列》。包含jquery源码、underscore源码、lodash源码、sentry源码、vuex源码、axios源码、koa源码、redux源码、vue-devtools源码、vuex4源码、Taro源码。前端路上，PPT爱好者，所知甚少，唯善学。",
 	description:
@@ -63,6 +64,11 @@ export default defineConfig({
 			id: "UA-145436866-1",
 		}),
 		pluginFontOpenSans(),
+		mermaid({
+			mermaidConfig: {
+				theme: "forest",
+			},
+		}),
 	],
 
 	themeConfig: {
@@ -128,7 +134,7 @@ export default defineConfig({
 			},
 			{
 				text: "源码共读",
-				link: '/read-source-code/'
+				link: "/read-source-code/",
 			},
 			{
 				text: "源码共读-其他链接",
@@ -398,182 +404,259 @@ export default defineConfig({
 					items: ["/about/"],
 				},
 			],
-			'/read-source-code/': [
+			"/read-source-code/": [
 				{
-				  text: '总则',
-				  items: [{ text: '共读规则', link: '/read-source-code/index' }],
+					text: "总则",
+					items: [
+						{ text: "共读规则", link: "/read-source-code/index" },
+					],
 				},
 				{
-				  text: '公告',
-				  items: [
-					{
-					  text: '第60期 | Taro 源码揭秘 - 7. Taro.request 和请求响应拦截器是如何实现的',
-					  link: '/read-source-code/p60',
-					},
-					{
-					  text: '第59期 | Taro 源码揭秘 - 6. 为什么通过 Taro.xxx 能调用各个小程序平台的 API，如何设计实现的',
-					  link: '/read-source-code/p59',
-					},
-					{
-					  text: '第58期 | Taro 源码揭秘 - 5.高手都在用的发布订阅机制 Events 在 Taro 中是如何实现的？',
-					  link: '/read-source-code/p58',
-					},
-					{
-					  text: '# 第57期 | Taro 源码揭秘 4.每次 npm run dev_weapp 开发小程序，build 编译打包是如何实现的？',
-					  link: '/read-source-code/p57',
-					},
-					{
-					  text: '第56期 | 开发小程序又一新选择 vue-mini，据说性能是 Taro 的 10 倍，遥遥领先',
-					  link: '/read-source-code/p56',
-					},
-					{
-					  text: '第55期 | Taro 源码揭秘 3. taro init',
-					  link: '/read-source-code/p55',
-					},
-					{
-					  text: '第54期 | Taro 源码揭秘 2. 插件机制',
-					  link: '/read-source-code/p54',
-					},
-					{
-					  text: '第53期 | Taro 源码揭秘 1. taro init 初始化项目',
-					  link: '/read-source-code/p53',
-					},
-					{
-					  text: '第52期 | 分析 vant4 组件库源码，写一个 Vue3 highlight 高亮文本的组件',
-					  link: '/read-source-code/p52',
-					},
-					{
-					  text: '第51期 | fileSaver 考虑周到的下载文件库',
-					  link: '/read-source-code/p51',
-					},
-					{
-					  text: '第50期 | 剖析 localForage 源码，学习本地存储库原理',
-					  link: '/read-source-code/p50',
-					},
-					{
-					  text: '第49期 | 剖析 hotkeys-js 源码，学会快捷键实现原理',
-					  link: '/read-source-code/p49',
-					},
-					{
-					  text: '第48期 | axios 是如何打包发布的，如何开发工具库',
-					  link: '/read-source-code/p48',
-					},
-					{
-					  text: '第47期 | vant4.0 正式发布了，分析其源码学会用 vue3 写一个图片懒加载组件！',
-					  link: '/read-source-code/p47',
-					},
-					{
-					  text: '第46期 _ 分析 vant4 源码，学会用 vue3 + ts 开发毫秒级渲染的倒计时组件，真是妙啊',
-					  link: '/read-source-code/p46',
-					},
-					{
-					  text: '第45期 | 分析 vant4 源码，如何用 vue3 + ts 开发一个瀑布流滚动加载的列表组件？',
-					  link: '/read-source-code/p45',
-					},
-					{
-					  text: '第44期 | 神器啊，从未想过 VSCode 还能这样直接打开仓库URL，原理揭秘~',
-					  link: '/read-source-code/p44',
-					},
-					{
-					  text: '第43期 | 学习 react-use 源码，写自定义 hooks 越来越顺',
-					  link: '/read-source-code/p43',
-					},
-					{
-					  text: '第42期 | 跟着 vant4 源码学习如何用 vue3+ts 开发一个 loading 组件，仅88行代码',
-					  link: '/read-source-code/p42',
-					},
-					{
-					  text: '第41期 | vant 4 正式发布了，支持暗黑主题，那么是如何实现的呢',
-					  link: '/read-source-code/p41',
-					},
-					{
-					  text: '第40期 | vite 是如何解析用户配置的 .env 的',
-					  link: '/read-source-code/p40',
-					},
-					{
-					  text: '第39期 | 如何发布一个 npm 库，自动化管理版本号、生成 changelog、tag 等',
-					  link: '/read-source-code/p39',
-					},
-					{
-					  text: '第38期 | 经常用 vant-weapp 开发小程序，却不知道如何开发一个组件？学！',
-					  link: '/read-source-code/p38',
-					},
-					{
-					  text: '第37期 | vite 3.0 都发布了，经常初始化 vite 项目，却不知 create-vite 原理？揭秘！',
-					  link: '/read-source-code/p37',
-					},
-					{
-					  text: '第36期 | 可能是历史上最简单的一期 omit.js 剔除对象中的属性',
-					  link: '/read-source-code/p36',
-					},
-					{
-					  text: '第35期 | 为 vite 项目自动添加 eslint 和 prettier',
-					  link: '/read-source-code/p35',
-					},
-					{ text: '第34期 | tdesign-vue 初始化组件', link: '/read-source-code/p34' },
-					{ text: '第33期 | arrify 转数组', link: '/read-source-code/p33' },
-					{ text: '第32期 | yocto-queue 队列 链表', link: '/read-source-code/p32' },
-					{ text: '第31期 | p-limit 限制并发数', link: '/read-source-code/p31' },
-					{
-					  text: '第30期 | @tarojs_plugin-mini-ci 小程序上传代码 ci',
-					  link: '/read-source-code/p30',
-					},
-					{ text: '第29期 | quick-lru', link: '/read-source-code/p29' },
-					{
-					  text: '第28期 | vue react 小程序 message 组件',
-					  link: '/read-source-code/p28',
-					},
-					{ text: '第27期 | read-pkg', link: '/read-source-code/p27' },
-					{ text: '第26期 | classnames', link: '/read-source-code/p26' },
-					{ text: '第25期 | 跟着underscore学防抖', link: '/read-source-code/p25' },
-					{ text: '第24期 | vue2工具函数', link: '/read-source-code/p24' },
-					{
-					  text: '第23期 | 为什么 Vue2 this 能够直接获取到 data 和 methods',
-					  link: '/read-source-code/p23',
-					},
-					{ text: '第22期 | dotenv', link: '/read-source-code/p22' },
-					{ text: '第21期 | await-to-js', link: '/read-source-code/p21' },
-					{ text: '第20期 | install-pkg', link: '/read-source-code/p20' },
-					{ text: '第19期 | axios 工具函数', link: '/read-source-code/p19' },
-					{
-					  text: '第18期 | delay  带取消功能的延迟函数',
-					  link: '/read-source-code/p18',
-					},
-					{ text: '第17期 | js-cookie', link: '/read-source-code/p17' },
-					{ text: '第16期 | 一行代码统一规范 包管理器', link: '/read-source-code/p16' },
-					{ text: '第15期 | element 初始化组件功能', link: '/read-source-code/p15' },
-					{ text: '第14期 | promisify', link: '/read-source-code/p14' },
-					{ text: '第13期 | open 打开浏览器', link: '/read-source-code/p13' },
-					{ text: '第12期 | 尤雨溪推荐 的ni 神器', link: '/read-source-code/p12' },
-					{ text: '第11期 | 玩具 vite', link: '/read-source-code/p11' },
-					{ text: '第10期 | configstore 存储', link: '/read-source-code/p10' },
-					{
-					  text: '第9期 | create-vue Vue 团队公开的全新脚手架工具',
-					  link: '/read-source-code/p9',
-					},
-					{ text: '第8期 | mitt、tiny-emitter 发布订阅', link: '/read-source-code/p8' },
-					{
-					  text: '第7期 | validate-npm-package-name 检测 npm 包是否符合标准',
-					  link: '/read-source-code/p7',
-					},
-					{
-					  text: '第6期 | update-notifier 检测 npm 包是否更新',
-					  link: '/read-source-code/p6',
-					},
-					{
-					  text: '第5期 | koa-compose 相对较难，觉得难可跳过',
-					  link: '/read-source-code/p5',
-					},
-					{ text: '第4期 | co 源码 觉得较难可先跳过', link: '/read-source-code/p4' },
-					{
-					  text: '第3期 | vue 3.2 是怎么发布的 vue-release',
-					  link: '/read-source-code/p3',
-					},
-					{ text: '第2期 | vue3 工具函数', link: '/read-source-code/p2' },
-					{ text: '第1期 | vue-devtools', link: '/read-source-code/p1' },
-				  ],
+					text: "公告",
+					items: [
+						{
+							text: "第60期 | Taro 源码揭秘 - 7. Taro.request 和请求响应拦截器是如何实现的",
+							link: "/read-source-code/p60",
+						},
+						{
+							text: "第59期 | Taro 源码揭秘 - 6. 为什么通过 Taro.xxx 能调用各个小程序平台的 API，如何设计实现的",
+							link: "/read-source-code/p59",
+						},
+						{
+							text: "第58期 | Taro 源码揭秘 - 5.高手都在用的发布订阅机制 Events 在 Taro 中是如何实现的？",
+							link: "/read-source-code/p58",
+						},
+						{
+							text: "# 第57期 | Taro 源码揭秘 4.每次 npm run dev_weapp 开发小程序，build 编译打包是如何实现的？",
+							link: "/read-source-code/p57",
+						},
+						{
+							text: "第56期 | 开发小程序又一新选择 vue-mini，据说性能是 Taro 的 10 倍，遥遥领先",
+							link: "/read-source-code/p56",
+						},
+						{
+							text: "第55期 | Taro 源码揭秘 3. taro init",
+							link: "/read-source-code/p55",
+						},
+						{
+							text: "第54期 | Taro 源码揭秘 2. 插件机制",
+							link: "/read-source-code/p54",
+						},
+						{
+							text: "第53期 | Taro 源码揭秘 1. taro init 初始化项目",
+							link: "/read-source-code/p53",
+						},
+						{
+							text: "第52期 | 分析 vant4 组件库源码，写一个 Vue3 highlight 高亮文本的组件",
+							link: "/read-source-code/p52",
+						},
+						{
+							text: "第51期 | fileSaver 考虑周到的下载文件库",
+							link: "/read-source-code/p51",
+						},
+						{
+							text: "第50期 | 剖析 localForage 源码，学习本地存储库原理",
+							link: "/read-source-code/p50",
+						},
+						{
+							text: "第49期 | 剖析 hotkeys-js 源码，学会快捷键实现原理",
+							link: "/read-source-code/p49",
+						},
+						{
+							text: "第48期 | axios 是如何打包发布的，如何开发工具库",
+							link: "/read-source-code/p48",
+						},
+						{
+							text: "第47期 | vant4.0 正式发布了，分析其源码学会用 vue3 写一个图片懒加载组件！",
+							link: "/read-source-code/p47",
+						},
+						{
+							text: "第46期 _ 分析 vant4 源码，学会用 vue3 + ts 开发毫秒级渲染的倒计时组件，真是妙啊",
+							link: "/read-source-code/p46",
+						},
+						{
+							text: "第45期 | 分析 vant4 源码，如何用 vue3 + ts 开发一个瀑布流滚动加载的列表组件？",
+							link: "/read-source-code/p45",
+						},
+						{
+							text: "第44期 | 神器啊，从未想过 VSCode 还能这样直接打开仓库URL，原理揭秘~",
+							link: "/read-source-code/p44",
+						},
+						{
+							text: "第43期 | 学习 react-use 源码，写自定义 hooks 越来越顺",
+							link: "/read-source-code/p43",
+						},
+						{
+							text: "第42期 | 跟着 vant4 源码学习如何用 vue3+ts 开发一个 loading 组件，仅88行代码",
+							link: "/read-source-code/p42",
+						},
+						{
+							text: "第41期 | vant 4 正式发布了，支持暗黑主题，那么是如何实现的呢",
+							link: "/read-source-code/p41",
+						},
+						{
+							text: "第40期 | vite 是如何解析用户配置的 .env 的",
+							link: "/read-source-code/p40",
+						},
+						{
+							text: "第39期 | 如何发布一个 npm 库，自动化管理版本号、生成 changelog、tag 等",
+							link: "/read-source-code/p39",
+						},
+						{
+							text: "第38期 | 经常用 vant-weapp 开发小程序，却不知道如何开发一个组件？学！",
+							link: "/read-source-code/p38",
+						},
+						{
+							text: "第37期 | vite 3.0 都发布了，经常初始化 vite 项目，却不知 create-vite 原理？揭秘！",
+							link: "/read-source-code/p37",
+						},
+						{
+							text: "第36期 | 可能是历史上最简单的一期 omit.js 剔除对象中的属性",
+							link: "/read-source-code/p36",
+						},
+						{
+							text: "第35期 | 为 vite 项目自动添加 eslint 和 prettier",
+							link: "/read-source-code/p35",
+						},
+						{
+							text: "第34期 | tdesign-vue 初始化组件",
+							link: "/read-source-code/p34",
+						},
+						{
+							text: "第33期 | arrify 转数组",
+							link: "/read-source-code/p33",
+						},
+						{
+							text: "第32期 | yocto-queue 队列 链表",
+							link: "/read-source-code/p32",
+						},
+						{
+							text: "第31期 | p-limit 限制并发数",
+							link: "/read-source-code/p31",
+						},
+						{
+							text: "第30期 | @tarojs_plugin-mini-ci 小程序上传代码 ci",
+							link: "/read-source-code/p30",
+						},
+						{
+							text: "第29期 | quick-lru",
+							link: "/read-source-code/p29",
+						},
+						{
+							text: "第28期 | vue react 小程序 message 组件",
+							link: "/read-source-code/p28",
+						},
+						{
+							text: "第27期 | read-pkg",
+							link: "/read-source-code/p27",
+						},
+						{
+							text: "第26期 | classnames",
+							link: "/read-source-code/p26",
+						},
+						{
+							text: "第25期 | 跟着underscore学防抖",
+							link: "/read-source-code/p25",
+						},
+						{
+							text: "第24期 | vue2工具函数",
+							link: "/read-source-code/p24",
+						},
+						{
+							text: "第23期 | 为什么 Vue2 this 能够直接获取到 data 和 methods",
+							link: "/read-source-code/p23",
+						},
+						{
+							text: "第22期 | dotenv",
+							link: "/read-source-code/p22",
+						},
+						{
+							text: "第21期 | await-to-js",
+							link: "/read-source-code/p21",
+						},
+						{
+							text: "第20期 | install-pkg",
+							link: "/read-source-code/p20",
+						},
+						{
+							text: "第19期 | axios 工具函数",
+							link: "/read-source-code/p19",
+						},
+						{
+							text: "第18期 | delay  带取消功能的延迟函数",
+							link: "/read-source-code/p18",
+						},
+						{
+							text: "第17期 | js-cookie",
+							link: "/read-source-code/p17",
+						},
+						{
+							text: "第16期 | 一行代码统一规范 包管理器",
+							link: "/read-source-code/p16",
+						},
+						{
+							text: "第15期 | element 初始化组件功能",
+							link: "/read-source-code/p15",
+						},
+						{
+							text: "第14期 | promisify",
+							link: "/read-source-code/p14",
+						},
+						{
+							text: "第13期 | open 打开浏览器",
+							link: "/read-source-code/p13",
+						},
+						{
+							text: "第12期 | 尤雨溪推荐 的ni 神器",
+							link: "/read-source-code/p12",
+						},
+						{
+							text: "第11期 | 玩具 vite",
+							link: "/read-source-code/p11",
+						},
+						{
+							text: "第10期 | configstore 存储",
+							link: "/read-source-code/p10",
+						},
+						{
+							text: "第9期 | create-vue Vue 团队公开的全新脚手架工具",
+							link: "/read-source-code/p9",
+						},
+						{
+							text: "第8期 | mitt、tiny-emitter 发布订阅",
+							link: "/read-source-code/p8",
+						},
+						{
+							text: "第7期 | validate-npm-package-name 检测 npm 包是否符合标准",
+							link: "/read-source-code/p7",
+						},
+						{
+							text: "第6期 | update-notifier 检测 npm 包是否更新",
+							link: "/read-source-code/p6",
+						},
+						{
+							text: "第5期 | koa-compose 相对较难，觉得难可跳过",
+							link: "/read-source-code/p5",
+						},
+						{
+							text: "第4期 | co 源码 觉得较难可先跳过",
+							link: "/read-source-code/p4",
+						},
+						{
+							text: "第3期 | vue 3.2 是怎么发布的 vue-release",
+							link: "/read-source-code/p3",
+						},
+						{
+							text: "第2期 | vue3 工具函数",
+							link: "/read-source-code/p2",
+						},
+						{
+							text: "第1期 | vue-devtools",
+							link: "/read-source-code/p1",
+						},
+					],
 				},
-			  ],
+			],
 		},
 	},
 });

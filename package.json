@@ -32,7 +32,8 @@
 	},
 	"homepage": "https://github.com/ruochuan12/blog#readme",
 	"dependencies": {
-		"rspress": "^1.39.0"
+		"rspress": "^1.39.1",
+		"rspress-plugin-mermaid": "^0.3.0"
 	},
 	"devDependencies": {
 		"@release-it/conventional-changelog": "^5.1.1",
