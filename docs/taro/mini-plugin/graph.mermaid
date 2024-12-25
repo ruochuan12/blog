@@ -1,0 +1,68 @@
+graph TD
+    A[apply 方法] --> B[初始化上下文和入口文件]
+    B --> C{解构配置选项}
+    C --> D[注册 run 钩子]
+    C --> E[注册 watchRun 钩子]
+    C --> F[注册 make 钩子]
+    C --> G[注册 compilation 钩子]
+    C --> H[注册 afterEmit 钩子]
+    C --> I[应用 TaroNormalModulesPlugin]
+    C --> J{newBlended 模式}
+    J --> K[添加加载块插件]
+
+    D --> L[执行 run 方法]
+    L --> M[应用 TaroLoadChunksPlugin]
+
+    E --> N[获取已修改文件]
+    N --> O{文件有变更}
+    O --> P[设置 isWatch 为 true]
+    E --> Q[执行 run 方法]
+    Q --> R{loadChunksPlugin 是否存在}
+    R --> S[应用 TaroLoadChunksPlugin]
+
+    F --> T[处理依赖项]
+    T --> U[编译独立页面]
+    T --> V[添加依赖项到 compilation]
+    V --> W[调用 onCompilerMake 回调]
+
+    G --> X[设置依赖工厂]
+    G --> Y[插入 Taro Loader]
+    G --> Z[注册 processAssets 钩子]
+    Z --> AA[生成独立分包文件]
+    Z --> AB[生成小程序文件]
+    Z --> AC[优化小程序文件]
+    Z --> AD[调用 modifyBuildAssets 回调]
+
+    H --> AE[添加 tabbar 文件到依赖中]
+
+    style A fill:#f9f,stroke:#333,stroke-width:4px
+    style B fill:#bbf,stroke:#333,stroke-width:2px
+    style C fill:#bbf,stroke:#333,stroke-width:2px
+    style D fill:#bbf,stroke:#333,stroke-width:2px
+    style E fill:#bbf,stroke:#333,stroke-width:2px
+    style F fill:#bbf,stroke:#333,stroke-width:2px
+    style G fill:#bbf,stroke:#333,stroke-width:2px
+    style H fill:#bbf,stroke:#333,stroke-width:2px
+    style I fill:#bbf,stroke:#333,stroke-width:2px
+    style J fill:#bbf,stroke:#333,stroke-width:2px
+    style K fill:#bbf,stroke:#333,stroke-width:2px
+    style L fill:#bbf,stroke:#333,stroke-width:2px
+    style M fill:#bbf,stroke:#333,stroke-width:2px
+    style N fill:#bbf,stroke:#333,stroke-width:2px
+    style O fill:#bbf,stroke:#333,stroke-width:2px
+    style P fill:#bbf,stroke:#333,stroke-width:2px
+    style Q fill:#bbf,stroke:#333,stroke-width:2px
+    style R fill:#bbf,stroke:#333,stroke-width:2px
+    style S fill:#bbf,stroke:#333,stroke-width:2px
+    style T fill:#bbf,stroke:#333,stroke-width:2px
+    style U fill:#bbf,stroke:#333,stroke-width:2px
+    style V fill:#bbf,stroke:#333,stroke-width:2px
+    style W fill:#bbf,stroke:#333,stroke-width:2px
+    style X fill:#bbf,stroke:#333,stroke-width:2px
+    style Y fill:#bbf,stroke:#333,stroke-width:2px
+    style Z fill:#bbf,stroke:#333,stroke-width:2px
+    style AA fill:#bbf,stroke:#333,stroke-width:2px
+    style AB fill:#bbf,stroke:#333,stroke-width:2px
+    style AC fill:#bbf,stroke:#333,stroke-width:2px
+    style AD fill:#bbf,stroke:#333,stroke-width:2px
+    style AE fill:#bbf,stroke:#333,stroke-width:2px
