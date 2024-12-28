@@ -41,7 +41,7 @@
 - [Taro 源码揭秘 - 7. Taro.request 和请求响应拦截器是如何实现的？](https://ruochuan12.github.io/taro/request/)
 - [Taro 源码揭秘：8. Taro 是如何使用 webpack 打包构建小程序的](https://ruochuan12.github.io/taro/webpack5-runner/)
 - [Taro 源码揭秘：9. Taro 是如何生成 webpack 配置进行构建小程序的？](https://ruochuan12.github.io/taro/webpack5-runner/)
-
+- [Taro 源码揭秘：10. Taro 到底是怎样转换成小程序文件的？](https://ruochuan12.github.io/taro/mini-plugin/)
 
 **vant 组件库源码分析系列：**
 
