@@ -7,7 +7,7 @@ theme: smartblue
 
 ## 1. 前言
 
-大家好，我是[若川](https://lxchuan12.gitee.io)，欢迎 `follow` [我的 github](https://github.com/ruochuan12)。我倾力持续组织了3年多[每周大家一起学习200行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（5.7k+人）第一的专栏，写有20余篇源码文章。
+大家好，我是[若川](https://ruochuan12.github.io)，欢迎 `follow` [我的 github](https://github.com/ruochuan12)。我倾力持续组织了3年多[每周大家一起学习200行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（5.7k+人）第一的专栏，写有20余篇源码文章。
 
 我们开发业务时经常会使用到组件库，一般来说，很多时候我们不需要关心内部实现。但是如果希望学习和深究里面的原理，这时我们可以分析自己使用的组件库实现。有哪些优雅实现、最佳实践、前沿技术等都可以值得我们借鉴。
 
@@ -331,7 +331,7 @@ export default defineComponent({
 
   setup(props) {
     const highlightChunks = computed(() => {
-      // 省略这里的代码，后文讲述... 
+      // 省略这里的代码，后文讲述...
     });
 
     const renderContent = () => {
@@ -365,12 +365,12 @@ export default defineComponent({
                 "highlight": false
             }
         ]
-         * 
+         *
         */
         const { start, end, highlight } = chunk;
         // 取出文本
         const text = sourceString.slice(start, end);
-        
+
         debugger;
 
         if (highlight) {
@@ -548,7 +548,7 @@ const highlightChunks = computed(() => {
 
 ## 6. 加源码共读交流群
 
-作者：常以[若川](https://lxchuan12.gitee.io)为名混迹于江湖。所知甚少，唯善学。
+作者：常以[若川](https://ruochuan12.github.io)为名混迹于江湖。所知甚少，唯善学。
 
 最后可以持续关注我[@若川](https://juejin.cn/user/1415826704971918)，欢迎 `follow` [我的 github](https://github.com/ruochuan12)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（5.7k+人）第一的专栏，写有20余篇源码文章。
 

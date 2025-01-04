@@ -14,7 +14,7 @@
 >
 > `vuepress`博客：[https://ruochuan12.github.io](../)
 >
-> 如果打开比较慢，可以访问[http://lxchuan12.gitee.io/](http://lxchuan12.gitee.io/)，可能会快些
+> 如果打开比较慢，可以访问[http://ruochuan12.github.io/](http://ruochuan12.github.io/)，可能会快些
 
 您可以在以下网站（点击图片跳转）关注我：<br>
 <a href="https://juejin.im/user/1415826704971918/posts" >
