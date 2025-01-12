@@ -388,6 +388,9 @@ export default defineConfig({
 					collapsible: true, // 可选的, 默认值是 true,
 					// sidebarDepth: 2, // 可选的, 默认值是 1
 					items: [
+						"/annual-summary/2024/",
+						"/annual-summary/2023/",
+						"/annual-summary/2022/",
 						"/annual-summary/2021/",
 						"/annual-summary/2020/",
 						"/annual-summary/2019/",
