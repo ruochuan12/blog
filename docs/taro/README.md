@@ -1,7 +1,5 @@
 # Taro 源码揭秘系列
 
-TODOs
-
 - [Taro 源码揭秘：1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](../taro/cli-init/)
 - [Taro 源码揭秘：2. 揭开整个架构的插件系统的秘密](../taro/cli-plugins/)
 - [Taro 源码揭秘：3. 每次创建新的 Taro 项目（taro init）的背后原理是什么？](../taro/cli-init-2/)
@@ -12,3 +10,11 @@ TODOs
 - [Taro 源码揭秘：8. Taro 是如何使用 webpack 打包构建小程序的？](../taro/webpack5/)
 - [Taro 源码揭秘：9. Taro 是如何生成 webpack 配置进行构建小程序的？](../taro/webpack5-runner/)
 - [Taro 源码揭秘：10. Taro 到底是怎样转换成小程序文件的？](../taro/mini-plugin/)
+
+- TODOs:
+- [ ] TaroMiniPlugin 读取文件
+- [ ] TaroMiniPlugin 生成模板文件
+- [ ] 微信小程序转 Taro taro-cli-convertor
+- [ ] plugin-mini-ci
+- [ ] plugin-html
+- [ ] plugin-http
