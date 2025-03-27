@@ -28,6 +28,7 @@ theme: smartblue
 前面 4 篇文章都是讲述编译相关的，CLI、插件机制、初始化项目、编译构建流程。
 第 5-7 篇讲述的是运行时相关的 Events、API、request 等。
 第 10 篇接着继续追随第 4 篇和第 8、9 篇的脚步，分析 TaroMiniPlugin webpack 的插件实现。
+我们继续分析 TaroMiniPlugin webpack 的插件实现。
 
 关于克隆项目、环境准备、如何调试代码等，参考[第一篇文章-准备工作、调试](https://juejin.cn/post/7378363694939783178#heading-1)。后续文章基本不再过多赘述。
 
@@ -35,13 +36,36 @@ theme: smartblue
 
 ```bash
 1. Taro 到底是怎样转换成小程序的？
-2. 熟悉 webpack 核心库 tapable 事件机制
-3. 对 webpack 自定义插件和 compiler 钩子等有比较深刻的认识
-4. 对 webpack 自定义 loader 等有比较深刻的认识
 等等
 ```
 
 我们先来看 TaroMiniPlugin 结构
+
+```ts
+export default class TaroMiniPlugin {
+	constructor (options: ITaroMiniPluginOptions) {
+		// 省略
+	}
+	/**
+   * 插件入口
+   */
+	apply (compiler: Compiler) {
+		this.context = compiler.context
+		this.appEntry = this.getAppEntry(compiler)
+		// 省略代码
+		/** build mode */
+		compiler.hooks.run.tapAsync(
+			PLUGIN_NAME,
+			this.tryAsync<Compiler>(async compiler => {
+				await this.run(compiler)
+				// 省略
+			})
+		)
+	}
+}
+```
+
+插件入口 apply 方法
 
 ```ts
 export default class TaroMiniPlugin {
@@ -76,6 +100,32 @@ export default class TaroMiniPlugin {
     - getDarkMode() 获取暗黑模式配置
     - getConfigFiles(compiler) 获取配置文件
     - addEntries() 添加入口文件
+
+```mermaid
+graph TD
+    A[开始] --> B{是否为插件构建模式?}
+    B -- 是 --> C[调用 getPluginFiles]
+    C --> D[调用 getConfigFiles]
+    B -- 否 --> E[调用 getAppConfig]
+    E --> F[调用 getPages]
+    F --> G[调用 getPagesConfig]
+    G --> H[调用 getDarkMode]
+    H --> I[调用 getConfigFiles]
+    I --> J[调用 addEntries]
+    D --> K[结束]
+    J --> K
+
+    subgraph 函数解释
+        C["getPluginFiles: 获取插件文件，处理插件相关配置"]
+        D["getConfigFiles: 获取配置文件，处理配置相关逻辑"]
+        E["getAppConfig: 获取应用全局配置"]
+        F["getPages: 根据app配置收集页面信息，处理分包和tabbar"]
+        G["getPagesConfig: 读取页面及其依赖组件的配置"]
+        H["getDarkMode: 获取暗黑模式相关配置"]
+        I["getConfigFiles: 同上"]
+        J["addEntries: 添加app、模板组件、页面、组件等资源模块"]
+    end
+```
 
 ## getAppConfig 获取入口配置文件配置
 
@@ -162,6 +212,13 @@ appConfig 配置
   }
 ```
 
+![filesConfig](./images/filesConfig.png)
+
+#### readConfig 读取配置
+
+```ts
+```
+
 ## getPages 获取页面信息
 
 ```ts
@@ -207,6 +264,8 @@ getPages () {
 	newBlended && this.getNativeComponent()
 }
 ```
+
+![alt text](./images/image.png)
 
 ## getPagesConfig 读取页面及其依赖的组件的配置
 
@@ -285,6 +344,24 @@ getPagesConfig () {
       this.addEntry(path.resolve(__dirname, '..', 'template/comp'), 'comp', META_TYPE.STATIC)
     }
     this.addEntry(path.resolve(__dirname, '..', 'template/custom-wrapper'), 'custom-wrapper', META_TYPE.STATIC)
+	// 拆分
+  }
+```
+
+```ts
+// packages/taro-helper/src/constants.ts
+export enum META_TYPE {
+  ENTRY = 'ENTRY',
+  PAGE = 'PAGE',
+  COMPONENT = 'COMPONENT',
+  NORMAL = 'NORMAL',
+  STATIC = 'STATIC',
+  CONFIG = 'CONFIG',
+  EXPORTS = 'EXPORTS',
+}
+```
+
+```ts
 
     this.pages.forEach(item => {
       if (item.isNative) {
@@ -313,47 +390,6 @@ getPagesConfig () {
         this.addEntry(item.path, item.name, META_TYPE.COMPONENT)
       }
     })
-  }
-```
-
-```mermaid
-graph TD;
-    A[开始] --> B[获取文件路径和配置路径];
-    B --> C[读取配置文件];
-    C --> D{是否为构建插件且有 componentGenerics};
-    D -- 是 --> E[处理 componentGenerics];
-    D -- 否 --> F{是否有 usingComponents};
-    E --> F;
-    F -- 是 --> G[遍历 usingComponents];
-    F -- 否 --> K[保存配置到 filesConfig];
-    G --> H{是否为别名路径};
-    H -- 是 --> I[替换别名路径];
-    H -- 否 --> J{是否为第三方依赖};
-    I --> J;
-    J -- 是 --> J1[获取第三方包绝对路径];
-    J -- 否 --> J2[使用原路径];
-    J1 --> J3[更新配置中的路径];
-    J2 --> J3;
-    J3 --> J4[添加到依赖组件列表];
-    J4 --> J5{是否为第三方组件且非原生文件};
-    J5 -- 是 --> J6[添加到第三方组件集合];
-    J5 -- 否 --> J7[跳过];
-    J6 --> J8{是否遍历完 usingComponents};
-    J7 --> J8;
-    J8 -- 否 --> G;
-    J8 -- 是 --> J9[遍历依赖组件列表];
-    J9 --> J10{文件是否存在且未添加到 components};
-    J10 -- 是 --> J11{是否为本地化组件};
-    J10 -- 否 --> J12[跳过];
-    J11 -- 是 --> J12;
-    J11 -- 否 --> J13[获取组件信息];
-    J13 --> J14[添加到独立分包组件列表];
-    J14 --> J15[添加到 components 集合];
-    J15 --> J16[递归调用 compileFile];
-    J16 --> J17{是否遍历完依赖组件列表};
-    J17 -- 否 --> J9;
-    J17 -- 是 --> K;
-    K --> L[结束];
 ```
 
 最后可以持续关注我[@若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
