@@ -217,6 +217,26 @@ appConfig 配置
 #### readConfig 读取配置
 
 ```ts
+export function readConfig<T extends IReadConfigOptions> (configPath: string, options: T = {} as T) {
+  let result: any = {}
+  if (fs.existsSync(configPath)) {
+    if (REG_JSON.test(configPath)) {
+      result = fs.readJSONSync(configPath)
+    } else {
+      result = requireWithEsbuild(configPath, {
+        customConfig: {
+        },
+        customSwcConfig: {
+        },
+      })
+    }
+
+    result = getModuleDefaultExport(result)
+  } else {
+    result = readPageConfig(configPath)
+  }
+  return result
+}
 ```
 
 ## getPages 获取页面信息
