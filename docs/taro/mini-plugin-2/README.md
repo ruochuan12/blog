@@ -9,7 +9,7 @@ theme: smartblue
 
 大家好，我是[若川](https://ruochuan12.github.io)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
 
-截至目前（`2025-03-25`），目前最新是 [`4.0.9`](https://github.com/NervJS/taro/releases/tag/v4.0.9)，官方`4.0`正式版本的介绍文章暂未发布。官方之前发过[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。
+截至目前（`2025-04-15`），目前最新是 [`4.0.10`](https://github.com/NervJS/taro/releases/tag/v4.0.10)，官方`4.0`正式版本的介绍文章暂未发布。官方之前发过[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。
 
 计划写一个 Taro 源码揭秘系列，博客地址：[https://ruochuan12.github.io/taro](https://ruochuan12.github.io/taro) 可以加入书签，持续关注[若川](https://juejin.cn/user/1415826704971918)。
 
@@ -27,17 +27,20 @@ theme: smartblue
 
 前面 4 篇文章都是讲述编译相关的，CLI、插件机制、初始化项目、编译构建流程。
 第 5-7 篇讲述的是运行时相关的 Events、API、request 等。
-第 10 篇接着继续追随第 4 篇和第 8、9 篇的脚步，分析 TaroMiniPlugin webpack 的插件实现。
-我们继续分析 TaroMiniPlugin webpack 的插件实现。
+第 10 篇接着继续追随第 4 篇和第 8、9 篇的脚步，分析 TaroMiniPlugin webpack 的插件实现（全流程概览）。
+第 11 篇，我们继续分析 TaroMiniPlugin webpack 的插件实现。分析 Taro 是如何解析入口文件和页面的？
 
-关于克隆项目、环境准备、如何调试代码等，参考[第一篇文章-准备工作、调试](https://juejin.cn/post/7378363694939783178#heading-1)。后续文章基本不再过多赘述。
+关于克隆项目、环境准备、如何调试代码等，参考[第一篇文章-准备工作、调试](https://juejin.cn/post/7378363694939783178#heading-1)和[第 4 篇 npm run dev:weapp](https://juejin.cn/post/7403193330271682612#heading-2)。后续文章基本不再过多赘述。
 
 学完本文，你将学到：
 
 ```bash
-1. Taro 到底是怎样转换成小程序的？
+1. Taro 是如何解析入口文件和页面的？
+2. 如何读取文件
 等等
 ```
+
+![taro-mini-plugin](./images/taro-webpack.png)
 
 我们先来看 TaroMiniPlugin 结构
 
@@ -47,10 +50,12 @@ export default class TaroMiniPlugin {
 		// 省略
 	}
 	/**
-   * 插件入口
-   */
+	* 插件入口
+	*/
 	apply (compiler: Compiler) {
 		this.context = compiler.context
+		//  根据 webpack entry 配置获取入口文件路径
+		//  @returns app 入口文件路径
 		this.appEntry = this.getAppEntry(compiler)
 		// 省略代码
 		/** build mode */
@@ -65,7 +70,12 @@ export default class TaroMiniPlugin {
 }
 ```
 
-插件入口 apply 方法
+插件入口 apply 方法，获取到 `this.appEntry` `src/app.[js|jsx|ts|tsx]`，调用 `run` 方法。
+
+这里是
+this.appEntry = "/Users/ruochuan/git-source/github/taro4-debug/src/app.ts"
+
+本文主要讲述 `run` 方法。
 
 ```ts
 export default class TaroMiniPlugin {
@@ -127,7 +137,13 @@ graph TD
     end
 ```
 
-## getAppConfig 获取入口配置文件配置
+## 2. getAppConfig 获取入口配置文件配置
+
+```ts
+this.appConfig = await this.getAppConfig();
+```
+
+入口文件是 `src/app.[js|jsx|ts|tsx]`。
 
 ```ts
 async getAppConfig (): Promise<AppConfig> {
@@ -184,7 +200,9 @@ appConfig 配置
 }
 ```
 
-### compileFile 读取页面、组件的配置，并递归读取依赖的组件的配置
+其中 compileFile 函数的实现。
+
+### 2.1 compileFile 读取页面、组件的配置，并递归读取依赖的组件的配置
 
 ```ts
 /**
@@ -202,8 +220,8 @@ appConfig 配置
 
     // 递归收集依赖的第三方组件
     if (usingComponents) {
-		// 省略...
-	}
+      // 省略...
+    }
 
     this.filesConfig[this.getConfigFilePath(file.name)] = {
       content: fileConfig,
@@ -212,11 +230,22 @@ appConfig 配置
   }
 ```
 
+compileFile 相对比较复杂，我们省略一些代码。
+
+`filesConfig` 如下图所示：
+
 ![filesConfig](./images/filesConfig.png)
 
-#### readConfig 读取配置
+包含路径和内容。
+
+### 2.2 readConfig 读取配置
+
+[页面配置](https://docs.taro.zone/docs/page-config)
+
+![page.config](./images/page.config.png)
 
 ```ts
+// packages/taro-helper/src/utils.ts
 export function readConfig<T extends IReadConfigOptions> (configPath: string, options: T = {} as T) {
   let result: any = {}
   if (fs.existsSync(configPath)) {
@@ -224,11 +253,8 @@ export function readConfig<T extends IReadConfigOptions> (configPath: string, op
       result = fs.readJSONSync(configPath)
     } else {
       result = requireWithEsbuild(configPath, {
-        customConfig: {
-        },
-        customSwcConfig: {
-        },
-      })
+		// 省略若干代码
+	  })
     }
 
     result = getModuleDefaultExport(result)
@@ -239,7 +265,103 @@ export function readConfig<T extends IReadConfigOptions> (configPath: string, op
 }
 ```
 
-## getPages 获取页面信息
+#### 2.2.1 requireWithEsbuild
+
+```ts
+// packages/taro-helper/src/esbuild/index.ts
+
+import { Config, transformSync } from '@swc/core'
+import esbuild from 'esbuild'
+import requireFromString from 'require-from-string'
+// 省略若干代码
+
+/** 基于 esbuild 的 require 实现 */
+export function requireWithEsbuild(
+  id: string,
+  { customConfig = {}, customSwcConfig = {}, cwd = process.cwd() }: IRequireWithEsbuildOptions = {}
+) {
+  const { outputFiles = [] } = esbuild.buildSync(
+	// 省略若干代码
+  )
+
+  // Note: esbuild.buildSync 模式下不支持引入插件，所以这里需要手动转换
+  const { code = '' } = transformSync(
+    outputFiles[0].text,
+    defaults(customSwcConfig, {
+      jsc: { target: 'es2015' },
+    })
+  )
+  return requireFromString(code, id)
+}
+```
+
+#### 2.2.2 getModuleDefaultExport
+
+```ts
+export const getModuleDefaultExport = (exports) => (exports.__esModule ? exports.default : exports)
+```
+
+#### 2.2.3 readPageConfig 读取页面 js
+
+```ts
+// packages/taro-helper/src/utils.ts
+
+export function readPageConfig(configPath: string) {
+  let result: any = {}
+  const extNames = ['.js', '.jsx', '.ts', '.tsx', '.vue']
+
+  // check source file extension
+  extNames.some((ext) => {
+    const tempPath = configPath.replace('.config', ext)
+    if (fs.existsSync(tempPath)) {
+      try {
+        result = readSFCPageConfig(tempPath)
+      } catch (error) {
+        result = {}
+      }
+      return true
+    }
+  })
+  return result
+}
+```
+
+#### 2.2.4 readSFCPageConfig
+
+```ts
+// packages/taro-helper/src/utils.ts
+
+// read page config from a sfc file instead of the regular config file
+function readSFCPageConfig(configPath: string) {
+  if (!fs.existsSync(configPath)) return {}
+
+  const sfcSource = fs.readFileSync(configPath, 'utf8')
+  const dpcReg = /definePageConfig\(\{[\w\W]+?\}\)/g
+  const matches = sfcSource.match(dpcReg)
+
+  let result: any = {}
+
+  if (matches && matches.length === 1) {
+    const callExprHandler = (p: any) => {
+      const { callee } = p.node
+      if (!callee.name) return
+      if (callee.name && callee.name !== 'definePageConfig') return
+
+      const configNode = p.node.arguments[0]
+      result = exprToObject(configNode)
+      p.stop()
+    }
+    const configSource = matches[0]
+    const program = (babel.parse(configSource, { filename: '' }))?.program
+
+    program && babel.traverse(program, { CallExpression: callExprHandler })
+  }
+
+  return result
+}
+```
+
+## 3. getPages 获取页面信息
 
 ```ts
 /**
@@ -263,6 +385,12 @@ getPages () {
 	const { newBlended, frameworkExts, combination } = this.options
 	const { prerender } = combination.config
 
+	// 拆分到下方
+```
+
+![image](./images/image.png)
+
+```ts
 	this.prerenderPages = new Set(validatePrerenderPages(appPages, prerender).map(p => p.path))
 	this.getTabBarFiles(this.appConfig)
 	this.pages = new Set([
@@ -285,9 +413,7 @@ getPages () {
 }
 ```
 
-![alt text](./images/image.png)
-
-## getPagesConfig 读取页面及其依赖的组件的配置
+## 4. getPagesConfig 读取页面及其依赖的组件的配置
 
 ```ts
 /**
@@ -307,7 +433,9 @@ getPagesConfig () {
 }
 ```
 
-## getDarkMode 收集 dark mode 配置中的文件
+![image](./images/image.png)
+
+## 5. getDarkMode 收集 dark mode 配置中的文件
 
 ```ts
 /**
@@ -322,7 +450,7 @@ getPagesConfig () {
   }
 ```
 
-## getConfigFiles 往 this.dependencies 中新增或修改所有 config 配置模块
+## 6. getConfigFiles 往 this.dependencies 中新增或修改所有 config 配置模块
 
 ```ts
 /**
@@ -350,23 +478,7 @@ getPagesConfig () {
   }
 ```
 
-## addEntries 在 this.dependencies 中新增或修改 app、模板组件、页面、组件等资源模块
-
-```ts
-/**
-   * 在 this.dependencies 中新增或修改 app、模板组件、页面、组件等资源模块
-   */
-  addEntries () {
-    const { template } = this.options
-
-    this.addEntry(this.appEntry, 'app', META_TYPE.ENTRY)
-    if (!template.isSupportRecursive) {
-      this.addEntry(path.resolve(__dirname, '..', 'template/comp'), 'comp', META_TYPE.STATIC)
-    }
-    this.addEntry(path.resolve(__dirname, '..', 'template/custom-wrapper'), 'custom-wrapper', META_TYPE.STATIC)
-	// 拆分
-  }
-```
+## 7. addEntries 在 this.dependencies 中新增或修改 app、模板组件、页面、组件等资源模块
 
 ```ts
 // packages/taro-helper/src/constants.ts
@@ -382,7 +494,24 @@ export enum META_TYPE {
 ```
 
 ```ts
+/**
+   * 在 this.dependencies 中新增或修改 app、模板组件、页面、组件等资源模块
+   */
+  addEntries () {
+    const { template } = this.options
 
+    this.addEntry(this.appEntry, 'app', META_TYPE.ENTRY)
+    if (!template.isSupportRecursive) {
+      this.addEntry(path.resolve(__dirname, '..', 'template/comp'), 'comp', META_TYPE.STATIC)
+    }
+    this.addEntry(path.resolve(__dirname, '..', 'template/custom-wrapper'), 'custom-wrapper', META_TYPE.STATIC)
+	// 拆分到下方
+  }
+```
+
+遍历页面添加到依赖项中。
+
+```ts
     this.pages.forEach(item => {
       if (item.isNative) {
         this.addEntry(item.path, item.name, META_TYPE.NORMAL, { isNativePage: true })
@@ -396,7 +525,11 @@ export enum META_TYPE {
         this.addEntry(item.path, item.name, META_TYPE.PAGE)
       }
     })
+```
 
+遍历组件添加到依赖项中。
+
+```ts
     this.components.forEach(item => {
       if (item.isNative) {
         this.addEntry(item.path, item.name, META_TYPE.NORMAL, { isNativePage: true })
@@ -411,5 +544,33 @@ export enum META_TYPE {
       }
     })
 ```
+
+## 8. addEntry 在 this.dependencies 中新增或修改模块
+
+```ts
+/**
+   * 在 this.dependencies 中新增或修改模块
+   */
+  addEntry (entryPath: string, entryName: string, entryType: META_TYPE, options = {}) {
+    let dep: TaroSingleEntryDependency
+    if (this.dependencies.has(entryPath)) {
+      dep = this.dependencies.get(entryPath)!
+      dep.name = entryName
+      dep.loc = { name: entryName }
+      dep.request = entryPath
+      dep.userRequest = entryPath
+      dep.miniType = entryType
+      dep.options = options
+    } else {
+      dep = new TaroSingleEntryDependency(entryPath, entryName, { name: entryName }, entryType, options)
+    }
+    this.dependencies.set(entryPath, dep)
+  }
+```
+
+this.dependencies 是这样的结构。TODO:
+
+## 9. 总结
+
 
 最后可以持续关注我[@若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
