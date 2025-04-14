@@ -72,10 +72,9 @@ export default class TaroMiniPlugin {
 
 插件入口 apply 方法，获取到 `this.appEntry` `src/app.[js|jsx|ts|tsx]`，调用 `run` 方法。
 
-这里是
-this.appEntry = "/Users/ruochuan/git-source/github/taro4-debug/src/app.ts"
+这里的 `this.appEntry` 是 `"/Users/ruochuan/git-source/github/taro4-debug/src/app.ts"`
 
-本文主要讲述 `run` 方法。
+本文主要讲述 `run` 方法的具体实现。分析 `app` 入口文件，搜集页面、组件信息，往 `this.dependencies` 中添加资源模块。
 
 ```ts
 export default class TaroMiniPlugin {
@@ -144,9 +143,46 @@ this.appConfig = await this.getAppConfig();
 ```
 
 入口文件是 `src/app.[js|jsx|ts|tsx]`。
+`getAppConfig` 获取入口文件的配置。
+
+这个函数要做的事情是把配置文件 `src/app.config.ts` 转换成
+
+```ts
+// src/app.config.ts
+export default defineAppConfig({
+  pages: [
+    'pages/index/index'
+  ],
+  window: {
+    backgroundTextStyle: 'light',
+    navigationBarBackgroundColor: '#fff',
+    navigationBarTitleText: 'WeChat',
+    navigationBarTextStyle: 'black'
+  }
+})
+```
+
+最终这样的对象。
+
+```ts
+{
+  pages: [
+    "pages/index/index",
+  ],
+  window: {
+    backgroundTextStyle: "light",
+    navigationBarBackgroundColor: "#fff",
+    navigationBarTitleText: "WeChat",
+    navigationBarTextStyle: "black",
+  },
+}
+```
+
+我们来看 `getAppConfig` 的具体实现。
 
 ```ts
 async getAppConfig (): Promise<AppConfig> {
+	// 'app'
     const appName = path.basename(this.appEntry).replace(path.extname(this.appEntry), '')
 
     this.compileFile({
@@ -169,38 +205,9 @@ async getAppConfig (): Promise<AppConfig> {
   }
 ```
 
-```ts
-// app.config.ts
-export default defineAppConfig({
-  pages: [
-    'pages/index/index'
-  ],
-  window: {
-    backgroundTextStyle: 'light',
-    navigationBarBackgroundColor: '#fff',
-    navigationBarTitleText: 'WeChat',
-    navigationBarTextStyle: 'black'
-  }
-})
-```
+其中 `compileFile` 函数的实现。
 
-appConfig 配置
-
-```ts
-{
-  pages: [
-    "pages/index/index",
-  ],
-  window: {
-    backgroundTextStyle: "light",
-    navigationBarBackgroundColor: "#fff",
-    navigationBarTitleText: "WeChat",
-    navigationBarTextStyle: "black",
-  },
-}
-```
-
-其中 compileFile 函数的实现。
+`modifyAppConfig` 是传入的修改 `app.config.ts` 配置文件的钩子函数。
 
 ### 2.1 compileFile 读取页面、组件的配置，并递归读取依赖的组件的配置
 
@@ -230,13 +237,15 @@ appConfig 配置
   }
 ```
 
-compileFile 相对比较复杂，我们省略一些代码。
+`compileFile` 相对比较复杂，我们省略一些代码。
 
-`filesConfig` 如下图所示：
+最终给 `this.filesConfig` 赋值，对象如下图所示：
 
 ![filesConfig](./images/filesConfig.png)
 
-包含路径和内容。
+包含配置文件的路径和配置的内容。
+
+这个函数中，其中有一个很关键的函数 `readConfig`，我们来看它的具体实现。
 
 ### 2.2 readConfig 读取配置
 
@@ -264,6 +273,16 @@ export function readConfig<T extends IReadConfigOptions> (configPath: string, op
   return result
 }
 ```
+
+[仓库里有更多 readConfig 测试用例](https://github.com/NervJS/taro/blob/main/packages/taro-helper/src/__tests__/config.spec.ts)
+
+我们很容易看出，存在配置文件，如果是JSON，则用 `fs.readJSONSync` 读取。
+
+- 支持多种配置文件格式（支持 JSON 和 JS/TS 文件格式）
+- 支持路径别名和常量定义
+- 使用 esbuild、SWC 进行快速编译
+- 处理模块默认导出
+- 支持页面配置读取
 
 #### 2.2.1 requireWithEsbuild
 
@@ -295,13 +314,17 @@ export function requireWithEsbuild(
 }
 ```
 
-#### 2.2.2 getModuleDefaultExport
+#### 2.2.2 getModuleDefaultExport 处理模块默认导出
 
 ```ts
 export const getModuleDefaultExport = (exports) => (exports.__esModule ? exports.default : exports)
 ```
 
-#### 2.2.3 readPageConfig 读取页面 js
+#### 2.2.3 readPageConfig 读取页面配置
+
+这个函数要实现的功能是：在页面 JS 文件中使用 `definePageConfig` 也能配置读取。
+
+![page-js](./images/page-js.png)
 
 ```ts
 // packages/taro-helper/src/utils.ts
@@ -386,9 +409,13 @@ getPages () {
 	const { prerender } = combination.config
 
 	// 拆分到下方
+}
 ```
 
-![image](./images/image.png)
+一些判断和校验。
+其中经常能在控制台看到的一句提示`发现入口`，源码就是在这里实现的。
+
+![image](./images/console.png)
 
 ```ts
 	this.prerenderPages = new Set(validatePrerenderPages(appPages, prerender).map(p => p.path))
@@ -413,6 +440,12 @@ getPages () {
 }
 ```
 
+执行这个函数过后，`this.pages` 会得到所有的页面数据。
+
+![pages](./images/pages.png)
+
+接下来是获取页面配置信息和组件等。
+
 ## 4. getPagesConfig 读取页面及其依赖的组件的配置
 
 ```ts
@@ -433,7 +466,13 @@ getPagesConfig () {
 }
 ```
 
-![image](./images/image.png)
+其中经常能在控制台看到的一句提示`发现页面`，源码就是在这里实现的。
+
+![image](./images/console.png)
+
+pages 的配置。
+
+![pages.config](./images/pages.config.png)
 
 ## 5. getDarkMode 收集 dark mode 配置中的文件
 
@@ -449,6 +488,10 @@ getPagesConfig () {
     }
   }
 ```
+
+收集起来。
+
+我们接下来看 `getConfigFiles` 的实现。
 
 ## 6. getConfigFiles 往 this.dependencies 中新增或修改所有 config 配置模块
 
@@ -480,6 +523,8 @@ getPagesConfig () {
 
 ## 7. addEntries 在 this.dependencies 中新增或修改 app、模板组件、页面、组件等资源模块
 
+加入依赖项中的类型。方便针对不同类型，采用不同的 `loader` 处理。
+
 ```ts
 // packages/taro-helper/src/constants.ts
 export enum META_TYPE {
@@ -508,6 +553,15 @@ export enum META_TYPE {
 	// 拆分到下方
   }
 ```
+
+1. 添加应用入口
+2. 添加模板组件
+  - 如果模板不支持递归，添加 comp 组件
+  - 添加 custom-wrapper 组件
+3. 添加页面
+- 如果是原生页面，添加页面文件、样式文件和模板文件
+- 如果是普通页面，只添加页面文件
+
 
 遍历页面添加到依赖项中。
 
@@ -545,7 +599,7 @@ export enum META_TYPE {
     })
 ```
 
-## 8. addEntry 在 this.dependencies 中新增或修改模块
+### 7.1 addEntry 在 this.dependencies 中新增或修改模块
 
 ```ts
 /**
@@ -568,9 +622,13 @@ export enum META_TYPE {
   }
 ```
 
-this.dependencies 是这样的结构。TODO:
+this.dependencies 是这样的结构。存储的是路径和 TaroSingleEntryDependency 实例对象。如果存在则更新。
 
-## 9. 总结
+![dependencies](./images/dependencies.png)
+
+行文至此，我们完成了对 `run` 函数的分析。分析 `app` 入口文件，搜集页面、组件信息，往 `this.dependencies` 中添加资源模块。
+
+## 8. 总结
 
 
 最后可以持续关注我[@若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
