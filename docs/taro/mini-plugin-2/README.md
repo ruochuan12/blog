@@ -3,15 +3,16 @@ highlight: darcula
 theme: smartblue
 ---
 
-# Taro 源码揭秘：11. Taro 是如何解析入口文件和页面的？
+# Taro 源码揭秘：11. Taro 是如何解析入口配置 app.config.ts 和页面配置的？
 
 ## 1. 前言
 
 大家好，我是[若川](https://ruochuan12.github.io)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
 
-截至目前（`2025-04-15`），目前最新是 [`4.0.10`](https://github.com/NervJS/taro/releases/tag/v4.0.10)，官方`4.0`正式版本的介绍文章暂未发布。官方之前发过[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。
+截至目前（`2025-04-16`），目前最新是 [`4.0.12`](https://github.com/NervJS/taro/releases/tag/v4.0.12)，官方`4.0`正式版本的介绍文章暂未发布。官方之前发过[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。
 
 计划写一个 Taro 源码揭秘系列，博客地址：[https://ruochuan12.github.io/taro](https://ruochuan12.github.io/taro) 可以加入书签，持续关注[若川](https://juejin.cn/user/1415826704971918)。
+>时隔3个月才继续写第 11 篇，我会继续持续写下去，争取做全网最新最全的 Taro 源码系列。
 
 -   [x] [1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
 -   [x] [2. 揭开整个架构的插件系统的秘密](https://juejin.cn/post/7380195796208205824)
@@ -26,17 +27,20 @@ theme: smartblue
 -   [ ] 等等
 
 前面 4 篇文章都是讲述编译相关的，CLI、插件机制、初始化项目、编译构建流程。
+
 第 5-7 篇讲述的是运行时相关的 Events、API、request 等。
-第 10 篇接着继续追随第 4 篇和第 8、9 篇的脚步，分析 TaroMiniPlugin webpack 的插件实现（全流程概览）。
+
+第 10 篇接着继续追随第 4 篇和第 8、9 篇的脚步，分析 TaroMiniPlugin webpack 的插件实现（全流程讲述）。
+
 第 11 篇，我们继续分析 TaroMiniPlugin webpack 的插件实现。分析 Taro 是如何解析入口文件和页面的？
 
-关于克隆项目、环境准备、如何调试代码等，参考[第一篇文章-准备工作、调试](https://juejin.cn/post/7378363694939783178#heading-1)和[第 4 篇 npm run dev:weapp](https://juejin.cn/post/7403193330271682612#heading-2)。后续文章基本不再过多赘述。
+关于克隆项目、环境准备、如何调试代码等，参考[第 1 篇文章-准备工作、调试](https://juejin.cn/post/7378363694939783178#heading-1)和[第 4 篇 npm run dev:weapp（本文以这篇文章中的调试为例）](https://juejin.cn/post/7403193330271682612#heading-2)。后续文章基本不再过多赘述。
 
 学完本文，你将学到：
 
 ```bash
 1. Taro 是如何解析入口文件和页面的？
-2. 如何读取文件
+2. 学完能对自己平时写的 Taro 项目更理解透彻
 等等
 ```
 
@@ -101,7 +105,7 @@ export default class TaroMiniPlugin {
 - 插件构建模式 ( this.options.isBuildPlugin 为 true 时)：
   - 调用 getPluginFiles() 获取插件文件
   - 调用 getConfigFiles(compiler) 获取配置文件
-- 正常构建模式 ：
+- 正常构建模式：
   - 首先通过 getAppConfig() 获取应用配置
   - 然后依次执行：
     - getPages() 获取页面信息
@@ -131,7 +135,7 @@ graph TD
         F["getPages: 根据app配置收集页面信息，处理分包和tabbar"]
         G["getPagesConfig: 读取页面及其依赖组件的配置"]
         H["getDarkMode: 获取暗黑模式相关配置"]
-        I["getConfigFiles: 同上"]
+        I["getConfigFiles: 获取配置文件，处理配置相关逻辑"]
         J["addEntries: 添加app、模板组件、页面、组件等资源模块"]
     end
 ```
@@ -162,7 +166,7 @@ export default defineAppConfig({
 })
 ```
 
-最终这样的对象。
+最终这样的对象，方便读取 `pages` 等相关配置，再进行处理。
 
 ```ts
 {
@@ -185,18 +189,21 @@ async getAppConfig (): Promise<AppConfig> {
 	// 'app'
     const appName = path.basename(this.appEntry).replace(path.extname(this.appEntry), '')
 
+	// 编译处理入口配置文件 app.config.ts
     this.compileFile({
       name: appName,
       path: this.appEntry,
       isNative: false
     })
 
+	// 编译完成，获取文件内容
     const fileConfig = this.filesConfig[this.getConfigFilePath(appName)]
     const appConfig = fileConfig ? fileConfig.content || {} : {}
 
     if (isEmptyObject(appConfig)) {
       throw new Error('缺少 app 全局配置文件，请检查！')
     }
+	// 预留钩子函数可修改配置文件
     const { modifyAppConfig } = this.options.combination.config
     if (typeof modifyAppConfig === 'function') {
       await modifyAppConfig(appConfig)
@@ -205,9 +212,11 @@ async getAppConfig (): Promise<AppConfig> {
   }
 ```
 
-其中 `compileFile` 函数的实现。
+其中 `compileFile` 函数，简单来说就是读取配置，然后存储到 this.filesConfig 上。
 
 `modifyAppConfig` 是传入的修改 `app.config.ts` 配置文件的钩子函数。
+
+我们继续来看实现 `compileFile` 函数的实现。
 
 ### 2.1 compileFile 读取页面、组件的配置，并递归读取依赖的组件的配置
 
@@ -237,7 +246,7 @@ async getAppConfig (): Promise<AppConfig> {
   }
 ```
 
-`compileFile` 相对比较复杂，我们省略一些代码。
+`compileFile` 相对比较复杂，我们省略了一些代码。
 
 最终给 `this.filesConfig` 赋值，对象如下图所示：
 
@@ -284,6 +293,8 @@ export function readConfig<T extends IReadConfigOptions> (configPath: string, op
 - 处理模块默认导出
 - 支持页面配置读取
 
+其中 `requireWithEsbuild` 函数，看函数名即可猜测出具体含义。基于 `esbuild` 的 `require` 实现。
+
 #### 2.2.1 requireWithEsbuild
 
 ```ts
@@ -313,6 +324,8 @@ export function requireWithEsbuild(
   return requireFromString(code, id)
 }
 ```
+
+这块可以调试细看，当然我知道大部分人不会去调试，问题不大，知道个大概即可。后续碰到类似问题能想到这里的解决方案即可。
 
 #### 2.2.2 getModuleDefaultExport 处理模块默认导出
 
@@ -349,6 +362,11 @@ export function readPageConfig(configPath: string) {
 }
 ```
 
+- 读取页面配置文件
+- 支持多种文件格式（.js, .jsx, .ts, .tsx, .vue）
+- 调用 readSFCPageConfig 解析文件内容
+- 返回解析后的配置对象
+
 #### 2.2.4 readSFCPageConfig
 
 ```ts
@@ -383,6 +401,15 @@ function readSFCPageConfig(configPath: string) {
   return result
 }
 ```
+
+- 从单文件组件（SFC）中读取页面配置
+- 解析 definePageConfig 函数调用
+- 将 AST 节点转换为 JavaScript 对象
+- 返回解析后的配置对象
+
+[仓库里有更多 readConfig 测试用例](https://github.com/NervJS/taro/blob/main/packages/taro-helper/src/__tests__/config.spec.ts)
+
+上述提到的测试用例缺失，有读者感兴趣可以补上，提 `PR` 的机会来了。也可以修改项目中的配置为页面中的 JS 进行调试。
 
 ## 3. getPages 获取页面信息
 
@@ -489,7 +516,11 @@ pages 的配置。
   }
 ```
 
-收集起来。
+[DarkMode 适配指南](https://developers.weixin.qq.com/miniprogram/dev/framework/ability/darkmode.html)
+
+![darkmode](./images/darkmode.png)
+
+收集起来，后续再使用。
 
 我们接下来看 `getConfigFiles` 的实现。
 
@@ -520,6 +551,10 @@ pages 的配置。
     })
   }
 ```
+
+把 `compileFile` 编译的文件，全部遍历标记为配置文件，添加到 `dependencies` 中。
+
+`webpack` `createChunkAssets` 前一刻，去除所有 `config chunks`
 
 ## 7. addEntries 在 this.dependencies 中新增或修改 app、模板组件、页面、组件等资源模块
 
@@ -626,9 +661,40 @@ this.dependencies 是这样的结构。存储的是路径和 TaroSingleEntryDepe
 
 ![dependencies](./images/dependencies.png)
 
-行文至此，我们完成了对 `run` 函数的分析。分析 `app` 入口文件，搜集页面、组件信息，往 `this.dependencies` 中添加资源模块。
+行文至此，我们完成了对 `run` 函数的分析。分析 `app` 入口文件，搜集页面、组件信息，往 `this.dependencies` 中添加资源模块。后续针对不同的类型，采用不同的 `loader` 处理等。
 
 ## 8. 总结
 
+根据 webpack entry 配置获取入口文件路径
+这里的 `this.appEntry` 是 `"/Users/ruochuan/git-source/github/taro4-debug/src/app.ts"`
+
+根据入口文件获取到配置文件，`app.config.ts`。
+
+run 函数
+
+- 首先通过 getAppConfig() 获取应用配置
+  - 然后依次执行：
+    - getPages() 获取页面信息（从 app.config.ts 中 pages 读取）
+    - getPagesConfig() 获取页面配置（找到对应的页面配置）
+    - getDarkMode() 获取暗黑模式配置
+    - getConfigFiles(compiler) 获取配置文件（包含第三方组件等）
+    - addEntries() 添加入口文件（）
+
+其中 `compileFile` 函数是重点，读取页面、组件的配置，并递归读取依赖的组件的配置。
+
+`readConfig` 读取配置文件
+
+- `fs.readJSONSync` 读取 JSON
+- 通过 `esbuild` 的 `require` 实现
+- 或者通过 `AST` 读取页面配置文件
+
+启发：Taro 是非常知名的跨端框架，我们在使用它，享受它带来便利的同时，有余力也可以多为其做出一些贡献。比如帮忙解答一些 issue 或者提 pr 修改 bug 等。
+在这个过程，我们会不断学习，促使我们去解决问题，带来的好处则是不断拓展知识深度和知识广度。
+
+---
+
+**如果看完有收获，欢迎点赞、评论、分享、收藏支持。你的支持和肯定，是我写作的动力。也欢迎提建议和交流讨论**。
+
+作者：常以**若川**为名混迹于江湖。所知甚少，唯善学。[若川的博客](https://ruochuan12.github.io)，[github blog](https://github.com/ruochuan12/blog)，可以点个 `star` 鼓励下持续创作。
 
 最后可以持续关注我[@若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
