@@ -7,7 +7,7 @@ theme: smartblue
 
 ## 1. 前言
 
-大家好，我是[若川](https://ruochuan12.github.io)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
+大家好，我是[若川](https://ruochuan12.github.io)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。从 2021 年 8 月起，我持续组织了好几年的[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
 
 截至目前（`2025-04-16`），目前最新是 [`4.0.12`](https://github.com/NervJS/taro/releases/tag/v4.0.12)，官方`4.0`正式版本的介绍文章暂未发布。官方之前发过[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。
 
@@ -212,13 +212,57 @@ async getAppConfig (): Promise<AppConfig> {
   }
 ```
 
-其中 `compileFile` 函数，简单来说就是读取配置，然后存储到 this.filesConfig 上。
+其中 `compileFile` 函数，简单来说就是读取配置，然后存储到 `this.filesConfig` 上。
 
 `modifyAppConfig` 是传入的修改 `app.config.ts` 配置文件的钩子函数。
 
+### 2.1 modifyAppConfig 修改 app.config.ts 配置文件
+
+可以搜索 Taro 项目中的 `modifyAppConfig`，查看使用场景。
+
+另外，有一种场景，小程序开发页面过多时，加载打包更新就很缓慢。比如这篇文章[古茗是如何将小程序编译速度提升3倍的](https://juejin.cn/post/7339024907718967359#heading-15)，不过这篇文章主要是劫持 `app.config.ts`，当时估计没有这个 `modifyAppConfig` 钩子函数，且他们写的插件没有开源。
+
+我们可以在开发环境，修改 `config` 配置，只设置当前开发的页面。这是一个异步方法，可以直接手动修改，当前要开发的文件，也可以用读取页面出来再选择设置（利用 [enquire](https://www.npmjs.com/package/enquirer) 类似 `npm` 包实现）。这样就可以解决开发环境时打包更新比较慢的情况。
+
+在项目路径 `config/modifyAppConfig.ts` 开发一个插件修改。
+
+```ts
+// config/modifyAppConfig.ts
+export default async (ctx, options) => {
+  await ctx.modifyAppConfig((config) => {
+	// 开发环境才修改 config 配置
+    if(process.env.NODE_ENV === 'development'){
+	  // 只是示例代码
+      config.appConfig.pages.push('pages/demo/index');
+      console.log('config', config);
+    }
+  });
+};
+```
+
+再在项目路径 `config/index.ts` 添加写的 `modifyAppConfig` 插件。
+
+```ts
+// config/index.ts
+import path from 'node:path';
+
+const baseConfig = {
+	// 插件
+	plugins: [
+		path.resolve(__dirname, './modifyAppConfig.ts'),
+	]
+}
+```
+
+我们重新执行 `pnpm run dev:weapp` 或其他，即可看到输出的配置信息和修改的页面路径。
+
+![modifyAppConfig](./images/modifyAppConfig.png)
+
+目前 [Taro 编写插件文档](https://docs.taro.zone/docs/plugin-custom) 上暂时没有体现这个 `modifyAppConfig` 钩子。所以有些时候还是需要深入学习源码，理解源码才能更好的针对项目做相应的优化。
+
 我们继续来看实现 `compileFile` 函数的实现。
 
-### 2.1 compileFile 读取页面、组件的配置，并递归读取依赖的组件的配置
+### 2.2 compileFile 读取页面、组件的配置，并递归读取依赖的组件的配置
 
 ```ts
 /**
@@ -256,7 +300,7 @@ async getAppConfig (): Promise<AppConfig> {
 
 这个函数中，其中有一个很关键的函数 `readConfig`，我们来看它的具体实现。
 
-### 2.2 readConfig 读取配置
+### 2.3 readConfig 读取配置
 
 [页面配置](https://docs.taro.zone/docs/page-config)
 
@@ -690,6 +734,7 @@ run 函数
 
 启发：Taro 是非常知名的跨端框架，我们在使用它，享受它带来便利的同时，有余力也可以多为其做出一些贡献。比如帮忙解答一些 issue 或者提 pr 修改 bug 等。
 在这个过程，我们会不断学习，促使我们去解决问题，带来的好处则是不断拓展知识深度和知识广度。
+有些时候还是需要深入学习源码，理解源码才能更好的针对项目做相应的优化。
 
 ---
 
@@ -697,4 +742,4 @@ run 函数
 
 作者：常以**若川**为名混迹于江湖。所知甚少，唯善学。[若川的博客](https://ruochuan12.github.io)，[github blog](https://github.com/ruochuan12/blog)，可以点个 `star` 鼓励下持续创作。
 
-最后可以持续关注我[@若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。我倾力持续组织了 3 年多[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
+最后可以持续关注我[@若川](https://juejin.cn/user/1415826704971918)，欢迎关注我的[公众号：若川视野](https://mp.weixin.qq.com/s/MacNfeTPODNMLLFdzrULow)。从 2021 年 8 月起，我持续组织了好几年的[每周大家一起学习 200 行左右的源码共读活动](https://juejin.cn/post/7079706017579139102)，感兴趣的可以[点此扫码加我微信 `ruochuan02` 参与](https://juejin.cn/pin/7217386885793595453)。另外，想学源码，极力推荐关注我写的专栏[《学习源码整体架构系列》](https://juejin.cn/column/6960551178908205093)，目前是掘金关注人数（6k+人）第一的专栏，写有几十篇源码文章。
