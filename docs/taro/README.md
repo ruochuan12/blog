@@ -13,8 +13,9 @@
 - [Taro 源码揭秘：11. Taro 是如何解析入口配置 app.config.ts 和页面配置的？](../taro/mini-plugin-2/)
 
 - TODOs:
-- [ ] TaroMiniPlugin 读取文件
+- [x] TaroMiniPlugin 读取文件
 - [ ] TaroMiniPlugin 生成模板文件
+- [ ] TaroMiniPlugin 分享功能的实现 enableShareAppMessage
 - [ ] 微信小程序转 Taro taro-cli-convertor
 - [ ] plugin-mini-ci
 - [ ] plugin-html

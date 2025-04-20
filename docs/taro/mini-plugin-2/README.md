@@ -49,6 +49,7 @@ theme: smartblue
 我们先来看 TaroMiniPlugin 结构
 
 ```ts
+// packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
 export default class TaroMiniPlugin {
 	constructor (options: ITaroMiniPluginOptions) {
 		// 省略
@@ -81,6 +82,7 @@ export default class TaroMiniPlugin {
 本文主要讲述 `run` 方法的具体实现。分析 `app` 入口文件，搜集页面、组件信息，往 `this.dependencies` 中添加资源模块。
 
 ```ts
+// packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
 export default class TaroMiniPlugin {
 	/**
 	 * 分析 app 入口文件，搜集页面、组件信息，
@@ -112,7 +114,7 @@ export default class TaroMiniPlugin {
     - getPagesConfig() 获取页面配置
     - getDarkMode() 获取暗黑模式配置
     - getConfigFiles(compiler) 获取配置文件
-    - addEntries() 添加入口文件
+    - addEntries() 在 this.dependencies 中新增或修改 app、模板组件、页面、组件等资源模块
 
 ```mermaid
 graph TD
@@ -136,13 +138,14 @@ graph TD
         G["getPagesConfig: 读取页面及其依赖组件的配置"]
         H["getDarkMode: 获取暗黑模式相关配置"]
         I["getConfigFiles: 获取配置文件，处理配置相关逻辑"]
-        J["addEntries: 添加app、模板组件、页面、组件等资源模块"]
+        J["addEntries: 在 this.dependencies 中新增或修改 app、模板组件、页面、组件等资源模块"]
     end
 ```
 
 ## 2. getAppConfig 获取入口配置文件配置
 
 ```ts
+// packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
 this.appConfig = await this.getAppConfig();
 ```
 
@@ -185,6 +188,7 @@ export default defineAppConfig({
 我们来看 `getAppConfig` 的具体实现。
 
 ```ts
+// packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
 async getAppConfig (): Promise<AppConfig> {
 	// 'app'
     const appName = path.basename(this.appEntry).replace(path.extname(this.appEntry), '')
@@ -265,6 +269,7 @@ const baseConfig = {
 ### 2.2 compileFile 读取页面、组件的配置，并递归读取依赖的组件的配置
 
 ```ts
+// packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
 /**
    * 读取页面、组件的配置，并递归读取依赖的组件的配置
    */
@@ -343,7 +348,6 @@ export function readConfig<T extends IReadConfigOptions> (configPath: string, op
 
 ```ts
 // packages/taro-helper/src/esbuild/index.ts
-
 import { Config, transformSync } from '@swc/core'
 import esbuild from 'esbuild'
 import requireFromString from 'require-from-string'
@@ -374,6 +378,7 @@ export function requireWithEsbuild(
 #### 2.2.2 getModuleDefaultExport 处理模块默认导出
 
 ```ts
+// packages/taro-helper/src/utils.ts
 export const getModuleDefaultExport = (exports) => (exports.__esModule ? exports.default : exports)
 ```
 
@@ -385,7 +390,6 @@ export const getModuleDefaultExport = (exports) => (exports.__esModule ? exports
 
 ```ts
 // packages/taro-helper/src/utils.ts
-
 export function readPageConfig(configPath: string) {
   let result: any = {}
   const extNames = ['.js', '.jsx', '.ts', '.tsx', '.vue']
@@ -415,7 +419,6 @@ export function readPageConfig(configPath: string) {
 
 ```ts
 // packages/taro-helper/src/utils.ts
-
 // read page config from a sfc file instead of the regular config file
 function readSFCPageConfig(configPath: string) {
   if (!fs.existsSync(configPath)) return {}
@@ -458,6 +461,7 @@ function readSFCPageConfig(configPath: string) {
 ## 3. getPages 获取页面信息
 
 ```ts
+// packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
 /**
  * 根据 app config 的 pages 配置项，收集所有页面信息，
  * 包括处理分包和 tabbar
@@ -489,6 +493,7 @@ getPages () {
 ![image](./images/console.png)
 
 ```ts
+// packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
 	this.prerenderPages = new Set(validatePrerenderPages(appPages, prerender).map(p => p.path))
 	this.getTabBarFiles(this.appConfig)
 	this.pages = new Set([
@@ -520,6 +525,7 @@ getPages () {
 ## 4. getPagesConfig 读取页面及其依赖的组件的配置
 
 ```ts
+// packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
 /**
  * 读取页面及其依赖的组件的配置
  */
@@ -548,6 +554,7 @@ pages 的配置。
 ## 5. getDarkMode 收集 dark mode 配置中的文件
 
 ```ts
+// packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
 /**
    * 收集 dark mode 配置中的文件
    */
@@ -571,6 +578,7 @@ pages 的配置。
 ## 6. getConfigFiles 往 this.dependencies 中新增或修改所有 config 配置模块
 
 ```ts
+// packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
 /**
    * 往 this.dependencies 中新增或修改所有 config 配置模块
    */
@@ -618,6 +626,7 @@ export enum META_TYPE {
 ```
 
 ```ts
+// packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
 /**
    * 在 this.dependencies 中新增或修改 app、模板组件、页面、组件等资源模块
    */
@@ -645,6 +654,7 @@ export enum META_TYPE {
 遍历页面添加到依赖项中。
 
 ```ts
+// packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
     this.pages.forEach(item => {
       if (item.isNative) {
         this.addEntry(item.path, item.name, META_TYPE.NORMAL, { isNativePage: true })
@@ -663,6 +673,7 @@ export enum META_TYPE {
 遍历组件添加到依赖项中。
 
 ```ts
+// packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
     this.components.forEach(item => {
       if (item.isNative) {
         this.addEntry(item.path, item.name, META_TYPE.NORMAL, { isNativePage: true })
@@ -681,6 +692,7 @@ export enum META_TYPE {
 ### 7.1 addEntry 在 this.dependencies 中新增或修改模块
 
 ```ts
+// packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
 /**
    * 在 this.dependencies 中新增或修改模块
    */
@@ -722,7 +734,7 @@ run 函数
     - getPagesConfig() 获取页面配置（找到对应的页面配置）
     - getDarkMode() 获取暗黑模式配置
     - getConfigFiles(compiler) 获取配置文件（包含第三方组件等）
-    - addEntries() 添加入口文件（）
+    - addEntries() 在 this.dependencies 中新增或修改 app、模板组件、页面、组件等资源模块
 
 其中 `compileFile` 函数是重点，读取页面、组件的配置，并递归读取依赖的组件的配置。
 
