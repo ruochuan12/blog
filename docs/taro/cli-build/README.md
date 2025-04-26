@@ -39,7 +39,7 @@ theme: smartblue
 `npm run dev:weapp` 对应的是 `taro build --type weapp --watch`。<br>
 `npm run build:weapp` 对应的是 `taro build --type weapp`。<br>
 
-关于克隆项目、环境准备、如何调试代码等，参考[第一篇文章-准备工作、调试](https://juejin.cn/post/7378363694939783178#heading-1)。后续文章基本不再过多赘述。
+关于克隆项目、环境准备、如何调试代码等，参考[第一篇文章-准备工作、调试](https://juejin.cn/post/7378363694939783178#heading-1)。后续文章基本不再过多赘述。写文章时最新的版本是 4.0.4，后续文章会持续揭秘最新源码，读者后续如果调试源码使用最新版本源码即可。
 >文章中基本是先放源码，源码中不做过多解释。源码后面再做简单讲述。
 
 ## 2. 调试源码
@@ -51,7 +51,6 @@ npx @taro/cli init taro4-debug
 cd taro4-debug
 # 安装依赖
 pnpm i
-# 写文章时最新的版本是 4.0.4
 ```
 
 如图所示
@@ -84,9 +83,6 @@ git clone https://github.com/NervJS/taro.git
 cd taro
 pnpm i
 pnpm run build
-# 写文章时最新的版本是 4.0.4，可以 git checkout 39dd83eb0bfc2a937acd79b289c7c2ec6e59e202
-# 39dd83eb0bfc2a937acd79b289c7c2ec6e59e202
-# chore(release): publish 4.0.4 (#16202)
 ```
 
 方式1调试截图如下：
@@ -96,7 +92,7 @@ pnpm run build
 优点，无需多余的配置，可以直接调试本身项目。
 缺点：安装的 `taro` 依赖都是 `dist` 目录，压缩过后的，不方便查看原始代码。
 
-我们使用调试方法2。
+我们使用调试方式2。
 
 ### 2.2 调试方式2：使用 taro 源码
 
@@ -105,7 +101,8 @@ pnpm run build
 优点：可以调试本身不压缩的源码。因为 `taro` 自身打包生成了对应的 `sourcemap` 文件，所以可以调试源码文件。
 缺点：
 - 1. 需要配置 `.vscode/launch.json`。
-- 2. 还需要在对应的 `dist` 文件修改一些包的路径。
+- 2. 需要使用 pnpm link（更推荐）
+- 3. 或者需要在对应的 `dist` 文件修改一些包的路径。
 
 #### 2.2.1 配置 `.vscode/launch.json`
 
@@ -136,7 +133,41 @@ pnpm run build
 }
 ```
 
-#### 2.2.2 修改以下两个包的路径
+#### 2.2.2 pnpm run debug 内置命令（更推荐）
+
+Taro 4.0.7 新增了 `pnpm run debug` 命令。
+
+看源码时，开源项目的 github 仓库中的贡献文档或者文档中的贡献文档要重点看。
+
+[Taro 文档 - 贡献指南](https://docs.taro.zone/docs/CONTRIBUTING-GUIDE)，[CONTRIBUTING.md](https://github.com/NervJS/taro/blob/main/CONTRIBUTING.md)
+
+![pnpm-run-debug](./images/pnpm-run-debug.png)
+
+```bash
+# 进入 taro 源码项目
+cd taro
+# 运行 debug 项目 --packages 是初始化的 taro4-debug 项目中依赖的包，或者自己想调试的包
+pnpm run debug --projectPath /Users/ruochuan/git-source/github/taro4-debug --packages @tarojs/components,@tarojs/helper,@tarojs/plugin-platform-weapp,@tarojs/runtime,@tarojs/shared,@tarojs/taro,@tarojs/plugin-framework-react,@tarojs/react,@tarojs/cli,@tarojs/taro-loader,@tarojs/webpack5-runner,@tarojs/plugin-platform-alipay,@tarojs/plugin-platform-tt,@tarojs/plugin-platform-swan,@tarojs/plugin-platform-jd,@tarojs/plugin-platform-qq,@tarojs/plugin-platform-h5,@tarojs/plugin-platform-harmony-hybrid
+```
+
+![pnpm-run-debug-terminal](./images/pnpm-run-debug-terminal.png)
+
+```bash
+# 进入初始化的 taro4-debug 项目
+cd taro4-debug
+# 重新安装依赖
+pnpm install
+```
+
+再用 `VSCode` 打开 Taro 源码项目，运行和调试栏选择 `CLI debug`，调试方式2 调试截图如下：
+
+![使用 taro 源码调试](./images/taro-debugger.png)
+
+有时 `pnpm link` 可能不生效，可以使用这个方法。
+
+#### 2.2.3 pnpm link 无效时，修改以下两个包的路径
+
+本文中只涉及这两个包，所以只需要改这两个即可。
 
 - `@tarojs/plugin-platform-weapp` => `../taro/packages/taro-platform-weapp/index.js`
 - `@tarojs/webpack5-runner` => `../taro/packages/taro-webpack5-runner/index.js`
@@ -171,9 +202,7 @@ getRunner() {
 
 不配置的话，不会调用对应的 taro 文件源码，而是调用项目中的依赖包源码，路径不对。
 
-方式2调试截图如下：
-
-![使用 taro 源码调试](./images/taro-debugger.png)
+## 3. command build 命令
 
 根据前面两篇 [1. taro cli init](https://juejin.cn/post/7378363694939783178)、[2. taro 插件机制](https://juejin.cn/post/7380195796208205824) 文章，我们可以得知：`taro build` 初始化命令，最终调用的是 `packages/taro-cli/src/presets/commands/build.ts` 文件中的 `ctx.registerCommand` 注册的 `build` 命令行的 `fn` 函数。
 
@@ -280,7 +309,7 @@ await ctx.applyPlugins({
 
 调用的是端平台插件，本文以微信小程序为例，所以调用的是 weapp。对应的源码文件路径是：`packages/taro-platform-weapp/src/index.ts`。我们来看具体实现。
 
-## 3. 端平台插件 Weapp
+## 4. 端平台插件 Weapp
 
 [Taro文档 - 端平台插件](https://docs.taro.zone/docs/platform-plugin/) 中，有对端平台插件的比较详细的描述，可以参考学习。
 
@@ -322,7 +351,7 @@ await program.start()
 
 `ctx.registerPlatform` 注册 `weapp` 平台插件，调用 `Weapp` 构造函数，传入 `ctx` 、`config` 和 `options` 等配置。再调用实例对象的 `start` 方法。
 
-## 4. new Weapp 构造函数
+## 5. new Weapp 构造函数
 
 >packages/taro-platform-weapp/src/program.ts
 
@@ -389,9 +418,9 @@ export default class Weapp extends TaroPlatformBase {
 
 这样抽象的好处，在于其他端平台插件 [比如小红书](https://github.com/NervJS/taro-plugin-platform-xhs) 基于这个抽象类扩展继承就比较方便。
 
-## 5. TaroPlatform 端平台插件抽象类
+## 6. TaroPlatform 端平台插件抽象类
 
-### 5.1 Transaction 事务
+### 6.1 Transaction 事务
 
 ```ts
 // packages/taro-service/src/platform-plugin-base/platform.ts
@@ -469,7 +498,7 @@ export default abstract class TaroPlatform<T extends TConfig = TConfig> {
 }
 ```
 
-### 5.2 emptyOutputDir 清空输出的文件夹等
+### 6.2 emptyOutputDir 清空输出的文件夹等
 
 ```ts
 // 清空输出的文件夹
@@ -496,7 +525,7 @@ abstract start(): Promise<void>
 
 我们来看 `TaroPlatformBase` 的实现
 
-## 6. TaroPlatformBase 端平台插件基础抽象类
+## 7. TaroPlatformBase 端平台插件基础抽象类
 
 ```ts
 // packages/taro-service/src/platform-plugin-base/mini.ts
@@ -544,7 +573,7 @@ export abstract class TaroPlatformBase<T extends TConfig = TConfig> extends Taro
 
 `start` 实现，`setup` 再执行 `build`。我们来看 setup 函数。
 
-### 6.1 setup
+### 7.1 setup
 
 ```ts
 /**
@@ -585,7 +614,7 @@ private setupImpl () {
 
 我们继续来看 `build` 函数。
 
-### 6.2 build
+### 7.2 build
 
 ```ts
 /**
@@ -636,7 +665,7 @@ protected async getRunner () {
 
 初始化项目使用的 `webpack5` 所以使用的是 `@tarojs/webpack5-runner` 我们来看它的具体实现。
 
-## 7. runner => @tarojs/webpack5-runner
+## 8. runner => @tarojs/webpack5-runner
 
 `package.json` 属性 "main": "index.js" 入口文件 `index.js`
 
@@ -695,7 +724,7 @@ export default async function build (appPath: string, rawConfig: IMiniBuildConfi
 
 `const compiler = webpack(webpackConfig)` 使用 `webpack` 编译。这部分代码比较多。后续有空再写 `webpack` 编译的文章。
 
-## 8. 总结
+## 9. 总结
 
 我们学习了两种方式如何调试 `taro` build 部分的源码。
 
