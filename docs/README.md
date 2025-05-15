@@ -67,7 +67,7 @@
 - [Taro 源码揭秘：8. Taro 是如何使用 webpack 打包构建小程序的](../taro/webpack5-runner/)
 - [Taro 源码揭秘：9. Taro 是如何生成 webpack 配置进行构建小程序的？](../taro/webpack5-runner/)
 - [Taro 源码揭秘：10. Taro 到底是怎样转换成小程序文件的？](../taro/mini-plugin/)
-- [Taro 源码揭秘：11. Taro 是如何解析入口配置 app.config.ts 和页面配置的？](../taro/mini-plugin-2/)
+- [Taro 源码揭秘：11. Taro 项目开发编译速度太慢，怎么办？写个简单插件按需编译？](../taro/mini-plugin-2/)
 
 **vant 组件库源码分析系列：**
 

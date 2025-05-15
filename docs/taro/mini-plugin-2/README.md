@@ -3,7 +3,7 @@ highlight: darcula
 theme: smartblue
 ---
 
-# Taro 源码揭秘：11. Taro 是如何解析入口配置 app.config.ts 和页面配置的？
+# Taro 源码揭秘：11. Taro 项目开发编译速度太慢，怎么办？写个简单插件按需编译
 
 ## 1. 前言
 
@@ -39,8 +39,9 @@ theme: smartblue
 学完本文，你将学到：
 
 ```bash
-1. Taro 是如何解析入口文件和页面的？
-2. 学完能对自己平时写的 Taro 项目更理解透彻
+1. Taro 是如何解析入口配置 app.config.ts 和页面配置的？
+2. 学会写一个 Taro 插件，解决 Taro 项目编译速度太慢的问题
+3. 学完能对自己平时写的 Taro 项目更理解透彻
 等等
 ```
 

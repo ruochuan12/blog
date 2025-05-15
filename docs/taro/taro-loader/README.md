@@ -3,7 +3,7 @@ highlight: darcula
 theme: smartblue
 ---
 
-# Taro 源码揭秘：12. Taro 如何编译成小程序文件的
+# Taro 源码揭秘：12. Taro
 
 ## 1. 前言
 
@@ -42,9 +42,6 @@ theme: smartblue
 1. Taro 是如何解析入口文件和页面的？
 等等
 ```
-
-##
-
 
 ## 总结
 
