@@ -133,6 +133,14 @@ export default defineConfig({
 				link: "/about/",
 			},
 			{
+				text: "加微信交流群",
+				link: "/weixin/",
+			},
+			{
+				text: "公众号：若川视野",
+				link: "https://image-static.segmentfault.com/355/182/3551821948-5df888aa1dc88_articlex",
+			},
+			{
 				text: "源码共读",
 				link: "/read-source-code/",
 			},
@@ -171,21 +179,16 @@ export default defineConfig({
 				link: "https://github.com/ruochuan12/blog",
 			},
 			{
-				text: "公众号：若川视野",
-				link: "https://image-static.segmentfault.com/355/182/3551821948-5df888aa1dc88_articlex",
-			},
-
-			{
-				text: "知乎",
-				link: "https://www.zhihu.com/people/lxchuan12/activities",
-			},
-			{
-				text: "语雀",
-				link: "https://www.yuque.com/lxchuan12/blog",
-			},
-			{
 				text: "其他",
 				items: [
+					{
+						text: "知乎",
+						link: "https://www.zhihu.com/people/lxchuan12/activities",
+					},
+					{
+						text: "语雀",
+						link: "https://www.yuque.com/lxchuan12/blog",
+					},
 					{
 						text: "segmentFault",
 						link: "https://segmentfault.com/u/lxchuan12/articles",
@@ -263,9 +266,7 @@ export default defineConfig({
 					// path: '/about/',      // 可选的, 应该是一个绝对路径
 					// collapsible: true, // 可选的, 默认值是 true,
 					// sidebarDepth: 2, // 可选的, 默认值是 1
-					items: [
-						"/antd-mobile/toast/",
-					],
+					items: ["/antd-mobile/toast/"],
 				},
 				{
 					text: "taro源码揭秘", // 必要的
@@ -284,6 +285,7 @@ export default defineConfig({
 						"/taro/webpack5-runner/",
 						"/taro/mini-plugin/",
 						"/taro/mini-plugin-2/",
+						"/taro/mini-plugin-3/",
 					],
 				},
 				{
