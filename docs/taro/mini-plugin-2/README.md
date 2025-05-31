@@ -267,7 +267,41 @@ const baseConfig = {
 
 我们继续来看实现 `compileFile` 函数的实现。
 
-### 2.2 compileFile 读取页面、组件的配置，并递归读取依赖的组件的配置
+### 2.2 Taro 4.0.9 版本增加按需编译 pages 或 components 能力
+
+
+最近发现 release 4.0.9 有按需编译页面或者组件的功能：[release 4.0.9](https://github.com/NervJS/taro/releases/tag/v4.0.9)
+
+![release-4.0.9](./images/release-4.0.9.webp)
+
+我们来看下是如何实现的。
+
+[feat(cli): 增加按需编译pages或components能力](https://github.com/NervJS/taro/commit/47722ef882f3eaadbcc990a95e3c3484bdf68adc)
+
+我们看下代码修改记录，看看是如何实现的。
+
+![pages-build](./images/pages-build.webp)
+
+```bash
+taro build --type weapp --watch --pages pages/index/index
+```
+
+可以在终端这样执行命令，可以按需编译 pages 或 components
+
+```bash
+pnpm run dev:weapp --pages pages/index/index
+pnpm run dev:weapp --components pages/components/index
+```
+
+![pages-build-2](./images/pages-build-2.webp)
+
+`taro build` 命令中 `modifyAppConfig` 中有个函数 `extratCompileEntry`，我们来看它的具体实现。
+
+![pages-app-config](./images/pages-app-config.webp)
+
+我们可以看出，简单来说就是解析命令行参数的 `pages` 或者 `components`，逗号分割是路径（没有配置则不修改），通过 `modifyAppConfig` 钩子函数，修改 `app.config.ts (appConfig)` 的配置文件，`pages` 或者 `components`，`subPackages` 置为空。从而实现了按需编译 `pages` 或者 `components`。
+
+### 2.3 compileFile 读取页面、组件的配置，并递归读取依赖的组件的配置
 
 ```ts
 // packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
@@ -306,7 +340,7 @@ const baseConfig = {
 
 这个函数中，其中有一个很关键的函数 `readConfig`，我们来看它的具体实现。
 
-### 2.3 readConfig 读取配置
+### 2.4 readConfig 读取配置
 
 [页面配置](https://docs.taro.zone/docs/page-config)
 
@@ -345,7 +379,7 @@ export function readConfig<T extends IReadConfigOptions> (configPath: string, op
 
 其中 `requireWithEsbuild` 函数，看函数名即可猜测出具体含义。基于 `esbuild` 的 `require` 实现。
 
-#### 2.2.1 requireWithEsbuild
+#### 2.4.1 requireWithEsbuild
 
 ```ts
 // packages/taro-helper/src/esbuild/index.ts
@@ -376,14 +410,14 @@ export function requireWithEsbuild(
 
 这块可以调试细看，当然我知道大部分人不会去调试，问题不大，知道个大概即可。后续碰到类似问题能想到这里的解决方案即可。
 
-#### 2.2.2 getModuleDefaultExport 处理模块默认导出
+#### 2.4.2 getModuleDefaultExport 处理模块默认导出
 
 ```ts
 // packages/taro-helper/src/utils.ts
 export const getModuleDefaultExport = (exports) => (exports.__esModule ? exports.default : exports)
 ```
 
-#### 2.2.3 readPageConfig 读取页面配置
+#### 2.4.3 readPageConfig 读取页面配置
 
 这个函数要实现的功能是：在页面 JS 文件中使用 `definePageConfig` 也能配置读取。
 
@@ -416,7 +450,7 @@ export function readPageConfig(configPath: string) {
 - 调用 readSFCPageConfig 解析文件内容
 - 返回解析后的配置对象
 
-#### 2.2.4 readSFCPageConfig
+#### 2.4.4 readSFCPageConfig
 
 ```ts
 // packages/taro-helper/src/utils.ts
