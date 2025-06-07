@@ -12,7 +12,8 @@ theme: smartblue
 截至目前（`2025-04-16`），目前最新是 [`4.0.12`](https://github.com/NervJS/taro/releases/tag/v4.0.12)，官方`4.0`正式版本的介绍文章暂未发布。官方之前发过[Taro 4.0 Beta 发布：支持开发鸿蒙应用、小程序编译模式、Vite 编译等](https://juejin.cn/post/7330792655125463067)。
 
 计划写一个 Taro 源码揭秘系列，博客地址：[https://ruochuan12.github.io/taro](https://ruochuan12.github.io/taro) 可以加入书签，持续关注[若川](https://juejin.cn/user/1415826704971918)。
->时隔3个月才继续写第 11 篇，我会继续持续写下去，争取做全网最新最全的 Taro 源码系列。
+
+> 时隔 3 个月才继续写第 11 篇，我会继续持续写下去，争取做全网最新最全的 Taro 源码系列。
 
 -   [x] [1. 揭开整个架构的入口 CLI => taro init 初始化项目的秘密](https://juejin.cn/post/7378363694939783178)
 -   [x] [2. 揭开整个架构的插件系统的秘密](https://juejin.cn/post/7380195796208205824)
@@ -46,19 +47,19 @@ theme: smartblue
 ```ts
 // packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
 compilation.hooks.processAssets.tapAsync(
-  {
-    name: PLUGIN_NAME,
-    stage: PROCESS_ASSETS_STAGE_ADDITIONAL
-  },
-  this.tryAsync<any>(async () => {
-    // 如果是子编译器，证明是编译独立分包，进行单独的处理
-    if ((compilation as any).__tag === CHILD_COMPILER_TAG) {
-      await this.generateIndependentMiniFiles(compilation, compiler)
-    } else {
-      await this.generateMiniFiles(compilation, compiler)
-    }
-  })
-)
+	{
+		name: PLUGIN_NAME,
+		stage: PROCESS_ASSETS_STAGE_ADDITIONAL,
+	},
+	this.tryAsync<any>(async () => {
+		// 如果是子编译器，证明是编译独立分包，进行单独的处理
+		if ((compilation as any).__tag === CHILD_COMPILER_TAG) {
+			await this.generateIndependentMiniFiles(compilation, compiler);
+		} else {
+			await this.generateMiniFiles(compilation, compiler);
+		}
+	})
+);
 ```
 
 ```ts
@@ -71,9 +72,9 @@ async generateMiniFiles (compilation: Compilation, compiler: Compiler) {
 
 这个函数特别长，简单来说就是以下这几项
 
-- 生成 XS 文件 generateXSFile
-- 生成配置文件 generateConfigFile
-- 生成模板文件 generateTemplateFile
+-   生成 XS 文件 generateXSFile
+-   生成配置文件 generateConfigFile
+-   生成模板文件 generateTemplateFile
 
 最终通过 `compilation.assets[xxx] = xxx;` 赋值语句生成文件。
 
@@ -83,22 +84,135 @@ async generateMiniFiles (compilation: Compilation, compiler: Compiler) {
 
 是 TaroMiniPlugin 类中用于生成小程序相关产物（如模板、配置、样式、资源等）的核心方法。它的主要职责是根据收集到的页面、组件、配置等信息，生成最终小程序所需的各种文件，并写入到 webpack 的 compilation.assets 中。其主要流程如下：
 
-```ts
-// packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
-
-```
-
 处理样式文件名重复问题
 首先遍历所有产物，如果发现样式文件名重复（如 .wxss.wxss），则去重，保证产物中只有一个正确的样式文件名。
+
+```ts
+// packages/taro-webpack5-runner/src/plugins/MiniPlugin.ts
+/** 生成小程序相关文件 */
+  async generateMiniFiles (compilation: Compilation, compiler: Compiler) {
+    const { RawSource } = compiler.webpack.sources
+    const { template, combination, isBuildPlugin, sourceDir } = this.options
+    const { modifyMiniConfigs } = combination.config
+    const baseTemplateName = 'base'
+    const isUsingCustomWrapper = componentConfig.thirdPartyComponents.has('custom-wrapper')
+
+    /**
+     * 与原生小程序混写时解析模板与样式
+     */
+    compilation.getAssets().forEach(({ name: assetPath }) => {
+      const styleExt = this.options.fileType.style
+      if (new RegExp(`${styleExt}${styleExt}$`).test(assetPath)) {
+        const assetObj = compilation.assets[assetPath]
+        const newAssetPath = assetPath.replace(styleExt, '')
+        compilation.assets[newAssetPath] = assetObj
+      }
+    })
+}
+```
 
 自定义配置处理
 如果配置中定义了 modifyMiniConfigs 钩子，则调用该钩子允许用户自定义修改所有页面、组件的配置内容。
 
+```ts
+if (typeof modifyMiniConfigs === "function") {
+	await modifyMiniConfigs(this.filesConfig);
+}
+```
+
 生成 app 配置文件
 在非 blended 模式且不是插件构建时，生成主包的 app 配置文件（如 app.json），内容来自 this.filesConfig。
 
+```ts
+if ((!this.options.blended || !this.options.newBlended) && !isBuildPlugin) {
+	const appConfigPath = this.getConfigFilePath(this.appEntry);
+	const appConfigName = path
+		.basename(appConfigPath)
+		.replace(path.extname(appConfigPath), "");
+	this.generateConfigFile(
+		compilation,
+		compiler,
+		this.appEntry,
+		this.filesConfig[appConfigName].content
+	);
+}
+```
+
 生成基础组件模板和配置
 如果当前模板不支持递归（如微信、QQ 小程序），则生成基础组件（comp）和自定义包装器（custom-wrapper）的模板和配置文件。
+
+```ts
+if (!template.isSupportRecursive) {
+	// 如微信、QQ 不支持递归模版的小程序，需要使用自定义组件协助递归
+	this.generateTemplateFile(
+		compilation,
+		compiler,
+		baseCompName,
+		template.buildBaseComponentTemplate,
+		this.options.fileType.templ
+	);
+
+	const baseCompConfig = {
+		component: true,
+		styleIsolation: "apply-shared",
+		usingComponents: {
+			[baseCompName]: `./${baseCompName}`,
+		},
+	} as Config & {
+		component?: boolean;
+		usingComponents: Record<string, string>;
+	};
+
+	if (isUsingCustomWrapper) {
+		baseCompConfig.usingComponents[
+			customWrapperName
+		] = `./${customWrapperName}`;
+		this.generateConfigFile(compilation, compiler, customWrapperName, {
+			component: true,
+			styleIsolation: "apply-shared",
+			usingComponents: {
+				[baseCompName]: `./${baseCompName}`,
+				[customWrapperName]: `./${customWrapperName}`,
+			},
+		});
+	}
+
+	this.generateConfigFile(
+		compilation,
+		compiler,
+		baseCompName,
+		baseCompConfig
+	);
+} else {
+	if (isUsingCustomWrapper) {
+		this.generateConfigFile(compilation, compiler, customWrapperName, {
+			component: true,
+			styleIsolation: "apply-shared",
+			usingComponents: {
+				[customWrapperName]: `./${customWrapperName}`,
+			},
+		});
+	}
+}
+```
+
+```ts
+this.generateTemplateFile(
+	compilation,
+	compiler,
+	baseTemplateName,
+	template.buildTemplate,
+	componentConfig
+);
+isUsingCustomWrapper &&
+	this.generateTemplateFile(
+		compilation,
+		compiler,
+		customWrapperName,
+		template.buildCustomComponentTemplate,
+		this.options.fileType.templ
+	);
+```
 
 生成全局模板和自定义包装器模板
 生成全局的 base 模板和 custom-wrapper 模板（如 base.wxml、custom-wrapper.wxml），并根据配置决定是否压缩 XML。
@@ -106,23 +220,235 @@ async generateMiniFiles (compilation: Compilation, compiler: Compiler) {
 生成全局 XS 脚本
 如果平台支持 XS 脚本，则生成 utils 脚本文件。
 
+```ts
+this.generateXSFile(compilation, compiler, "utils");
+```
+
 生成所有组件的配置和模板
 遍历所有组件，为每个组件生成配置文件和模板文件（非原生组件才生成模板）。
+
+```ts
+this.components.forEach((component) => {
+	const importBaseTemplatePath = promoteRelativePath(
+		path.relative(
+			component.path,
+			path.join(
+				sourceDir,
+				isBuildPlugin ? "plugin" : "",
+				this.getTemplatePath(baseTemplateName)
+			)
+		)
+	);
+	const config = this.filesConfig[this.getConfigFilePath(component.name)];
+	if (config) {
+		this.generateConfigFile(
+			compilation,
+			compiler,
+			component.path,
+			config.content
+		);
+	}
+	if (!component.isNative) {
+		this.generateTemplateFile(
+			compilation,
+			compiler,
+			component.path,
+			template.buildPageTemplate,
+			importBaseTemplatePath
+		);
+	}
+});
+```
 
 生成所有页面的配置和模板
 遍历所有页面，为每个页面生成配置文件和模板文件（非原生页面才生成模板），并处理分包页面的过滤。
 
+```ts
+this.pages.forEach((page) => {
+	const importBaseTemplatePath = promoteRelativePath(
+		path.relative(
+			page.path,
+			path.join(
+				sourceDir,
+				isBuildPlugin ? "plugin" : "",
+				this.getTemplatePath(baseTemplateName)
+			)
+		)
+	);
+	const config = this.filesConfig[this.getConfigFilePath(page.name)];
+	// pages 里面会混合独立分包的，在这里需要过滤一下，避免重复生成 assets
+	const isIndependent = !!this.getIndependentPackage(page.path);
+
+	if (isIndependent) return;
+
+	// 生成页面模板需要在生成页面配置之前，因为会依赖到页面配置的部分内容
+	if (!page.isNative) {
+		this.generateTemplateFile(
+			compilation,
+			compiler,
+			page.path,
+			template.buildPageTemplate,
+			importBaseTemplatePath,
+			config
+		);
+	}
+
+	if (config) {
+		const importBaseCompPath = promoteRelativePath(
+			path.relative(
+				page.path,
+				path.join(
+					sourceDir,
+					isBuildPlugin ? "plugin" : "",
+					this.getTargetFilePath(baseCompName, "")
+				)
+			)
+		);
+		const importCustomWrapperPath = promoteRelativePath(
+			path.relative(
+				page.path,
+				path.join(
+					sourceDir,
+					isBuildPlugin ? "plugin" : "",
+					this.getTargetFilePath(customWrapperName, "")
+				)
+			)
+		);
+		config.content.usingComponents = {
+			...config.content.usingComponents,
+		};
+
+		if (isUsingCustomWrapper) {
+			config.content.usingComponents[customWrapperName] =
+				importCustomWrapperPath;
+		}
+		if (!template.isSupportRecursive && !page.isNative) {
+			config.content.usingComponents[baseCompName] = importBaseCompPath;
+		}
+		this.generateConfigFile(
+			compilation,
+			compiler,
+			page.path,
+			config.content
+		);
+	}
+});
+```
+
 生成 tabbar 图标资源
 调用 generateTabBarFiles 方法，将 tabbar 所需的图片资源写入产物。
+
+```ts
+this.generateTabBarFiles(compilation, compiler);
+```
 
 注入公共样式
 调用 injectCommonStyles 方法，将公共样式自动引入到 app 和各页面样式文件中。
 
+```ts
+this.injectCommonStyles(compilation, compiler);
+```
+
 生成暗黑模式主题文件
 如果配置了暗黑模式主题，则输出对应的主题文件。
 
+```ts
+if (this.themeLocation) {
+	this.generateDarkModeFile(compilation, compiler);
+}
+```
+
 插件模式下生成 plugin.json
 如果是插件构建，自动生成并写入 plugin.json 文件。
+
+```ts
+if (isBuildPlugin) {
+	const pluginJSONPath = path.join(sourceDir, "plugin", "plugin.json");
+	if (fs.existsSync(pluginJSONPath)) {
+		const pluginJSON = fs.readJSONSync(pluginJSONPath);
+		this.modifyPluginJSON(pluginJSON);
+		compilation.assets["plugin.json"] = new RawSource(
+			JSON.stringify(pluginJSON)
+		);
+	}
+}
+```
+
+### generateConfigFile
+
+```ts
+generateConfigFile (compilation: Compilation, compiler: Compiler, filePath: string, config: Config & { component?: boolean }) {
+    const { RawSource } = compiler.webpack.sources
+    const fileConfigName = this.getConfigPath(this.getComponentName(filePath))
+
+    const unofficialConfigs = ['enableShareAppMessage', 'enableShareTimeline', 'enablePageMeta', 'components']
+    unofficialConfigs.forEach(item => {
+      delete config[item]
+    })
+
+    this.adjustConfigContent(config)
+
+    const fileConfigStr = JSON.stringify(config)
+    compilation.assets[fileConfigName] = new RawSource(fileConfigStr)
+  }
+```
+
+### generateTemplateFile 生成模板文件
+
+```ts
+generateTemplateFile (compilation: Compilation, compiler: Compiler, filePath: string, templateFn: (...args) => string, ...options) {
+    const { RawSource } = compiler.webpack.sources
+    let templStr = templateFn(...options)
+    const fileTemplName = this.getTemplatePath(this.getComponentName(filePath))
+
+    if (this.options.combination.config.minifyXML?.collapseWhitespace) {
+      const minify = require('html-minifier').minify
+      templStr = minify(templStr, {
+        collapseWhitespace: true,
+        keepClosingSlash: true
+      })
+    }
+
+    compilation.assets[fileTemplName] = new RawSource(templStr)
+  }
+```
+
+### generateXSFile 生产 xs 文件
+
+```ts
+generateXSFile (compilation: Compilation, compiler: Compiler, xsPath) {
+    const { RawSource } = compiler.webpack.sources
+    const ext = this.options.fileType.xs
+    const isUseXS = this.options.template.isUseXS
+
+    if (ext == null || !isUseXS) {
+      return
+    }
+
+    const xs = this.options.template.buildXScript()
+    const fileXsName = this.getTargetFilePath(xsPath, ext)
+    const filePath = fileXsName
+    compilation.assets[filePath] = new RawSource(xs)
+  }
+```
+
+### generateTabBarFiles 输出 tabbar icons 文件
+
+```ts
+/**
+ * 输出 tabbar icons 文件
+ */
+generateTabBarFiles (compilation: Compilation, { webpack }: Compiler) {
+  const { RawSource } = webpack.sources
+  this.tabBarIcons.forEach(icon => {
+    const iconPath = path.resolve(this.options.sourceDir, icon)
+    if (fs.existsSync(iconPath)) {
+      const iconSource = fs.readFileSync(iconPath)
+      compilation.assets[icon] = new RawSource(iconSource)
+    }
+  })
+}
+```
 
 ## 总结
 
